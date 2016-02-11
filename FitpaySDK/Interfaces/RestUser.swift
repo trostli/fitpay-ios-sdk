@@ -9,21 +9,21 @@ protocol RestUser
      - parameter [User]?: Provides array of User objects, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias UsersHandler = ([User]?, ErrorType?)->Void
+    typealias ListUsersHandler = ([User]?, ErrorType?)->Void
     
     /**
       Returns a list of all users that belong to your organization. The customers are returned sorted by creation date, with the most recently created customers appearing first
      
      - parameter limit:      Max number of profiles per page
      - parameter offset:     Start index position for list of entities returned
-     - parameter completion: UsersHandler closure
+     - parameter completion: ListUsersHandler closure
      */
-    func users(limit:Int, offset:Int, completion:UsersHandler)
+    func listUsers(limit limit:Int, offset:Int, completion: ListUsersHandler)
     
     /**
      Completion handler
      
-     - parameter [User]?: Provides User object, or nil if error occurs
+     - parameter [User]?: Provides created User object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
     typealias CreateUsersHandler = (User?, ErrorType?)->Void
@@ -37,7 +37,7 @@ protocol RestUser
      - parameter email:      email of the user
      - parameter completion: CreateUsersHandler closure
      */
-    func createUser(firstName:String, lastName:String, birthDate:String, email:String, completion:CreateUsersHandler)
+    func createUser(firstName firstName:String, lastName:String, birthDate:String, email:String, completion:CreateUsersHandler)
     
     /**
      Completion handler
@@ -53,7 +53,7 @@ protocol RestUser
      - parameter id:         user id
      - parameter completion: UserHandler closure
      */
-    func user(id:String, completion:UserHandler)
+    func user(id id:String, completion:UserHandler)
     
     /**
      Completion handler
@@ -66,7 +66,7 @@ protocol RestUser
     /**
      Update the details of an existing user
      
-     - parameter id:                   used id
+     - parameter id:                   user id
      - parameter firstName:            first name or nil if no change is required
      - parameter lastName:             last name or nil if no change is required
      - parameter birthDate:            birth date in date format [YYYY-MM-DD] or nil if no change is required
@@ -75,6 +75,65 @@ protocol RestUser
      - parameter termsVersion:         terms version formatted as [0.0.0]
      - parameter completion:           UpdateUserHandler closure
      */
-    func updateUser(id:String, firstName:String?, lastName:String?, birthDate:Int?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:UpdateUserHandler)
+    func updateUser(id id:String, firstName:String?, lastName:String?, birthDate:Int?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:UpdateUserHandler)
     
+    /**
+     Completion handler
+     
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias DeleteUserHandler = (ErrorType?)->Void
+
+    /**
+     Delete a single user from your organization
+     
+     - parameter id:         user id
+     - parameter completion: DeleteUserHandler closure
+     */
+    func deleteUser(id id:String, completion:DeleteUserHandler)
+
+    /**
+     Completion handler
+
+     - parameter Relationship?: Provides Relationship object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias RelationshipHandler = (Relationship?, ErrorType?)->Void
+
+    /**
+     Get a single relationship
+     
+     - parameter userId:       user id
+     - parameter creditCardId: credit card id
+     - parameter deviceId:     device id
+     - parameter completion:   RelationshipHandler closure
+     */
+    func relationship(userId userId:String, creditCardId:String, deviceId:String, completion:RelationshipHandler)
+
+    /**
+     Completion handler
+
+     - parameter Relationship?: Provides created Relationship object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias CreateRelationshipHandler = (Relationship?, ErrorType?)->Void
+
+    /**
+     Creates a relationship between a device and a creditCard
+     
+     - parameter userId:       user id
+     - parameter creditCardId: credit card id
+     - parameter deviceId:     device id
+     - parameter completion:   CreateRelationshipHandler closure
+     */
+    func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
+    
+    /**
+     Completion handler
+     
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias DeleteRelationshipHandler = (ErrorType?)->Void
+    
+    func deleteRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:DeleteRelationshipHandler)
 }

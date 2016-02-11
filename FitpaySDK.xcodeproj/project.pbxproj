@@ -13,7 +13,10 @@
 		0AD9232C1C20BB38007693AB /* FitpaySDK.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD9232B1C20BB38007693AB /* FitpaySDK.swift */; };
 		96C196610BB289EAB485089F /* Pods_FitpaySDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF2E70C4C402E580DA9AF8DD /* Pods_FitpaySDKTests.framework */; };
 		CD0380075304E507E691CA74 /* ErrorCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03866854F2E2BCB52647AD /* ErrorCode.swift */; };
+		CD0380CD0CBA208F2D0FA0BA /* ResourceLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0384578A04079FF4A0DDFC /* ResourceLinks.swift */; };
 		CD038162495DE5925EDBE6C6 /* RestUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038DF4B66E589BFF5529F0 /* RestUser.swift */; };
+		CD0382872225453E20A0E6C7 /* CreditCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038CB9D8187C9887B810CD /* CreditCard.swift */; };
+		CD0388030929AE84CA8653D0 /* Relationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038CD7F2AFBC2801013643 /* Relationship.swift */; };
 		CD038DA86CCCAB70F1593B42 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038DB209CF5A58935FD582 /* User.swift */; };
 		DDD2ED7CB97B4B6EF77DD31F /* Pods_FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E49C657DBA7ECC7EAD5AD0B4 /* Pods_FitpaySDK.framework */; };
 /* End PBXBuildFile section */
@@ -40,7 +43,10 @@
 		77F13D0165C8E22E0B00802A /* Pods-FitpaySDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		7C5C07F3D8783908B07CB70B /* Pods-FitpaySDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9C591A194E450FD347037C2E /* Pods-FitpaySDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.debug.xcconfig"; sourceTree = "<group>"; };
+		CD0384578A04079FF4A0DDFC /* ResourceLinks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceLinks.swift; sourceTree = "<group>"; };
 		CD03866854F2E2BCB52647AD /* ErrorCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorCode.swift; sourceTree = "<group>"; };
+		CD038CB9D8187C9887B810CD /* CreditCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreditCard.swift; sourceTree = "<group>"; };
+		CD038CD7F2AFBC2801013643 /* Relationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Relationship.swift; sourceTree = "<group>"; };
 		CD038DB209CF5A58935FD582 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CD038DF4B66E589BFF5529F0 /* RestUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestUser.swift; sourceTree = "<group>"; };
 		E49C657DBA7ECC7EAD5AD0B4 /* Pods_FitpaySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FitpaySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -131,6 +137,9 @@
 			isa = PBXGroup;
 			children = (
 				CD038DB209CF5A58935FD582 /* User.swift */,
+				CD038CD7F2AFBC2801013643 /* Relationship.swift */,
+				CD038CB9D8187C9887B810CD /* CreditCard.swift */,
+				CD0384578A04079FF4A0DDFC /* ResourceLinks.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -350,6 +359,9 @@
 				CD038162495DE5925EDBE6C6 /* RestUser.swift in Sources */,
 				CD038DA86CCCAB70F1593B42 /* User.swift in Sources */,
 				CD0380075304E507E691CA74 /* ErrorCode.swift in Sources */,
+				CD0388030929AE84CA8653D0 /* Relationship.swift in Sources */,
+				CD0382872225453E20A0E6C7 /* CreditCard.swift in Sources */,
+				CD0380CD0CBA208F2D0FA0BA /* ResourceLinks.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
