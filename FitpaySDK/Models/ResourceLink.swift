@@ -1,13 +1,9 @@
 
 import Foundation
 
-class ResourceLinks
-{
-    var links:[Link]?
-}
-
-class Link
+class ResourceLink
 {
     var target:String?
     var href:String?
 }
+

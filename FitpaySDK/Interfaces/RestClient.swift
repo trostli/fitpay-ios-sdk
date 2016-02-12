@@ -1,15 +1,15 @@
 
 import Foundation
 
-protocol RestUser
+protocol RestClient
 {
     /**
      Completion handler
      
-     - parameter [User]?: Provides array of User objects, or nil if error occurs
+     - parameter ResultCollection<User>?: Provides ResultCollection<User>, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias ListUsersHandler = ([User]?, ErrorType?)->Void
+    typealias ListUsersHandler = (ResultCollection<User>?, ErrorType?)->Void
     
     /**
       Returns a list of all users that belong to your organization. The customers are returned sorted by creation date, with the most recently created customers appearing first
@@ -135,5 +135,47 @@ protocol RestUser
      */
     typealias DeleteRelationshipHandler = (ErrorType?)->Void
     
+    /**
+     Removes a relationship between a device and a creditCard if it exists
+     
+     - parameter userId:       user id
+     - parameter creditCardId: credit card id
+     - parameter deviceId:     device id
+     - parameter completion:   DeleteRelationshipHandler closure
+     */
     func deleteRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:DeleteRelationshipHandler)
+    
+    /**
+     Completion handler
+     
+     - parameter CreditCard?: Provides updated CreditCard object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias AcceptTermsHandler = (CreditCard?, ErrorType?)->Void
+    
+    /**
+     Indicates a user has accepted the terms and conditions presented when the credit card was first added to the user's profile
+    
+     - parameter creditCardId: credit card id
+     - parameter userId:       user id
+     - parameter completion:   AcceptTermsHandler handler
+     */
+    func acceptTerms(creditCardId creditCardId:String, userId:String, completion:AcceptTermsHandler)
+    
+    /**
+     Completion handler
+     
+     - parameter CreditCard?: Provides updated CreditCard object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias DeclineTermsHandler = (CreditCard?, ErrorType?)->Void
+    
+    /**
+     Indicate a user has declined the terms and conditions. Once declined the credit card will be in a final state, no other actions may be taken
+     
+     - parameter creditCardId: credit card id
+     - parameter userId:       user id
+     - parameter completion:   DeclineTermsHandler handler
+     */
+    func declineTerms(creditCardId creditCardId:String, userId:String, completion:DeclineTermsHandler)
 }

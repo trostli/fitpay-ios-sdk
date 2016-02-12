@@ -3,6 +3,7 @@ import Foundation
 
 class CreditCard
 {
+    var links:[ResourceLink]?
     var creditCardId:String?
     var userId:String?
     var isDefault:Bool?
@@ -24,32 +25,23 @@ class CardMetadata
     var contactEmail:String?
     var termsAndConditionsUrl:String?
     var privacyPolicyUrl:String?
-    var brandLogo:[BrandLogo]?
-    var cardBackground:[CardBackground]?
-    var cardBackgroundCombined:[CardBackgroundCombined]?
-    var coBrandLogo:[CoBrandLogo]?
-    var icon:[Icon]?
+    var brandLogo:[Image]?
+    var cardBackground:[Image]?
+    var cardBackgroundCombined:[Image]?
+    var coBrandLogo:[Image]?
+    var icon:[Image]?
     var termsAssetId:String?
     var termsAssetReferences:[TermsAssetReferences]?
     var eligibilityExpiration:String?
     var eligibilityExpirationEpoch:Int?
+    var deviceRelationships:[DeviceRelationships]?
+    var encryptedData:String?
 }
 
-class BrandLogo : Image {}
-
-class CardBackground : Image {}
-
-class CardBackgroundCombined : Image {}
-
-class CoBrandLogo : Image {}
-
-class Icon : Image {}
-
-class IssuerLogo : Image {}
 
 class Image
 {
-    var links:ResourceLinks?
+    var links: [ResourceLink]?
     var mimeType:String?
     var height:Int?
     var width:Int?
@@ -57,15 +49,44 @@ class Image
 
 class TermsAssetReferences
 {
-    var links:ResourceLinks?
+    var links: [ResourceLink]?
     var mimeType:String?
 }
 
 class DeviceRelationships
 {
     var deviceType:String?
-    var links:ResourceLinks?
+    var links: [ResourceLink]?
     var deviceIdentifier:String?
     var manufacturerName:String?
     var deviceName:String?
+    var serialNumber:String?
+    var modelNumber:String?
+    var hardwareRevision:String?
+    var firmwareRevision:String?
+    var softwareRevision:String?
+    var created:String?
+    var createdTsEpoch:Int?
+    var osName:String?
+    var systemId:String?
+}
+
+class CardInfo
+{
+    class Address
+    {
+        var street1:String?
+        var street2:String?
+        var street3:String?
+        var city:String?
+        var state:String?
+        var postalCode:String?
+        var countryCode:String?
+    }
+
+    var pan:String?
+    var expMonth:Int?
+    var expYear:Int?
+    var cvv:Int?
+    var address:Address?
 }
