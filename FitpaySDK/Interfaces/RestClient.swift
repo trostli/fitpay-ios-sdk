@@ -3,10 +3,12 @@ import Foundation
 
 protocol RestClient
 {
+    // MARK: User
+    
     /**
      Completion handler
      
-     - parameter ResultCollection<User>?: Provides ResultCollection<User>, or nil if error occurs
+     - parameter ResultCollection<User>?: Provides ResultCollection<User> object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
     typealias ListUsersHandler = (ResultCollection<User>?, ErrorType?)->Void
@@ -92,6 +94,8 @@ protocol RestClient
      */
     func deleteUser(id id:String, completion:DeleteUserHandler)
 
+    // MARK: Relationship
+    
     /**
      Completion handler
 
@@ -144,7 +148,9 @@ protocol RestClient
      - parameter completion:   DeleteRelationshipHandler closure
      */
     func deleteRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:DeleteRelationshipHandler)
-    
+
+    // MARK: Credit Card
+
     /**
      Completion handler
      
@@ -158,7 +164,7 @@ protocol RestClient
     
      - parameter creditCardId: credit card id
      - parameter userId:       user id
-     - parameter completion:   AcceptTermsHandler handler
+     - parameter completion:   AcceptTermsHandler closure
      */
     func acceptTerms(creditCardId creditCardId:String, userId:String, completion:AcceptTermsHandler)
     
@@ -171,11 +177,160 @@ protocol RestClient
     typealias DeclineTermsHandler = (CreditCard?, ErrorType?)->Void
     
     /**
-     Indicate a user has declined the terms and conditions. Once declined the credit card will be in a final state, no other actions may be taken
+     Indicates a user has declined the terms and conditions. Once declined the credit card will be in a final state, no other actions may be taken
      
      - parameter creditCardId: credit card id
      - parameter userId:       user id
-     - parameter completion:   DeclineTermsHandler handler
+     - parameter completion:   DeclineTermsHandler closure
      */
     func declineTerms(creditCardId creditCardId:String, userId:String, completion:DeclineTermsHandler)
+
+    /**
+     Completion handler
+     
+     - parameter CreditCard?: Provides updated CreditCard object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias MakeDefaultHandler = (CreditCard?, ErrorType?)->Void
+
+    /**
+     Mark the credit card as the default payment instrument. If another card is currently marked as the default, the default will automatically transition to the indicated credit card
+     
+     - parameter creditCardId: credit card id
+     - parameter userId:       user id
+     - parameter completion:   MakeDefaultHandler closure
+     */
+    func makeDefault(creditCardId creditCardId:String, userId:String, completion:MakeDefaultHandler)
+
+    /**
+     Completion handler
+
+     - parameter CreditCard?: Provides deactivated CreditCard object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias DeactivateHandler = (CreditCard?, ErrorType?)->Void
+    
+    /**
+     Transition the credit card into a deactived state so that it may not be utilized for payment. This link will only be available for qualified credit cards that are currently in an active state.
+     
+     - parameter creditCardId: credit card id
+     - parameter userId:       user id
+     - parameter causedBy:     deactivation initiator
+     - parameter reason:       deactivation reason
+     - parameter completion:   DeactivateHandler closure
+     */
+    func deactivate(creditCardId creditCardId:String, userId:String, causedBy:CreditCardInitiator, reason:String, completion:DeactivateHandler)
+    
+    
+    /**
+     Completion handler
+     
+     - parameter CreditCard?: Provides reactivated CreditCard object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias ReactivateHandler = (CreditCard?, ErrorType?)->Void
+
+    /**
+     Transition the credit card into an active state where it can be utilized for payment. This link will only be available for qualified credit cards that are currently in a deactivated state.
+     
+     - parameter creditCardId: credit card id
+     - parameter userId:       user id
+     - parameter causedBy:     reactivation initiator
+     - parameter reason:       reactivation reason
+     - parameter completion:   ReactivateHandler closure
+     */
+    func reactivate(creditCardId creditCardId:String, userId:String, causedBy:CreditCardInitiator, reason:String, completion:ReactivateHandler)
+
+
+    /**
+     Completion handler
+
+     - parameter VerificationType?: Provides VerificationType object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias SelectVerificationTypeHandler = (VerificationType?, ErrorType?)->Void
+    
+    /**
+     When an issuer requires additional authentication to verfiy the identity of the cardholder, this indicates the user has selected the specified verification method by the indicated verificationTypeId
+     
+     - parameter creditCardId:       credit card id
+     - parameter userId:             user id
+     - parameter verificationTypeId: verification type id
+     - parameter completion:         SelectVerificationTypeHandler closure
+     */
+    func selectVerificationType(creditCardId creditCardId:String, userId:String, verificationTypeId:String, completion:SelectVerificationTypeHandler)
+    
+    /**
+     Completion handler
+     
+     - parameter VerificationType?: Provides VerificationType object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias VerifyHandler = (VerificationResult?, ErrorType?)->Void
+    
+    /**
+     If a verification method is selected that requires an entry of a pin code, this transition will be available. Not all verification methods will include a secondary verification step through the FitPay API
+     
+     - parameter creditCardId:       credit card id
+     - parameter userId:             user id
+     - parameter verificationTypeId: verification type id
+     - parameter verificationCode:   verification code
+     - parameter completion:         VerifyHandler closure
+     */
+    func verify(creditCardId creditCardId:String, userId:String, verificationTypeId:String, verificationCode:String, completion:VerifyHandler)
+
+    // MARK: Devices
+    
+    /**
+    Completion handler
+    
+    - parameter ResultCollection<Device>?: Provides ResultCollection<Device> object, or nil if error occurs
+    - parameter ErrorType?: Provides error object, or nil if no error occurs
+    */
+    typealias DevicesHandler = (ResultCollection<Device>?, ErrorType?)->Void
+    
+    /**
+     For a single user, retrieve a pagable collection of devices in their profile
+     
+     - parameter userId:     user id
+     - parameter limit:      max number of profiles per page
+     - parameter offset:     start index position for list of entities returned
+     - parameter completion: DevicesHandler closure
+     */
+    func devices(userId userId:String, limit:Int, offset:Int, completion:DevicesHandler)
+
+    /**
+    Completion handler
+
+    - parameter Device?: Provides created Device object, or nil if error occurs
+    - parameter ErrorType?: Provides error object, or nil if no error occurs
+    */
+    typealias CreateNewDeviceHandler = (Device?, ErrorType?)->Void
+
+    /**
+     For a single user, create a new device in their profile
+     
+     - parameter userId:           user id
+     - parameter deviceType:       device typr
+     - parameter manufacturerName: manufacturer name
+     - parameter deviceName:       device name
+     - parameter serialNumber:     serial number
+     - parameter modelNumber:      model number
+     - parameter hardwareRevision: hardware revision
+     - parameter firmwareRevision: firmware revision
+     - parameter softwareRevision: software revision
+     - parameter systemId:         system id
+     - parameter osName:           os name
+     - parameter licenseKey:       license key
+     - parameter bdAddress:        bd address //TODO: provide better description
+     - parameter secureElementId:  secure element id
+     - parameter pairing:          pairing date [MM-DD-YYYY]
+     - parameter completion:       CreateNewDeviceHandler closure
+     */
+    func createNewDevice(userId userId:String, deviceType:String, manufacturerName:String, deviceName:String,
+                         serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
+                         softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
+                         secureElementId:String, pairing:String, completion:CreateNewDeviceHandler)
+
+
 }

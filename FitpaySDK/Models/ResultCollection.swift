@@ -7,4 +7,5 @@ class ResultCollection<T>
     var offset:Int?
     var totalResults:Int?
     var results:[T]?
+    var links:[ResourceLink]?
 }

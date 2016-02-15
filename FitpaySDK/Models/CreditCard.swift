@@ -73,20 +73,20 @@ class DeviceRelationships
 
 class CardInfo
 {
-    class Address
-    {
-        var street1:String?
-        var street2:String?
-        var street3:String?
-        var city:String?
-        var state:String?
-        var postalCode:String?
-        var countryCode:String?
-    }
-
     var pan:String?
     var expMonth:Int?
     var expYear:Int?
     var cvv:Int?
     var address:Address?
+}
+
+class Address
+{
+    var street1:String?
+    var street2:String?
+    var street3:String?
+    var city:String?
+    var state:String?
+    var postalCode:String?
+    var countryCode:String?
 }
