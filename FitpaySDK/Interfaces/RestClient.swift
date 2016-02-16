@@ -311,7 +311,7 @@ protocol RestClient
      For a single user, create a new device in their profile
      
      - parameter userId:           user id
-     - parameter deviceType:       device typr
+     - parameter deviceType:       device type
      - parameter manufacturerName: manufacturer name
      - parameter deviceName:       device name
      - parameter serialNumber:     serial number
@@ -332,5 +332,265 @@ protocol RestClient
                          softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
                          secureElementId:String, pairing:String, completion:CreateNewDeviceHandler)
 
+    /**
+    Completion handler
 
+    - parameter Device?: Provides existing Device object, or nil if error occurs
+    - parameter ErrorType?: Provides error object, or nil if no error occurs
+    */
+    typealias DeviceHandler = (Device?, ErrorType?)
+    
+    /**
+     Retrieves the details of an existing device. You need only supply the uniqueidentifier that was returned upon creation.
+     
+     - parameter deviceId:   device id
+     - parameter userId:     user id
+     - parameter completion: DeviceHandler closure
+     */
+    func device(deviceId deviceId:String, userId:String, completion:DeviceHandler)
+
+    /**
+    Completion handler
+
+    - parameter Device?: Provides updated Device object, or nil if error occurs
+    - parameter ErrorType?: Provides error object, or nil if no error occurs
+    */
+    typealias UpdateDeviceHandler = (Device?, ErrorType?)
+
+    /**
+     Update the details of an existing device
+     (For optional? parameters use nil if field doesn't need to be updated) //TODO: consider adding default nil value
+
+     - parameter deviceId:          device id
+     - parameter userId:            user id
+     - parameter firmwareRevision?: firmware revision
+     - parameter softwareRevision?: software revision
+     - parameter completion:        UpdateDeviceHandler closure
+     */
+    func updateDevice(deviceId deviceId:String, userId:String, firmwareRevision:String?, softwareRevision:String?,
+                      completion:UpdateDeviceHandler)
+
+    /**
+    Completion handler
+
+    - parameter ErrorType?: Provides error object, or nil if no error occurs
+    */
+    typealias DeleteDeviceHandler = (ErrorType?)
+
+    /**
+     Delete a single device
+     
+     - parameter deviceId:   device id
+     - parameter userId:     user id
+     - parameter completion: DeleteDeviceHandler closure
+     */
+    func deleteDevice(deviceId deviceId:String, userId:String, completion:DeleteDeviceHandler)
+
+    // MARK: Commits
+
+    /**
+     Completion handler
+
+     - parameter ResultCollection<Commit>?: Provides ResultCollection<Commit> object, or nil if error occurs
+     - parameter ErrorType?:                Provides error object, or nil if no error occurs
+    */
+    typealias CommitsHandler = (ResultCollection<Commit>?, ErrorType?)->Void
+    
+    /**
+     Retrieves a collection of all events that should be committed to this device
+     
+     - parameter deviceId:     device id
+     - parameter userId:       user id
+     - parameter commitsAfter: the last commit successfully applied. Query will return all subsequent commits which need to be applied.
+     - parameter limit:        max number of profiles per page
+     - parameter offset:       start index position for list of entities returned
+     - parameter completion:   CommitsHandler closure
+     */
+    func commits(deviceId deviceId:String, userId:String, commitsAfter:String, limit:Int, offset:Int,
+        completion:CommitsHandler)
+    
+    /**
+     Completion handler
+     
+     - parameter Commit?:    Provides Commit object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias CommitHandler = (Commit?, ErrorType?)->Void
+    
+    /**
+     Retrieves an individual commit
+     
+     - parameter commitId:   commit id
+     - parameter deviceId:   device id
+     - parameter userId:     user id
+     - parameter completion: CommitHandler closure
+     */
+    func commit(commitId commitId:String, deviceId:String, userId:String, completion:CommitHandler)
+
+    // MARK: Transactions
+
+    /**
+     Completion handler
+
+     - parameter ResultCollection<Commit>?: Provides ResultCollection<Transaction> object, or nil if error occurs
+     - parameter ErrorType?:                Provides error object, or nil if no error occurs
+    */
+    typealias TransactionsHandler = (ResultCollection<Transaction>?, ErrorType?)->Void
+
+    /**
+     Provides a transaction history (if available) for the user, results are limited by provider.
+     
+     - parameter userId:     user id
+     - parameter completion: TransactionsHandler closure
+     */
+    func transactions(userId userId:String, completion:TransactionsHandler)
+
+    /**
+     Completion handler
+
+     - parameter Transaction?: Provides Transaction object, or nil if error occurs
+     - parameter ErrorType?:   Provides error object, or nil if no error occurs
+     */
+    typealias TransactionHandler = (Transaction?, ErrorType?)->Void
+
+    /**
+     Get a single transaction
+     
+     - parameter transactionId: transaction id
+     - parameter userId:        user id
+     - parameter completion:    TransactionHandler closure
+     */
+    func transaction(transactionId transactionId:String, userId:String, completion:TransactionHandler)
+
+    // MARK: APDU Packages
+
+    /**
+     Completion handler
+     
+     - parameter PackageConfirmation?: Provides PackageConfirmation object, or nil if error occurs
+     - parameter ErrorType?:   Provides error object, or nil if no error occurs
+     */
+    typealias ConfirmAPDUHandler = (PackageConfirmation?, ErrorType?)->Void
+
+    /**
+     Endpoint to allow for returning responses to APDU execution
+     
+     - parameter packageId:  package id
+     - parameter completion: ConfirmAPDUHandler closure
+     */
+    func confirmAPDU(packageId:String, completion:ConfirmAPDUHandler)
+
+    // MARK: Assets
+
+    /**
+     Completion handler
+
+     - parameter AnyObject?: Provides AnyObject (UIImage or String) object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias AssetsHandler = (AnyObject?, ErrorType?)->Void
+
+    /**
+     Retrieve an individual asset (i.e. terms and conditions)
+     
+     - parameter adapterData: adapter data
+     - parameter adapterId:   adapter id
+     - parameter assetId:     asset id
+     - parameter completion:  AssetsHandler closure
+     */
+    func assets(adapterData:String, adapterId:String, assetId:String, completion:AssetsHandler)
+
+    /**
+     Completion handler
+
+     - parameter EncryptionKey?: Provides created EncryptionKey object, or nil if error occurs
+     - parameter ErrorType?:     Provides error object, or nil if no error occurs
+     */
+    typealias CreateEncryptionKeyHandler = (EncryptionKey?, ErrorType?)->Void
+
+    /**
+     Creates a new encryption key pair
+     
+     - parameter clientPublicKey: client public key
+     - parameter completion:      CreateEncryptionKeyHandler closure
+     */
+    func createEncryptionKey(clientPublicKey:String, completion:CreateEncryptionKeyHandler)
+
+    /**
+     Completion handler
+
+     - parameter EncryptionKey?: Provides EncryptionKey object, or nil if error occurs
+     - parameter ErrorType?:     Provides error object, or nil if no error occurs
+     */
+    typealias EncryptionKeyHandler = (EncryptionKey?, ErrorType?)->Void
+
+    /**
+     Retrieve and individual key pair
+     
+     - parameter keyId:      key id
+     - parameter completion: EncryptionKeyHandler closure
+     */
+    func encryptionKey(keyId:String, completion:EncryptionKeyHandler)
+    
+    
+    /**
+     Completion handler
+     
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias DeleteEncryptionKeyHandler = (ErrorType?)->Void
+    
+    /**
+     Deletes encryption key
+     
+     - parameter keyId:      key id
+     - parameter completion: DeleteEncryptionKeyHandler
+     */
+    func deleteEncryptionKey(keyId:String, completion:DeleteEncryptionKeyHandler)
+    
+    /**
+     Completion handler
+     
+     - parameter String?:    Provides String object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias AddWebhookHandler = (String?, ErrorType?)
+    
+    /**
+     Sets the webhook endpoint you would like FitPay to send notifications to, must be a valid URL
+     
+     - parameter webhookURL: valid webhook URL
+     - parameter completion: AddWebhookHandler closure
+     */
+    func addWebhook(webhookURL:NSURL, completion:AddWebhookHandler)
+    
+    /**
+     Completion handler
+     
+     - parameter String?:    Provides String object, or nil if error occurs
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias WebhookHandler = (String?, ErrorType?)->Void
+    
+    /**
+     TODO: add description when it becomes available on API documentation page
+     
+     - parameter completion: WebhookHandler closure
+     */
+    func webhook(completion:WebhookHandler)
+    
+    /**
+     Completion handler
+     
+     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     */
+    typealias RemoveWebhookHandler = (ErrorType)->Void
+    
+    /**
+     Removes the current webhook endpoint, unsubscribing you from all Fitpay notifications
+     
+     - parameter webhookURL: webhook URL
+     - parameter completion: RemoveWebhookHandler closure
+     */
+    func removeWebhook(webhookURL:NSURL, completion:RemoveWebhookHandler)
 }
