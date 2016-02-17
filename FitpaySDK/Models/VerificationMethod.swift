@@ -1,5 +1,5 @@
 
-class VerificationResult
+class VerificationMethod
 {
     var links:[ResourceLink]?
     var verificationId:String?

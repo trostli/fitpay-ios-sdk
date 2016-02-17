@@ -1,6 +1,4 @@
 
-import Foundation
-
 class ResultCollection<T>
 {
     var limit:Int?

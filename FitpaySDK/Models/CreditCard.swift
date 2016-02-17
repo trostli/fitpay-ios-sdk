@@ -38,7 +38,6 @@ class CardMetadata
     var encryptedData:String?
 }
 
-
 class Image
 {
     var links: [ResourceLink]?

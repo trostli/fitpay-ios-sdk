@@ -1,3 +1,4 @@
+
 class Device
 {
     var links:[ResourceLink]?

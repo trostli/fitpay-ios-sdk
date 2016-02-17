@@ -16,16 +16,17 @@
 		CD0380CD0CBA208F2D0FA0BA /* ResourceLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0384578A04079FF4A0DDFC /* ResourceLink.swift */; };
 		CD038162495DE5925EDBE6C6 /* RestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038DF4B66E589BFF5529F0 /* RestClient.swift */; };
 		CD0381BA60A938D229F91780 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038EBFE7A85CC39F342A3E /* Address.swift */; };
-		CD0381E97328D0F0751BBCBA /* VerificationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038A0A829CA93641B70C4B /* VerificationType.swift */; };
 		CD0382872225453E20A0E6C7 /* CreditCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038CB9D8187C9887B810CD /* CreditCard.swift */; };
-		CD0383E4B784A1A81DF3ECB6 /* PackageConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038B357165AF9B9DA7228C /* PackageConfirmation.swift */; };
+		CD0383E4B784A1A81DF3ECB6 /* ApduPackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038B357165AF9B9DA7228C /* ApduPackage.swift */; };
 		CD0384C9C24CA84883D42016 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038F8698D5C4935DD01C1F /* Transaction.swift */; };
+		CD0387227CAB2CB6C0E24E69 /* RestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038A4CF900C1735489CD4C /* RestSession.swift */; };
 		CD03877B21479870AA040E45 /* Commit.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038DA6A21A062C975791D6 /* Commit.swift */; };
 		CD0387934DCBDA8DFF6C8556 /* ResultCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03864313FABEE95E576E33 /* ResultCollection.swift */; };
 		CD0388030929AE84CA8653D0 /* Relationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038CD7F2AFBC2801013643 /* Relationship.swift */; };
 		CD0388B539F9733823AB6A1C /* EncryptionKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03813923AFDC6FC8756C39 /* EncryptionKey.swift */; };
 		CD038A1E2FE6CC916D04138E /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038D0B18B872E556ECB145 /* Device.swift */; };
-		CD038BFDC6617BFD92BA2458 /* VerificationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03826F80390CAFFF165B0A /* VerificationResult.swift */; };
+		CD038BFDC6617BFD92BA2458 /* VerificationMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03826F80390CAFFF165B0A /* VerificationMethod.swift */; };
+		CD038C06B6F1D8E930D35B4E /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03860D5D46EEE5CAA19188 /* APIConstants.swift */; };
 		CD038C5D2FAE5B7251DDA893 /* CreditCardInitiator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038F869C637B5F1DD5E74B /* CreditCardInitiator.swift */; };
 		CD038DA86CCCAB70F1593B42 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038DB209CF5A58935FD582 /* User.swift */; };
 		DDD2ED7CB97B4B6EF77DD31F /* Pods_FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E49C657DBA7ECC7EAD5AD0B4 /* Pods_FitpaySDK.framework */; };
@@ -54,12 +55,13 @@
 		7C5C07F3D8783908B07CB70B /* Pods-FitpaySDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9C591A194E450FD347037C2E /* Pods-FitpaySDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.debug.xcconfig"; sourceTree = "<group>"; };
 		CD03813923AFDC6FC8756C39 /* EncryptionKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionKey.swift; sourceTree = "<group>"; };
-		CD03826F80390CAFFF165B0A /* VerificationResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerificationResult.swift; sourceTree = "<group>"; };
+		CD03826F80390CAFFF165B0A /* VerificationMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerificationMethod.swift; sourceTree = "<group>"; };
 		CD0384578A04079FF4A0DDFC /* ResourceLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceLink.swift; sourceTree = "<group>"; };
+		CD03860D5D46EEE5CAA19188 /* APIConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
 		CD03864313FABEE95E576E33 /* ResultCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultCollection.swift; sourceTree = "<group>"; };
 		CD03866854F2E2BCB52647AD /* ErrorCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorCode.swift; sourceTree = "<group>"; };
-		CD038A0A829CA93641B70C4B /* VerificationType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerificationType.swift; sourceTree = "<group>"; };
-		CD038B357165AF9B9DA7228C /* PackageConfirmation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PackageConfirmation.swift; sourceTree = "<group>"; };
+		CD038A4CF900C1735489CD4C /* RestSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestSession.swift; sourceTree = "<group>"; };
+		CD038B357165AF9B9DA7228C /* ApduPackage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApduPackage.swift; sourceTree = "<group>"; };
 		CD038CB9D8187C9887B810CD /* CreditCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreditCard.swift; sourceTree = "<group>"; };
 		CD038CD7F2AFBC2801013643 /* Relationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Relationship.swift; sourceTree = "<group>"; };
 		CD038D0B18B872E556ECB145 /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				CD038DF4B66E589BFF5529F0 /* RestClient.swift */,
+				CD038A4CF900C1735489CD4C /* RestSession.swift */,
 			);
 			path = Interfaces;
 			sourceTree = "<group>";
@@ -161,13 +164,12 @@
 				CD038CB9D8187C9887B810CD /* CreditCard.swift */,
 				CD0384578A04079FF4A0DDFC /* ResourceLink.swift */,
 				CD03864313FABEE95E576E33 /* ResultCollection.swift */,
-				CD038A0A829CA93641B70C4B /* VerificationType.swift */,
-				CD03826F80390CAFFF165B0A /* VerificationResult.swift */,
+				CD03826F80390CAFFF165B0A /* VerificationMethod.swift */,
 				CD038D0B18B872E556ECB145 /* Device.swift */,
 				CD038DA6A21A062C975791D6 /* Commit.swift */,
 				CD038EBFE7A85CC39F342A3E /* Address.swift */,
 				CD038F8698D5C4935DD01C1F /* Transaction.swift */,
-				CD038B357165AF9B9DA7228C /* PackageConfirmation.swift */,
+				CD038B357165AF9B9DA7228C /* ApduPackage.swift */,
 				CD03813923AFDC6FC8756C39 /* EncryptionKey.swift */,
 			);
 			path = Models;
@@ -178,6 +180,7 @@
 			children = (
 				CD03866854F2E2BCB52647AD /* ErrorCode.swift */,
 				CD038F869C637B5F1DD5E74B /* CreditCardInitiator.swift */,
+				CD03860D5D46EEE5CAA19188 /* APIConstants.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -394,14 +397,15 @@
 				CD0380CD0CBA208F2D0FA0BA /* ResourceLink.swift in Sources */,
 				CD0387934DCBDA8DFF6C8556 /* ResultCollection.swift in Sources */,
 				CD038C5D2FAE5B7251DDA893 /* CreditCardInitiator.swift in Sources */,
-				CD0381E97328D0F0751BBCBA /* VerificationType.swift in Sources */,
-				CD038BFDC6617BFD92BA2458 /* VerificationResult.swift in Sources */,
+				CD038BFDC6617BFD92BA2458 /* VerificationMethod.swift in Sources */,
 				CD038A1E2FE6CC916D04138E /* Device.swift in Sources */,
 				CD03877B21479870AA040E45 /* Commit.swift in Sources */,
 				CD0381BA60A938D229F91780 /* Address.swift in Sources */,
 				CD0384C9C24CA84883D42016 /* Transaction.swift in Sources */,
-				CD0383E4B784A1A81DF3ECB6 /* PackageConfirmation.swift in Sources */,
+				CD0383E4B784A1A81DF3ECB6 /* ApduPackage.swift in Sources */,
 				CD0388B539F9733823AB6A1C /* EncryptionKey.swift in Sources */,
+				CD0387227CAB2CB6C0E24E69 /* RestSession.swift in Sources */,
+				CD038C06B6F1D8E930D35B4E /* APIConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

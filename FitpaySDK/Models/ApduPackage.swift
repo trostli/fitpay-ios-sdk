@@ -1,5 +1,5 @@
 
-class PackageConfirmation
+class ApduPackage
 {
     var packageId:String?
     var state:String? //TODO: consider adding enum

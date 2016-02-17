@@ -1,8 +1,15 @@
 
 import Foundation
 
-protocol RestClient
+class RestClient
 {
+    private var _session:RestSession
+
+    init(session:RestSession)
+    {
+        _session = session;
+    }
+
     // MARK: User
     
     /**
@@ -21,6 +28,9 @@ protocol RestClient
      - parameter completion: ListUsersHandler closure
      */
     func listUsers(limit limit:Int, offset:Int, completion: ListUsersHandler)
+    {
+
+    }
     
     /**
      Completion handler
@@ -40,6 +50,9 @@ protocol RestClient
      - parameter completion: CreateUsersHandler closure
      */
     func createUser(firstName firstName:String, lastName:String, birthDate:String, email:String, completion:CreateUsersHandler)
+    {
+
+    }
     
     /**
      Completion handler
@@ -56,6 +69,9 @@ protocol RestClient
      - parameter completion: UserHandler closure
      */
     func user(id id:String, completion:UserHandler)
+    {
+
+    }
     
     /**
      Completion handler
@@ -78,6 +94,9 @@ protocol RestClient
      - parameter completion:           UpdateUserHandler closure
      */
     func updateUser(id id:String, firstName:String?, lastName:String?, birthDate:Int?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:UpdateUserHandler)
+    {
+
+    }
     
     /**
      Completion handler
@@ -93,6 +112,9 @@ protocol RestClient
      - parameter completion: DeleteUserHandler closure
      */
     func deleteUser(id id:String, completion:DeleteUserHandler)
+    {
+
+    }
 
     // MARK: Relationship
     
@@ -113,6 +135,9 @@ protocol RestClient
      - parameter completion:   RelationshipHandler closure
      */
     func relationship(userId userId:String, creditCardId:String, deviceId:String, completion:RelationshipHandler)
+    {
+
+    }
 
     /**
      Completion handler
@@ -131,6 +156,9 @@ protocol RestClient
      - parameter completion:   CreateRelationshipHandler closure
      */
     func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
+    {
+
+    }
     
     /**
      Completion handler
@@ -148,16 +176,20 @@ protocol RestClient
      - parameter completion:   DeleteRelationshipHandler closure
      */
     func deleteRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:DeleteRelationshipHandler)
+    {
+
+    }
 
     // MARK: Credit Card
 
     /**
      Completion handler
-     
-     - parameter CreditCard?: Provides updated CreditCard object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+
+     - parameter Bool:        Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter CreditCard?: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter ErrorType? : Provides error object, or nil if no error occurs
      */
-    typealias AcceptTermsHandler = (CreditCard?, ErrorType?)->Void
+    typealias AcceptTermsHandler = (Bool, CreditCard?, ErrorType?)->Void
     
     /**
      Indicates a user has accepted the terms and conditions presented when the credit card was first added to the user's profile
@@ -167,31 +199,39 @@ protocol RestClient
      - parameter completion:   AcceptTermsHandler closure
      */
     func acceptTerms(creditCardId creditCardId:String, userId:String, completion:AcceptTermsHandler)
+    {
+
+    }
     
     /**
      Completion handler
      
-     - parameter CreditCard?: Provides updated CreditCard object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter Bool:        Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter CreditCard?: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    typealias DeclineTermsHandler = (CreditCard?, ErrorType?)->Void
+    typealias DeclineTermsHandler = (Bool, CreditCard?, ErrorType?)->Void
     
     /**
      Indicates a user has declined the terms and conditions. Once declined the credit card will be in a final state, no other actions may be taken
-     
+
      - parameter creditCardId: credit card id
      - parameter userId:       user id
      - parameter completion:   DeclineTermsHandler closure
      */
     func declineTerms(creditCardId creditCardId:String, userId:String, completion:DeclineTermsHandler)
+    {
+
+    }
 
     /**
      Completion handler
-     
-     - parameter CreditCard?: Provides updated CreditCard object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+
+     - parameter Bool:        Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter CreditCard?: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    typealias MakeDefaultHandler = (CreditCard?, ErrorType?)->Void
+    typealias MakeDefaultHandler = (Bool, CreditCard?, ErrorType?)->Void
 
     /**
      Mark the credit card as the default payment instrument. If another card is currently marked as the default, the default will automatically transition to the indicated credit card
@@ -201,14 +241,18 @@ protocol RestClient
      - parameter completion:   MakeDefaultHandler closure
      */
     func makeDefault(creditCardId creditCardId:String, userId:String, completion:MakeDefaultHandler)
+    {
+
+    }
 
     /**
      Completion handler
 
-     - parameter CreditCard?: Provides deactivated CreditCard object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter Bool:        Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter CreditCard?: Provides deactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    typealias DeactivateHandler = (CreditCard?, ErrorType?)->Void
+    typealias DeactivateHandler = (Bool, CreditCard?, ErrorType?)->Void
     
     /**
      Transition the credit card into a deactived state so that it may not be utilized for payment. This link will only be available for qualified credit cards that are currently in an active state.
@@ -220,13 +264,16 @@ protocol RestClient
      - parameter completion:   DeactivateHandler closure
      */
     func deactivate(creditCardId creditCardId:String, userId:String, causedBy:CreditCardInitiator, reason:String, completion:DeactivateHandler)
-    
-    
+    {
+
+    }
+
     /**
      Completion handler
-     
-     - parameter CreditCard?: Provides reactivated CreditCard object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+
+     - parameter Bool:        Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter CreditCard?: Provides reactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
     typealias ReactivateHandler = (CreditCard?, ErrorType?)->Void
 
@@ -240,15 +287,17 @@ protocol RestClient
      - parameter completion:   ReactivateHandler closure
      */
     func reactivate(creditCardId creditCardId:String, userId:String, causedBy:CreditCardInitiator, reason:String, completion:ReactivateHandler)
+    {
 
+    }
 
     /**
      Completion handler
-
-     - parameter VerificationType?: Provides VerificationType object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter Bool:                Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
+     - parameter VerificationMethod?: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter ErrorType?:          Provides error object, or nil if no error occurs
      */
-    typealias SelectVerificationTypeHandler = (VerificationType?, ErrorType?)->Void
+    typealias SelectVerificationTypeHandler = (Bool, VerificationMethod?, ErrorType?)->Void
     
     /**
      When an issuer requires additional authentication to verfiy the identity of the cardholder, this indicates the user has selected the specified verification method by the indicated verificationTypeId
@@ -259,14 +308,18 @@ protocol RestClient
      - parameter completion:         SelectVerificationTypeHandler closure
      */
     func selectVerificationType(creditCardId creditCardId:String, userId:String, verificationTypeId:String, completion:SelectVerificationTypeHandler)
+    {
+
+    }
     
     /**
      Completion handler
      
-     - parameter VerificationType?: Provides VerificationType object, or nil if error occurs
+     - parameter Bool:                Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
+     - parameter VerificationMethod?: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias VerifyHandler = (VerificationResult?, ErrorType?)->Void
+    typealias VerifyHandler = (Bool, VerificationMethod?, ErrorType?)->Void
     
     /**
      If a verification method is selected that requires an entry of a pin code, this transition will be available. Not all verification methods will include a secondary verification step through the FitPay API
@@ -278,6 +331,9 @@ protocol RestClient
      - parameter completion:         VerifyHandler closure
      */
     func verify(creditCardId creditCardId:String, userId:String, verificationTypeId:String, verificationCode:String, completion:VerifyHandler)
+    {
+
+    }
 
     // MARK: Devices
     
@@ -298,6 +354,9 @@ protocol RestClient
      - parameter completion: DevicesHandler closure
      */
     func devices(userId userId:String, limit:Int, offset:Int, completion:DevicesHandler)
+    {
+
+    }
 
     /**
     Completion handler
@@ -331,6 +390,9 @@ protocol RestClient
                          serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
                          softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
                          secureElementId:String, pairing:String, completion:CreateNewDeviceHandler)
+    {
+
+    }
 
     /**
     Completion handler
@@ -348,6 +410,9 @@ protocol RestClient
      - parameter completion: DeviceHandler closure
      */
     func device(deviceId deviceId:String, userId:String, completion:DeviceHandler)
+    {
+
+    }
 
     /**
     Completion handler
@@ -369,6 +434,9 @@ protocol RestClient
      */
     func updateDevice(deviceId deviceId:String, userId:String, firmwareRevision:String?, softwareRevision:String?,
                       completion:UpdateDeviceHandler)
+    {
+
+    }
 
     /**
     Completion handler
@@ -385,6 +453,9 @@ protocol RestClient
      - parameter completion: DeleteDeviceHandler closure
      */
     func deleteDevice(deviceId deviceId:String, userId:String, completion:DeleteDeviceHandler)
+    {
+
+    }
 
     // MARK: Commits
 
@@ -408,6 +479,9 @@ protocol RestClient
      */
     func commits(deviceId deviceId:String, userId:String, commitsAfter:String, limit:Int, offset:Int,
         completion:CommitsHandler)
+    {
+
+    }
     
     /**
      Completion handler
@@ -426,6 +500,9 @@ protocol RestClient
      - parameter completion: CommitHandler closure
      */
     func commit(commitId commitId:String, deviceId:String, userId:String, completion:CommitHandler)
+    {
+
+    }
 
     // MARK: Transactions
 
@@ -444,6 +521,9 @@ protocol RestClient
      - parameter completion: TransactionsHandler closure
      */
     func transactions(userId userId:String, completion:TransactionsHandler)
+    {
+
+    }
 
     /**
      Completion handler
@@ -461,6 +541,9 @@ protocol RestClient
      - parameter completion:    TransactionHandler closure
      */
     func transaction(transactionId transactionId:String, userId:String, completion:TransactionHandler)
+    {
+
+    }
 
     // MARK: APDU Packages
 
@@ -470,15 +553,18 @@ protocol RestClient
      - parameter PackageConfirmation?: Provides PackageConfirmation object, or nil if error occurs
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    typealias ConfirmAPDUHandler = (PackageConfirmation?, ErrorType?)->Void
+    typealias ConfirmAPDUPackageHandler = (ApduPackage?, ErrorType?)->Void
 
     /**
      Endpoint to allow for returning responses to APDU execution
      
      - parameter packageId:  package id
-     - parameter completion: ConfirmAPDUHandler closure
+     - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    func confirmAPDU(packageId:String, completion:ConfirmAPDUHandler)
+    func confirmAPDUPackage(packageId:String, completion: ConfirmAPDUPackageHandler)
+    {
+
+    }
 
     // MARK: Assets
 
@@ -499,6 +585,11 @@ protocol RestClient
      - parameter completion:  AssetsHandler closure
      */
     func assets(adapterData:String, adapterId:String, assetId:String, completion:AssetsHandler)
+    {
+        
+    }
+
+    // MARK: EncryptionKeys
 
     /**
      Completion handler
@@ -515,6 +606,9 @@ protocol RestClient
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
     func createEncryptionKey(clientPublicKey:String, completion:CreateEncryptionKeyHandler)
+    {
+        
+    }
 
     /**
      Completion handler
@@ -531,8 +625,10 @@ protocol RestClient
      - parameter completion: EncryptionKeyHandler closure
      */
     func encryptionKey(keyId:String, completion:EncryptionKeyHandler)
-    
-    
+    {
+        
+    }
+
     /**
      Completion handler
      
@@ -547,6 +643,11 @@ protocol RestClient
      - parameter completion: DeleteEncryptionKeyHandler
      */
     func deleteEncryptionKey(keyId:String, completion:DeleteEncryptionKeyHandler)
+    {
+        
+    }
+
+    // MARK: Webhooks
     
     /**
      Completion handler
@@ -554,7 +655,7 @@ protocol RestClient
      - parameter String?:    Provides String object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias AddWebhookHandler = (String?, ErrorType?)
+    typealias SetWebhookHandler = (String?, ErrorType?)
     
     /**
      Sets the webhook endpoint you would like FitPay to send notifications to, must be a valid URL
@@ -562,7 +663,10 @@ protocol RestClient
      - parameter webhookURL: valid webhook URL
      - parameter completion: AddWebhookHandler closure
      */
-    func addWebhook(webhookURL:NSURL, completion:AddWebhookHandler)
+    func setWebhook(webhookURL:NSURL, completion:SetWebhookHandler)
+    {
+        
+    }
     
     /**
      Completion handler
@@ -578,6 +682,9 @@ protocol RestClient
      - parameter completion: WebhookHandler closure
      */
     func webhook(completion:WebhookHandler)
+    {
+
+    }
     
     /**
      Completion handler
@@ -593,4 +700,7 @@ protocol RestClient
      - parameter completion: RemoveWebhookHandler closure
      */
     func removeWebhook(webhookURL:NSURL, completion:RemoveWebhookHandler)
+    {
+        
+    }
 }
