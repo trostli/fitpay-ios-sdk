@@ -1,80 +1,80 @@
 
 import Foundation
 
-class CreditCard
+public class CreditCard
 {
-    var links:[ResourceLink]?
-    var creditCardId:String?
-    var userId:String?
-    var isDefault:Bool?
-    var created:String?
-    var createdEpoch:Int?
-    var state:String?
-    var cardType:String?
-    var cardMetaData:CardMetadata?
+    public var links:[ResourceLink]?
+    public var creditCardId:String?
+    public var userId:String?
+    public var isDefault:Bool?
+    public var created:String?
+    public var createdEpoch:Int?
+    public var state:String?
+    public var cardType:String?
+    public var cardMetaData:CardMetadata?
 }
 
-class CardMetadata
+public class CardMetadata
 {
-    var labelColor:String?
-    var issuerName:String?
-    var shortDescription:String?
-    var longDescription:String?
-    var contactUrl:String?
-    var contactPhone:String?
-    var contactEmail:String?
-    var termsAndConditionsUrl:String?
-    var privacyPolicyUrl:String?
-    var brandLogo:[Image]?
-    var cardBackground:[Image]?
-    var cardBackgroundCombined:[Image]?
-    var coBrandLogo:[Image]?
-    var icon:[Image]?
-    var termsAssetId:String?
-    var termsAssetReferences:[TermsAssetReferences]?
-    var eligibilityExpiration:String?
-    var eligibilityExpirationEpoch:Int?
-    var deviceRelationships:[DeviceRelationships]?
-    var encryptedData:String?
+    public var labelColor:String?
+    public var issuerName:String?
+    public var shortDescription:String?
+    public var longDescription:String?
+    public var contactUrl:String?
+    public var contactPhone:String?
+    public var contactEmail:String?
+    public var termsAndConditionsUrl:String?
+    public var privacyPolicyUrl:String?
+    public var brandLogo:[Image]?
+    public var cardBackground:[Image]?
+    public var cardBackgroundCombined:[Image]?
+    public var coBrandLogo:[Image]?
+    public var icon:[Image]?
+    public var termsAssetId:String?
+    public var termsAssetReferences:[TermsAssetReferences]?
+    public var eligibilityExpiration:String?
+    public var eligibilityExpirationEpoch:Int?
+    public var deviceRelationships:[DeviceRelationships]?
+    public var encryptedData:String?
 }
 
-class Image
+public class Image
 {
-    var links: [ResourceLink]?
-    var mimeType:String?
-    var height:Int?
-    var width:Int?
+    public var links: [ResourceLink]?
+    public var mimeType:String?
+    public var height:Int?
+    public var width:Int?
 }
 
-class TermsAssetReferences
+public class TermsAssetReferences
 {
-    var links: [ResourceLink]?
-    var mimeType:String?
+    public var links: [ResourceLink]?
+    public var mimeType:String?
 }
 
-class DeviceRelationships
+public class DeviceRelationships
 {
-    var deviceType:String?
-    var links: [ResourceLink]?
-    var deviceIdentifier:String?
-    var manufacturerName:String?
-    var deviceName:String?
-    var serialNumber:String?
-    var modelNumber:String?
-    var hardwareRevision:String?
-    var firmwareRevision:String?
-    var softwareRevision:String?
-    var created:String?
-    var createdTsEpoch:Int?
-    var osName:String?
-    var systemId:String?
+    public var deviceType:String?
+    public var links: [ResourceLink]?
+    public var deviceIdentifier:String?
+    public var manufacturerName:String?
+    public var deviceName:String?
+    public var serialNumber:String?
+    public var modelNumber:String?
+    public var hardwareRevision:String?
+    public var firmwareRevision:String?
+    public var softwareRevision:String?
+    public var created:String?
+    public var createdTsEpoch:Int?
+    public var osName:String?
+    public var systemId:String?
 }
 
-class CardInfo
+public class CardInfo
 {
-    var pan:String?
-    var expMonth:Int?
-    var expYear:Int?
-    var cvv:Int?
-    var address:Address?
+    public var pan:String?
+    public var expMonth:Int?
+    public var expYear:Int?
+    public var cvv:Int?
+    public var address:Address?
 }

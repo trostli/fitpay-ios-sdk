@@ -1,9 +1,9 @@
 
-class ResultCollection<T>
+public class ResultCollection<T>
 {
-    var limit:Int?
-    var offset:Int?
-    var totalResults:Int?
-    var results:[T]?
-    var links:[ResourceLink]?
+    public var limit:Int?
+    public var offset:Int?
+    public var totalResults:Int?
+    public var results:[T]?
+    public var links:[ResourceLink]?
 }

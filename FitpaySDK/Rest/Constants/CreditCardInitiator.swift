@@ -5,7 +5,7 @@
  - CARDHOLDER: card holder
  - ISSUER:     issuer
  */
-enum CreditCardInitiator: String
+public enum CreditCardInitiator: String
 {
     case CARDHOLDER = "CARDHOLDER"
     case ISSUER = "ISSUER"

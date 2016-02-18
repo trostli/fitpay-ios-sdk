@@ -1,8 +1,8 @@
 
-class User
+public class User
 {
-    var firstName:String?
-    var lastName:String?
-    var birthDate:String?
-    var email:String?
+    public var firstName:String?
+    public var lastName:String?
+    public var birthDate:String?
+    public var email:String?
 }

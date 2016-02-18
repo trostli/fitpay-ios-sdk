@@ -1,7 +1,7 @@
 
 import Foundation
 
-enum AuthScope : String
+public enum AuthScope : String
 {
     case userRead =  "user.read"
     case userWrite = "user.write"
@@ -10,27 +10,27 @@ enum AuthScope : String
 }
 
 
-class RestSession
+public class RestSession
 {
     private var credentials:String
 
-    init(consumerKey:String, consumerSecret:String)
+    public init(consumerKey:String, consumerSecret:String)
     {
         let pair = "\(consumerKey):\(consumerSecret)"
         let bytes = pair.dataUsingEncoding(NSUTF8StringEncoding)!
         self.credentials = bytes.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue:0))
     }
 
-    typealias AcquireAccessTokenHandler = (String?, ErrorType?)->Void
+    public typealias AcquireAccessTokenHandler = (String?, ErrorType?)->Void
 
-    func acquireAccessToken(completion: AcquireAccessTokenHandler)
+    public func acquireAccessToken(completion: AcquireAccessTokenHandler)
     {
 
     }
 
-    typealias  AuthorizeHandler = (ErrorType?)->Void
+    public typealias  AuthorizeHandler = (ErrorType?)->Void
 
-    func authorize(scopes:[AuthScope], completion:AuthorizeHandler)
+    public func authorize(scopes:[AuthScope], completion:AuthorizeHandler)
     {
 
     }

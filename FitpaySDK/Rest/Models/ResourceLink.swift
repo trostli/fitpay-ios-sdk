@@ -1,9 +1,9 @@
 
 import Foundation
 
-class ResourceLink
+public class ResourceLink
 {
-    var target:String?
-    var href:String?
+    public var target:String?
+    public var href:String?
 }
 

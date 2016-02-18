@@ -1,15 +1,15 @@
 
-class Transaction
+public class Transaction
 {
-    var links:[ResourceLink]?
-    var transactionId:String?
-    var transactionType:String? //TODO: consider adding enum
-    var amount:Foundation.NSDecimalNumber? //TODO: consider keeping it as String
-    var currencyCode:String?  //TODO: consider adding enum
-    var authorizationStatus:String?  //TODO: consider adding enum
-    var transactionTime:String?
-    var transactionTimeEpoch:Int?
-    var merchantName:String?
-    var merchantCode:String?
-    var merchantType:String?
+    public var links:[ResourceLink]?
+    public var transactionId:String?
+    public var transactionType:String? //TODO: consider adding enum
+    public var amount:Foundation.NSDecimalNumber? //TODO: consider keeping it as String
+    public var currencyCode:String?  //TODO: consider adding enum
+    public var authorizationStatus:String?  //TODO: consider adding enum
+    public var transactionTime:String?
+    public var transactionTimeEpoch:Int?
+    public var merchantName:String?
+    public var merchantCode:String?
+    public var merchantType:String?
 }

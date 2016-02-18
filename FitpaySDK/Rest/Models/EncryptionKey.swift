@@ -1,10 +1,10 @@
 
-class EncryptionKey
+public class EncryptionKey
 {
-    var links:[ResourceLink]?
-    var keyId:String?
-    var created:String?
-    var createdEpoch:Int?
-    var serverPublicKey:String?
-    var clientPublicKey:String?
+    public var links:[ResourceLink]?
+    public var keyId:String?
+    public var created:String?
+    public var createdEpoch:Int?
+    public var serverPublicKey:String?
+    public var clientPublicKey:String?
 }

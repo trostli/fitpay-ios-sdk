@@ -1,7 +1,7 @@
 
-class Relationship
+public class Relationship
 {
-    var links:[ResourceLink]?
-    var card:CardInfo?
-    var device: DeviceInfo?
+    public var links:[ResourceLink]?
+    public var card:CardInfo?
+    public var device: DeviceInfo?
 }

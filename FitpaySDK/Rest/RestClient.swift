@@ -1,11 +1,11 @@
 
 import Foundation
 
-class RestClient
+public class RestClient
 {
     private var _session:RestSession
 
-    init(session:RestSession)
+    public init(session:RestSession)
     {
         _session = session;
     }
@@ -18,7 +18,7 @@ class RestClient
      - parameter ResultCollection<User>?: Provides ResultCollection<User> object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias ListUsersHandler = (ResultCollection<User>?, ErrorType?)->Void
+    public typealias ListUsersHandler = (ResultCollection<User>?, ErrorType?)->Void
     
     /**
       Returns a list of all users that belong to your organization. The customers are returned sorted by creation date, with the most recently created customers appearing first
@@ -27,7 +27,7 @@ class RestClient
      - parameter offset:     Start index position for list of entities returned
      - parameter completion: ListUsersHandler closure
      */
-    func listUsers(limit limit:Int, offset:Int, completion: ListUsersHandler)
+    public func listUsers(limit limit:Int, offset:Int, completion: ListUsersHandler)
     {
 
     }
@@ -38,7 +38,7 @@ class RestClient
      - parameter [User]?: Provides created User object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias CreateUsersHandler = (User?, ErrorType?)->Void
+    public typealias CreateUsersHandler = (User?, ErrorType?)->Void
     
     /**
      Creates a new user within your organization
@@ -49,7 +49,7 @@ class RestClient
      - parameter email:      email of the user
      - parameter completion: CreateUsersHandler closure
      */
-    func createUser(firstName firstName:String, lastName:String, birthDate:String, email:String, completion:CreateUsersHandler)
+    public func createUser(firstName firstName:String, lastName:String, birthDate:String, email:String, completion:CreateUsersHandler)
     {
 
     }
@@ -60,7 +60,7 @@ class RestClient
      - parameter User?: Provides User object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias UserHandler = (User?, ErrorType?)->Void
+    public typealias UserHandler = (User?, ErrorType?)->Void
     
     /**
      Retrieves the details of an existing user. You need only supply the unique user identifier that was returned upon user creation
@@ -68,7 +68,7 @@ class RestClient
      - parameter id:         user id
      - parameter completion: UserHandler closure
      */
-    func user(id id:String, completion:UserHandler)
+    public func user(id id:String, completion:UserHandler)
     {
 
     }
@@ -79,7 +79,7 @@ class RestClient
      - parameter User?: Provides updated User object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias UpdateUserHandler = (User?, ErrorType?)->Void
+    public typealias UpdateUserHandler = (User?, ErrorType?)->Void
     
     /**
      Update the details of an existing user
@@ -93,7 +93,7 @@ class RestClient
      - parameter termsVersion:         terms version formatted as [0.0.0]
      - parameter completion:           UpdateUserHandler closure
      */
-    func updateUser(id id:String, firstName:String?, lastName:String?, birthDate:Int?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:UpdateUserHandler)
+    public func updateUser(id id:String, firstName:String?, lastName:String?, birthDate:Int?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:UpdateUserHandler)
     {
 
     }
@@ -103,7 +103,7 @@ class RestClient
      
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias DeleteUserHandler = (ErrorType?)->Void
+    public typealias DeleteUserHandler = (ErrorType?)->Void
 
     /**
      Delete a single user from your organization
@@ -111,7 +111,7 @@ class RestClient
      - parameter id:         user id
      - parameter completion: DeleteUserHandler closure
      */
-    func deleteUser(id id:String, completion:DeleteUserHandler)
+    public func deleteUser(id id:String, completion:DeleteUserHandler)
     {
 
     }
@@ -124,7 +124,7 @@ class RestClient
      - parameter Relationship?: Provides Relationship object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias RelationshipHandler = (Relationship?, ErrorType?)->Void
+    public typealias RelationshipHandler = (Relationship?, ErrorType?)->Void
 
     /**
      Get a single relationship
@@ -134,7 +134,7 @@ class RestClient
      - parameter deviceId:     device id
      - parameter completion:   RelationshipHandler closure
      */
-    func relationship(userId userId:String, creditCardId:String, deviceId:String, completion:RelationshipHandler)
+    public func relationship(userId userId:String, creditCardId:String, deviceId:String, completion:RelationshipHandler)
     {
 
     }
@@ -145,7 +145,7 @@ class RestClient
      - parameter Relationship?: Provides created Relationship object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias CreateRelationshipHandler = (Relationship?, ErrorType?)->Void
+    public typealias CreateRelationshipHandler = (Relationship?, ErrorType?)->Void
 
     /**
      Creates a relationship between a device and a creditCard
@@ -155,7 +155,7 @@ class RestClient
      - parameter deviceId:     device id
      - parameter completion:   CreateRelationshipHandler closure
      */
-    func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
+    public func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
     {
 
     }
@@ -165,7 +165,7 @@ class RestClient
      
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias DeleteRelationshipHandler = (ErrorType?)->Void
+    public typealias DeleteRelationshipHandler = (ErrorType?)->Void
     
     /**
      Removes a relationship between a device and a creditCard if it exists
@@ -175,7 +175,7 @@ class RestClient
      - parameter deviceId:     device id
      - parameter completion:   DeleteRelationshipHandler closure
      */
-    func deleteRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:DeleteRelationshipHandler)
+    public func deleteRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:DeleteRelationshipHandler)
     {
 
     }
@@ -189,7 +189,7 @@ class RestClient
      - parameter CreditCard?: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType? : Provides error object, or nil if no error occurs
      */
-    typealias AcceptTermsHandler = (Bool, CreditCard?, ErrorType?)->Void
+    public typealias AcceptTermsHandler = (Bool, CreditCard?, ErrorType?)->Void
     
     /**
      Indicates a user has accepted the terms and conditions presented when the credit card was first added to the user's profile
@@ -198,7 +198,7 @@ class RestClient
      - parameter userId:       user id
      - parameter completion:   AcceptTermsHandler closure
      */
-    func acceptTerms(creditCardId creditCardId:String, userId:String, completion:AcceptTermsHandler)
+    public func acceptTerms(creditCardId creditCardId:String, userId:String, completion:AcceptTermsHandler)
     {
 
     }
@@ -210,7 +210,7 @@ class RestClient
      - parameter CreditCard?: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    typealias DeclineTermsHandler = (Bool, CreditCard?, ErrorType?)->Void
+    public typealias DeclineTermsHandler = (Bool, CreditCard?, ErrorType?)->Void
     
     /**
      Indicates a user has declined the terms and conditions. Once declined the credit card will be in a final state, no other actions may be taken
@@ -219,7 +219,7 @@ class RestClient
      - parameter userId:       user id
      - parameter completion:   DeclineTermsHandler closure
      */
-    func declineTerms(creditCardId creditCardId:String, userId:String, completion:DeclineTermsHandler)
+    public func declineTerms(creditCardId creditCardId:String, userId:String, completion:DeclineTermsHandler)
     {
 
     }
@@ -231,7 +231,7 @@ class RestClient
      - parameter CreditCard?: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    typealias MakeDefaultHandler = (Bool, CreditCard?, ErrorType?)->Void
+    public typealias MakeDefaultHandler = (Bool, CreditCard?, ErrorType?)->Void
 
     /**
      Mark the credit card as the default payment instrument. If another card is currently marked as the default, the default will automatically transition to the indicated credit card
@@ -240,7 +240,7 @@ class RestClient
      - parameter userId:       user id
      - parameter completion:   MakeDefaultHandler closure
      */
-    func makeDefault(creditCardId creditCardId:String, userId:String, completion:MakeDefaultHandler)
+    public func makeDefault(creditCardId creditCardId:String, userId:String, completion:MakeDefaultHandler)
     {
 
     }
@@ -252,7 +252,7 @@ class RestClient
      - parameter CreditCard?: Provides deactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    typealias DeactivateHandler = (Bool, CreditCard?, ErrorType?)->Void
+    public typealias DeactivateHandler = (Bool, CreditCard?, ErrorType?)->Void
     
     /**
      Transition the credit card into a deactived state so that it may not be utilized for payment. This link will only be available for qualified credit cards that are currently in an active state.
@@ -263,7 +263,7 @@ class RestClient
      - parameter reason:       deactivation reason
      - parameter completion:   DeactivateHandler closure
      */
-    func deactivate(creditCardId creditCardId:String, userId:String, causedBy:CreditCardInitiator, reason:String, completion:DeactivateHandler)
+    public func deactivate(creditCardId creditCardId:String, userId:String, causedBy:CreditCardInitiator, reason:String, completion:DeactivateHandler)
     {
 
     }
@@ -275,7 +275,7 @@ class RestClient
      - parameter CreditCard?: Provides reactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    typealias ReactivateHandler = (CreditCard?, ErrorType?)->Void
+    public typealias ReactivateHandler = (CreditCard?, ErrorType?)->Void
 
     /**
      Transition the credit card into an active state where it can be utilized for payment. This link will only be available for qualified credit cards that are currently in a deactivated state.
@@ -286,7 +286,7 @@ class RestClient
      - parameter reason:       reactivation reason
      - parameter completion:   ReactivateHandler closure
      */
-    func reactivate(creditCardId creditCardId:String, userId:String, causedBy:CreditCardInitiator, reason:String, completion:ReactivateHandler)
+    public func reactivate(creditCardId creditCardId:String, userId:String, causedBy:CreditCardInitiator, reason:String, completion:ReactivateHandler)
     {
 
     }
@@ -297,7 +297,7 @@ class RestClient
      - parameter VerificationMethod?: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?:          Provides error object, or nil if no error occurs
      */
-    typealias SelectVerificationTypeHandler = (Bool, VerificationMethod?, ErrorType?)->Void
+    public typealias SelectVerificationTypeHandler = (Bool, VerificationMethod?, ErrorType?)->Void
     
     /**
      When an issuer requires additional authentication to verfiy the identity of the cardholder, this indicates the user has selected the specified verification method by the indicated verificationTypeId
@@ -307,7 +307,7 @@ class RestClient
      - parameter verificationTypeId: verification type id
      - parameter completion:         SelectVerificationTypeHandler closure
      */
-    func selectVerificationType(creditCardId creditCardId:String, userId:String, verificationTypeId:String, completion:SelectVerificationTypeHandler)
+    public func selectVerificationType(creditCardId creditCardId:String, userId:String, verificationTypeId:String, completion:SelectVerificationTypeHandler)
     {
 
     }
@@ -319,7 +319,7 @@ class RestClient
      - parameter VerificationMethod?: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias VerifyHandler = (Bool, VerificationMethod?, ErrorType?)->Void
+    public typealias VerifyHandler = (Bool, VerificationMethod?, ErrorType?)->Void
     
     /**
      If a verification method is selected that requires an entry of a pin code, this transition will be available. Not all verification methods will include a secondary verification step through the FitPay API
@@ -330,7 +330,7 @@ class RestClient
      - parameter verificationCode:   verification code
      - parameter completion:         VerifyHandler closure
      */
-    func verify(creditCardId creditCardId:String, userId:String, verificationTypeId:String, verificationCode:String, completion:VerifyHandler)
+    public func verify(creditCardId creditCardId:String, userId:String, verificationTypeId:String, verificationCode:String, completion:VerifyHandler)
     {
 
     }
@@ -343,7 +343,7 @@ class RestClient
     - parameter ResultCollection<DeviceInfo>?: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
     - parameter ErrorType?: Provides error object, or nil if no error occurs
     */
-    typealias DevicesHandler = (ResultCollection<DeviceInfo>?, ErrorType?)->Void
+    public typealias DevicesHandler = (ResultCollection<DeviceInfo>?, ErrorType?)->Void
     
     /**
      For a single user, retrieve a pagable collection of devices in their profile
@@ -353,7 +353,7 @@ class RestClient
      - parameter offset:     start index position for list of entities returned
      - parameter completion: DevicesHandler closure
      */
-    func devices(userId userId:String, limit:Int, offset:Int, completion:DevicesHandler)
+    public func devices(userId userId:String, limit:Int, offset:Int, completion:DevicesHandler)
     {
 
     }
@@ -364,7 +364,7 @@ class RestClient
     - parameter DeviceInfo?: Provides created DeviceInfo object, or nil if error occurs
     - parameter ErrorType?: Provides error object, or nil if no error occurs
     */
-    typealias CreateNewDeviceHandler = (DeviceInfo?, ErrorType?)->Void
+    public typealias CreateNewDeviceHandler = (DeviceInfo?, ErrorType?)->Void
 
     /**
      For a single user, create a new device in their profile
@@ -386,7 +386,7 @@ class RestClient
      - parameter pairing:          pairing date [MM-DD-YYYY]
      - parameter completion:       CreateNewDeviceHandler closure
      */
-    func createNewDevice(userId userId:String, deviceType:String, manufacturerName:String, deviceName:String,
+    public func createNewDevice(userId userId:String, deviceType:String, manufacturerName:String, deviceName:String,
                          serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
                          softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
                          secureElementId:String, pairing:String, completion:CreateNewDeviceHandler)
@@ -400,7 +400,7 @@ class RestClient
     - parameter DeviceInfo?: Provides existing DeviceInfo object, or nil if error occurs
     - parameter ErrorType?: Provides error object, or nil if no error occurs
     */
-    typealias DeviceHandler = (DeviceInfo?, ErrorType?)
+    public typealias DeviceHandler = (DeviceInfo?, ErrorType?)
     
     /**
      Retrieves the details of an existing device. You need only supply the uniqueidentifier that was returned upon creation.
@@ -409,7 +409,7 @@ class RestClient
      - parameter userId:     user id
      - parameter completion: DeviceHandler closure
      */
-    func device(deviceId deviceId:String, userId:String, completion:DeviceHandler)
+    public func device(deviceId deviceId:String, userId:String, completion:DeviceHandler)
     {
 
     }
@@ -420,7 +420,7 @@ class RestClient
     - parameter DeviceInfo?: Provides updated DeviceInfo object, or nil if error occurs
     - parameter ErrorType?: Provides error object, or nil if no error occurs
     */
-    typealias UpdateDeviceHandler = (DeviceInfo?, ErrorType?)
+    public typealias UpdateDeviceHandler = (DeviceInfo?, ErrorType?)
 
     /**
      Update the details of an existing device
@@ -432,7 +432,7 @@ class RestClient
      - parameter softwareRevision?: software revision
      - parameter completion:        UpdateDeviceHandler closure
      */
-    func updateDevice(deviceId deviceId:String, userId:String, firmwareRevision:String?, softwareRevision:String?,
+    public func updateDevice(deviceId deviceId:String, userId:String, firmwareRevision:String?, softwareRevision:String?,
                       completion:UpdateDeviceHandler)
     {
 
@@ -443,7 +443,7 @@ class RestClient
 
     - parameter ErrorType?: Provides error object, or nil if no error occurs
     */
-    typealias DeleteDeviceHandler = (ErrorType?)
+    public typealias DeleteDeviceHandler = (ErrorType?)
 
     /**
      Delete a single device
@@ -452,7 +452,7 @@ class RestClient
      - parameter userId:     user id
      - parameter completion: DeleteDeviceHandler closure
      */
-    func deleteDevice(deviceId deviceId:String, userId:String, completion:DeleteDeviceHandler)
+    public func deleteDevice(deviceId deviceId:String, userId:String, completion:DeleteDeviceHandler)
     {
 
     }
@@ -465,7 +465,7 @@ class RestClient
      - parameter ResultCollection<Commit>?: Provides ResultCollection<Commit> object, or nil if error occurs
      - parameter ErrorType?:                Provides error object, or nil if no error occurs
     */
-    typealias CommitsHandler = (ResultCollection<Commit>?, ErrorType?)->Void
+    public typealias CommitsHandler = (ResultCollection<Commit>?, ErrorType?)->Void
     
     /**
      Retrieves a collection of all events that should be committed to this device
@@ -477,7 +477,7 @@ class RestClient
      - parameter offset:       start index position for list of entities returned
      - parameter completion:   CommitsHandler closure
      */
-    func commits(deviceId deviceId:String, userId:String, commitsAfter:String, limit:Int, offset:Int,
+    public func commits(deviceId deviceId:String, userId:String, commitsAfter:String, limit:Int, offset:Int,
         completion:CommitsHandler)
     {
 
@@ -489,7 +489,7 @@ class RestClient
      - parameter Commit?:    Provides Commit object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias CommitHandler = (Commit?, ErrorType?)->Void
+    public typealias CommitHandler = (Commit?, ErrorType?)->Void
     
     /**
      Retrieves an individual commit
@@ -499,7 +499,7 @@ class RestClient
      - parameter userId:     user id
      - parameter completion: CommitHandler closure
      */
-    func commit(commitId commitId:String, deviceId:String, userId:String, completion:CommitHandler)
+    public func commit(commitId commitId:String, deviceId:String, userId:String, completion:CommitHandler)
     {
 
     }
@@ -512,7 +512,7 @@ class RestClient
      - parameter ResultCollection<Commit>?: Provides ResultCollection<Transaction> object, or nil if error occurs
      - parameter ErrorType?:                Provides error object, or nil if no error occurs
     */
-    typealias TransactionsHandler = (ResultCollection<Transaction>?, ErrorType?)->Void
+    public typealias TransactionsHandler = (ResultCollection<Transaction>?, ErrorType?)->Void
 
     /**
      Provides a transaction history (if available) for the user, results are limited by provider.
@@ -520,7 +520,7 @@ class RestClient
      - parameter userId:     user id
      - parameter completion: TransactionsHandler closure
      */
-    func transactions(userId userId:String, completion:TransactionsHandler)
+    public func transactions(userId userId:String, completion:TransactionsHandler)
     {
 
     }
@@ -531,7 +531,7 @@ class RestClient
      - parameter Transaction?: Provides Transaction object, or nil if error occurs
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    typealias TransactionHandler = (Transaction?, ErrorType?)->Void
+    public typealias TransactionHandler = (Transaction?, ErrorType?)->Void
 
     /**
      Get a single transaction
@@ -540,7 +540,7 @@ class RestClient
      - parameter userId:        user id
      - parameter completion:    TransactionHandler closure
      */
-    func transaction(transactionId transactionId:String, userId:String, completion:TransactionHandler)
+    public func transaction(transactionId transactionId:String, userId:String, completion:TransactionHandler)
     {
 
     }
@@ -553,7 +553,7 @@ class RestClient
      - parameter PackageConfirmation?: Provides PackageConfirmation object, or nil if error occurs
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    typealias ConfirmAPDUPackageHandler = (ApduPackage?, ErrorType?)->Void
+    public typealias ConfirmAPDUPackageHandler = (ApduPackage?, ErrorType?)->Void
 
     /**
      Endpoint to allow for returning responses to APDU execution
@@ -561,7 +561,7 @@ class RestClient
      - parameter packageId:  package id
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    func confirmAPDUPackage(packageId:String, completion: ConfirmAPDUPackageHandler)
+    public func confirmAPDUPackage(packageId:String, completion: ConfirmAPDUPackageHandler)
     {
 
     }
@@ -574,7 +574,7 @@ class RestClient
      - parameter AnyObject?: Provides AnyObject (UIImage or String) object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias AssetsHandler = (AnyObject?, ErrorType?)->Void
+    public typealias AssetsHandler = (AnyObject?, ErrorType?)->Void
 
     /**
      Retrieve an individual asset (i.e. terms and conditions)
@@ -584,7 +584,7 @@ class RestClient
      - parameter assetId:     asset id
      - parameter completion:  AssetsHandler closure
      */
-    func assets(adapterData:String, adapterId:String, assetId:String, completion:AssetsHandler)
+    public func assets(adapterData:String, adapterId:String, assetId:String, completion:AssetsHandler)
     {
         
     }
@@ -597,7 +597,7 @@ class RestClient
      - parameter EncryptionKey?: Provides created EncryptionKey object, or nil if error occurs
      - parameter ErrorType?:     Provides error object, or nil if no error occurs
      */
-    typealias CreateEncryptionKeyHandler = (EncryptionKey?, ErrorType?)->Void
+    public typealias CreateEncryptionKeyHandler = (EncryptionKey?, ErrorType?)->Void
 
     /**
      Creates a new encryption key pair
@@ -605,7 +605,7 @@ class RestClient
      - parameter clientPublicKey: client public key
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
-    func createEncryptionKey(clientPublicKey:String, completion:CreateEncryptionKeyHandler)
+    public func createEncryptionKey(clientPublicKey:String, completion:CreateEncryptionKeyHandler)
     {
         
     }
@@ -616,7 +616,7 @@ class RestClient
      - parameter EncryptionKey?: Provides EncryptionKey object, or nil if error occurs
      - parameter ErrorType?:     Provides error object, or nil if no error occurs
      */
-    typealias EncryptionKeyHandler = (EncryptionKey?, ErrorType?)->Void
+    public typealias EncryptionKeyHandler = (EncryptionKey?, ErrorType?)->Void
 
     /**
      Retrieve and individual key pair
@@ -624,7 +624,7 @@ class RestClient
      - parameter keyId:      key id
      - parameter completion: EncryptionKeyHandler closure
      */
-    func encryptionKey(keyId:String, completion:EncryptionKeyHandler)
+    public func encryptionKey(keyId:String, completion:EncryptionKeyHandler)
     {
         
     }
@@ -634,7 +634,7 @@ class RestClient
      
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias DeleteEncryptionKeyHandler = (ErrorType?)->Void
+    public typealias DeleteEncryptionKeyHandler = (ErrorType?)->Void
     
     /**
      Deletes encryption key
@@ -642,7 +642,7 @@ class RestClient
      - parameter keyId:      key id
      - parameter completion: DeleteEncryptionKeyHandler
      */
-    func deleteEncryptionKey(keyId:String, completion:DeleteEncryptionKeyHandler)
+    public func deleteEncryptionKey(keyId:String, completion:DeleteEncryptionKeyHandler)
     {
         
     }
@@ -655,7 +655,7 @@ class RestClient
      - parameter String?:    Provides String object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias SetWebhookHandler = (String?, ErrorType?)
+    public typealias SetWebhookHandler = (String?, ErrorType?)
     
     /**
      Sets the webhook endpoint you would like FitPay to send notifications to, must be a valid URL
@@ -663,7 +663,7 @@ class RestClient
      - parameter webhookURL: valid webhook URL
      - parameter completion: AddWebhookHandler closure
      */
-    func setWebhook(webhookURL:NSURL, completion:SetWebhookHandler)
+    public func setWebhook(webhookURL:NSURL, completion:SetWebhookHandler)
     {
         
     }
@@ -674,14 +674,14 @@ class RestClient
      - parameter String?:    Provides String object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias WebhookHandler = (String?, ErrorType?)->Void
+    public typealias WebhookHandler = (String?, ErrorType?)->Void
     
     /**
      TODO: add description when it becomes available on API documentation page
      
      - parameter completion: WebhookHandler closure
      */
-    func webhook(completion:WebhookHandler)
+    public func webhook(completion:WebhookHandler)
     {
 
     }
@@ -691,7 +691,7 @@ class RestClient
      
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    typealias RemoveWebhookHandler = (ErrorType)->Void
+    public typealias RemoveWebhookHandler = (ErrorType)->Void
     
     /**
      Removes the current webhook endpoint, unsubscribing you from all Fitpay notifications
@@ -699,7 +699,7 @@ class RestClient
      - parameter webhookURL: webhook URL
      - parameter completion: RemoveWebhookHandler closure
      */
-    func removeWebhook(webhookURL:NSURL, completion:RemoveWebhookHandler)
+    public func removeWebhook(webhookURL:NSURL, completion:RemoveWebhookHandler)
     {
         
     }

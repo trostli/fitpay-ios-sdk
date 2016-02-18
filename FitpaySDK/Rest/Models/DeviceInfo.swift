@@ -1,30 +1,33 @@
 
-class DeviceInfo
+public class DeviceInfo
 {
-    var links:[ResourceLink]?
-    var deviceIdentifier:String?
-    var deviceName:String?
-    var manufacturerName:String?
-    var serialNumber:String?
-    var modelNumber:String?
-    var hardwareRevision:String?
-    var firmwareRevision:String?
-    var softwareRevision:String?
-    var createdEpoch:Int?
-    var created:String?
-    var osName:String?
-    var systemId:String?
-    var cardRelationships:[CardRelationship]?
-    var licenseKey:String?
-    var bdAddress:String?
-    var pairing:String?
-    var secureElementId:String?
+    public var links:[ResourceLink]?
+    public var deviceIdentifier:String?
+    public var deviceName:String?
+    public var manufacturerName:String?
+    public var serialNumber:String?
+    public var modelNumber:String?
+    public var hardwareRevision:String?
+    public var firmwareRevision:String?
+    public var softwareRevision:String?
+    public var createdEpoch:Int?
+    public var created:String?
+    public var osName:String?
+    public var systemId:String?
+    public var cardRelationships:[CardRelationship]?
+    public var licenseKey:String?
+    public var bdAddress:String?
+    public var pairing:String?
+    public var secureElementId:String?
+
+    // Extra metadata specific for a particural type of device
+    var metadata = [String : AnyObject]()
 }
 
-class CardRelationship
+public class CardRelationship
 {
-    var links:[ResourceLink]?
-    var pan:String?
-    var expMonth:String?
-    var expYear:String?
+    public var links:[ResourceLink]?
+    public var pan:String?
+    public var expMonth:String?
+    public var expYear:String?
 }

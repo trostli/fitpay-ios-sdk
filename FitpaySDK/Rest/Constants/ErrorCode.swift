@@ -12,7 +12,7 @@ import Foundation
  - NotFound:         The requested item doesn't exist
  - ServerError[0-3]: Something went wrong on FitPay's end
  */
-enum ErrorCode : Int
+public enum ErrorCode : Int
 {
     case OK = 200
     case BadRequest = 400

@@ -1,16 +1,16 @@
 
-class ApduPackage
+public class ApduPackage
 {
-    var packageId:String?
-    var state:String? //TODO: consider adding enum
-    var executed:String?
-    var executedDuration:Int?
-    var apduResponses:[ApduResponse]?
+    public var packageId:String?
+    public var state:String? //TODO: consider adding enum
+    public var executed:String?
+    public var executedDuration:Int?
+    public var apduResponses:[ApduResponse]?
 }
 
-class ApduResponse
+public class ApduResponse
 {
-    var commandId:String?
-    var responseCode:String?
-    var responseData:String?
+    public var commandId:String?
+    public var responseCode:String?
+    public var responseData:String?
 }
