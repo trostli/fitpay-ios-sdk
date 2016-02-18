@@ -1,5 +1,5 @@
 
-class Device
+class DeviceInfo
 {
     var links:[ResourceLink]?
     var deviceIdentifier:String?

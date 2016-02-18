@@ -2,7 +2,7 @@
 class Commit
 {
     var links:[ResourceLink]?
-    var commitType:String? //TODO: consider adding enum
+    var commitType:CommitType?
     var payload:Payload?
     var created:Int?
     var previousCommit:String?

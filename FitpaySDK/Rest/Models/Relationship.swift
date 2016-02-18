@@ -3,5 +3,5 @@ class Relationship
 {
     var links:[ResourceLink]?
     var card:CardInfo?
-    var device:Device?
+    var device: DeviceInfo?
 }

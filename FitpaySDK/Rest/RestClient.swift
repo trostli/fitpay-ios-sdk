@@ -340,10 +340,10 @@ class RestClient
     /**
     Completion handler
     
-    - parameter ResultCollection<Device>?: Provides ResultCollection<Device> object, or nil if error occurs
+    - parameter ResultCollection<DeviceInfo>?: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
     - parameter ErrorType?: Provides error object, or nil if no error occurs
     */
-    typealias DevicesHandler = (ResultCollection<Device>?, ErrorType?)->Void
+    typealias DevicesHandler = (ResultCollection<DeviceInfo>?, ErrorType?)->Void
     
     /**
      For a single user, retrieve a pagable collection of devices in their profile
@@ -361,10 +361,10 @@ class RestClient
     /**
     Completion handler
 
-    - parameter Device?: Provides created Device object, or nil if error occurs
+    - parameter DeviceInfo?: Provides created DeviceInfo object, or nil if error occurs
     - parameter ErrorType?: Provides error object, or nil if no error occurs
     */
-    typealias CreateNewDeviceHandler = (Device?, ErrorType?)->Void
+    typealias CreateNewDeviceHandler = (DeviceInfo?, ErrorType?)->Void
 
     /**
      For a single user, create a new device in their profile
@@ -397,10 +397,10 @@ class RestClient
     /**
     Completion handler
 
-    - parameter Device?: Provides existing Device object, or nil if error occurs
+    - parameter DeviceInfo?: Provides existing DeviceInfo object, or nil if error occurs
     - parameter ErrorType?: Provides error object, or nil if no error occurs
     */
-    typealias DeviceHandler = (Device?, ErrorType?)
+    typealias DeviceHandler = (DeviceInfo?, ErrorType?)
     
     /**
      Retrieves the details of an existing device. You need only supply the uniqueidentifier that was returned upon creation.
@@ -417,10 +417,10 @@ class RestClient
     /**
     Completion handler
 
-    - parameter Device?: Provides updated Device object, or nil if error occurs
+    - parameter DeviceInfo?: Provides updated DeviceInfo object, or nil if error occurs
     - parameter ErrorType?: Provides error object, or nil if no error occurs
     */
-    typealias UpdateDeviceHandler = (Device?, ErrorType?)
+    typealias UpdateDeviceHandler = (DeviceInfo?, ErrorType?)
 
     /**
      Update the details of an existing device
