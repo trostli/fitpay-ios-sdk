@@ -12,25 +12,9 @@ public enum AuthScope : String
 
 public class RestSession
 {
-    private var credentials:String
+    typealias LoginHandler = (ErrorType?)->Void
 
-    public init(consumerKey:String, consumerSecret:String)
-    {
-        let pair = "\(consumerKey):\(consumerSecret)"
-        let bytes = pair.dataUsingEncoding(NSUTF8StringEncoding)!
-        self.credentials = bytes.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue:0))
-    }
-
-    public typealias AcquireAccessTokenHandler = (String?, ErrorType?)->Void
-
-    public func acquireAccessToken(completion: AcquireAccessTokenHandler)
-    {
-
-    }
-
-    public typealias  AuthorizeHandler = (ErrorType?)->Void
-
-    public func authorize(scopes:[AuthScope], completion:AuthorizeHandler)
+    func login(password:String, completion:LoginHandler)
     {
 
     }
