@@ -4,7 +4,7 @@ public class Commit
     var links:[ResourceLink]?
     var commitType:CommitType?
     var payload:Payload?
-    var created:Int?
+    var created:Int64?
     var previousCommit:String?
     var commit:String?
 }

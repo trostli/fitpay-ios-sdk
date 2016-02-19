@@ -8,9 +8,9 @@ public class VerificationMethod
     public var value:String?
     public var verificationResult:String? //TODO: consider creating enum
     public var created:String?
-    public var createdEpoch:Int?
+    public var createdEpoch:Int64?
     public var lastModified:String?
-    public var lastModifiedEpoch:Int?
+    public var lastModifiedEpoch:Int64?
     public var verified:String?
     public var verifiedEpoch:String?
 }
