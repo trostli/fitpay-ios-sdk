@@ -12,6 +12,7 @@
 		0AD922AD1C1F7EFC007693AB /* FitpaySDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD922AC1C1F7EFC007693AB /* FitpaySDKTests.swift */; };
 		0AD9232C1C20BB38007693AB /* FitpaySDK.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD9232B1C20BB38007693AB /* FitpaySDK.swift */; };
 		96C196610BB289EAB485089F /* Pods_FitpaySDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF2E70C4C402E580DA9AF8DD /* Pods_FitpaySDKTests.framework */; };
+		9AA5BDAB1C7B54B600EDF2F6 /* RestSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */; };
 		CD03806996B162B739B5C3C4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0387CEBA596BFB51256128 /* User.swift */; };
 		CD0380D8C5E628E5C1A755AC /* RestAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03818A549A1841A5ED64B3 /* RestAPIConstants.swift */; };
 		CD03811FA3F15932D1C0F66B /* RestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03892F10B569368C16273E /* RestSession.swift */; };
@@ -56,6 +57,7 @@
 		699893136E8B8AA0878E37CF /* Pods-FitpaySDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.release.xcconfig"; sourceTree = "<group>"; };
 		77F13D0165C8E22E0B00802A /* Pods-FitpaySDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		7C5C07F3D8783908B07CB70B /* Pods-FitpaySDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests.debug.xcconfig"; sourceTree = "<group>"; };
+		9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestSessionTests.swift; sourceTree = "<group>"; };
 		9C591A194E450FD347037C2E /* Pods-FitpaySDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.debug.xcconfig"; sourceTree = "<group>"; };
 		CD03815EA04C30427064A86B /* Transaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		CD03818A549A1841A5ED64B3 /* RestAPIConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestAPIConstants.swift; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 		0AD922AB1C1F7EFC007693AB /* FitpaySDKTests */ = {
 			isa = PBXGroup;
 			children = (
+				9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */,
 				0AD922AC1C1F7EFC007693AB /* FitpaySDKTests.swift */,
 				0AD922AE1C1F7EFC007693AB /* Info.plist */,
 			);
@@ -449,6 +452,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9AA5BDAB1C7B54B600EDF2F6 /* RestSessionTests.swift in Sources */,
 				0AD922AD1C1F7EFC007693AB /* FitpaySDKTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
