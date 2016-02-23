@@ -20,22 +20,23 @@ class RestSessionTests: XCTestCase
     
     func testAcquireAccessTokenRetrievesToken()
     {
-        let expectation = super.expectationWithDescription("testAcquireAccessTokenRetrievesToken")
-        session.acquireAccessToken(clientId: "e362a5cd-ab9d-4f9a-98ff-f91fcdd27936",
-            clientSecret:"s2CLUBKcbvQP6IqKx31XLclyqAd3nf6tyIPk74rL")
-            {
-                (token, error) -> Void in
-                expectation.fulfill()
-            }
+        let expectation = super.expectationWithDescription("Test acquireAccessToken retrieves auth details")
+
+        self.session.acquireAccessToken(clientId:"pagare", redirectUri:"http://demo.pagare.me",
+                username:"pagareuser@fit-pay.com", password:"pagaresecret", completion:
+        {
+            authDetails, error in
+
+            XCTAssertNotNil(authDetails)
+            XCTAssertNil(error)
+            XCTAssertNotNil(authDetails?.accessToken)
+            XCTAssertNotNil(authDetails?.expiresIn)
+            XCTAssertNotNil(authDetails?.jti)
+            XCTAssertNotNil(authDetails?.scope)
+
+            expectation.fulfill()
+        });
+
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
-    
-    func testPerformanceExample()
-    {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
 }
