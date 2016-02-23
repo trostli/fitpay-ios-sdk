@@ -15,6 +15,15 @@ public enum AuthScope : String
 {
     public static let sharedSession = RestSession()
 
+    private var clientId:String?
+    private var redirectUri:String?
+
+    public func configure(clientId:String, redirectUri:String)
+    {
+        self.clientId = clientId
+        self.redirectUri = redirectUri
+    }
+
     public typealias LoginHandler = (ErrorType?)->Void
     public func login(password:String, completion:LoginHandler)
     {
@@ -22,14 +31,19 @@ public enum AuthScope : String
     }
 
     internal typealias AcquireAccessTokenHandler = (String?, ErrorType?)->Void
-    internal func acquireAccessToken(clientId clientId:String, clientSecret:String, completion:AcquireAccessTokenHandler)
+    internal func acquireAccessToken(clientId clientId:String, redirectUri:String, username:String, password:String, completion:AcquireAccessTokenHandler)
     {
-        let pair = "\(clientId):\(clientSecret)"
-        let bytes = pair.dataUsingEncoding(NSUTF8StringEncoding)!
-        let credentials = bytes.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue:0))
-        let headers = ["Authorization" : "Bearer \(credentials)"]
         let manager = Manager.sharedInstance
-        let parameters = ["grant_type" : "client_credentials"]
+
+
+
+        let parameters = [
+                "response_type" : "token",
+                "client_id" : clientId,
+                "redirect_uri" : redirectUri,
+                "credentials" : ["username" : username, "password" : password ].JSONString!
+        ]
+
         let request = manager.request(.POST, AUTH_URL, parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
 
 

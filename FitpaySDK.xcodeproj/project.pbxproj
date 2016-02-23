@@ -18,7 +18,9 @@
 		CD03811FA3F15932D1C0F66B /* RestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03892F10B569368C16273E /* RestSession.swift */; };
 		CD038125B3958A9F8CF17E26 /* WebViewSessionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03843A84ED76B33DA758D4 /* WebViewSessionData.swift */; };
 		CD0381268F7131417FB26686 /* CreditCardInitiator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0385589BFC700A206717B1 /* CreditCardInitiator.swift */; };
+		CD038163A93FFC2353B572A0 /* DictionaryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03877A3C526340ECB9C853 /* DictionaryExtensions.swift */; };
 		CD03838AE5953B954AC82E50 /* ResultCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0387ACA27383C2A0D33CBC /* ResultCollection.swift */; };
+		CD03844FF2823EFCDF1972EE /* NSJSONSerializationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0386DA358049C9AC2135F6 /* NSJSONSerializationExtensions.swift */; };
 		CD03852C57B1C79751A86197 /* ApduPackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0387D62F4EB734531CCEA9 /* ApduPackage.swift */; };
 		CD0385C5EFAB73A715B73025 /* PaymentDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038CF70D8842F8B96D0963 /* PaymentDevice.swift */; };
 		CD0385EFB1AE91118505CC3E /* EncryptionKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038D1774A53D9340CFCFBE /* EncryptionKey.swift */; };
@@ -69,6 +71,8 @@
 		CD0385589BFC700A206717B1 /* CreditCardInitiator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreditCardInitiator.swift; sourceTree = "<group>"; };
 		CD0385770D2621125F59B8DD /* VerificationMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerificationMethod.swift; sourceTree = "<group>"; };
 		CD03869312A30FB6257C3313 /* Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
+		CD0386DA358049C9AC2135F6 /* NSJSONSerializationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSJSONSerializationExtensions.swift; sourceTree = "<group>"; };
+		CD03877A3C526340ECB9C853 /* DictionaryExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryExtensions.swift; sourceTree = "<group>"; };
 		CD0387ACA27383C2A0D33CBC /* ResultCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultCollection.swift; sourceTree = "<group>"; };
 		CD0387CEBA596BFB51256128 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CD0387D62F4EB734531CCEA9 /* ApduPackage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApduPackage.swift; sourceTree = "<group>"; };
@@ -133,6 +137,7 @@
 				CD038511B6DB51958C59E6FC /* Rest */,
 				CD038444AAB4BDB6FF14D2D7 /* Rtm */,
 				CD0384F64FF8B4B91DDBC6AF /* PaymentDevice */,
+				CD0389AD6419ED1E01710351 /* Extensions */,
 			);
 			path = FitpaySDK;
 			sourceTree = "<group>";
@@ -219,6 +224,15 @@
 				CD03818A549A1841A5ED64B3 /* RestAPIConstants.swift */,
 			);
 			path = Constants;
+			sourceTree = "<group>";
+		};
+		CD0389AD6419ED1E01710351 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				CD0386DA358049C9AC2135F6 /* NSJSONSerializationExtensions.swift */,
+				CD03877A3C526340ECB9C853 /* DictionaryExtensions.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		F81B81892E9B3CE24432125C /* Pods */ = {
@@ -445,6 +459,8 @@
 				CD03811FA3F15932D1C0F66B /* RestSession.swift in Sources */,
 				CD0386948E879E2106699B3C /* RestClient.swift in Sources */,
 				CD0385C5EFAB73A715B73025 /* PaymentDevice.swift in Sources */,
+				CD03844FF2823EFCDF1972EE /* NSJSONSerializationExtensions.swift in Sources */,
+				CD038163A93FFC2353B572A0 /* DictionaryExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
