@@ -7,30 +7,39 @@ class RestClientTests: XCTestCase
     let clientId = "pagare"
     let redirectUri = "http://demo.pagare.me"
 
-    var session:RestSession?
-    var client:RestClient?
+    var session:RestSession!
+    var client:RestClient!
+    var crypto:Crypto!
 
     override func setUp()
     {
         super.setUp()
-        self.client = RestClient(self.session = RestSession(clientId:self.clientId, redirectUri:self.redirectUri))
+        self.session = RestSession(clientId:self.clientId, redirectUri:self.redirectUri)
+        self.client = RestClient(session: self.session!)
+        self.crypto = Crypto()
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    override func tearDown()
+    {
+        self.client = nil
+        self.session = nil
+        self.client = nil
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    func testCreateEncryptionKeyCreatesKey()
+    {
+        let expectation = super.expectationWithDescription("test createEncryptionKey creates key")
+        
+        self.client.createEncryptionKey(clientPublicKey:self.crypto.publicKey, completion: { (encryptionKey, error) -> Void in
+            expectation.fulfill()
+        })
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
-    }
+    
     
 }

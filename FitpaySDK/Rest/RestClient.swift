@@ -1,6 +1,7 @@
 
 import Foundation
-import OpenSSL
+import Alamofire
+import AlamofireObjectMapper
 
 public class RestClient
 {
@@ -606,11 +607,20 @@ public class RestClient
      - parameter clientPublicKey: client public key
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
-    public func createEncryptionKey(clientPublicKey:String, completion:CreateEncryptionKeyHandler)
+    public func createEncryptionKey(clientPublicKey clientPublicKey:String, completion:CreateEncryptionKeyHandler)
     {
-        let parameters = ["" : ""]
+        let headers = ["Accept" : "application/json"]
+        let parameters = [
+                "clientPublicKey" : clientPublicKey
+        ]
 
+        let request = Manager.sharedInstance.request(.POST, API_BASE_URL + "/config/encryptionKeys", parameters: parameters, encoding:.JSON, headers: headers)
 
+        request.responseString { response -> Void in
+            
+            print(response.result.value)
+        }
+        
     }
 
     /**

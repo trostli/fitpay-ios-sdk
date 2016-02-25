@@ -1,5 +1,6 @@
 
 import XCTest
+
 @testable import FitpaySDK
 
 class RestSessionTests: XCTestCase
@@ -60,6 +61,5 @@ class RestSessionTests: XCTestCase
         }
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
-
     }
 }
