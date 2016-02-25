@@ -594,10 +594,10 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter EncryptionKey?: Provides created EncryptionKey object, or nil if error occurs
-     - parameter ErrorType?:     Provides error object, or nil if no error occurs
+     - parameter encryptionKey?: Provides created EncryptionKey object, or nil if error occurs
+     - parameter error?:         Provides error object, or nil if no error occurs
      */
-    public typealias CreateEncryptionKeyHandler = (EncryptionKey?, ErrorType?)->Void
+    public typealias CreateEncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:ErrorType?)->Void
 
     /**
      Creates a new encryption key pair
@@ -607,7 +607,7 @@ public class RestClient
      */
     public func createEncryptionKey(clientPublicKey:String, completion:CreateEncryptionKeyHandler)
     {
-        
+        let parameters = ["" : ""]
     }
 
     /**
@@ -644,6 +644,6 @@ public class RestClient
      */
     public func deleteEncryptionKey(keyId:String, completion:DeleteEncryptionKeyHandler)
     {
-        
+
     }
 }
