@@ -1,5 +1,6 @@
 
 import Foundation
+import OpenSSL
 
 public class RestClient
 {
@@ -608,6 +609,8 @@ public class RestClient
     public func createEncryptionKey(clientPublicKey:String, completion:CreateEncryptionKeyHandler)
     {
         let parameters = ["" : ""]
+
+
     }
 
     /**

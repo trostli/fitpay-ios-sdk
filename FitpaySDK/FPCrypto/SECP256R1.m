@@ -1,0 +1,114 @@
+
+#import "SECP256R1.h"
+#include <openssl/ec.h>
+#include <openssl/evp.h>
+#include <openssl/bn.h>
+#include <openssl/obj_mac.h>
+#include <string.h>
+
+char ans1PubKeyEncoding[] = "3059301306072a8648ce3d020106082a8648ce3d03010703420004\0";
+
+struct CKeyPair
+{
+    char public_key[1024];
+    char private_key[1024];
+    EC_KEY * key;
+};
+
+static void GenerateKeyPair(CKeyPair *key_pair)
+{
+
+    BN_CTX * bn_ctx;
+    BIGNUM* client_publicK_x = NULL;
+    BIGNUM* client_publicK_y = NULL;
+    
+    bn_ctx = BN_CTX_new();
+    BN_CTX_start(bn_ctx);
+    
+    client_publicK_x = BN_CTX_get(bn_ctx);
+    client_publicK_y = BN_CTX_get(bn_ctx);
+
+    EC_KEY *  client_key_curve = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+
+    if (client_key_curve  == NULL)
+    {
+        BN_CTX_free(bn_ctx);
+        return;
+    }
+
+    const EC_GROUP * client_key_group = EC_KEY_get0_group(client_key_curve);
+
+    if (client_key_group == NULL)
+    {
+        BN_CTX_free(bn_ctx);
+        EC_KEY_free(client_key_curve);
+        return;
+    }
+    
+    if (EC_KEY_generate_key(client_key_curve) != 1)
+    {
+        BN_CTX_free(bn_ctx);
+        EC_KEY_free(client_key_curve);
+        return;
+    }
+
+    const EC_POINT * client_publicKey = EC_KEY_get0_public_key(client_key_curve);
+
+    if (client_publicKey == NULL)
+    {
+        BN_CTX_free(bn_ctx);
+        EC_KEY_free(client_key_curve);
+        return;
+    }
+    
+    if (EC_KEY_check_key(client_key_curve) != 1)
+    {
+        BN_CTX_free(bn_ctx);
+        EC_KEY_free(client_key_curve);
+        return;
+    }
+
+    const BIGNUM * client_privateKey = EC_KEY_get0_private_key(client_key_curve);
+    char * client_public_key = NULL;
+
+    char * client_private_key = BN_bn2hex(client_privateKey);
+    BIGNUM *bigNumX = BN_CTX_get(bn_ctx);
+    BIGNUM *bigNumY = BN_CTX_get(bn_ctx);
+
+    if (EC_POINT_get_affine_coordinates_GFp(client_key_group, client_publicKey, bigNumX, bigNumY, NULL))
+    {
+
+        char * strX = BN_bn2hex(bigNumX);
+        char * strY = BN_bn2hex(bigNumY);
+
+        if((client_public_key = malloc(strlen(ans1PubKeyEncoding) + strlen(strX) + strlen(strY) + 1)) != NULL)
+        {
+            client_public_key[0] = '\0';
+            strcat(client_public_key, ans1PubKeyEncoding);
+            strcat(client_public_key, strX);
+            strcat(client_public_key, strY);
+        }
+
+        free(strX);
+        free(strY);
+    }
+
+    key_pair->key = EC_KEY_new();
+    EC_KEY_copy(key_pair->key, client_key_curve);
+
+    memcpy(key_pair->public_key, client_public_key, strlen(client_public_key) + 1);
+    memcpy(key_pair->private_key, client_private_key, strlen(client_private_key) + 1);
+
+    // free at last
+    free(client_public_key);
+    free(client_private_key);
+    EC_POINT_free((EC_POINT *)client_publicKey);
+    EC_GROUP_free((EC_GROUP *)client_key_group);
+
+    BN_free(client_publicK_x);
+    BN_free(client_publicK_y);
+    BN_free((BIGNUM *)client_privateKey);
+
+    BN_CTX_free(bn_ctx);
+}
+
