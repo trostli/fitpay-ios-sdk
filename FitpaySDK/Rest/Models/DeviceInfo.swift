@@ -10,7 +10,7 @@ public class DeviceInfo
     public var hardwareRevision:String?
     public var firmwareRevision:String?
     public var softwareRevision:String?
-    public var createdEpoch:Int64?
+    public var createdEpoch:CLong?
     public var created:String?
     public var osName:String?
     public var systemId:String?

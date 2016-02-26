@@ -8,7 +8,7 @@ public class CreditCard
     public var userId:String?
     public var isDefault:Bool?
     public var created:String?
-    public var createdEpoch:Int64?
+    public var createdEpoch:CLong?
     public var state:String?
     public var cardType:String?
     public var cardMetaData:CardMetadata?
@@ -33,7 +33,7 @@ public class CardMetadata
     public var termsAssetId:String?
     public var termsAssetReferences:[TermsAssetReferences]?
     public var eligibilityExpiration:String?
-    public var eligibilityExpirationEpoch:Int64?
+    public var eligibilityExpirationEpoch:CLong?
     public var deviceRelationships:[DeviceRelationships]?
     public var encryptedData:String?
 }
@@ -65,7 +65,7 @@ public class DeviceRelationships
     public var firmwareRevision:String?
     public var softwareRevision:String?
     public var created:String?
-    public var createdEpoch:Int64?
+    public var createdEpoch:CLong?
     public var osName:String?
     public var systemId:String?
 }

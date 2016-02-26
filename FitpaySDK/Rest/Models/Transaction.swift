@@ -8,7 +8,7 @@ public class Transaction
     public var currencyCode:String?  //TODO: consider adding enum
     public var authorizationStatus:String?  //TODO: consider adding enum
     public var transactionTime:String?
-    public var transactionTimeEpoch:Int64?
+    public var transactionTimeEpoch:CLong?
     public var merchantName:String?
     public var merchantCode:String?
     public var merchantType:String?

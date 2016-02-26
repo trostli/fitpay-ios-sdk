@@ -615,21 +615,24 @@ public class RestClient
         ]
 
         let request = Manager.sharedInstance.request(.POST, API_BASE_URL + "/config/encryptionKeys", parameters: parameters, encoding:.JSON, headers: headers)
+        request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        {
+            (response: Response<EncryptionKey, NSError>) -> Void in
 
-        request.responseString { response -> Void in
-            
-            print(response.result.value)
+            dispatch_async(dispatch_get_main_queue(),
+            { () -> Void in
+                completion(encryptionKey:response.result.value, error:response.result.error)
+            })
         }
-        
     }
 
     /**
      Completion handler
 
-     - parameter EncryptionKey?: Provides EncryptionKey object, or nil if error occurs
-     - parameter ErrorType?:     Provides error object, or nil if no error occurs
+     - parameter encryptionKey?: Provides EncryptionKey object, or nil if error occurs
+     - parameter error?:         Provides error object, or nil if no error occurs
      */
-    public typealias EncryptionKeyHandler = (EncryptionKey?, ErrorType?)->Void
+    public typealias EncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:ErrorType?)->Void
 
     /**
      Retrieve and individual key pair
@@ -639,15 +642,26 @@ public class RestClient
      */
     public func encryptionKey(keyId:String, completion:EncryptionKeyHandler)
     {
+        let headers = ["Accept" : "application/json"]
         
+        let request = Manager.sharedInstance.request(.GET, API_BASE_URL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
+        request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        {
+            (response: Response<EncryptionKey, NSError>) -> Void in
+            
+            dispatch_async(dispatch_get_main_queue(),
+            { () -> Void in
+                completion(encryptionKey:response.result.value, error:response.result.error)
+            })
+        }
     }
 
     /**
      Completion handler
      
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter error?: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteEncryptionKeyHandler = (ErrorType?)->Void
+    public typealias DeleteEncryptionKeyHandler = (error:ErrorType?)->Void
     
     /**
      Deletes encryption key
@@ -657,6 +671,18 @@ public class RestClient
      */
     public func deleteEncryptionKey(keyId:String, completion:DeleteEncryptionKeyHandler)
     {
+        let headers = ["Accept" : "application/json"]
 
+        let request = Manager.sharedInstance.request(.DELETE, API_BASE_URL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
+        
+        request.validate().responseString
+        {
+            (response:Response<String, NSError>) -> Void in
+            dispatch_async(dispatch_get_main_queue(),
+            {
+                () -> Void in
+                completion(error:response.result.error)
+            })
+        }
     }
 }
