@@ -5,7 +5,45 @@ import AlamofireObjectMapper
 
 public class RestClient
 {
+    /**
+     FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
+
+     Not all errors map cleanly onto HTTP response codes, however. When a request is valid but does not complete successfully (e.g. a card is declined), we return a 402 error code.
+
+     - OK:               Everything worked as expected
+     - BadRequest:       Often missing a required parameter
+     - Unauthorized:     No valid API key provided
+     - RequestFailed:    Parameters were valid but request failed
+     - NotFound:         The requested item doesn't exist
+     - ServerError[0-3]: Something went wrong on FitPay's end
+     */
+    public enum ErrorCode : Int, ErrorType, RawIntValue
+    {
+        case OK = 200
+        case BadRequest = 400
+        case Unauthorized = 401
+        case RequestFailed = 402
+        case NotFound = 404
+        case ServerError0 = 500
+        case ServerError1 = 502
+        case ServerError2 = 503
+        case ServerError3 = 504
+    }
+
+
+    private let defaultHeaders = ["Accept" : "application/json"]
     private var _session:RestSession
+    internal var keyPair:SECP256R1KeyPair = SECP256R1KeyPair()
+
+    lazy private var _manager:Manager =
+    {
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        configuration.HTTPAdditionalHeaders = Manager.defaultHTTPHeaders
+        configuration.requestCachePolicy = .ReloadIgnoringLocalCacheData
+        return Manager(configuration: configuration)
+    }()
+
+    private var key:EncryptionKey?
 
     public init(session:RestSession)
     {
@@ -13,27 +51,27 @@ public class RestClient
     }
 
     // MARK: User
-    
+
     /**
      Completion handler
-     
+
      - parameter ResultCollection<User>?: Provides ResultCollection<User> object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
     public typealias ListUsersHandler = (ResultCollection<User>?, ErrorType?)->Void
-    
+
     /**
       Returns a list of all users that belong to your organization. The customers are returned sorted by creation date, with the most recently created customers appearing first
-     
+
      - parameter limit:      Max number of profiles per page
      - parameter offset:     Start index position for list of entities returned
      - parameter completion: ListUsersHandler closure
      */
     public func listUsers(limit limit:Int, offset:Int, completion: ListUsersHandler)
     {
-
+        //TODO: Implement or remove this
     }
-    
+
     /**
      Completion handler
      
@@ -53,16 +91,16 @@ public class RestClient
      */
     public func createUser(firstName firstName:String, lastName:String, birthDate:String, email:String, completion:CreateUsersHandler)
     {
-
+        //TODO: Implement or remove this
     }
     
     /**
      Completion handler
      
-     - parameter User?: Provides User object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter user: Provides User object, or nil if error occurs
+     - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias UserHandler = (User?, ErrorType?)->Void
+    public typealias UserHandler = (user:User?, error:ErrorType?)->Void
     
     /**
      Retrieves the details of an existing user. You need only supply the unique user identifier that was returned upon user creation
@@ -72,7 +110,40 @@ public class RestClient
      */
     public func user(id id:String, completion:UserHandler)
     {
-
+        self.prepareAuthAndKeyHeaders(
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.GET, API_BASE_URL + "/users/" + id, parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<User, NSError>) -> Void in
+                    
+                    if let resultError = response.result.error
+                    {
+                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                        
+                        completion(user:nil, error: error)
+                    }
+                    else if let resultValue = response.result.value
+                    {
+                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
+                        completion(user:resultValue, error:response.result.error)
+                    }
+                    else
+                    {
+                        completion(user: nil, error: NSError.unhandledError(RestClient.self))
+                    }
+                })
+            }
+            else
+            {
+                completion(user: nil, error: error)
+            }
+            
+        })
     }
     
     /**
@@ -599,7 +670,7 @@ public class RestClient
      - parameter encryptionKey?: Provides created EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    public typealias CreateEncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:ErrorType?)->Void
+    internal typealias CreateEncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:ErrorType?)->Void
 
     /**
      Creates a new encryption key pair
@@ -607,21 +678,35 @@ public class RestClient
      - parameter clientPublicKey: client public key
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
-    public func createEncryptionKey(clientPublicKey clientPublicKey:String, completion:CreateEncryptionKeyHandler)
+    internal func createEncryptionKey(clientPublicKey clientPublicKey:String, completion:CreateEncryptionKeyHandler)
     {
-        let headers = ["Accept" : "application/json"]
+        let headers = self.defaultHeaders
         let parameters = [
                 "clientPublicKey" : clientPublicKey
         ]
 
-        let request = Manager.sharedInstance.request(.POST, API_BASE_URL + "/config/encryptionKeys", parameters: parameters, encoding:.JSON, headers: headers)
+        let request = _manager.request(.POST, API_BASE_URL + "/config/encryptionKeys", parameters: parameters, encoding:.JSON, headers: headers)
         request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {
             (response: Response<EncryptionKey, NSError>) -> Void in
 
             dispatch_async(dispatch_get_main_queue(),
             { () -> Void in
-                completion(encryptionKey:response.result.value, error:response.result.error)
+                
+                if let resultError = response.result.error
+                {
+                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                    
+                    completion(encryptionKey:nil, error: error)
+                }
+                else if let resultValue = response.result.value
+                {
+                    completion(encryptionKey:resultValue, error:response.result.error)
+                }
+                else
+                {
+                    completion(encryptionKey: nil, error: NSError.unhandledError(RestClient.self))
+                }
             })
         }
     }
@@ -632,7 +717,7 @@ public class RestClient
      - parameter encryptionKey?: Provides EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    public typealias EncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:ErrorType?)->Void
+    internal typealias EncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:ErrorType?)->Void
 
     /**
      Retrieve and individual key pair
@@ -640,18 +725,33 @@ public class RestClient
      - parameter keyId:      key id
      - parameter completion: EncryptionKeyHandler closure
      */
-    public func encryptionKey(keyId:String, completion:EncryptionKeyHandler)
+    
+    
+    internal func encryptionKey(keyId:String, completion:EncryptionKeyHandler)
     {
-        let headers = ["Accept" : "application/json"]
-        
-        let request = Manager.sharedInstance.request(.GET, API_BASE_URL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
+        let headers = self.defaultHeaders
+        let request = _manager.request(.GET, API_BASE_URL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
         request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {
             (response: Response<EncryptionKey, NSError>) -> Void in
             
             dispatch_async(dispatch_get_main_queue(),
             { () -> Void in
-                completion(encryptionKey:response.result.value, error:response.result.error)
+
+                if let resultError = response.result.error
+                {
+                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                    
+                    completion(encryptionKey:nil, error: error)
+                }
+                else if let resultValue = response.result.value
+                {
+                    completion(encryptionKey:resultValue, error:nil)
+                }
+                else
+                {
+                    completion(encryptionKey: nil, error: NSError.unhandledError(RestClient.self))
+                }
             })
         }
     }
@@ -661,7 +761,7 @@ public class RestClient
      
      - parameter error?: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteEncryptionKeyHandler = (error:ErrorType?)->Void
+    internal typealias DeleteEncryptionKeyHandler = (error:ErrorType?)->Void
     
     /**
      Deletes encryption key
@@ -669,12 +769,10 @@ public class RestClient
      - parameter keyId:      key id
      - parameter completion: DeleteEncryptionKeyHandler
      */
-    public func deleteEncryptionKey(keyId:String, completion:DeleteEncryptionKeyHandler)
+    internal func deleteEncryptionKey(keyId:String, completion:DeleteEncryptionKeyHandler)
     {
-        let headers = ["Accept" : "application/json"]
-
-        let request = Manager.sharedInstance.request(.DELETE, API_BASE_URL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
-        
+        let headers = self.defaultHeaders
+        let request = _manager.request(.DELETE, API_BASE_URL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
         request.validate().responseString
         {
             (response:Response<String, NSError>) -> Void in
@@ -683,6 +781,78 @@ public class RestClient
                 () -> Void in
                 completion(error:response.result.error)
             })
+        }
+    }
+    
+    typealias CreateKeyIfNeeded = CreateEncryptionKeyHandler
+    
+    private func createKeyIfNeeded(completion: CreateKeyIfNeeded)
+    {
+        if let key = self.key
+        {
+            completion(encryptionKey: key, error: nil)
+        }
+        else
+        {
+            self.createEncryptionKey(clientPublicKey: self.keyPair.publicKey!, completion:
+            {
+                [unowned self](encryptionKey, error) -> Void in
+                
+                if let error = error
+                {
+                    completion(encryptionKey:nil, error:error)
+                }
+                else if let encryptionKey = encryptionKey
+                {
+                    self.key = encryptionKey
+                    completion(encryptionKey: self.key, error: nil)
+                }
+            })
+        }
+    }
+
+    typealias CreateAuthHeaders = (headers:[String:String]?, error:ErrorType?) -> Void
+    private func createAuthHeaders(completion:CreateAuthHeaders)
+    {
+        if self._session.isAuthorized
+        {
+            completion(headers:["Authorization" : "Bearer " + self._session.accessToken!], error:nil)
+        }
+        else
+        {
+            completion(headers: nil, error: NSError.error(code: ErrorCode.Unauthorized, domain: RestClient.self, message: "\(ErrorCode.Unauthorized)"))
+        }
+    }
+    
+    
+    typealias PrepareAuthAndKeyHeaders = (headers:[String:String]?, error:ErrorType?) -> Void
+    private func prepareAuthAndKeyHeaders(completion:PrepareAuthAndKeyHeaders)
+    {
+        self.createAuthHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            
+            if let error = error
+            {
+                completion(headers:nil, error:error)
+            }
+            else
+            {
+                self.createKeyIfNeeded(
+                {
+                    (encryptionKey, keyError) -> Void in
+                    
+                    if let keyError = keyError
+                    {
+                        completion(headers:nil, error: keyError)
+                    }
+                    else
+                    {
+                        completion(headers: headers! + ["fp-key-id" : encryptionKey!.keyId!], error: nil)
+                    }
+                })
+            }
+            
         }
     }
 }

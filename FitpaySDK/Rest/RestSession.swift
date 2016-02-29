@@ -49,6 +49,12 @@ public class RestSession
     private var redirectUri:String
 
     public var userId:String?
+    internal var accessToken:String?
+    public var isAuthorized:Bool
+    {
+        return self.accessToken != nil
+    }
+    
 
     public init(clientId:String, redirectUri:String)
     {
@@ -100,6 +106,7 @@ public class RestSession
                                 [unowned self] () -> Void in
 
                                 self.userId = userId
+                                self.accessToken = accessToken
                                 completion(error:nil)
                             })
                         }

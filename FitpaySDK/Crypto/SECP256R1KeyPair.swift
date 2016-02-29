@@ -1,9 +1,9 @@
 
 import FPCrypto
 
-class Crypto
+class SECP256R1KeyPair
 {
-    static let sharedInstance = Crypto()
+    static let sharedInstance = SECP256R1KeyPair()
 
     private let keyPair = UnsafeMutablePointer<SECP256R1_KeyPair>.alloc(sizeof(SECP256R1_KeyPair))
 
@@ -27,13 +27,17 @@ class Crypto
         return key
     }
     
-    func generateSecretForPublicKey(publicKey: String!) -> NSData?
+    func generateSecretForPublicKey(publicKey:String) -> NSData?
     {
-        guard let cPublicKey = publicKey.cStringUsingEncoding(NSUTF8StringEncoding) else {
+        guard let cPublicKey = publicKey.cStringUsingEncoding(NSUTF8StringEncoding)
+        else
+        {
             return nil
         }
         
-        guard cPublicKey.count > 1 else {
+        guard cPublicKey.count > 1
+        else
+        {
             return nil
         }
         

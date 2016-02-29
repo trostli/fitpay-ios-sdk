@@ -6,24 +6,23 @@ class RestClientTests: XCTestCase
 {
     let clientId = "pagare"
     let redirectUri = "http://demo.pagare.me"
+    let username = "pagareuser@fit-pay.com"
+    let password = "pagaresecret"
 
     var session:RestSession!
     var client:RestClient!
-    var crypto:Crypto!
 
     override func setUp()
     {
         super.setUp()
         self.session = RestSession(clientId:self.clientId, redirectUri:self.redirectUri)
         self.client = RestClient(session: self.session!)
-        self.crypto = Crypto()
     }
     
     override func tearDown()
     {
         self.client = nil
         self.session = nil
-        self.client = nil
         super.tearDown()
     }
 
@@ -31,7 +30,7 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test 'createEncryptionKey' creates key")
         
-        self.client.createEncryptionKey(clientPublicKey:self.crypto.publicKey!, completion: { (encryptionKey, error) -> Void in
+        self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!, completion: { (encryptionKey, error) -> Void in
 
             XCTAssertNil(error)
             XCTAssertNotNil(encryptionKey)
@@ -55,7 +54,7 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test 'encryptionKey' retrieves key")
 
-        self.client.createEncryptionKey(clientPublicKey:self.crypto.publicKey!, completion:
+        self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!, completion:
         {
             [unowned self](createdEncryptionKey, createdError) -> Void in
 
@@ -100,18 +99,18 @@ class RestClientTests: XCTestCase
                 (retrievedEncryptionKey, retrievedError) -> Void in
                 
                 XCTAssertNotNil(retrievedError)
+                print(retrievedError)
                 expectation.fulfill()
         })
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectationsWithTimeout(100, handler: nil)
     }
 
-    // TODO: Find out with Fitpay why this test fails
     func testDeleteEncryptionKeyDeletesCreatedKey()
     {
         let expectation = super.expectationWithDescription("test 'deleteEncryptionKey' deletes key")
 
-        self.client.createEncryptionKey(clientPublicKey:self.crypto.publicKey!, completion:
+        self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!, completion:
             {
                 [unowned self](createdEncryptionKey, createdError) -> Void in
                 
@@ -131,6 +130,7 @@ class RestClientTests: XCTestCase
                                 
                                 XCTAssertNil(againRetrievedEncryptionKey)
                                 XCTAssertNotNil(againRetrievedError)
+                            
                                 expectation.fulfill()
                         })
                     })
@@ -138,7 +138,39 @@ class RestClientTests: XCTestCase
                 
             })
 
+        super.waitForExpectationsWithTimeout(100, handler: nil)
+    }
+    
+    func testUserRetrievesUserById()
+    {
+        let expectation = super.expectationWithDescription("test 'user' retrieves user by her id")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            self.client.user(id: self.session.userId!, completion:
+            {
+                (user, error) -> Void in
+                
+                XCTAssertNotNil(user)
+                XCTAssertNotNil(user?.info)
+                XCTAssertNotNil(user?.created)
+                XCTAssertNotNil(user?.links)
+                XCTAssertNotNil(user?.createdEpoch)
+                XCTAssertNotNil(user?.lastModified)
+                XCTAssertNotNil(user?.lastModifiedEpoch)
+                XCTAssertNotNil(user?.encryptedData)
+                XCTAssertNotNil(user?.info?.firstName)
+                XCTAssertNotNil(user?.info?.lastName)
+                XCTAssertNotNil(user?.info?.email)
+                XCTAssertNil(error)
+                
+                expectation.fulfill()
+            })
+        }
+        
         super.waitForExpectationsWithTimeout(10, handler: nil)
+
     }
     
 }

@@ -23,6 +23,7 @@ class RestSessionTests: XCTestCase
         super.tearDown()
     }
     
+    
     func testAcquireAccessTokenRetrievesToken()
     {
         let expectation = super.expectationWithDescription("Test acquireAccessToken retrieves auth details")
