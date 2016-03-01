@@ -413,10 +413,10 @@ public class RestClient
     /**
     Completion handler
     
-    - parameter ResultCollection<DeviceInfo>?: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
-    - parameter ErrorType?: Provides error object, or nil if no error occurs
+    - parameter devices: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
+    - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DevicesHandler = (ResultCollection<DeviceInfo>?, ErrorType?)->Void
+    public typealias DevicesHandler = (devices:ResultCollection<DeviceInfo>?, error:ErrorType?)->Void
     
     /**
      For a single user, retrieve a pagable collection of devices in their profile
@@ -428,8 +428,39 @@ public class RestClient
      */
     public func devices(userId userId:String, limit:Int, offset:Int, completion:DevicesHandler)
     {
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/devices", parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<ResultCollection<DeviceInfo>, NSError>) -> Void in
 
+                    if let resultError = response.result.error
+                    {
+                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+
+                        completion(devices:nil, error: error)
+                    }
+                    else if let resultValue = response.result.value
+                    {
+                        completion(devices:resultValue, error:response.result.error)
+                    }
+                    else
+                    {
+                        completion(devices: nil, error: NSError.unhandledError(RestClient.self))
+                    }
+                })
+            }
+            else
+            {
+                completion(devices: nil, error: error)
+            }
+        }
     }
+
 
     /**
     Completion handler

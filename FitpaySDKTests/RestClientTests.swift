@@ -173,4 +173,33 @@ class RestClientTests: XCTestCase
 
     }
     
+    func testDeviceRetrievesDevicesByUserId()
+    {
+        let expectation = super.expectationWithDescription("test 'device' retrieves devices by user id")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            self.client.devices(userId: self.session.userId!, limit: 10, offset: 0, completion:
+            {
+                (devices, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(devices)
+                XCTAssertNotNil(devices?.limit)
+                XCTAssertNotNil(devices?.totalResults)
+                XCTAssertNotNil(devices?.links)
+                XCTAssertNotNil(devices?.results)
+                
+                for deviceInfo in devices!.results! {
+                    XCTAssertNotNil(deviceInfo.metadata)
+                }
+                
+                expectation.fulfill()
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
 }

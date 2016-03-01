@@ -1,5 +1,7 @@
 
-public class Transaction
+import ObjectMapper
+
+public class Transaction : Mappable
 {
     public var links:[ResourceLink]?
     public var transactionId:String?
@@ -12,4 +14,14 @@ public class Transaction
     public var merchantName:String?
     public var merchantCode:String?
     public var merchantType:String?
+    
+    public required init?(_ map: Map)
+    {
+        
+    }
+    
+    public func mapping(map: Map)
+    {
+        
+    }
 }
