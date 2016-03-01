@@ -1,5 +1,7 @@
 
-public class DeviceInfo
+import ObjectMapper
+
+public class DeviceInfo : Mappable
 {
     public var links:[ResourceLink]?
     public var deviceIdentifier:String?
@@ -21,7 +23,37 @@ public class DeviceInfo
     public var secureElementId:String?
 
     // Extra metadata specific for a particural type of device
-    var metadata = [String : AnyObject]()
+    public var metadata:[String : AnyObject]?
+    
+    public required init?(_ map: Map)
+    {
+        
+    }
+    
+    public func mapping(map: Map)
+    {
+        links <- (map["_links"], ResourceLinkTransformType())
+        created <- map["createdTs"]
+        createdEpoch <- map["createdTsEpoch"]
+        deviceIdentifier <- map["deviceIdentifier"]
+        deviceName <- map["deviceName"]
+        manufacturerName <- map["manufacturerName"]
+        serialNumber <- map["serialNumber"]
+        modelNumber <- map["modelNumber"]
+        hardwareRevision <- map["hardwareRevision"]
+        firmwareRevision <- map["firmwareRevision"]
+        softwareRevision <- map["softwareRevision"]
+        osName <- map["osName"]
+        systemId <- map["systemId"]
+        licenseKey <- map["licenseKey"]
+        bdAddress <- map["bdAddress"]
+        pairing <- map["pairing"]
+        secureElementId <- map["secureElementId"]
+        //TODO: cardRelationships
+        // cardRelationships <- map["cardRelationships"]
+        
+        metadata = map.JSONDictionary
+    }
 }
 
 public class CardRelationship

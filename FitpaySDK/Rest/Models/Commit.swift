@@ -1,5 +1,7 @@
 
-public class Commit
+import ObjectMapper
+
+public class Commit : Mappable
 {
     var links:[ResourceLink]?
     var commitType:CommitType?
@@ -7,6 +9,16 @@ public class Commit
     var created:CLong?
     var previousCommit:String?
     var commit:String?
+    
+    public required init?(_ map: Map)
+    {
+        
+    }
+    
+    public func mapping(map: Map)
+    {
+        
+    }
 }
 
 public enum CommitType : String
