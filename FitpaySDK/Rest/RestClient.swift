@@ -267,13 +267,12 @@ public class RestClient
             {
                 let parameters:[String : AnyObject] = ["excludeState" : excludeState.joinWithSeparator(","), "limit" : limit, "offest" : offset]
                 let request = self._manager.request(.GET, API_BASE_URL + "/users/" + userId + "/creditCards", parameters: parameters, encoding: .JSON, headers: headers)
-                /*
+                
                 request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response:Response<ResultCollection<CreditCard>, NSError>) -> Void in
                     
                 })
-                */
             }
             else
             {

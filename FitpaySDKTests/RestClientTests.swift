@@ -183,6 +183,9 @@ class RestClientTests: XCTestCase
             {
                 (result, error) -> Void in
                 
+                
+                
+                expectation.fulfill()
             })
         }
         
