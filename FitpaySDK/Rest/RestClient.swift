@@ -256,6 +256,34 @@ public class RestClient
 
     // MARK: Credit Card
 
+    public typealias CreditCardsHandler = (result:ResultCollection<CreditCard>?, error:ErrorType?) -> Void
+
+    public func creditCards(userId userId:String, excludeState:[String], limit:Int, offset:Int, completion:CreditCardsHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let parameters:[String : AnyObject] = ["excludeState" : excludeState.joinWithSeparator(","), "limit" : limit, "offest" : offset]
+                let request = self._manager.request(.GET, API_BASE_URL + "/users/" + userId + "/creditCards", parameters: parameters, encoding: .JSON, headers: headers)
+                /*
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<ResultCollection<CreditCard>, NSError>) -> Void in
+                    
+                })
+                */
+            }
+            else
+            {
+                
+            }
+        }
+    }
+    
+    
+    
     /**
      Completion handler
 
@@ -274,7 +302,7 @@ public class RestClient
      */
     public func acceptTerms(creditCardId creditCardId:String, userId:String, completion:AcceptTermsHandler)
     {
-
+        
     }
     
     /**
