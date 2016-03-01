@@ -432,7 +432,11 @@ public class RestClient
         {
             (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/devices", parameters: nil, encoding: .JSON, headers: headers)
+                let parameters = [
+                    "Limit" : "\(limit)",
+                    "Off Set" : "\(offset)"
+                ]
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/devices", parameters: parameters, encoding: .JSON, headers: headers)
                 request.validate().responseObject(
                 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
@@ -461,14 +465,13 @@ public class RestClient
         }
     }
 
-
     /**
     Completion handler
 
-    - parameter DeviceInfo?: Provides created DeviceInfo object, or nil if error occurs
-    - parameter ErrorType?: Provides error object, or nil if no error occurs
+    - parameter device: Provides created DeviceInfo object, or nil if error occurs
+    - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias CreateNewDeviceHandler = (DeviceInfo?, ErrorType?)->Void
+    public typealias CreateNewDeviceHandler = (device:DeviceInfo?, error:ErrorType?)->Void
 
     /**
      For a single user, create a new device in their profile
@@ -495,7 +498,53 @@ public class RestClient
                          softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
                          secureElementId:String, pairing:String, completion:CreateNewDeviceHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let params = [
+                    "deviceType" : deviceType,
+                    "manufacturerName" : manufacturerName,
+                    "deviceName" : deviceName,
+                    "serialNumber" : serialNumber,
+                    "modelNumber" : modelNumber,
+                    "hardwareRevision" : hardwareRevision,
+                    "firmwareRevision" : firmwareRevision,
+                    "softwareRevision" : softwareRevision,
+                    "systemId" : systemId,
+                    "osName" : osName,
+                    "licenseKey" : licenseKey,
+                    "bdAddress" : bdAddress,
+                    "secureElementId" : secureElementId,
+                    "pairingTs" : pairing
+                ]
+                let request = self._manager.request(.POST, "\(API_BASE_URL)/users/\(userId)/devices", parameters: params, encoding: .JSON, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<DeviceInfo, NSError>) -> Void in
+                    
+                    if let resultError = response.result.error
+                    {
+                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                        
+                        completion(device:nil, error: error)
+                    }
+                    else if let resultValue = response.result.value
+                    {
+                        completion(device:resultValue, error:response.result.error)
+                    }
+                    else
+                    {
+                        completion(device: nil, error: NSError.unhandledError(RestClient.self))
+                    }
+                })
+            }
+            else
+            {
+                completion(device: nil, error: error)
+            }
+        }
     }
 
     /**

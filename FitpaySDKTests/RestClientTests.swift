@@ -192,6 +192,7 @@ class RestClientTests: XCTestCase
                 XCTAssertNotNil(devices?.results)
                 
                 for deviceInfo in devices!.results! {
+                    XCTAssertNotNil(deviceInfo.deviceIdentifier)
                     XCTAssertNotNil(deviceInfo.metadata)
                 }
                 
@@ -202,4 +203,41 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
+    func testDeviceCreateNewDeviceForUser()
+    {
+        let expectation = super.expectationWithDescription("test 'device' creates new device for user with id")
+        
+        self.session.login(username: self.username, password: self.password)
+            {
+                [unowned self](error) -> Void in
+                
+                let deviceType = "SMART_STRAP"
+                let manufacturerName = "Fitpay"
+                let deviceName = "PSPS"
+                let serialNumber = "074DCC022E14"
+                let modelNumber = "FB404"
+                let hardwareRevision = "1.0.0.0"
+                let firmwareRevision = "1030.6408.1309.0001"
+                let softwareRevision = "2.0.242009.6"
+                let systemId = "0x123456FFFE9ABCDE"
+                let osName = "ANDROID"
+                let licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
+                let bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
+                let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
+                let pairing = "2016-02-29T21:42:21.469Z"
+                
+                self.client.createNewDevice(userId: self.session.userId!, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
+                    {
+                        (device, error) -> Void in
+                        
+                        XCTAssertNil(error)
+                        XCTAssertNotNil(device)
+                        XCTAssertNotNil(device!.deviceIdentifier)
+                        
+                        expectation.fulfill()
+                })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
 }
