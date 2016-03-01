@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class User : Mappable
+public class User : Mappable, SecretApplyable
 {
     public var links:[ResourceLink]?
     public var id:String?
@@ -28,14 +28,22 @@ public class User : Mappable
         encryptedData <- map["encryptedData"]
     }
     
-    internal func applySecret(secret:NSData)
+    internal func applySecret(secret:NSData, expectedKeyId:String?)
     {
         if let encryptedData = self.encryptedData
         {
             let jweResult = JWEObject.parse(payload: encryptedData)
-            if let decryptResult = try? jweResult?.decrypt(secret)
+
+            if let kid = jweResult?.header?.kid, let expectedKeyId = expectedKeyId
             {
-                self.info = Mapper<UserInfo>().map(decryptResult)
+                // decrypt only if keys match
+                if kid == expectedKeyId
+                {
+                    if let decryptResult = try? jweResult?.decrypt(secret)
+                    {
+                        self.info = Mapper<UserInfo>().map(decryptResult)
+                    }
+                }
             }
         }
     }

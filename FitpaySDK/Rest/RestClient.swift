@@ -30,6 +30,7 @@ public class RestClient
         case ServerError3 = 504
     }
 
+    private static let fpKeyIdKey:String = "fp-key-id"
 
     private let defaultHeaders = ["Accept" : "application/json"]
     private var _session:RestSession
@@ -129,7 +130,7 @@ public class RestClient
                     }
                     else if let resultValue = response.result.value
                     {
-                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
+                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
                         completion(user:resultValue, error:response.result.error)
                     }
                     else
@@ -848,7 +849,7 @@ public class RestClient
                     }
                     else
                     {
-                        completion(headers: headers! + ["fp-key-id" : encryptionKey!.keyId!], error: nil)
+                        completion(headers: headers! + [RestClient.fpKeyIdKey : encryptionKey!.keyId!], error: nil)
                     }
                 })
             }
