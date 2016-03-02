@@ -441,21 +441,23 @@ public class RestClient
                 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response: Response<ResultCollection<DeviceInfo>, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
 
-                    if let resultError = response.result.error
-                    {
-                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-
-                        completion(devices:nil, error: error)
-                    }
-                    else if let resultValue = response.result.value
-                    {
-                        completion(devices:resultValue, error:response.result.error)
-                    }
-                    else
-                    {
-                        completion(devices: nil, error: NSError.unhandledError(RestClient.self))
-                    }
+                            completion(devices:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(devices:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(devices: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
                 })
             }
             else
@@ -523,21 +525,24 @@ public class RestClient
                 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response: Response<DeviceInfo, NSError>) -> Void in
-                    
-                    if let resultError = response.result.error
+                    dispatch_async(dispatch_get_main_queue(),
                     {
-                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                        
-                        completion(device:nil, error: error)
-                    }
-                    else if let resultValue = response.result.value
-                    {
-                        completion(device:resultValue, error:response.result.error)
-                    }
-                    else
-                    {
-                        completion(device: nil, error: NSError.unhandledError(RestClient.self))
-                    }
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(device:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(device:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(device: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
                 })
             }
             else
@@ -550,10 +555,10 @@ public class RestClient
     /**
     Completion handler
 
-    - parameter DeviceInfo?: Provides existing DeviceInfo object, or nil if error occurs
-    - parameter ErrorType?: Provides error object, or nil if no error occurs
+    - parameter device: Provides existing DeviceInfo object, or nil if error occurs
+    - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DeviceHandler = (DeviceInfo?, ErrorType?)
+    public typealias DeviceHandler = (device:DeviceInfo?, error:ErrorType?) -> Void
     
     /**
      Retrieves the details of an existing device. You need only supply the uniqueidentifier that was returned upon creation.
@@ -564,16 +569,49 @@ public class RestClient
      */
     public func device(deviceId deviceId:String, userId:String, completion:DeviceHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/devices/\(deviceId)", parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<DeviceInfo, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(device:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(device:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(device: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                completion(device: nil, error: error)
+            }
+        }
     }
 
     /**
     Completion handler
 
-    - parameter DeviceInfo?: Provides updated DeviceInfo object, or nil if error occurs
-    - parameter ErrorType?: Provides error object, or nil if no error occurs
+    - parameter device: Provides updated DeviceInfo object, or nil if error occurs
+    - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias UpdateDeviceHandler = (DeviceInfo?, ErrorType?)
+    public typealias UpdateDeviceHandler = (device:DeviceInfo?, error:ErrorType?) -> Void
 
     /**
      Update the details of an existing device
@@ -588,15 +626,67 @@ public class RestClient
     public func updateDevice(deviceId deviceId:String, userId:String, firmwareRevision:String?, softwareRevision:String?,
                       completion:UpdateDeviceHandler)
     {
-
+        var paramsArray = [AnyObject]()
+        if let firmwareRevision = firmwareRevision {
+            paramsArray.append(["op" : "replace", "path" : "/firmwareRevision", "value" : firmwareRevision])
+        }
+    
+        if let softwareRevision = softwareRevision {
+            paramsArray.append(["op" : "replace", "path" : "/softwareRevision", "value" : softwareRevision])
+        }
+        
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let params = ["params" : paramsArray]
+                let request = self._manager.request(.PATCH, "\(API_BASE_URL)/users/\(userId)/devices/\(deviceId)", parameters: params, encoding: .Custom({
+                    (convertible, params) in
+                    let mutableRequest = convertible.URLRequest.copy() as! NSMutableURLRequest
+                    let jsondata = try? NSJSONSerialization.dataWithJSONObject(params!["params"]!, options: NSJSONWritingOptions(rawValue: 0))
+                    if let jsondata = jsondata {
+                        mutableRequest.HTTPBody = jsondata
+                        mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    }
+                    return (mutableRequest, nil)
+                }), headers: headers)
+                request.validate().responseObject(
+                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    {
+                        (response: Response<DeviceInfo, NSError>) -> Void in
+                        dispatch_async(dispatch_get_main_queue(),
+                        {
+                            () -> Void in
+                            if let resultError = response.result.error
+                            {
+                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                
+                                completion(device:nil, error: error)
+                            }
+                            else if let resultValue = response.result.value
+                            {
+                                completion(device:resultValue, error:response.result.error)
+                            }
+                            else
+                            {
+                                completion(device: nil, error: NSError.unhandledError(RestClient.self))
+                            }
+                        })
+                    })
+            }
+            else
+            {
+                completion(device: nil, error: error)
+            }
+        }
     }
 
     /**
     Completion handler
 
-    - parameter ErrorType?: Provides error object, or nil if no error occurs
+    - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DeleteDeviceHandler = (ErrorType?)
+    public typealias DeleteDeviceHandler = (error:ErrorType?) -> Void
 
     /**
      Delete a single device
@@ -607,7 +697,26 @@ public class RestClient
      */
     public func deleteDevice(deviceId deviceId:String, userId:String, completion:DeleteDeviceHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.DELETE, "\(API_BASE_URL)/users/\(userId)/devices/\(deviceId)", parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseString
+                {
+                    (response:Response<String, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                            () -> Void in
+                            completion(error:response.result.error)
+                    })
+                }
+            }
+            else
+            {
+                completion(error: error)
+            }
+        }
     }
 
     // MARK: Commits

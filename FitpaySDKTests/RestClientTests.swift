@@ -6,8 +6,8 @@ class RestClientTests: XCTestCase
 {
     let clientId = "pagare"
     let redirectUri = "http://demo.pagare.me"
-    let username = "pagareuser@fit-pay.com"
-    let password = "pagaresecret"
+    let username = "anton.popovichenko@masterofcode.com"
+    let password = "1487"
 
     var session:RestSession!
     var client:RestClient!
@@ -180,6 +180,15 @@ class RestClientTests: XCTestCase
         self.session.login(username: self.username, password: self.password)
         {
             [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
             self.client.devices(userId: self.session.userId!, limit: 10, offset: 0, completion:
             {
                 (devices, error) -> Void in
@@ -208,36 +217,170 @@ class RestClientTests: XCTestCase
         let expectation = super.expectationWithDescription("test 'device' creates new device for user with id")
         
         self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
             {
-                [unowned self](error) -> Void in
+                expectation.fulfill()
+                return
+            }
+            
+            self.createDefaultDevice(self.session.userId!, completion:
+            {
+                (device, error) -> Void in
                 
-                let deviceType = "SMART_STRAP"
-                let manufacturerName = "Fitpay"
-                let deviceName = "PSPS"
-                let serialNumber = "074DCC022E14"
-                let modelNumber = "FB404"
-                let hardwareRevision = "1.0.0.0"
-                let firmwareRevision = "1030.6408.1309.0001"
-                let softwareRevision = "2.0.242009.6"
-                let systemId = "0x123456FFFE9ABCDE"
-                let osName = "ANDROID"
-                let licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
-                let bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
-                let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
-                let pairing = "2016-02-29T21:42:21.469Z"
+                XCTAssertNil(error)
+                XCTAssertNotNil(device)
+                XCTAssertNotNil(device!.deviceIdentifier)
                 
-                self.client.createNewDevice(userId: self.session.userId!, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
-                    {
-                        (device, error) -> Void in
-                        
-                        XCTAssertNil(error)
-                        XCTAssertNotNil(device)
-                        XCTAssertNotNil(device!.deviceIdentifier)
-                        
-                        expectation.fulfill()
-                })
+                expectation.fulfill()
+            })
         }
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testDeviceDeleteDeviceWithId()
+    {
+        let expectation = super.expectationWithDescription("test 'device' delete device")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.createDefaultDevice(self.session.userId!, completion:
+            {
+                (device, error) -> Void in
+                XCTAssertNil(error)
+                
+                self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                {
+                    (error) -> Void in
+                    XCTAssertNil(error)
+                    expectation.fulfill()
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testDeviceRetrievesDeviceById()
+    {
+        let expectation = super.expectationWithDescription("test 'device' delete device")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.createDefaultDevice(self.session.userId!, completion:
+            {
+                (device, error) -> Void in
+                XCTAssertNil(error)
+                
+                self.client.device(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                {
+                    (device, error) -> Void in
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(device)
+                    self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                    {
+                        (error) -> Void in
+                        XCTAssertNil(error)
+                        expectation.fulfill()
+                    })
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testDeviceUpdateDeviceWithId()
+    {
+        let expectation = super.expectationWithDescription("test 'device' update device")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.createDefaultDevice(self.session.userId!, completion:
+            {
+                (device, error) -> Void in
+                XCTAssertNil(error)
+                
+                let firmwareRev = "2.7.7.7"
+                let softwareRev = "6.8.1"
+                self.client.updateDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, firmwareRevision: firmwareRev, softwareRevision: softwareRev, completion:
+                {
+                    (updatedDevice, error) -> Void in
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(updatedDevice)
+                    
+                    XCTAssertTrue(updatedDevice?.softwareRevision == softwareRev)
+                    XCTAssertTrue(updatedDevice?.firmwareRevision == firmwareRev)
+                    
+                    self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                    {
+                        (error) -> Void in
+                        XCTAssertNil(error)
+                        expectation.fulfill()
+                    })
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
+    {
+        let deviceType = "SMART_STRAP"
+        let manufacturerName = "Fitpay"
+        let deviceName = "PSPS"
+        let serialNumber = "074DCC022E14"
+        let modelNumber = "FB404"
+        let hardwareRevision = "1.0.0.0"
+        let firmwareRevision = "1030.6408.1309.0001"
+        let softwareRevision = "2.0.242009.6"
+        let systemId = "0x123456FFFE9ABCDE"
+        let osName = "ANDROID"
+        let licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
+        let bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
+        let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
+        let pairing = "2016-02-29T21:42:21.469Z"
+        
+        self.client.createNewDevice(userId: self.session.userId!, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
+        {
+            (device, error) -> Void in
+            completion(device: device, error: error)
+        })
     }
 }
