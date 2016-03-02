@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class ResultCollection<T: Mappable> : Mappable
+public class ResultCollection<T: Mappable> : Mappable, SecretApplyable
 {
     public var limit:Int?
     public var offset:Int?
@@ -26,6 +26,17 @@ public class ResultCollection<T: Mappable> : Mappable
             for objectMap in objectsArray {
                 if let modelObject = Mapper<T>().map(objectMap) {
                     results!.append(modelObject)
+                }
+            }
+        }
+    }
+    
+    internal func applySecret(secret:NSData, expectedKeyId:String?)
+    {
+        if let results = self.results {
+            for modelObject in results {
+                if let objectWithEncryptedData = modelObject as? SecretApplyable {
+                    objectWithEncryptedData.applySecret(secret, expectedKeyId: expectedKeyId)
                 }
             }
         }

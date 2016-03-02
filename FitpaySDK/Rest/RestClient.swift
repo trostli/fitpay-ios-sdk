@@ -30,6 +30,7 @@ public class RestClient
         case ServerError3 = 504
     }
 
+    private static let fpKeyIdKey:String = "fp-key-id"
 
     private let defaultHeaders = ["Accept" : "application/json"]
     private var _session:RestSession
@@ -129,7 +130,7 @@ public class RestClient
                     }
                     else if let resultValue = response.result.value
                     {
-                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
+                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
                         completion(user:resultValue, error:response.result.error)
                     }
                     else
@@ -433,10 +434,10 @@ public class RestClient
             (headers, error) -> Void in
             if let headers = headers {
                 let parameters = [
-                    "Limit" : "\(limit)",
-                    "Off Set" : "\(offset)"
+                    "limit" : "\(limit)",
+                    "offset" : "\(offset)"
                 ]
-                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/devices", parameters: parameters, encoding: .JSON, headers: headers)
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/devices", parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
                 request.validate().responseObject(
                 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
@@ -724,10 +725,10 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter ResultCollection<Commit>?: Provides ResultCollection<Commit> object, or nil if error occurs
-     - parameter ErrorType?:                Provides error object, or nil if no error occurs
+     - parameter commits: Provides ResultCollection<Commit> object, or nil if error occurs
+     - parameter error:   Provides error object, or nil if no error occurs
     */
-    public typealias CommitsHandler = (ResultCollection<Commit>?, ErrorType?)->Void
+    public typealias CommitsHandler = (commits:ResultCollection<Commit>?, error:ErrorType?)->Void
     
     /**
      Retrieves a collection of all events that should be committed to this device
@@ -742,7 +743,44 @@ public class RestClient
     public func commits(deviceId deviceId:String, userId:String, commitsAfter:String, limit:Int, offset:Int,
         completion:CommitsHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let parameters = [
+                    "limit" : "\(limit)",
+                    "offset" : "\(offset)"
+                ]
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/devices/\(deviceId)/commits", parameters: parameters, encoding: .URL, headers: headers)
+                request.validate().responseObject(
+                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    {
+                        (response: Response<ResultCollection<Commit>, NSError>) -> Void in
+                        dispatch_async(dispatch_get_main_queue(),
+                        {
+                            if let resultError = response.result.error
+                            {
+                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                
+                                completion(commits: nil, error: error)
+                            }
+                            else if let resultValue = response.result.value
+                            {
+                                resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                completion(commits: resultValue, error: response.result.error)
+                            }
+                            else
+                            {
+                                completion(commits: nil, error: NSError.unhandledError(RestClient.self))
+                            }
+                        })
+                    })
+            }
+            else
+            {
+                completion(commits: nil, error: error)
+            }
+        }
     }
     
     /**
@@ -1037,7 +1075,7 @@ public class RestClient
                     }
                     else
                     {
-                        completion(headers: headers! + ["fp-key-id" : encryptionKey!.keyId!], error: nil)
+                        completion(headers: headers! + [RestClient.fpKeyIdKey : encryptionKey!.keyId!], error: nil)
                     }
                 })
             }

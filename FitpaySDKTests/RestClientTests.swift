@@ -6,8 +6,8 @@ class RestClientTests: XCTestCase
 {
     let clientId = "pagare"
     let redirectUri = "http://demo.pagare.me"
-    let username = "anton.popovichenko@masterofcode.com"
-    let password = "1487"
+    let username = "testable@something.com"
+    let password = "1029"
 
     var session:RestSession!
     var client:RestClient!
@@ -189,7 +189,7 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            self.client.devices(userId: self.session.userId!, limit: 10, offset: 0, completion:
+            self.client.devices(userId: self.session.userId!, limit: 1, offset: 3, completion:
             {
                 (devices, error) -> Void in
                 
@@ -359,6 +359,50 @@ class RestClientTests: XCTestCase
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
+    
+    func testDeviceRetrievesCommitsFromDevice()
+    {
+        let expectation = super.expectationWithDescription("test 'device' retrieving commits from device")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.devices(userId: self.session.userId!, limit: 1, offset: 0, completion:
+            {
+                (devices, error) -> Void in
+                XCTAssertNil(error)
+                self.client.commits(deviceId: devices!.results![0].deviceIdentifier!, userId: self.session.userId!, commitsAfter: "", limit: 10, offset: 0, completion:
+                {
+                    (commits, error) -> Void in
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(commits)
+                    XCTAssertNotNil(commits?.limit)
+                    XCTAssertNotNil(commits?.totalResults)
+                    XCTAssertNotNil(commits?.links)
+                    XCTAssertNotNil(commits?.results)
+                    
+                    for commit in commits!.results! {
+                        XCTAssertNotNil(commit.commitType)
+                        XCTAssertNotNil(commit.payload)
+                    }
+                    
+                    expectation.fulfill()
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
     
     func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
     {

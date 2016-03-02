@@ -152,7 +152,9 @@ public class RestSession
         {
             (response: Response<AuthorizationDetails, NSError>) -> Void in
 
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            dispatch_async(dispatch_get_main_queue(),
+            {
+                () -> Void in
                 completion(response.result.value, response.result.error)
             })
         }
