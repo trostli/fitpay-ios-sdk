@@ -40,7 +40,7 @@ public class RestSession
 {
     public enum Error : Int, ErrorType, RawIntValue
     {
-        case DecodeFailure = 0
+        case DecodeFailure = 1000
         case ParsingFailure
         case AccessTokenFailure
     }
@@ -148,14 +148,26 @@ public class RestSession
 
         let request = Manager.sharedInstance.request(.POST, AUTHORIZE_URL, parameters: parameters, encoding:.URL, headers: headers)
     
-        request.responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {
             (response: Response<AuthorizationDetails, NSError>) -> Void in
 
             dispatch_async(dispatch_get_main_queue(),
             {
                 () -> Void in
-                completion(response.result.value, response.result.error)
+                
+                if let resultError = response.result.error
+                {
+                    completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError))
+                }
+                else if let resultValue = response.result.value
+                {
+                    completion(resultValue, nil)
+                }
+                else
+                {
+                    completion(nil, NSError.unhandledError(RestClient.self))
+                }
             })
         }
     }

@@ -10,23 +10,19 @@ public class CreditCard : Mappable
     public var isDefault:Bool?
     public var created:String?
     public var createdEpoch:CLong?
-    public var lastModifiedEpoch:CLong?
     public var state:String?
     public var cardType:String?
-    public var cardMetaData:CardMetadata?
-    // TODO: Parse fields below
-    public var targetDeviceId:String?
-    public var targetDeviceType:String?
-    public var verificationMethods:[VerificationMethod]?
-    public var deviceRelationships:[DeviceRelationships]?
-    internal var encryptedData:String?
-    public var externalTokenReference:String?
-    public var lastModified:String?
-
+    public var cardMetaData:CardMetadata?    
     public var termsAssetId:String?
     public var termsAssetReferences:[TermsAssetReferences]?
     public var eligibilityExpiration:String?
     public var eligibilityExpirationEpoch:CLong?
+    public var deviceRelationships:[DeviceRelationships]?
+    internal var encryptedData:String?
+    public var targetDeviceId:String?
+    public var targetDeviceType:String?
+    public var verificationMethods:[VerificationMethod]?
+    public var externalTokenReference:String?
     
     public required init?(_ map: Map)
     {
@@ -41,10 +37,19 @@ public class CreditCard : Mappable
         self.isDefault <- map["default"]
         self.created  <- map["createdTs"]
         self.createdEpoch <- map["createdTsEpoch"]
-        self.lastModifiedEpoch <- map["lastModifiedTsEpoch"]
         self.state <- map["state"]
         self.cardType <- map["cardType"]
         self.cardMetaData = Mapper<CardMetadata>().map(map["cardMetaData"].currentValue)
+        self.termsAssetId <- map["termsAssetId"]
+        self.termsAssetReferences <- (map["termsAssetReferences"], TermsAssetReferencesTransformType())
+        self.eligibilityExpiration <- map["eligibilityExpiration"]
+        self.eligibilityExpirationEpoch <- map["eligibilityExpirationEpoch"]
+        self.deviceRelationships <- (map["deviceRelationships"], DeviceRelationshipsTransformType())
+        self.encryptedData <- map["encryptedData"]
+        self.targetDeviceId <- map["targetDeviceId"]
+        self.targetDeviceType <- map["targetDeviceType"]
+        self.verificationMethods <- (map["verificationMethods"], VerificationMethodTransformType())
+        self.externalTokenReference <- map["externalTokenReference"]
     }
 }
 
@@ -65,8 +70,6 @@ public class CardMetadata : Mappable
     public var coBrandLogo:[Image]?
     public var icon:[Image]?
     public var issuerLogo:[Image]?
-
-    public var encryptedData:String?
     
     public required init?(_ map: Map)
     {
@@ -121,7 +124,7 @@ internal class ImageTransformType : TransformType
     
     func transformFromJSON(value: AnyObject?) -> [Image]?
     {
-        if let images = value as? [[String : AnyObject]]
+        if let images = value as? [[String:AnyObject]]
         {
             var list = [Image]()
             
@@ -141,19 +144,60 @@ internal class ImageTransformType : TransformType
     
     func transformToJSON(value:[Image]?) -> [[String:AnyObject]]?
     {
-        //TODO: Implement this upon requested
         return nil
     }
 }
 
 
-public class TermsAssetReferences
+public class TermsAssetReferences : Mappable
 {
     public var links: [ResourceLink]?
     public var mimeType:String?
+    
+    public required init?(_ map: Map)
+    {
+        
+    }
+    
+    public func mapping(map: Map)
+    {
+        self.links <- (map["_links"], ResourceLinkTransformType())
+        self.mimeType <- map["mimeType"]
+    }
 }
 
-public class DeviceRelationships
+internal class TermsAssetReferencesTransformType : TransformType
+{
+    typealias Object = [TermsAssetReferences]
+    typealias JSON = [[String:AnyObject]]
+    
+    func transformFromJSON(value: AnyObject?) -> [TermsAssetReferences]?
+    {
+        if let items = value as? [[String:AnyObject]]
+        {
+            var list = [TermsAssetReferences]()
+            
+            for raw in items
+            {
+                if let item = Mapper<TermsAssetReferences>().map(raw)
+                {
+                    list.append(item)
+                }
+            }
+            
+            return list
+        }
+        
+        return nil
+    }
+    
+    func transformToJSON(value:[TermsAssetReferences]?) -> [[String:AnyObject]]?
+    {
+        return nil
+    }
+}
+
+public class DeviceRelationships : Mappable
 {
     public var deviceType:String?
     public var links: [ResourceLink]?
@@ -169,13 +213,68 @@ public class DeviceRelationships
     public var createdEpoch:CLong?
     public var osName:String?
     public var systemId:String?
+    
+    public required init?(_ map: Map)
+    {
+        
+    }
+    
+    public func mapping(map: Map)
+    {
+        self.deviceType <- map["deviceType"]
+        self.links <- (map["_links"], ResourceLinkTransformType())
+        self.deviceIdentifier <- map["deviceIdentifier"]
+        self.manufacturerName <- map["manufacturerName"]
+        self.deviceName <- map["deviceName"]
+        self.serialNumber <- map["serialNumber"]
+        self.modelNumber <- map["modelNumber"]
+        self.hardwareRevision <- map["hardwareRevision"]
+        self.firmwareRevision <- map["firmwareRevision"]
+        self.softwareRevision <- map["softwareRevision"]
+        self.created <- map["createdTs"]
+        self.createdEpoch <- map["createdTsEpoch"]
+        self.osName <- map["osName"]
+        self.systemId <- map["systemId"]
+    }
 }
 
-public class CardInfo
+internal class DeviceRelationshipsTransformType : TransformType
 {
-    public var pan:String?
-    public var expMonth:Int?
-    public var expYear:Int?
-    public var cvv:Int?
-    public var address:Address?
+    typealias Object = [DeviceRelationships]
+    typealias JSON = [[String:AnyObject]]
+    
+    func transformFromJSON(value: AnyObject?) -> [DeviceRelationships]?
+    {
+        if let items = value as? [[String:AnyObject]]
+        {
+            var list = [DeviceRelationships]()
+            
+            for raw in items
+            {
+                if let item = Mapper<DeviceRelationships>().map(raw)
+                {
+                    list.append(item)
+                }
+            }
+            
+            return list
+        }
+        
+        return nil
+    }
+    
+    func transformToJSON(value:[DeviceRelationships]?) -> [[String:AnyObject]]?
+    {
+        return nil
+    }
+}
+
+
+internal class CardInfo
+{
+    var pan:String?
+    var expMonth:Int?
+    var expYear:Int?
+    var cvv:Int?
+    var address:Address?
 }

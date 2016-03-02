@@ -6,8 +6,8 @@ class RestClientTests: XCTestCase
 {
     let clientId = "pagare"
     let redirectUri = "http://demo.pagare.me"
-    let username = "pagareuser@fit-pay.com"
-    let password = "pagaresecret"
+    let username = "testable@something.com"
+    let password = "1029"
 
     var session:RestSession!
     var client:RestClient!
@@ -99,7 +99,6 @@ class RestClientTests: XCTestCase
                 (retrievedEncryptionKey, retrievedError) -> Void in
                 
                 XCTAssertNotNil(retrievedError)
-                print(retrievedError)
                 expectation.fulfill()
         })
         
@@ -111,32 +110,32 @@ class RestClientTests: XCTestCase
         let expectation = super.expectationWithDescription("'deleteEncryptionKey' deletes key")
 
         self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!, completion:
+        {
+            [unowned self](createdEncryptionKey, createdError) -> Void in
+            
+            self.client.encryptionKey((createdEncryptionKey?.keyId)!, completion:
             {
-                [unowned self](createdEncryptionKey, createdError) -> Void in
+                [unowned self](retrievedEncryptionKey, retrievedError) -> Void in
                 
-                self.client.encryptionKey((createdEncryptionKey?.keyId)!, completion:
+                self.client.deleteEncryptionKey((retrievedEncryptionKey?.keyId)!, completion:
                 {
-                    [unowned self](retrievedEncryptionKey, retrievedError) -> Void in
+                    [unowned self](error) -> Void in
                     
-                    self.client.deleteEncryptionKey((retrievedEncryptionKey?.keyId)!, completion:
+                    XCTAssertNil(error)
+                    
+                    self.client.encryptionKey((retrievedEncryptionKey?.keyId)!, completion:
                     {
-                        [unowned self](error) -> Void in
-                        
-                        XCTAssertNil(error)
-                        
-                        self.client.encryptionKey((retrievedEncryptionKey?.keyId)!, completion:
-                        {
-                                (againRetrievedEncryptionKey, againRetrievedError) -> Void in
-                                
-                                XCTAssertNil(againRetrievedEncryptionKey)
-                                XCTAssertNotNil(againRetrievedError)
+                            (againRetrievedEncryptionKey, againRetrievedError) -> Void in
                             
-                                expectation.fulfill()
-                        })
+                            XCTAssertNil(againRetrievedEncryptionKey)
+                            XCTAssertNotNil(againRetrievedError)
+                        
+                            expectation.fulfill()
                     })
                 })
-                
             })
+            
+        })
 
         super.waitForExpectationsWithTimeout(100, handler: nil)
     }
@@ -148,6 +147,16 @@ class RestClientTests: XCTestCase
         self.session.login(username: self.username, password: self.password)
         {
             [unowned self](error) -> Void in
+            
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
             self.client.user(id: self.session.userId!, completion:
             {
                 (user, error) -> Void in
@@ -160,8 +169,6 @@ class RestClientTests: XCTestCase
                 XCTAssertNotNil(user?.lastModified)
                 XCTAssertNotNil(user?.lastModifiedEpoch)
                 XCTAssertNotNil(user?.encryptedData)
-                XCTAssertNotNil(user?.info?.firstName)
-                XCTAssertNotNil(user?.info?.lastName)
                 XCTAssertNotNil(user?.info?.email)
                 XCTAssertNil(error)
                 
@@ -179,11 +186,48 @@ class RestClientTests: XCTestCase
         self.session.login(username: self.username, password: self.password)
         {
             [unowned self](error) -> Void in
+            
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
             self.client.creditCards(userId: self.session.userId!, excludeState:[], limit: 10, offset: 0, completion:
             {
                 (result, error) -> Void in
                 
+                XCTAssertNil(error)
+                XCTAssertNotNil(result)
+                XCTAssertNotNil(result?.limit)
+                XCTAssertNotNil(result?.offset)
+                XCTAssertNotNil(result?.totalResults)
+                XCTAssertNotNil(result?.results)
+                XCTAssertNotEqual(result?.results?.count, 0)
                 
+                if let results = result?.results
+                {
+                    for card in results
+                    {
+                        XCTAssertNotNil(card.links)
+                        XCTAssertNotNil(card.creditCardId)
+                        XCTAssertNotNil(card.userId)
+                        XCTAssertNotNil(card.isDefault)
+                        XCTAssertNotNil(card.created)
+                        XCTAssertNotNil(card.createdEpoch)
+                        XCTAssertNotNil(card.state)
+                        XCTAssertNotNil(card.cardType)
+                        XCTAssertNotNil(card.cardMetaData)
+                        XCTAssertNotNil(card.deviceRelationships)
+                        XCTAssertNotEqual(card.deviceRelationships?.count, 0)
+                        XCTAssertNotNil(card.encryptedData)
+                    }
+                }
+                
+                XCTAssertNotNil(result?.links)
                 
                 expectation.fulfill()
             })

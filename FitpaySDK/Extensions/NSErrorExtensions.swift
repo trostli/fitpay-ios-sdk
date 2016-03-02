@@ -17,11 +17,15 @@ extension NSError
                 return NSError(domain: "\(domain)", code:code, userInfo: [NSLocalizedDescriptionKey : messages[0]])
             }
         }
+        else if let message = data?.errorMessage
+        {
+            return NSError(domain: "\(domain)", code:code, userInfo: [NSLocalizedDescriptionKey : message])
+        }
         else if let message = data?.UTF8String
         {
             return NSError(domain: "\(domain)", code:code, userInfo: [NSLocalizedDescriptionKey : message])
         }
-        
+                
         let userInfo:[NSObject : AnyObject] = alternativeError?.userInfo != nil ? alternativeError!.userInfo : [NSLocalizedDescriptionKey: ""]
         return NSError(domain: "\(domain)", code:code, userInfo: userInfo )
     }
@@ -34,24 +38,5 @@ extension NSError
     class func unhandledError(domain:AnyClass) -> NSError
     {
         return NSError(domain:"\(domain)", code:0, userInfo: [NSLocalizedDescriptionKey : "Unhandled error"])
-    }
-
-    func errorWithData(data:NSData?)->NSError
-    {
-        if let data = data
-        {
-            let messages = data.errorMessages
-
-            if messages.count > 0
-            {
-                return NSError(domain:self.domain, code:self.code, userInfo: [NSLocalizedDescriptionKey : messages[0]])
-            }
-            else if let string = data.UTF8String
-            {
-                return NSError(domain:self.domain, code:self.code, userInfo: [NSLocalizedDescriptionKey : string])
-            }
-        }
-
-        return self
     }
 }
