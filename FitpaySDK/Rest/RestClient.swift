@@ -303,11 +303,123 @@ public class RestClient
     /**
     Completion handler
     
+    - parameter creditCard: Provides credit card object, or nil if error occurs
+    - parameter error:      Provides error object, or nil if no error occurs
+    */
+    public typealias CreateCreditCardHandler = (creditCard:CreditCard?, error:ErrorType?)->Void
+    
+    /**
+     Add a single credit card to a user's profile. If the card owner has no default card, then the new card will become the default.
+     
+     - parameter userId:     user id
+     - parameter pan:        pan
+     - parameter expMonth:   expiration month
+     - parameter expYear:    expiration year
+     - parameter cvv:        cvv code
+     - parameter name:       user name
+     - parameter street1:    address
+     - parameter street2:    address
+     - parameter street3:    street name
+     - parameter city:       address
+     - parameter state:      state
+     - parameter postalCode: postal code
+     - parameter country:    country
+     - parameter completion: CreateCreditCardHandler closure
+     */
+    public func createCreditCard(userId userId:String, pan:String, expMonth:Int, expYear:Int, cvv:String, name:String,
+        street1:String, street2:String, street3:String, city:String, state:String, postalCode:String, country:String,
+        completion:CreateCreditCardHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                var parameters:[String : String] = [:]
+                
+                let rawCard = [
+                    "pan" : pan,
+                    "expMonth" : expMonth,
+                    "expYear" : expYear,
+                    "cvv" : cvv,
+                    "name" : name,
+                    "address" : [
+                        "street1" : street1,
+                        "street2" : street2,
+                        "street3" : street3,
+                        "city" : city,
+                        "state" : state,
+                        "postalCode" : postalCode,
+                        "country" : country
+                        ]
+                ] as [String : AnyObject]
+                
+                if let cardJSON = rawCard.JSONString
+                {
+                    if let jweObject = try? JWEObject.createNewObject("A256GCMKW", enc: "A256GCM", payload: cardJSON, keyId:headers[RestClient.fpKeyIdKey]!)
+                    {
+                        if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
+                        {
+                            parameters["encryptedData"] = encrypted
+                        }
+                    }
+                }
+            
+                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards", parameters: parameters, encoding: .JSON, headers: headers)
+                
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<CreditCard, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(creditCard: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            completion(creditCard:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            completion(creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        completion(creditCard:nil, error: error)
+                })
+            }
+        }
+    }
+    
+    /**
+    Completion handler
+    
     - parameter result: Provides collection of credit cards, or nil if error occurs
     - parameter error:  Provides error object, or nil if no error occurs
     */
     public typealias CreditCardsHandler = (result:ResultCollection<CreditCard>?, error:ErrorType?) -> Void
 
+    /**
+     Retrieves the details of an existing credit card. You need only supply the uniqueidentifier that was returned upon creation.
+     
+     - parameter userId:       user id
+     - parameter excludeState: Exclude all credit cards in the specified state. If you desire to specify multiple excludeState values, then repeat this query parameter multiple times.
+     - parameter limit:        max number of profiles per page
+     - parameter offset:       start index position for list of entities returned
+     - parameter completion:   CreditCardsHandler closure
+     */
     public func creditCards(userId userId:String, excludeState:[String], limit:Int, offset:Int, completion:CreditCardsHandler)
     {
         self.prepareAuthAndKeyHeaders
@@ -332,6 +444,7 @@ public class RestClient
                         }
                         else if let resultValue = response.result.value
                         {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
                             completion(result:resultValue, error: nil)
                         }
                         else
@@ -351,8 +464,6 @@ public class RestClient
             }
         }
     }
-    
-    
     
     /**
      Completion handler
@@ -1090,8 +1201,6 @@ public class RestClient
      - parameter keyId:      key id
      - parameter completion: EncryptionKeyHandler closure
      */
-    
-    
     internal func encryptionKey(keyId:String, completion:EncryptionKeyHandler)
     {
         let headers = self.defaultHeaders
