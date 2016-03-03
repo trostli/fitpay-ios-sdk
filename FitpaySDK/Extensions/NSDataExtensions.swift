@@ -23,23 +23,39 @@ extension NSData
         return dictionary
     }
 
-    var errorMessages:[String]
+    var errorMessages:[String]?
     {
-        var messages = [String]()
+        var messages:[String]?
         if let dict:[String : AnyObject] = self.dictionary
         {
             if let errors = dict["errors"] as? [[String : String]]
             {
+                messages = []
                 for error in errors
                 {
                     if let message = error["message"]
                     {
-                        messages.append(message)
+                        messages!.append(message)
                     }
                 }
             }
         }
-        
         return messages
+    }
+    
+    var errorMessage:String?
+    {
+        if let dict = self.dictionary
+        {
+            if let messageDict = dict as? [String : String]
+            {
+                if let message = messageDict["message"]
+                {
+                    return message
+                }
+            }
+        }
+        
+        return nil
     }
 }

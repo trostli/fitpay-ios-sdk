@@ -8,8 +8,8 @@ class RestSessionTests: XCTestCase
     var session:RestSession!
     let clientId = "pagare"
     let redirectUri = "http://demo.pagare.me"
-    let username = "pagareuser@fit-pay.com"
-    let password = "pagaresecret"
+    let username = "testable@something.com"
+    let password = "1029"
     
     override func setUp()
     {
@@ -26,7 +26,7 @@ class RestSessionTests: XCTestCase
     
     func testAcquireAccessTokenRetrievesToken()
     {
-        let expectation = super.expectationWithDescription("Test acquireAccessToken retrieves auth details")
+        let expectation = super.expectationWithDescription("'acquireAccessToken' retrieves auth details")
 
         self.session.acquireAccessToken(clientId:self.clientId, redirectUri:self.redirectUri,
                 username:self.username, password:self.password, completion:
@@ -48,7 +48,7 @@ class RestSessionTests: XCTestCase
     
     func testLoginRetrievesUserId()
     {
-        let expectation = super.expectationWithDescription("Test login retrieves access token")
+        let expectation = super.expectationWithDescription("'login' retrieves user id")
         
         self.session.login(username: self.username, password: self.password)
         {
@@ -59,6 +59,24 @@ class RestSessionTests: XCTestCase
             XCTAssertNotNil(self.session.userId)
             
             expectation.fulfill()
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testLoginFailsForWrongCredentials()
+    {
+        let expectation = super.expectationWithDescription("'login' fails for wrond credentials")
+        
+        self.session.login(username: "totally@wrong.abc", password:"this is wrong")
+            {
+                [unowned self]
+                (error) -> Void in
+                
+                XCTAssertNotNil(error)
+                XCTAssertNil(self.session.userId)
+                
+                expectation.fulfill()
         }
         
         super.waitForExpectationsWithTimeout(10, handler: nil)

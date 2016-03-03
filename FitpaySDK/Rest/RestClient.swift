@@ -122,26 +122,34 @@ public class RestClient
                 {
                     (response: Response<User, NSError>) -> Void in
                     
-                    if let resultError = response.result.error
+                    dispatch_async(dispatch_get_main_queue(),
                     {
-                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                        
-                        completion(user:nil, error: error)
-                    }
-                    else if let resultValue = response.result.value
-                    {
-                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                        completion(user:resultValue, error:response.result.error)
-                    }
-                    else
-                    {
-                        completion(user: nil, error: NSError.unhandledError(RestClient.self))
-                    }
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(user:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            completion(user:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(user: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
                 })
             }
             else
             {
-                completion(user: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    () -> Void in
+                    completion(user: nil, error: error)
+                })
             }
             
         })
@@ -255,7 +263,61 @@ public class RestClient
     }
 
     // MARK: Credit Card
+    
+    /**
+    Completion handler
+    
+    - parameter result: Provides collection of credit cards, or nil if error occurs
+    - parameter error:  Provides error object, or nil if no error occurs
+    */
+    public typealias CreditCardsHandler = (result:ResultCollection<CreditCard>?, error:ErrorType?) -> Void
 
+    public func creditCards(userId userId:String, excludeState:[String], limit:Int, offset:Int, completion:CreditCardsHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let parameters:[String : AnyObject] = ["excludeState" : excludeState.joinWithSeparator(","), "limit" : limit, "offest" : offset]
+                let request = self._manager.request(.GET, API_BASE_URL + "/users/" + userId + "/creditCards", parameters: parameters, encoding: .JSON, headers: headers)
+                
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<ResultCollection<CreditCard>, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(result:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(result:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            completion(result:nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    () -> Void in
+                    completion(result:nil, error: error)
+                })
+            }
+        }
+    }
+    
+    
+    
     /**
      Completion handler
 
@@ -274,7 +336,7 @@ public class RestClient
      */
     public func acceptTerms(creditCardId creditCardId:String, userId:String, completion:AcceptTermsHandler)
     {
-
+        
     }
     
     /**
