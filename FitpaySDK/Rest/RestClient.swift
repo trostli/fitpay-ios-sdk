@@ -786,10 +786,10 @@ public class RestClient
     /**
      Completion handler
      
-     - parameter Commit?:    Provides Commit object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter commit:    Provides Commit object, or nil if error occurs
+     - parameter error:     Provides error object, or nil if no error occurs
      */
-    public typealias CommitHandler = (Commit?, ErrorType?)->Void
+    public typealias CommitHandler = (commit:Commit?, error:ErrorType?)->Void
     
     /**
      Retrieves an individual commit
@@ -801,7 +801,40 @@ public class RestClient
      */
     public func commit(commitId commitId:String, deviceId:String, userId:String, completion:CommitHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/devices/\(deviceId)/commits/\(commitId)", parameters: nil, encoding: .URL, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<Commit, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(commit: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            completion(commit: resultValue, error: response.result.error)
+                        }
+                        else
+                        {
+                            completion(commit: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                completion(commit: nil, error: error)
+            }
+        }
     }
 
     // MARK: Transactions

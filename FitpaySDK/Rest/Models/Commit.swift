@@ -23,7 +23,7 @@ public class Commit : Mappable, SecretApplyable
         commitType <- map["commitType"]
         created <- map["createdTs"]
         previousCommit <- map["previousCommit"]
-        commit <- map["commit"]
+        commit <- map["commitId"]
         encryptedData <- map["encryptedData"]
     }
     
