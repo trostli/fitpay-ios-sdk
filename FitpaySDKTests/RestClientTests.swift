@@ -252,7 +252,7 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            self.client.devices(userId: self.session.userId!, limit: 1, offset: 3, completion:
+            self.client.devices(userId: self.session.userId!, limit: 10, offset: 0, completion:
             {
                 (devices, error) -> Void in
                 

@@ -550,6 +550,8 @@ public class RestClient
                         }
                         else if let resultValue = response.result.value
                         {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            
                             completion(devices:resultValue, error:response.result.error)
                         }
                         else
@@ -635,6 +637,7 @@ public class RestClient
                         }
                         else if let resultValue = response.result.value
                         {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
                             completion(device:resultValue, error:response.result.error)
                         }
                         else
@@ -688,6 +691,8 @@ public class RestClient
                         }
                         else if let resultValue = response.result.value
                         {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            
                             completion(device:resultValue, error:response.result.error)
                         }
                         else
@@ -764,6 +769,8 @@ public class RestClient
                             }
                             else if let resultValue = response.result.value
                             {
+                                resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                
                                 completion(device:resultValue, error:response.result.error)
                             }
                             else

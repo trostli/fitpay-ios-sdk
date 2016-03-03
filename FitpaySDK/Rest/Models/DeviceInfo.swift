@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class DeviceInfo : Mappable
+public class DeviceInfo : Mappable, SecretApplyable
 {
     public var links:[ResourceLink]?
     public var deviceIdentifier:String?
@@ -49,17 +49,62 @@ public class DeviceInfo : Mappable
         bdAddress <- map["bdAddress"]
         pairing <- map["pairing"]
         secureElementId <- map["secureElementId"]
-        //TODO: cardRelationships
-        // cardRelationships <- map["cardRelationships"]
+        
+        if let cardRelationships = map["cardRelationships"].currentValue as? [AnyObject] {
+            if cardRelationships.count > 0 {
+                self.cardRelationships = [CardRelationship]()
+                
+                for itrObj in cardRelationships {
+                    if let parsedObj = Mapper<CardRelationship>().map(itrObj) {
+                        self.cardRelationships!.append(parsedObj)
+                    }
+                }
+            }
+        }
         
         metadata = map.JSONDictionary
     }
+    
+    func applySecret(secret:NSData, expectedKeyId:String?) {
+        if let cardRelationships = self.cardRelationships {
+            for modelObject in cardRelationships {
+                modelObject.applySecret(secret, expectedKeyId: expectedKeyId)
+            }
+        }
+    }
 }
 
-public class CardRelationship
+public class CardRelationship : Mappable, SecretApplyable
 {
     public var links:[ResourceLink]?
+    public var creditCardId:String?
     public var pan:String?
-    public var expMonth:String?
-    public var expYear:String?
+    public var expMonth:Int?
+    public var expYear:Int?
+    
+    internal var encryptedData:String?
+    
+    public required init?(_ map: Map)
+    {
+        
+    }
+    
+    public func mapping(map: Map)
+    {
+        links <- (map["_links"], ResourceLinkTransformType())
+        creditCardId <- map["creditCardId"]
+        encryptedData <- map["encryptedData"]
+        pan <- map["pan"]
+        expMonth <- map["expMonth"]
+        expYear <- map["expYear"]
+    }
+    
+    internal func applySecret(secret:NSData, expectedKeyId:String?)
+    {
+        if let decryptedObj : CardRelationship? = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
+            self.pan = decryptedObj?.pan
+            self.expMonth = decryptedObj?.expMonth
+            self.expYear = decryptedObj?.expYear
+        }
+    }
 }
