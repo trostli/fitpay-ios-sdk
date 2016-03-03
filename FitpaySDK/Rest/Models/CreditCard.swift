@@ -23,6 +23,7 @@ public class CreditCard : Mappable, SecretApplyable
     public var targetDeviceType:String?
     public var verificationMethods:[VerificationMethod]?
     public var externalTokenReference:String?
+    internal var info:CardInfo?
     
     public required init?(_ map: Map)
     {
@@ -54,7 +55,7 @@ public class CreditCard : Mappable, SecretApplyable
     
     func applySecret(secret:Foundation.NSData, expectedKeyId:String?)
     {
-        
+        self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
 }
 
@@ -275,11 +276,25 @@ internal class DeviceRelationshipsTransformType : TransformType
 }
 
 
-internal class CardInfo
+internal class CardInfo : Mappable
 {
     var pan:String?
     var expMonth:Int?
     var expYear:Int?
-    var cvv:Int?
+    var cvv:String?
     var address:Address?
+    
+    required init?(_ map: Map)
+    {
+        
+    }
+    
+    func mapping(map: Map)
+    {
+        self.pan <- map["pan"]
+        self.expMonth <- map["expMonth"]
+        self.expYear <- map["expYear"]
+        self.cvv <- map["cvv"]
+        self.address = Mapper<Address>().map(map["address"].currentValue)
+    }
 }
