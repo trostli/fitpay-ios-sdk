@@ -203,10 +203,10 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter Relationship?: Provides Relationship object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter relationship: Provides Relationship object, or nil if error occurs
+     - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias RelationshipHandler = (Relationship?, ErrorType?)->Void
+    public typealias RelationshipHandler = (relationship:Relationship?, error:ErrorType?)->Void
 
     /**
      Get a single relationship
@@ -218,7 +218,43 @@ public class RestClient
      */
     public func relationship(userId userId:String, creditCardId:String, deviceId:String, completion:RelationshipHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let parameters = [
+                    "creditCardId" : "\(creditCardId)",
+                    "deviceId" : "\(deviceId)"
+                ]
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/relationships", parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<Relationship, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(relationship:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(relationship:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(relationship: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                completion(relationship: nil, error: error)
+            }
+        }
     }
 
     /**

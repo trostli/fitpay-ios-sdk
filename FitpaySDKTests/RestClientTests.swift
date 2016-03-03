@@ -524,6 +524,59 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(15, handler: nil)
     }
     
+    func testRelationshipsRetrievesRelationshipsWithUserId()
+    {
+        let expectation = super.expectationWithDescription("test 'relationships' retrieving relationships with user id")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            //TODO: should create new device and new card
+            self.client.devices(userId: self.session.userId!, limit: 1, offset: 0, completion:
+            {
+                (devices, error) -> Void in
+                XCTAssertNil(error)
+                
+                for device in devices!.results! {
+                    self.client.creditCards(userId: self.session.userId!, excludeState:[], limit: 1, offset: 0, completion:
+                    {
+                        (result, error) -> Void in
+                        
+                        XCTAssertNil(error)
+                        XCTAssertNotNil(result)
+                        XCTAssertNotNil(result?.results)
+                        
+                        for card in result!.results! {
+                            self.client.relationship(userId: self.session.userId!, creditCardId: card.creditCardId!, deviceId: device.deviceIdentifier!, completion:
+                            {
+                                (relationship, error) -> Void in
+                                
+                                XCTAssertNil(error)
+                                XCTAssertNotNil(relationship)
+                                XCTAssertNotNil(relationship?.device)
+                                XCTAssertNotNil(relationship?.card)
+                                expectation.fulfill()
+                            })
+                            break
+                        }
+                    })
+                    break
+                }
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(15, handler: nil)
+    }
+    
     func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
     {
         let deviceType = "SMART_STRAP"

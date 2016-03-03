@@ -275,11 +275,29 @@ internal class DeviceRelationshipsTransformType : TransformType
 }
 
 
-internal class CardInfo
+internal class CardInfo : Mappable
 {
     var pan:String?
     var expMonth:Int?
     var expYear:Int?
     var cvv:Int?
+    var creditCardId:String?
+    var name:String?
     var address:Address?
+    
+    internal required init?(_ map: Map)
+    {
+        
+    }
+    
+    internal func mapping(map: Map)
+    {
+        pan <- map["pan"]
+        creditCardId <- map["creditCardId"]
+        expMonth <- map["expMonth"]
+        expYear <- map["expYear"]
+        address <- map["address"]
+        cvv <- map["cvv"]
+        name <- map["name"]
+    }
 }
