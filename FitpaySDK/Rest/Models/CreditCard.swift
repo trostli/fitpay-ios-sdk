@@ -2,7 +2,7 @@
 import Foundation
 import ObjectMapper
 
-public class CreditCard : Mappable
+public class CreditCard : Mappable, SecretApplyable
 {
     public var links:[ResourceLink]?
     public var creditCardId:String?
@@ -50,6 +50,11 @@ public class CreditCard : Mappable
         self.targetDeviceType <- map["targetDeviceType"]
         self.verificationMethods <- (map["verificationMethods"], VerificationMethodTransformType())
         self.externalTokenReference <- map["externalTokenReference"]
+    }
+    
+    func applySecret(secret:Foundation.NSData, expectedKeyId:String?)
+    {
+        
     }
 }
 

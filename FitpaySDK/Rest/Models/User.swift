@@ -30,22 +30,7 @@ public class User : Mappable, SecretApplyable
     
     internal func applySecret(secret:NSData, expectedKeyId:String?)
     {
-        if let encryptedData = self.encryptedData
-        {
-            let jweResult = JWEObject.parse(payload: encryptedData)
-
-            if let kid = jweResult?.header?.kid, let expectedKeyId = expectedKeyId
-            {
-                // decrypt only if keys match
-                if kid == expectedKeyId
-                {
-                    if let decryptResult = try? jweResult?.decrypt(secret)
-                    {
-                        self.info = Mapper<UserInfo>().map(decryptResult)
-                    }
-                }
-            }
-        }
+        self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
 }
 
