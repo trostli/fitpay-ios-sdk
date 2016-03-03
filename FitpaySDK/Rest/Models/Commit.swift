@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class Commit : Mappable
+public class Commit : Mappable, SecretApplyable
 {
     var links:[ResourceLink]?
     var commitType:CommitType?
@@ -10,6 +10,8 @@ public class Commit : Mappable
     var previousCommit:String?
     var commit:String?
     
+    internal var encryptedData:String?
+    
     public required init?(_ map: Map)
     {
         
@@ -17,7 +19,32 @@ public class Commit : Mappable
     
     public func mapping(map: Map)
     {
-        
+        links <- (map["_links"], ResourceLinkTransformType())
+        commitType <- map["commitType"]
+        created <- map["createdTs"]
+        previousCommit <- map["previousCommit"]
+        commit <- map["commit"]
+        encryptedData <- map["encryptedData"]
+    }
+    
+    internal func applySecret(secret:NSData, expectedKeyId:String?)
+    {
+        if let encryptedData = self.encryptedData
+        {
+            let jweResult = JWEObject.parse(payload: encryptedData)
+            
+            if let kid = jweResult?.header?.kid, let expectedKeyId = expectedKeyId
+            {
+                // decrypt only if keys match
+                if kid == expectedKeyId
+                {
+                    if let decryptResult = try? jweResult?.decrypt(secret)
+                    {
+                        self.payload = Mapper<Payload>().map(decryptResult)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -32,7 +59,17 @@ public enum CommitType : String
     case APDU_PACKAGE = "APDU_PACKAGE"
 }
 
-public class Payload
+public class Payload : Mappable
 {
     var info = [String : AnyObject]()
+    
+    public required init?(_ map: Map)
+    {
+        
+    }
+    
+    public func mapping(map: Map)
+    {
+        info = map.JSONDictionary
+    }
 }
