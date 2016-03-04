@@ -677,16 +677,22 @@ class RestClientTests: XCTestCase
                             
                             XCTAssertNil(error)
                             
-                            self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                            self.client.relationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
                             {
-                                (error) -> Void in
+                                (relationship, error) -> Void in
+                                XCTAssertNotNil(error)
                                 
-                                XCTAssertNil(error)
+                                self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                                {
+                                    (error) -> Void in
+                                    
+                                    XCTAssertNil(error)
+                                })
+                                
+                                //TODO: delete card
+                                
+                                expectation.fulfill()
                             })
-                            
-                            //TODO: delete card
-                            
-                            expectation.fulfill()
                         })
                     })
                 })
