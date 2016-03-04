@@ -778,37 +778,63 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            //TODO: should create new device and new card
-            self.client.devices(userId: self.session.userId!, limit: 1, offset: 0, completion:
+            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
             {
-                (devices, error) -> Void in
-                XCTAssertNil(error)
+                (card, error) -> Void in
                 
-                for device in devices!.results! {
-                    self.client.creditCards(userId: self.session.userId!, excludeState:[], limit: 1, offset: 0, completion:
+                XCTAssertNil(error)
+                XCTAssertNotNil(card)
+                
+                self.createDefaultDevice(self.session.userId!, completion:
+                {
+                    (device, error) -> Void in
+                    
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(device)
+                    
+                    self.client.createRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
                     {
-                        (result, error) -> Void in
+                        (relationship, error) -> Void in
                         
                         XCTAssertNil(error)
-                        XCTAssertNotNil(result)
-                        XCTAssertNotNil(result?.results)
+                        XCTAssertNotNil(device)
                         
-                        for card in result!.results! {
-                            self.client.relationship(userId: self.session.userId!, creditCardId: card.creditCardId!, deviceId: device.deviceIdentifier!, completion:
+                        XCTAssertNotNil(relationship?.device)
+                        XCTAssertNotNil(relationship?.card)
+                        
+                        self.client.relationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                        {
+                            (relationship, error) -> Void in
+                            XCTAssertNil(error)
+                            XCTAssertNotNil(relationship)
+                            XCTAssertNotNil(relationship?.device)
+                            XCTAssertNotNil(relationship?.card)
+                        
+                            self.client.deleteRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
                             {
-                                (relationship, error) -> Void in
+                                (error) -> Void in
                                 
                                 XCTAssertNil(error)
-                                XCTAssertNotNil(relationship)
-                                XCTAssertNotNil(relationship?.device)
-                                XCTAssertNotNil(relationship?.card)
-                                expectation.fulfill()
+                                    
+                                self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                                {
+                                    (error) -> Void in
+                                    
+                                    XCTAssertNil(error)
+                                    
+                                    self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                    {
+                                        (error) -> Void in
+                                        
+                                        XCTAssertNil(error)
+                                        
+                                        expectation.fulfill()
+                                    })
+                                })
                             })
-                            break
-                        }
+                        })
                     })
-                    break
-                }
+                })
             })
         }
         
@@ -871,11 +897,13 @@ class RestClientTests: XCTestCase
                                     (error) -> Void in
                                     
                                     XCTAssertNil(error)
+                                    self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                    {
+                                        (error) -> Void in
+                                        XCTAssertNil(error)
+                                        expectation.fulfill()
+                                    })
                                 })
-                                
-                                //TODO: delete card
-                                
-                                expectation.fulfill()
                             })
                         })
                     })
