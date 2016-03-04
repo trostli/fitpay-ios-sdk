@@ -454,7 +454,7 @@ public class RestClient
             else
             {
                 dispatch_async(dispatch_get_main_queue(),
-                    {
+                {
                         () -> Void in
                         completion(creditCard:nil, error: error)
                 })
@@ -519,6 +519,96 @@ public class RestClient
                 {
                     () -> Void in
                     completion(result:nil, error: error)
+                })
+            }
+        }
+    }
+    
+    public typealias CreditCardHandler = (creditCard:CreditCard?, error:ErrorType?)->Void
+    
+    public func creditCard(creditCardId creditCardId:String, userId:String, completion:CreditCardHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.GET, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId, parameters: nil, encoding: .JSON, headers: headers)
+                
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<CreditCard, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(creditCard:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            completion(creditCard:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            completion(creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        completion(creditCard:nil, error: error)
+                })
+            }
+        }
+    }
+    
+    public typealias DeleteCreditCardHandler = (error:ErrorType?)->Void
+    
+    public func deleteCreditCard(creditCardId creditCardId:String, userId:String, completion:DeleteCreditCardHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.DELETE, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId, parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseData(
+                {
+                    (response:Response<NSData, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(error: error)
+                        }
+                        else if let _ = response.result.value
+                        {
+                            completion(error: nil)
+                        }
+                        else
+                        {
+                            completion(error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    () -> Void in
+                    completion(error: error)
                 })
             }
         }
