@@ -283,6 +283,7 @@ internal class CardInfo : Mappable
     var expYear:Int?
     var cvv:String?
     var address:Address?
+    var name:String?
     
     required init?(_ map: Map)
     {
@@ -296,5 +297,6 @@ internal class CardInfo : Mappable
         self.expYear <- map["expYear"]
         self.cvv <- map["cvv"]
         self.address = Mapper<Address>().map(map["address"].currentValue)
+        self.name <- map["name"]
     }
 }
