@@ -439,7 +439,7 @@ public class RestClient
             if let headers = headers
             {
                 let request = self._manager.request(.GET, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId, parameters: nil, encoding: .JSON, headers: headers)
-                
+                print(headers)
                 request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response:Response<CreditCard, NSError>) -> Void in
@@ -581,18 +581,18 @@ public class RestClient
                         ])
                 }
                 
-                if let updateJSON = "[{\"op\": \"replace\", \"path\": \"/address/city\", \"value\" : \(city)}]" as? String//operations.JSONString
+                if let updateJSON = operations.JSONString
                 {
                     if let jweObject = try? JWEObject.createNewObject("A256GCMKW", enc: "A256GCM", payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                     {
-                        if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
+                        if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
                         {
                             parameters["encryptedData"] = encrypted
                         }
                     }
                 }
                 
-                let request = self._manager.request(.PATCH, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId, parameters: nil, encoding: .JSON, headers: headers)
+                let request = self._manager.request(.PATCH, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId, parameters: parameters, encoding: .JSON, headers: headers)
                 
                 request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
@@ -1278,10 +1278,10 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter AnyObject?: Provides AnyObject (UIImage or String) object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter asset: Provides Asset object, or nil if error occurs
+     - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias AssetsHandler = (AnyObject?, ErrorType?)->Void
+    public typealias AssetsHandler = (asset:Asset?, error:ErrorType?)->Void
 
     /**
      Retrieve an individual asset (i.e. terms and conditions)
@@ -1291,8 +1291,15 @@ public class RestClient
      - parameter assetId:     asset id
      - parameter completion:  AssetsHandler closure
      */
-    public func assets(adapterData:String, adapterId:String, assetId:String, completion:AssetsHandler)
+    public func assets(adapterData adapterData:String, adapterId:String, assetId:String, completion:AssetsHandler)
     {
+        let patameters = ["adapterData" : adapterData, "adapterId" : adapterId, "assetId" : assetId]
+        let request = self._manager.request(.GET, API_BASE_URL + "/assets", parameters: patameters, encoding: .JSON, headers: nil)
+        request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        {
+            (response:Response<Asset, NSError>) -> Void in
+            
+        }
         
     }
 
@@ -1443,6 +1450,8 @@ public class RestClient
         }
     }
 
+    
+    // MARK: Request Signature Helpers
     typealias CreateAuthHeaders = (headers:[String:String]?, error:ErrorType?) -> Void
     private func createAuthHeaders(completion:CreateAuthHeaders)
     {

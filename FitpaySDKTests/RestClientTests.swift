@@ -166,8 +166,6 @@ class RestClientTests: XCTestCase
                 XCTAssertNotNil(user?.created)
                 XCTAssertNotNil(user?.links)
                 XCTAssertNotNil(user?.createdEpoch)
-                XCTAssertNotNil(user?.lastModified)
-                XCTAssertNotNil(user?.lastModifiedEpoch)
                 XCTAssertNotNil(user?.encryptedData)
                 XCTAssertNotNil(user?.info?.email)
                 XCTAssertNil(error)
@@ -351,8 +349,6 @@ class RestClientTests: XCTestCase
                         XCTAssertNotNil(creditCard?.creditCardId)
                         XCTAssertNotNil(creditCard?.userId)
                         XCTAssertNotNil(creditCard?.isDefault)
-                        XCTAssertNotNil(creditCard?.created)
-                        XCTAssertNotNil(creditCard?.createdEpoch)
                         XCTAssertNotNil(creditCard?.state)
                         XCTAssertNotNil(creditCard?.cardType)
                         XCTAssertNotNil(creditCard?.cardMetaData)
@@ -365,12 +361,9 @@ class RestClientTests: XCTestCase
                         XCTAssertNotNil(creditCard?.info?.expMonth)
                         XCTAssertNotNil(creditCard?.info?.expYear)
                         XCTAssertNotNil(creditCard?.info?.pan)
-                        
-                        
+                                                
                         XCTAssertEqual(creditCard?.userId, card.userId)
                         XCTAssertEqual(creditCard?.isDefault, card.isDefault)
-                        XCTAssertEqual(creditCard?.created, card.created)
-                        XCTAssertEqual(creditCard?.createdEpoch, card.createdEpoch)
                         XCTAssertEqual(creditCard?.state, card.state)
                         XCTAssertEqual(creditCard?.cardType, card.cardType)
                         
@@ -527,7 +520,7 @@ class RestClientTests: XCTestCase
                     XCTAssertNotNil(card.info?.expYear)
                     XCTAssertNotNil(card.info?.pan)
                     
-                    self.client.updateCreditCard(creditCardId: card.creditCardId!, userId: self.session.userId!, name: nil, street1: nil, street2: nil, city: "Detroit", state: nil, postalCode: nil, countryCode: nil, completion:
+                    self.client.updateCreditCard(creditCardId: card.creditCardId!, userId: self.session.userId!, name: nil, street1: nil, street2: "Street 2", city: "California", state: "CA", postalCode: nil, countryCode: nil, completion:
                         {
                             (updatedCreditCard, error) -> Void in
                             
@@ -830,6 +823,13 @@ class RestClientTests: XCTestCase
             {
                 (devices, error) -> Void in
                 XCTAssertNil(error)
+                XCTAssertNotNil(devices)
+                
+                if devices == nil
+                {
+                    expectation.fulfill()
+                }
+                
                 self.client.commits(deviceId: devices!.results![0].deviceIdentifier!, userId: self.session.userId!, commitsAfter: "", limit: 10, offset: 0, completion:
                 {
                     (commits, error) -> Void in
@@ -889,5 +889,33 @@ class RestClientTests: XCTestCase
             (device, error) -> Void in
             completion(device: device, error: error)
         })
+    }
+    
+    func testAssetsRetrievesAsset()
+    {
+        let expectation = super.expectationWithDescription("'assets' retrieving commits from device")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.assets(adapterData:"401", adapterId: "1131178c-aab5-438b-ab9d-a6572cb64c8c", assetId:"143320683", completion:
+            {
+                (asset, error) -> Void in
+                XCTAssertNil(error)
+                XCTAssertNotNil(asset)
+                expectation.fulfill()
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
     }
 }
