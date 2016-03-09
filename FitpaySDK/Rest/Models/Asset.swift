@@ -1,18 +1,24 @@
 
 import ObjectMapper
 
-public class Asset : Mappable
+public class Asset
 {
     var text:String?
     var image:UIImage?
+    var data:NSData?
     
-    public required init?(_ map: Map)
+    init(text:String)
     {
-        
+        self.text = text
     }
     
-    public func mapping(map: Map)
+    init(image:UIImage)
     {
-        //TODO: Implement parsing
+        self.image = image
+    }
+    
+    init(data:NSData)
+    {
+        self.data = data
     }
 }

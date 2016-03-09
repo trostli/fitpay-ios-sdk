@@ -1294,12 +1294,58 @@ public class RestClient
     public func assets(adapterData adapterData:String, adapterId:String, assetId:String, completion:AssetsHandler)
     {
         let patameters = ["adapterData" : adapterData, "adapterId" : adapterId, "assetId" : assetId]
-        let request = self._manager.request(.GET, API_BASE_URL + "/assets", parameters: patameters, encoding: .JSON, headers: nil)
-        request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        
+        let request = self._manager.request(.GET, API_BASE_URL + "/assets", parameters: patameters, encoding: .URL, headers: nil)
+        
+        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
         {
-            (response:Response<Asset, NSError>) -> Void in
-            
-        }
+            () -> Void in
+            request.responseData
+            {
+                (response:Response<NSData, NSError>) -> Void in
+                if let resultError = response.result.error
+                {
+                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        completion(asset: nil, error: error)
+                    })
+                }
+                else if let resultValue = response.result.value
+                {
+                    var asset:Asset?
+                    if let image = UIImage(data: resultValue)
+                    {
+                        asset = Asset(image: image)
+                    }
+                    else if let string = resultValue.UTF8String
+                    {
+                        asset = Asset(text: string)
+                    }
+                    else
+                    {
+                        asset = Asset(data: resultValue)
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        completion(asset: asset, error: nil)
+                    })
+                }
+                else
+                {
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        completion(asset: nil, error: NSError.unhandledError(RestClient.self))
+                    })
+                }
+            }
+                
+        })
+        
+        
+        
         
     }
 
@@ -1465,7 +1511,7 @@ public class RestClient
         }
     }
     
-    
+
     typealias PrepareAuthAndKeyHeaders = (headers:[String:String]?, error:ErrorType?) -> Void
     private func prepareAuthAndKeyHeaders(completion:PrepareAuthAndKeyHeaders)
     {

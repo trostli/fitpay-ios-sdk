@@ -520,52 +520,20 @@ class RestClientTests: XCTestCase
                     XCTAssertNotNil(card.info?.expYear)
                     XCTAssertNotNil(card.info?.pan)
                     
-                    self.client.updateCreditCard(creditCardId: card.creditCardId!, userId: self.session.userId!, name: nil, street1: nil, street2: "Street 2", city: "California", state: "CA", postalCode: nil, countryCode: nil, completion:
+                    let street2 = "Street \(NSDate().timeIntervalSince1970)"
+                    
+                    self.client.updateCreditCard(creditCardId: card.creditCardId!, userId: self.session.userId!, name: nil, street1: nil, street2: street2, city: "California", state: "CA", postalCode: nil, countryCode: nil, completion:
                         {
                             (updatedCreditCard, error) -> Void in
                             
                             XCTAssertNil(error)
                             XCTAssertNotNil(updatedCreditCard)
+                            XCTAssertEqual(updatedCreditCard?.info?.address?.street2, street2)
                             
                             expectation.fulfill()
 
-                    })
-                    /*
-                    self.client.creditCard(creditCardId: card.creditCardId!, userId: self.session.userId!, completion:
-                        {
-                            (creditCard, error) -> Void in
-                            XCTAssertNil(error)
-                            XCTAssertNotNil(creditCard?.links)
-                            XCTAssertNotNil(creditCard?.creditCardId)
-                            XCTAssertNotNil(creditCard?.userId)
-                            XCTAssertNotNil(creditCard?.isDefault)
-                            XCTAssertNotNil(creditCard?.created)
-                            XCTAssertNotNil(creditCard?.createdEpoch)
-                            XCTAssertNotNil(creditCard?.state)
-                            XCTAssertNotNil(creditCard?.cardType)
-                            XCTAssertNotNil(creditCard?.cardMetaData)
-                            XCTAssertNotNil(creditCard?.deviceRelationships)
-                            XCTAssertNotEqual(creditCard?.deviceRelationships?.count, 0)
-                            XCTAssertNotNil(creditCard?.encryptedData)
-                            XCTAssertNotNil(creditCard?.info)
-                            XCTAssertNotNil(creditCard?.info?.address)
-                            XCTAssertNotNil(creditCard?.info?.cvv)
-                            XCTAssertNotNil(creditCard?.info?.expMonth)
-                            XCTAssertNotNil(creditCard?.info?.expYear)
-                            XCTAssertNotNil(creditCard?.info?.pan)
-                            
-                            
-                            XCTAssertEqual(creditCard?.userId, card.userId)
-                            XCTAssertEqual(creditCard?.isDefault, card.isDefault)
-                            XCTAssertEqual(creditCard?.created, card.created)
-                            XCTAssertEqual(creditCard?.createdEpoch, card.createdEpoch)
-                            XCTAssertEqual(creditCard?.state, card.state)
-                            XCTAssertEqual(creditCard?.cardType, card.cardType)
-                            
-                            
-                    })
-                    */
-                }
+                        })
+                    }
             })
         }
         
@@ -912,6 +880,7 @@ class RestClientTests: XCTestCase
                 (asset, error) -> Void in
                 XCTAssertNil(error)
                 XCTAssertNotNil(asset)
+                XCTAssertNotNil(asset?.image)
                 expectation.fulfill()
             })
         }
