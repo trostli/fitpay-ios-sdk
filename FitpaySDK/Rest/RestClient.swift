@@ -1054,7 +1054,10 @@ public class RestClient
             }
             else
             {
-                completion(devices: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(devices: nil, error: error)
+                })
             }
         }
     }
@@ -1140,7 +1143,10 @@ public class RestClient
             }
             else
             {
-                completion(device: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(device: nil, error: error)
+                })
             }
         }
     }
@@ -1195,7 +1201,10 @@ public class RestClient
             }
             else
             {
-                completion(device: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(device: nil, error: error)
+                })
             }
         }
     }
@@ -1273,7 +1282,10 @@ public class RestClient
             }
             else
             {
-                completion(device: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(device: nil, error: error)
+                })
             }
         }
     }
@@ -1311,7 +1323,10 @@ public class RestClient
             }
             else
             {
-                completion(error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(error: error)
+                })
             }
         }
     }
@@ -1374,7 +1389,10 @@ public class RestClient
             }
             else
             {
-                completion(commits: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(commits: nil, error: error)
+                })
             }
         }
     }
@@ -1428,7 +1446,10 @@ public class RestClient
             }
             else
             {
-                completion(commit: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(commit: nil, error: error)
+                })
             }
         }
     }
@@ -1438,29 +1459,71 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter ResultCollection<Commit>?: Provides ResultCollection<Transaction> object, or nil if error occurs
-     - parameter ErrorType?:                Provides error object, or nil if no error occurs
+     - parameter transactions: Provides ResultCollection<Transaction> object, or nil if error occurs
+     - parameter error:        Provides error object, or nil if no error occurs
     */
-    public typealias TransactionsHandler = (ResultCollection<Transaction>?, ErrorType?)->Void
+    public typealias TransactionsHandler = (transactions:ResultCollection<Transaction>?, error:ErrorType?)->Void
 
     /**
      Provides a transaction history (if available) for the user, results are limited by provider.
      
      - parameter userId:     user id
+     - parameter limit:      max number of profiles per page
+     - parameter offset:     start index position for list of entities returned
      - parameter completion: TransactionsHandler closure
      */
-    public func transactions(userId userId:String, completion:TransactionsHandler)
+    public func transactions(userId userId:String, limit:Int, offset:Int, completion:TransactionsHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let parameters = [
+                    "limit" : "\(limit)",
+                    "offset" : "\(offset)"
+                ]
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/transactions", parameters: parameters, encoding: .URL, headers: headers)
+                debugPrint(request)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<ResultCollection<Transaction>, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(transactions: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(transactions: resultValue, error: response.result.error)
+                        }
+                        else
+                        {
+                            completion(transactions: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(transactions: nil, error: error)
+                })
+            }
+        }
     }
 
     /**
      Completion handler
 
-     - parameter Transaction?: Provides Transaction object, or nil if error occurs
-     - parameter ErrorType?:   Provides error object, or nil if no error occurs
+     - parameter transaction: Provides Transaction object, or nil if error occurs
+     - parameter error:       Provides error object, or nil if no error occurs
      */
-    public typealias TransactionHandler = (Transaction?, ErrorType?)->Void
+    public typealias TransactionHandler = (transaction:Transaction?, error:ErrorType?)->Void
 
     /**
      Get a single transaction
@@ -1471,7 +1534,42 @@ public class RestClient
      */
     public func transaction(transactionId transactionId:String, userId:String, completion:TransactionHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/transactions", parameters: nil, encoding: .URLEncodedInURL, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<Transaction, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(transaction: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(transaction: resultValue, error: response.result.error)
+                        }
+                        else
+                        {
+                            completion(transaction: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(transaction: nil, error: error)
+                })
+            }
+        }
     }
 
     // MARK: APDU Packages

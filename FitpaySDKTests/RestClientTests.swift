@@ -1201,4 +1201,45 @@ class RestClientTests: XCTestCase
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
+    
+    func testTransactionRetrievesTransactionsByUserId()
+    {
+        let expectation = super.expectationWithDescription("test 'transactions' retrieves transactions by user id")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.transactions(userId: self.session.userId!, limit:10, offset:0, completion:
+            {
+                (transactions, error) -> Void in
+                
+                print(error)
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(transactions)
+                XCTAssertNotNil(transactions?.limit)
+                XCTAssertNotNil(transactions?.totalResults)
+                XCTAssertNotNil(transactions?.links)
+                XCTAssertNotNil(transactions?.results)
+                
+                for transactionInfo in transactions!.results! {
+                    XCTAssertNotNil(transactionInfo.transactionId)
+                    XCTAssertNotNil(transactionInfo.amount)
+                }
+                
+                expectation.fulfill()
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
 }

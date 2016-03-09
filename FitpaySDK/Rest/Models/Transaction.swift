@@ -22,6 +22,16 @@ public class Transaction : Mappable
     
     public func mapping(map: Map)
     {
-        
+        links <- (map["_links"], ResourceLinkTransformType())
+        transactionId <- map["transactionId"]
+        transactionType <- map["transactionType"]
+        amount <- map["amount"]
+        currencyCode <- map["currencyCode"]
+        authorizationStatus <- map["authorizationStatus"]
+        transactionTime <- map["transactionTime"]
+        transactionTimeEpoch <- map["transactionTimeEpoch"]
+        merchantName <- map["merchantName"]
+        merchantCode <- map["merchantCode"]
+        merchantType <- map["merchantType"]
     }
 }
