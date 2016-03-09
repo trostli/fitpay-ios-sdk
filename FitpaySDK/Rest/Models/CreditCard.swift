@@ -285,7 +285,6 @@ internal class CardInfo : Mappable
     var creditCardId:String?
     var name:String?
     var address:Address?
-    var name:String?
     
     internal required init?(_ map: Map)
     {
