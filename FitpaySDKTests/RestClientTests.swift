@@ -556,7 +556,7 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            self.client.devices(userId: self.session.userId!, limit: 1, offset: 3, completion:
+            self.client.devices(userId: self.session.userId!, limit: 10, offset: 0, completion:
             {
                 (devices, error) -> Void in
                 
@@ -835,9 +835,161 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(15, handler: nil)
     }
     
+    func testRelationshipsRetrievesRelationshipsWithUserId()
+    {
+        let expectation = super.expectationWithDescription("test 'relationships' retrieving relationships with user id")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+            {
+                (card, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(card)
+                
+                self.createDefaultDevice(self.session.userId!, completion:
+                {
+                    (device, error) -> Void in
+                    
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(device)
+                    
+                    self.client.createRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                    {
+                        (relationship, error) -> Void in
+                        
+                        XCTAssertNil(error)
+                        XCTAssertNotNil(device)
+                        
+                        XCTAssertNotNil(relationship?.device)
+                        XCTAssertNotNil(relationship?.card)
+                        
+                        self.client.relationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                        {
+                            (relationship, error) -> Void in
+                            XCTAssertNil(error)
+                            XCTAssertNotNil(relationship)
+                            XCTAssertNotNil(relationship?.device)
+                            XCTAssertNotNil(relationship?.card)
+                        
+                            self.client.deleteRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                            {
+                                (error) -> Void in
+                                
+                                XCTAssertNil(error)
+                                    
+                                self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                                {
+                                    (error) -> Void in
+                                    
+                                    XCTAssertNil(error)
+                                    
+                                    self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                    {
+                                        (error) -> Void in
+                                        
+                                        XCTAssertNil(error)
+                                        
+                                        expectation.fulfill()
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(15, handler: nil)
+    }
+    
+    func testRelationshipsCreatesAndDeletesRelationship()
+    {
+        let expectation = super.expectationWithDescription("test 'relationships' creates and deletes relationship")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+            {
+                (card, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(card)
+                
+                self.createDefaultDevice(self.session.userId!, completion:
+                {
+                    (device, error) -> Void in
+                    
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(device)
+                    
+                    self.client.createRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                    {
+                        (relationship, error) -> Void in
+                        
+                        XCTAssertNil(error)
+                        XCTAssertNotNil(device)
+                        
+                        XCTAssertNotNil(relationship?.device)
+                        XCTAssertNotNil(relationship?.card)
+                        
+                        self.client.deleteRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                        {
+                            (error) -> Void in
+                            
+                            XCTAssertNil(error)
+                            
+                            self.client.relationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                            {
+                                (relationship, error) -> Void in
+                                XCTAssertNotNil(error)
+                                
+                                self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                                {
+                                    (error) -> Void in
+                                    
+                                    XCTAssertNil(error)
+                                    self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                    {
+                                        (error) -> Void in
+                                        XCTAssertNil(error)
+                                        expectation.fulfill()
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(15, handler: nil)
+    }
+    
     func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
     {
-        let deviceType = "SMART_STRAP"
+        let deviceType = "ACTIVITY_TRACKER"
         let manufacturerName = "Fitpay"
         let deviceName = "PSPS"
         let serialNumber = "074DCC022E14"

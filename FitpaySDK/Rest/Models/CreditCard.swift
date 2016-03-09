@@ -282,20 +282,23 @@ internal class CardInfo : Mappable
     var expMonth:Int?
     var expYear:Int?
     var cvv:String?
-    var address:Address?
+    var creditCardId:String?
     var name:String?
+    var address:Address?
     
-    required init?(_ map: Map)
+    internal required init?(_ map: Map)
     {
         
     }
     
-    func mapping(map: Map)
+    internal func mapping(map: Map)
     {
         self.pan <- map["pan"]
+        self.creditCardId <- map["creditCardId"]
         self.expMonth <- map["expMonth"]
         self.expYear <- map["expYear"]
         self.cvv <- map["cvv"]
+        self.name <- map["name"]
         self.address = Mapper<Address>().map(map["address"].currentValue)
         self.name <- map["name"]
     }

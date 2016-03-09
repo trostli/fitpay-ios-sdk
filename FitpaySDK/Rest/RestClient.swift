@@ -203,10 +203,10 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter Relationship?: Provides Relationship object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter relationship: Provides Relationship object, or nil if error occurs
+     - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias RelationshipHandler = (Relationship?, ErrorType?)->Void
+    public typealias RelationshipHandler = (relationship:Relationship?, error:ErrorType?)->Void
 
     /**
      Get a single relationship
@@ -218,16 +218,52 @@ public class RestClient
      */
     public func relationship(userId userId:String, creditCardId:String, deviceId:String, completion:RelationshipHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let parameters = [
+                    "creditCardId" : "\(creditCardId)",
+                    "deviceId" : "\(deviceId)"
+                ]
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/relationships", parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<Relationship, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(relationship:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(relationship:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(relationship: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                completion(relationship: nil, error: error)
+            }
+        }
     }
 
     /**
      Completion handler
 
-     - parameter Relationship?: Provides created Relationship object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter relationship: Provides created Relationship object, or nil if error occurs
+     - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias CreateRelationshipHandler = (Relationship?, ErrorType?)->Void
+    public typealias CreateRelationshipHandler = (relationship:Relationship?, error:ErrorType?)->Void
 
     /**
      Creates a relationship between a device and a creditCard
@@ -239,15 +275,51 @@ public class RestClient
      */
     public func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let parameters = [
+                    "creditCardId" : "\(creditCardId)",
+                    "deviceId" : "\(deviceId)"
+                ]
+                let request = self._manager.request(.PUT, "\(API_BASE_URL)/users/\(userId)/relationships", parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<Relationship, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(relationship:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(relationship:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(relationship: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                completion(relationship: nil, error: error)
+            }
+        }
     }
     
     /**
      Completion handler
      
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteRelationshipHandler = (ErrorType?)->Void
+    public typealias DeleteRelationshipHandler = (error:ErrorType?)->Void
     
     /**
      Removes a relationship between a device and a creditCard if it exists
@@ -259,7 +331,30 @@ public class RestClient
      */
     public func deleteRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:DeleteRelationshipHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let parameters = [
+                    "creditCardId" : "\(creditCardId)",
+                    "deviceId" : "\(deviceId)"
+                ]
+                let request = self._manager.request(.DELETE, "\(API_BASE_URL)/users/\(userId)/relationships", parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
+                request.validate().responseString
+                {
+                    (response:Response<String, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        completion(error:response.result.error)
+                    })
+                }
+            }
+            else
+            {
+                completion(error: error)
+            }
+        }
     }
 
     // MARK: Credit Card
@@ -826,6 +921,8 @@ public class RestClient
                         }
                         else if let resultValue = response.result.value
                         {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            
                             completion(devices:resultValue, error:response.result.error)
                         }
                         else
@@ -911,6 +1008,7 @@ public class RestClient
                         }
                         else if let resultValue = response.result.value
                         {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
                             completion(device:resultValue, error:response.result.error)
                         }
                         else
@@ -964,6 +1062,8 @@ public class RestClient
                         }
                         else if let resultValue = response.result.value
                         {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            
                             completion(device:resultValue, error:response.result.error)
                         }
                         else
@@ -1040,6 +1140,8 @@ public class RestClient
                             }
                             else if let resultValue = response.result.value
                             {
+                                resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                
                                 completion(device:resultValue, error:response.result.error)
                             }
                             else
