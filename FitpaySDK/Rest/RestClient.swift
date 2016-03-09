@@ -936,7 +936,21 @@ public class RestClient
                         }
                         else
                         {
-                            completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                            if let statusCode = response.response?.statusCode
+                            {
+                                switch statusCode
+                                {
+                                    case 202:
+                                    completion(pending:true, creditCard:nil, error: nil)
+                                    
+                                    default:
+                                    completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                            else
+                            {
+                                completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                            }
                         }
                     })
                 })
