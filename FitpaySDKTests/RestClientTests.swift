@@ -472,19 +472,19 @@ class RestClientTests: XCTestCase
         let expectation = super.expectationWithDescription("'creditCard' update credit card for user")
         
         self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
             {
-                [unowned self](error) -> Void in
-                
-                XCTAssertNil(error)
-                XCTAssertTrue(self.session.isAuthorized)
-                
-                if !self.session.isAuthorized
-                {
-                    expectation.fulfill()
-                    return
-                }
-                
-                self.client.creditCards(userId: self.session.userId!, excludeState:[], limit: 10, offset: 0, completion:
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.creditCards(userId: self.session.userId!, excludeState:[], limit: 10, offset: 0, completion:
             {
                 [unowned self](result, error) -> Void in
                 
@@ -523,17 +523,83 @@ class RestClientTests: XCTestCase
                     let street2 = "Street \(NSDate().timeIntervalSince1970)"
                     
                     self.client.updateCreditCard(creditCardId: card.creditCardId!, userId: self.session.userId!, name: nil, street1: nil, street2: street2, city: "California", state: "CA", postalCode: nil, countryCode: nil, completion:
-                        {
-                            (updatedCreditCard, error) -> Void in
-                            
-                            XCTAssertNil(error)
-                            XCTAssertNotNil(updatedCreditCard)
-                            XCTAssertEqual(updatedCreditCard?.info?.address?.street2, street2)
-                            
-                            expectation.fulfill()
+                    {
+                        (updatedCreditCard, error) -> Void in
+                        
+                        XCTAssertNil(error)
+                        XCTAssertNotNil(updatedCreditCard)
+                        XCTAssertEqual(updatedCreditCard?.info?.address?.street2, street2)
+                        
+                        expectation.fulfill()
 
-                        })
-                    }
+                    })
+                }
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testMakeDefaultMakesCreditCardDefault()
+    {
+        let expectation = super.expectationWithDescription("'makeDefault' makes credit card default")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.creditCards(userId: self.session.userId!, excludeState:[], limit: 10, offset: 0, completion:
+            {
+                [unowned self](result, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(result)
+                XCTAssertNotNil(result?.limit)
+                XCTAssertNotNil(result?.offset)
+                XCTAssertNotNil(result?.totalResults)
+                XCTAssertNotNil(result?.results)
+                XCTAssertNotEqual(result?.results?.count, 0)
+                XCTAssertNotNil(result?.links)
+                
+                if let results = result?.results where result?.results?.count > 0
+                {
+                    // pick one of the cards randomly
+                    let card = results[Int(arc4random() % UInt32(results.count))]
+                    XCTAssertNotNil(card.links)
+                    XCTAssertNotNil(card.creditCardId)
+                    XCTAssertNotNil(card.userId)
+                    XCTAssertNotNil(card.isDefault)
+                    XCTAssertNotNil(card.created)
+                    XCTAssertNotNil(card.createdEpoch)
+                    XCTAssertNotNil(card.state)
+                    XCTAssertNotNil(card.cardType)
+                    XCTAssertNotNil(card.cardMetaData)
+                    XCTAssertNotNil(card.deviceRelationships)
+                    XCTAssertNotEqual(card.deviceRelationships?.count, 0)
+                    XCTAssertNotNil(card.encryptedData)
+                    XCTAssertNotNil(card.info)
+                    XCTAssertNotNil(card.info?.address)
+                    XCTAssertNotNil(card.info?.cvv)
+                    XCTAssertNotNil(card.info?.expMonth)
+                    XCTAssertNotNil(card.info?.expYear)
+                    XCTAssertNotNil(card.info?.pan)
+                    
+                    self.client.makeDefault(creditCardId: card.creditCardId!, userId: card.userId!, completion:
+                    {
+                        (pending, defaultCreditCard, error) -> Void in
+                        XCTAssertNil(error)
+                        expectation.fulfill()
+                    })
+                }
             })
         }
         

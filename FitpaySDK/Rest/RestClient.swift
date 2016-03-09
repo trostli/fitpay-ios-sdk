@@ -770,11 +770,11 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter Bool:        Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
-     - parameter CreditCard?: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter ErrorType?:  Provides error object, or nil if no error occurs
+     - parameter pending:     Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter creditCard: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error:  Provides error object, or nil if no error occurs
      */
-    public typealias MakeDefaultHandler = (Bool, CreditCard?, ErrorType?)->Void
+    public typealias MakeDefaultHandler = (pending:Bool, creditCard:CreditCard?, error:ErrorType?)->Void
 
     /**
      Mark the credit card as the default payment instrument. If another card is currently marked as the default, the default will automatically transition to the indicated credit card
@@ -785,6 +785,44 @@ public class RestClient
      */
     public func makeDefault(creditCardId creditCardId:String, userId:String, completion:MakeDefaultHandler)
     {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/makeDefault", parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<CreditCard, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(pending:false, creditCard:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(pending:false, creditCard:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    () -> Void in
+                    completion(pending:false, creditCard:nil, error: error)
+                })
+            }
+        }
 
     }
 
