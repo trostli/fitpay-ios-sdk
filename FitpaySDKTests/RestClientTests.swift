@@ -1204,7 +1204,7 @@ class RestClientTests: XCTestCase
     
     func testTransactionRetrievesTransactionsByUserId()
     {
-        let expectation = super.expectationWithDescription("test 'transactions' retrieves transactions by user id")
+        let expectation = super.expectationWithDescription("'transaction' retrieves transactions by user id")
         
         self.session.login(username: self.username, password: self.password)
         {
@@ -1218,25 +1218,99 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            self.client.transactions(userId: self.session.userId!, limit:10, offset:0, completion:
+            self.client.creditCards(userId: self.session.userId!, excludeState: [], limit: 10, offset: 0, completion:
             {
-                (transactions, error) -> Void in
-                
-                print(error)
+                (result, error) -> Void in
                 
                 XCTAssertNil(error)
-                XCTAssertNotNil(transactions)
-                XCTAssertNotNil(transactions?.limit)
-                XCTAssertNotNil(transactions?.totalResults)
-                XCTAssertNotNil(transactions?.links)
-                XCTAssertNotNil(transactions?.results)
+                XCTAssertNotNil(result)
                 
-                for transactionInfo in transactions!.results! {
-                    XCTAssertNotNil(transactionInfo.transactionId)
-                    XCTAssertNotNil(transactionInfo.amount)
+                for card in result!.results! {
+                    self.client.transactions(userId: self.session.userId!, cardId:card.creditCardId!, limit:10, offset:0, completion:
+                    {
+                        (transactions, error) -> Void in
+                        
+                        XCTAssertNil(error)
+                        XCTAssertNotNil(transactions)
+                        XCTAssertNotNil(transactions?.limit)
+                        XCTAssertNotNil(transactions?.totalResults)
+                        XCTAssertNotNil(transactions?.links)
+                        XCTAssertNotNil(transactions?.results)
+                        
+                        if let transactionsResults = transactions!.results {
+                            if transactionsResults.count > 0 {
+                                for transactionInfo in transactionsResults {
+                                    XCTAssertNotNil(transactionInfo.transactionId)
+                                    XCTAssertNotNil(transactionInfo.transactionType)
+                                }
+                                
+                                expectation.fulfill()
+                            }
+                        }
+                    })
                 }
-                
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testTransactionRetrievesTransactionById()
+    {
+        let expectation = super.expectationWithDescription("'transaction' retrieves transaction by id")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
                 expectation.fulfill()
+                return
+            }
+            
+            self.client.creditCards(userId: self.session.userId!, excludeState: [], limit: 10, offset: 0, completion:
+            {
+                (result, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(result)
+                
+                for card in result!.results! {
+                    self.client.transactions(userId: self.session.userId!, cardId:card.creditCardId!, limit:10, offset:0, completion:
+                    {
+                        (transactions, error) -> Void in
+                        
+                        XCTAssertNil(error)
+                        XCTAssertNotNil(transactions)
+                        XCTAssertNotNil(transactions?.limit)
+                        XCTAssertNotNil(transactions?.totalResults)
+                        XCTAssertNotNil(transactions?.links)
+                        XCTAssertNotNil(transactions?.results)
+                        
+                        if let transactionsResults = transactions!.results {
+                            if transactionsResults.count > 0 {
+                                for transactionInfo in transactionsResults {
+                                    
+                                    self.client.transaction(transactionId: transactionInfo.transactionId!, userId: self.session.userId!, cardId:card.creditCardId!, completion:
+                                    {
+                                        (transaction, error) -> Void in
+                                        print(error)
+                                        XCTAssertNil(error)
+                                        XCTAssertNotNil(transaction?.transactionId)
+                                        XCTAssertNotNil(transaction?.transactionType)
+                                        
+                                        expectation.fulfill()
+                                    })
+                                    
+                                    break
+                                }
+                            }
+                        }
+                    })
+                }
             })
         }
         

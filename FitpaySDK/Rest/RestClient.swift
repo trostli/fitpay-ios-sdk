@@ -1468,11 +1468,12 @@ public class RestClient
      Provides a transaction history (if available) for the user, results are limited by provider.
      
      - parameter userId:     user id
+     - parameter cardId:     card id
      - parameter limit:      max number of profiles per page
      - parameter offset:     start index position for list of entities returned
      - parameter completion: TransactionsHandler closure
      */
-    public func transactions(userId userId:String, limit:Int, offset:Int, completion:TransactionsHandler)
+    public func transactions(userId userId:String, cardId:String, limit:Int, offset:Int, completion:TransactionsHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -1482,7 +1483,7 @@ public class RestClient
                     "limit" : "\(limit)",
                     "offset" : "\(offset)"
                 ]
-                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/transactions", parameters: parameters, encoding: .URL, headers: headers)
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/creditCards/\(cardId)/transactions", parameters: parameters, encoding: .URL, headers: headers)
                 debugPrint(request)
                 request.validate().responseObject(
                 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
@@ -1530,15 +1531,16 @@ public class RestClient
      
      - parameter transactionId: transaction id
      - parameter userId:        user id
+     - parameter cardId:        card id
      - parameter completion:    TransactionHandler closure
      */
-    public func transaction(transactionId transactionId:String, userId:String, completion:TransactionHandler)
+    public func transaction(transactionId transactionId:String, userId:String, cardId:String, completion:TransactionHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
             (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/transactions", parameters: nil, encoding: .URLEncodedInURL, headers: headers)
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/creditCards/\(cardId)/transactions/\(transactionId)", parameters: nil, encoding: .URLEncodedInURL, headers: headers)
                 request.validate().responseObject(
                 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
