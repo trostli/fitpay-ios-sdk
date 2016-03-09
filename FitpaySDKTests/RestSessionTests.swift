@@ -36,10 +36,7 @@ class RestSessionTests: XCTestCase
             XCTAssertNotNil(authDetails)
             XCTAssertNil(error)
             XCTAssertNotNil(authDetails?.accessToken)
-            XCTAssertNotNil(authDetails?.expiresIn)
-            XCTAssertNotNil(authDetails?.jti)
-            XCTAssertNotNil(authDetails?.scope)
-
+           
             expectation.fulfill()
         });
 

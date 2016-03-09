@@ -534,7 +534,7 @@ public class RestClient
             if let headers = headers
             {
                 let request = self._manager.request(.GET, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId, parameters: nil, encoding: .JSON, headers: headers)
-                
+                print(headers)
                 request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response:Response<CreditCard, NSError>) -> Void in
@@ -609,6 +609,117 @@ public class RestClient
                 {
                     () -> Void in
                     completion(error: error)
+                })
+            }
+        }
+    }
+    
+    public typealias UpdateCreditCardHandler = (creditCard:CreditCard?, error:ErrorType?) -> Void
+    
+    public func updateCreditCard(creditCardId creditCardId:String, userId:String, name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:UpdateCreditCardHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                var operations:[[String : String]] = []
+                
+                var parameters:[String : AnyObject] = [:]
+                
+                if let name = name
+                {
+                    operations.append([
+                        "op": "replace", "path": "/name", "value" : name
+                        ])
+                }
+                
+                if let street1 = street1
+                {
+                    operations.append([
+                        "op": "replace", "path": "/address/street1", "value" : street1
+                        ])
+                }
+                
+                if let street2 = street2
+                {
+                    operations.append([
+                        "op": "replace", "path": "/address/street2", "value" : street2
+                        ])
+                }
+                
+                if let city = city
+                {
+                    operations.append([
+                        "op": "replace", "path": "/address/city", "value" : city
+                        ])
+                }
+                
+                if let state = state
+                {
+                    operations.append([
+                        "op": "replace", "path": "/address/state", "value" : state
+                        ])
+                }
+                
+                if let postalCode = postalCode
+                {
+                    operations.append([
+                        "op": "replace", "path": "/address/postalCode", "value" : postalCode
+                        ])
+                }
+                
+                if let countryCode = countryCode
+                {
+                    operations.append([
+                        "op": "replace", "path": "/address/countryCode", "value" : countryCode
+                        ])
+                }
+                
+                if let updateJSON = operations.JSONString
+                {
+                    if let jweObject = try? JWEObject.createNewObject("A256GCMKW", enc: "A256GCM", payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
+                    {
+                        if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
+                        {
+                            parameters["encryptedData"] = encrypted
+                        }
+                    }
+                }
+                
+                let request = self._manager.request(.PATCH, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId, parameters: parameters, encoding: .JSON, headers: headers)
+                
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<CreditCard, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(creditCard:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            completion(creditCard:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            completion(creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        completion(creditCard:nil, error: error)
                 })
             }
         }
@@ -1269,10 +1380,10 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter AnyObject?: Provides AnyObject (UIImage or String) object, or nil if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter asset: Provides Asset object, or nil if error occurs
+     - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias AssetsHandler = (AnyObject?, ErrorType?)->Void
+    public typealias AssetsHandler = (asset:Asset?, error:ErrorType?)->Void
 
     /**
      Retrieve an individual asset (i.e. terms and conditions)
@@ -1282,8 +1393,15 @@ public class RestClient
      - parameter assetId:     asset id
      - parameter completion:  AssetsHandler closure
      */
-    public func assets(adapterData:String, adapterId:String, assetId:String, completion:AssetsHandler)
+    public func assets(adapterData adapterData:String, adapterId:String, assetId:String, completion:AssetsHandler)
     {
+        let patameters = ["adapterData" : adapterData, "adapterId" : adapterId, "assetId" : assetId]
+        let request = self._manager.request(.GET, API_BASE_URL + "/assets", parameters: patameters, encoding: .JSON, headers: nil)
+        request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        {
+            (response:Response<Asset, NSError>) -> Void in
+            
+        }
         
     }
 
@@ -1434,6 +1552,8 @@ public class RestClient
         }
     }
 
+    
+    // MARK: Request Signature Helpers
     typealias CreateAuthHeaders = (headers:[String:String]?, error:ErrorType?) -> Void
     private func createAuthHeaders(completion:CreateAuthHeaders)
     {

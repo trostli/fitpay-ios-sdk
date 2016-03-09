@@ -285,6 +285,7 @@ internal class CardInfo : Mappable
     var creditCardId:String?
     var name:String?
     var address:Address?
+    var name:String?
     
     internal required init?(_ map: Map)
     {
@@ -300,5 +301,6 @@ internal class CardInfo : Mappable
         self.cvv <- map["cvv"]
         self.name <- map["name"]
         self.address = Mapper<Address>().map(map["address"].currentValue)
+        self.name <- map["name"]
     }
 }

@@ -55,6 +55,13 @@ public class RestSession
         return self.accessToken != nil
     }
     
+    lazy private var manager:Manager =
+    {
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        configuration.HTTPAdditionalHeaders = Manager.defaultHTTPHeaders
+        configuration.requestCachePolicy = .ReloadIgnoringLocalCacheData
+        return Manager(configuration: configuration)
+    }()
 
     public init(clientId:String, redirectUri:String)
     {
@@ -146,7 +153,7 @@ public class RestSession
                 "credentials" : ["username" : username, "password" : password].JSONString!
         ]
 
-        let request = Manager.sharedInstance.request(.POST, AUTHORIZE_URL, parameters: parameters, encoding:.URL, headers: headers)
+        let request = manager.request(.POST, AUTHORIZE_URL, parameters: parameters, encoding:.URL, headers: headers)
     
         request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {

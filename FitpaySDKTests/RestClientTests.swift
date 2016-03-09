@@ -166,8 +166,6 @@ class RestClientTests: XCTestCase
                 XCTAssertNotNil(user?.created)
                 XCTAssertNotNil(user?.links)
                 XCTAssertNotNil(user?.createdEpoch)
-                XCTAssertNotNil(user?.lastModified)
-                XCTAssertNotNil(user?.lastModifiedEpoch)
                 XCTAssertNotNil(user?.encryptedData)
                 XCTAssertNotNil(user?.info?.email)
                 XCTAssertNil(error)
@@ -320,7 +318,7 @@ class RestClientTests: XCTestCase
                 XCTAssertNotEqual(result?.results?.count, 0)
                 XCTAssertNotNil(result?.links)
                 
-                if let results = result?.results
+                if let results = result?.results where result?.results?.count > 0
                 {
                     // pick one of the cards randomly
                     let card = results[Int(arc4random() % UInt32(results.count))]
@@ -351,8 +349,6 @@ class RestClientTests: XCTestCase
                         XCTAssertNotNil(creditCard?.creditCardId)
                         XCTAssertNotNil(creditCard?.userId)
                         XCTAssertNotNil(creditCard?.isDefault)
-                        XCTAssertNotNil(creditCard?.created)
-                        XCTAssertNotNil(creditCard?.createdEpoch)
                         XCTAssertNotNil(creditCard?.state)
                         XCTAssertNotNil(creditCard?.cardType)
                         XCTAssertNotNil(creditCard?.cardMetaData)
@@ -365,12 +361,9 @@ class RestClientTests: XCTestCase
                         XCTAssertNotNil(creditCard?.info?.expMonth)
                         XCTAssertNotNil(creditCard?.info?.expYear)
                         XCTAssertNotNil(creditCard?.info?.pan)
-                        
-                        
+                                                
                         XCTAssertEqual(creditCard?.userId, card.userId)
                         XCTAssertEqual(creditCard?.isDefault, card.isDefault)
-                        XCTAssertEqual(creditCard?.created, card.created)
-                        XCTAssertEqual(creditCard?.createdEpoch, card.createdEpoch)
                         XCTAssertEqual(creditCard?.state, card.state)
                         XCTAssertEqual(creditCard?.cardType, card.cardType)
                         
@@ -474,6 +467,111 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
+    func testUpdateCreditCardUpdatesCreditCard()
+    {
+        let expectation = super.expectationWithDescription("'creditCard' update credit card for user")
+        
+        self.session.login(username: self.username, password: self.password)
+            {
+                [unowned self](error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertTrue(self.session.isAuthorized)
+                
+                if !self.session.isAuthorized
+                {
+                    expectation.fulfill()
+                    return
+                }
+                
+                self.client.creditCards(userId: self.session.userId!, excludeState:[], limit: 10, offset: 0, completion:
+            {
+                [unowned self](result, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(result)
+                XCTAssertNotNil(result?.limit)
+                XCTAssertNotNil(result?.offset)
+                XCTAssertNotNil(result?.totalResults)
+                XCTAssertNotNil(result?.results)
+                XCTAssertNotEqual(result?.results?.count, 0)
+                XCTAssertNotNil(result?.links)
+                
+                if let results = result?.results where result?.results?.count > 0
+                {
+                    // pick one of the cards randomly
+                    let card = results[Int(arc4random() % UInt32(results.count))]
+                    XCTAssertNotNil(card.links)
+                    XCTAssertNotNil(card.creditCardId)
+                    XCTAssertNotNil(card.userId)
+                    XCTAssertNotNil(card.isDefault)
+                    XCTAssertNotNil(card.created)
+                    XCTAssertNotNil(card.createdEpoch)
+                    XCTAssertNotNil(card.state)
+                    XCTAssertNotNil(card.cardType)
+                    XCTAssertNotNil(card.cardMetaData)
+                    XCTAssertNotNil(card.deviceRelationships)
+                    XCTAssertNotEqual(card.deviceRelationships?.count, 0)
+                    XCTAssertNotNil(card.encryptedData)
+                    XCTAssertNotNil(card.info)
+                    XCTAssertNotNil(card.info?.address)
+                    XCTAssertNotNil(card.info?.cvv)
+                    XCTAssertNotNil(card.info?.expMonth)
+                    XCTAssertNotNil(card.info?.expYear)
+                    XCTAssertNotNil(card.info?.pan)
+                    
+                    self.client.updateCreditCard(creditCardId: card.creditCardId!, userId: self.session.userId!, name: nil, street1: nil, street2: "Street 2", city: "California", state: "CA", postalCode: nil, countryCode: nil, completion:
+                        {
+                            (updatedCreditCard, error) -> Void in
+                            
+                            XCTAssertNil(error)
+                            XCTAssertNotNil(updatedCreditCard)
+                            
+                            expectation.fulfill()
+
+                    })
+                    /*
+                    self.client.creditCard(creditCardId: card.creditCardId!, userId: self.session.userId!, completion:
+                        {
+                            (creditCard, error) -> Void in
+                            XCTAssertNil(error)
+                            XCTAssertNotNil(creditCard?.links)
+                            XCTAssertNotNil(creditCard?.creditCardId)
+                            XCTAssertNotNil(creditCard?.userId)
+                            XCTAssertNotNil(creditCard?.isDefault)
+                            XCTAssertNotNil(creditCard?.created)
+                            XCTAssertNotNil(creditCard?.createdEpoch)
+                            XCTAssertNotNil(creditCard?.state)
+                            XCTAssertNotNil(creditCard?.cardType)
+                            XCTAssertNotNil(creditCard?.cardMetaData)
+                            XCTAssertNotNil(creditCard?.deviceRelationships)
+                            XCTAssertNotEqual(creditCard?.deviceRelationships?.count, 0)
+                            XCTAssertNotNil(creditCard?.encryptedData)
+                            XCTAssertNotNil(creditCard?.info)
+                            XCTAssertNotNil(creditCard?.info?.address)
+                            XCTAssertNotNil(creditCard?.info?.cvv)
+                            XCTAssertNotNil(creditCard?.info?.expMonth)
+                            XCTAssertNotNil(creditCard?.info?.expYear)
+                            XCTAssertNotNil(creditCard?.info?.pan)
+                            
+                            
+                            XCTAssertEqual(creditCard?.userId, card.userId)
+                            XCTAssertEqual(creditCard?.isDefault, card.isDefault)
+                            XCTAssertEqual(creditCard?.created, card.created)
+                            XCTAssertEqual(creditCard?.createdEpoch, card.createdEpoch)
+                            XCTAssertEqual(creditCard?.state, card.state)
+                            XCTAssertEqual(creditCard?.cardType, card.cardType)
+                            
+                            
+                    })
+                    */
+                }
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
     func testDeviceRetrievesDevicesByUserId()
     {
         let expectation = super.expectationWithDescription("test 'device' retrieves devices by user id")
@@ -725,6 +823,13 @@ class RestClientTests: XCTestCase
             {
                 (devices, error) -> Void in
                 XCTAssertNil(error)
+                XCTAssertNotNil(devices)
+                
+                if devices == nil
+                {
+                    expectation.fulfill()
+                }
+                
                 self.client.commits(deviceId: devices!.results![0].deviceIdentifier!, userId: self.session.userId!, commitsAfter: "", limit: 10, offset: 0, completion:
                 {
                     (commits, error) -> Void in
@@ -936,5 +1041,33 @@ class RestClientTests: XCTestCase
             (device, error) -> Void in
             completion(device: device, error: error)
         })
+    }
+    
+    func testAssetsRetrievesAsset()
+    {
+        let expectation = super.expectationWithDescription("'assets' retrieving commits from device")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.assets(adapterData:"401", adapterId: "1131178c-aab5-438b-ab9d-a6572cb64c8c", assetId:"143320683", completion:
+            {
+                (asset, error) -> Void in
+                XCTAssertNil(error)
+                XCTAssertNotNil(asset)
+                expectation.fulfill()
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
     }
 }
