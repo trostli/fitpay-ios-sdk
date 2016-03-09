@@ -571,6 +571,102 @@ class RestClientTests: XCTestCase
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
+    
+    func testCreditCardAcceptTerms()
+    {
+        let expectation = super.expectationWithDescription("'creditCard' accept terms")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+            {
+                (card, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(card)
+                self.client.acceptTerms(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                {
+                    (updateLater, card, error) -> Void in
+                    XCTAssertNil(error)
+                    
+                    self.client.creditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                    {
+                        (creditCard, error) -> Void in
+                        XCTAssertNil(error)
+                        XCTAssertEqual(creditCard?.state, "PENDING_VERIFICATION")
+                        
+                        self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                        {
+                            (error) -> Void in
+                            XCTAssertNil(error)
+                            
+                            expectation.fulfill()
+                        })
+                    })
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testCreditCardDeclineTerms()
+    {
+        let expectation = super.expectationWithDescription("'creditCard' decline terms")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+            {
+                (card, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(card)
+                self.client.declineTerms(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                {
+                    (updateLater, card, error) -> Void in
+                    XCTAssertNil(error)
+                    
+                    self.client.creditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                    {
+                        (creditCard, error) -> Void in
+                        XCTAssertNil(error)
+                        XCTAssertEqual(creditCard?.state, "DECLINED_TERMS_AND_CONDITIONS")
+                        
+                        self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                        {
+                            (error) -> Void in
+                            XCTAssertNil(error)
+                            
+                            expectation.fulfill()
+                        })
+                    })
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
 
     func testDeviceRetrievesDevicesByUserId()
     {
