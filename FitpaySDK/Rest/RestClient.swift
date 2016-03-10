@@ -524,8 +524,21 @@ public class RestClient
         }
     }
     
+    /**
+     Completion handler
+     
+     - parameter creditCard: Provides credit card object, or nil if error occurs
+     - parameter error:  Provides error object, or nil if no error occurs
+     */
     public typealias CreditCardHandler = (creditCard:CreditCard?, error:ErrorType?)->Void
     
+    /**
+     Retrieves the details of an existing credit card. You need only supply the uniqueidentifier that was returned upon creation.
+     
+     - parameter creditCardId: credit card id
+     - parameter userId:       user id
+     - parameter completion:   CreditCardHandler closure
+     */
     public func creditCard(creditCardId creditCardId:String, userId:String, completion:CreditCardHandler)
     {
         self.prepareAuthAndKeyHeaders
@@ -562,16 +575,28 @@ public class RestClient
             else
             {
                 dispatch_async(dispatch_get_main_queue(),
-                    {
-                        () -> Void in
-                        completion(creditCard:nil, error: error)
+                {
+                    () -> Void in
+                    completion(creditCard:nil, error: error)
                 })
             }
         }
     }
     
+    /**
+     Completion handler
+     
+     - parameter error: Provides error object, or nil if no error occurs
+     */
     public typealias DeleteCreditCardHandler = (error:ErrorType?)->Void
     
+    /**
+     Delete a single credit card from a user's profile. If you delete a card that is currently the default source, then the most recently added source will become the new default.
+     
+     - parameter creditCardId: credit card id
+     - parameter userId:       user id
+     - parameter completion:   DeleteCreditCardHandler closure
+     */
     public func deleteCreditCard(creditCardId creditCardId:String, userId:String, completion:DeleteCreditCardHandler)
     {
         self.prepareAuthAndKeyHeaders
@@ -614,8 +639,28 @@ public class RestClient
         }
     }
     
+    /**
+     Completion handler
+     
+     - parameter creditCard: Provides credit card object, or nil if error occurs
+     - parameter error:  Provides error object, or nil if no error occurs
+     */
     public typealias UpdateCreditCardHandler = (creditCard:CreditCard?, error:ErrorType?) -> Void
     
+    /**
+     Update the details of an existing credit card
+     
+     - parameter creditCardId: credit card id
+     - parameter userId:       user id
+     - parameter name:         name
+     - parameter street1:      address
+     - parameter street2:      address
+     - parameter city:         city
+     - parameter state:        state
+     - parameter postalCode:   postal code
+     - parameter countryCode:  country code
+     - parameter completion:   UpdateCreditCardHandler closure
+     */
     public func updateCreditCard(creditCardId creditCardId:String, userId:String, name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:UpdateCreditCardHandler)
     {
         self.prepareAuthAndKeyHeaders
@@ -891,7 +936,21 @@ public class RestClient
                         }
                         else
                         {
-                            completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                            if let statusCode = response.response?.statusCode
+                            {
+                                switch statusCode
+                                {
+                                    case 202:
+                                    completion(pending:true, creditCard:nil, error: nil)
+                                    
+                                    default:
+                                    completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                            else
+                            {
+                                completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                            }
                         }
                     })
                 })
