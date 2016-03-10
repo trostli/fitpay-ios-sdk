@@ -773,11 +773,11 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter isPending: Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
-     - parameter card?:     Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter error?:    Provides error object, or nil if no error occurs
+     - parameter pending: Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter card?:   Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error?:  Provides error object, or nil if no error occurs
      */
-    public typealias AcceptTermsHandler = (isPending:Bool, card:CreditCard?, error:ErrorType?)->Void
+    public typealias AcceptTermsHandler = (pending:Bool, card:CreditCard?, error:ErrorType?)->Void
     
     /**
      Indicates a user has accepted the terms and conditions presented when the credit card was first added to the user's profile
@@ -804,19 +804,19 @@ public class RestClient
                         if let resultError = response.result.error
                         {
                             let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                            completion(isPending: false, card: nil, error: error)
+                            completion(pending: false, card: nil, error: error)
                         }
                         else if let value = response.result.value
                         {
-                            completion(isPending: false, card: value, error: nil)
+                            completion(pending: false, card: value, error: nil)
                         }
                         else if (response.response != nil && response.response!.statusCode == 202)
                         {
-                            completion(isPending: true, card: nil, error: nil)
+                            completion(pending: true, card: nil, error: nil)
                         }
                         else
                         {
-                            completion(isPending: false, card: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(pending: false, card: nil, error: NSError.unhandledError(RestClient.self))
                         }
                     })
                 })
@@ -826,7 +826,7 @@ public class RestClient
                 dispatch_async(dispatch_get_main_queue(),
                 {
                     () -> Void in
-                    completion(isPending: false, card: nil, error: error)
+                    completion(pending: false, card: nil, error: error)
                 })
             }
         }
@@ -835,11 +835,11 @@ public class RestClient
     /**
      Completion handler
      
-     - parameter isPending: Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
-     - parameter card:      Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter error:     Provides error object, or nil if no error occurs
+     - parameter pending: Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter card:    Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error:   Provides error object, or nil if no error occurs
      */
-    public typealias DeclineTermsHandler = (isPending:Bool, card:CreditCard?, error:ErrorType?)->Void
+    public typealias DeclineTermsHandler = (pending:Bool, card:CreditCard?, error:ErrorType?)->Void
     
     /**
      Indicates a user has declined the terms and conditions. Once declined the credit card will be in a final state, no other actions may be taken
@@ -866,19 +866,19 @@ public class RestClient
                         if let resultError = response.result.error
                         {
                             let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                            completion(isPending: false, card: nil, error: error)
+                            completion(pending: false, card: nil, error: error)
                         }
                         else if let value = response.result.value
                         {
-                            completion(isPending: false, card: value, error: nil)
+                            completion(pending: false, card: value, error: nil)
                         }
                         else if (response.response != nil && response.response!.statusCode == 202)
                         {
-                            completion(isPending: true, card: nil, error: nil)
+                            completion(pending: true, card: nil, error: nil)
                         }
                         else
                         {
-                            completion(isPending: false, card: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(pending: false, card: nil, error: NSError.unhandledError(RestClient.self))
                         }
                     })
                 })
@@ -888,7 +888,7 @@ public class RestClient
                 dispatch_async(dispatch_get_main_queue(),
                 {
                     () -> Void in
-                    completion(isPending: false, card: nil, error: error)
+                    completion(pending: false, card: nil, error: error)
                 })
             }
         }
@@ -1117,11 +1117,11 @@ public class RestClient
 
     /**
      Completion handler
-     - parameter Bool:                Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
-     - parameter VerificationMethod?: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter ErrorType?:          Provides error object, or nil if no error occurs
+     - parameter pending:             Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
+     - parameter verificationMethod:  Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error:               Provides error object, or nil if no error occurs
      */
-    public typealias SelectVerificationTypeHandler = (Bool, VerificationMethod?, ErrorType?)->Void
+    public typealias SelectVerificationTypeHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:ErrorType?)->Void
     
     /**
      When an issuer requires additional authentication to verfiy the identity of the cardholder, this indicates the user has selected the specified verification method by the indicated verificationTypeId
@@ -1133,17 +1133,66 @@ public class RestClient
      */
     public func selectVerificationType(creditCardId creditCardId:String, userId:String, verificationTypeId:String, completion:SelectVerificationTypeHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/verificationMethods/\(verificationTypeId)/select", parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<VerificationMethod, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(pending:false, verificationMethod:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(pending:false, verificationMethod:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            if let statusCode = response.response?.statusCode
+                            {
+                                switch statusCode
+                                {
+                                case 202:
+                                    completion(pending:true, verificationMethod:nil, error: nil)
+                                    
+                                default:
+                                    completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                            else
+                            {
+                                completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                            }
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(pending:false, verificationMethod:nil, error: error)
+                })
+            }
+        }
     }
     
     /**
      Completion handler
      
-     - parameter Bool:                Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
-     - parameter VerificationMethod?: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter pending:            Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
+     - parameter verificationMethod: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error:              Provides error object, or nil if no error occurs
      */
-    public typealias VerifyHandler = (Bool, VerificationMethod?, ErrorType?)->Void
+    public typealias VerifyHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:ErrorType?)->Void
     
     /**
      If a verification method is selected that requires an entry of a pin code, this transition will be available. Not all verification methods will include a secondary verification step through the FitPay API
@@ -1156,7 +1205,60 @@ public class RestClient
      */
     public func verify(creditCardId creditCardId:String, userId:String, verificationTypeId:String, verificationCode:String, completion:VerifyHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let params = [
+                    "verificationCode" : verificationCode
+                ]
+                
+                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/verificationMethods/\(verificationTypeId)/verify", parameters: params, encoding: .JSON, headers: headers)
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<VerificationMethod, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(pending:false, verificationMethod:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(pending:false, verificationMethod:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            if let statusCode = response.response?.statusCode
+                            {
+                                switch statusCode
+                                {
+                                case 202:
+                                    completion(pending:true, verificationMethod:nil, error: nil)
+                                    
+                                default:
+                                    completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                            else
+                            {
+                                completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                            }
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(pending:false, verificationMethod:nil, error: error)
+                })
+            }
+        }
     }
 
     // MARK: Devices
@@ -1215,7 +1317,10 @@ public class RestClient
             }
             else
             {
-                completion(devices: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(devices: nil, error: error)
+                })
             }
         }
     }
@@ -1301,7 +1406,10 @@ public class RestClient
             }
             else
             {
-                completion(device: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(device: nil, error: error)
+                })
             }
         }
     }
@@ -1356,7 +1464,10 @@ public class RestClient
             }
             else
             {
-                completion(device: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(device: nil, error: error)
+                })
             }
         }
     }
@@ -1434,7 +1545,10 @@ public class RestClient
             }
             else
             {
-                completion(device: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(device: nil, error: error)
+                })
             }
         }
     }
@@ -1472,7 +1586,10 @@ public class RestClient
             }
             else
             {
-                completion(error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(error: error)
+                })
             }
         }
     }
@@ -1535,7 +1652,10 @@ public class RestClient
             }
             else
             {
-                completion(commits: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(commits: nil, error: error)
+                })
             }
         }
     }
@@ -1589,7 +1709,10 @@ public class RestClient
             }
             else
             {
-                completion(commit: nil, error: error)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(commit: nil, error: error)
+                })
             }
         }
     }
@@ -1599,40 +1722,119 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter ResultCollection<Commit>?: Provides ResultCollection<Transaction> object, or nil if error occurs
-     - parameter ErrorType?:                Provides error object, or nil if no error occurs
+     - parameter transactions: Provides ResultCollection<Transaction> object, or nil if error occurs
+     - parameter error:        Provides error object, or nil if no error occurs
     */
-    public typealias TransactionsHandler = (ResultCollection<Transaction>?, ErrorType?)->Void
+    public typealias TransactionsHandler = (transactions:ResultCollection<Transaction>?, error:ErrorType?)->Void
 
     /**
      Provides a transaction history (if available) for the user, results are limited by provider.
      
      - parameter userId:     user id
+     - parameter cardId:     card id
+     - parameter limit:      max number of profiles per page
+     - parameter offset:     start index position for list of entities returned
      - parameter completion: TransactionsHandler closure
      */
-    public func transactions(userId userId:String, completion:TransactionsHandler)
+    public func transactions(userId userId:String, cardId:String, limit:Int, offset:Int, completion:TransactionsHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let parameters = [
+                    "limit" : "\(limit)",
+                    "offset" : "\(offset)"
+                ]
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/creditCards/\(cardId)/transactions", parameters: parameters, encoding: .URL, headers: headers)
+                debugPrint(request)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<ResultCollection<Transaction>, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(transactions: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(transactions: resultValue, error: response.result.error)
+                        }
+                        else
+                        {
+                            completion(transactions: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(transactions: nil, error: error)
+                })
+            }
+        }
     }
 
     /**
      Completion handler
 
-     - parameter Transaction?: Provides Transaction object, or nil if error occurs
-     - parameter ErrorType?:   Provides error object, or nil if no error occurs
+     - parameter transaction: Provides Transaction object, or nil if error occurs
+     - parameter error:       Provides error object, or nil if no error occurs
      */
-    public typealias TransactionHandler = (Transaction?, ErrorType?)->Void
+    public typealias TransactionHandler = (transaction:Transaction?, error:ErrorType?)->Void
 
     /**
      Get a single transaction
      
      - parameter transactionId: transaction id
      - parameter userId:        user id
+     - parameter cardId:        card id
      - parameter completion:    TransactionHandler closure
      */
-    public func transaction(transactionId transactionId:String, userId:String, completion:TransactionHandler)
+    public func transaction(transactionId transactionId:String, userId:String, cardId:String, completion:TransactionHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/creditCards/\(cardId)/transactions/\(transactionId)", parameters: nil, encoding: .URLEncodedInURL, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<Transaction, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(transaction: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(transaction: resultValue, error: response.result.error)
+                        }
+                        else
+                        {
+                            completion(transaction: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(transaction: nil, error: error)
+                })
+            }
+        }
     }
 
     // MARK: APDU Packages
