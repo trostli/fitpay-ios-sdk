@@ -547,7 +547,6 @@ public class RestClient
             if let headers = headers
             {
                 let request = self._manager.request(.GET, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId, parameters: nil, encoding: .JSON, headers: headers)
-                print(headers)
                 request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response:Response<CreditCard, NSError>) -> Void in
@@ -992,7 +991,8 @@ public class RestClient
             [unowned self](headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/deactivate", parameters: nil, encoding: .JSON, headers: headers)
+                let parameters = ["causedBy" : causedBy.rawValue, "reason" : reason]
+                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/deactivate", parameters: parameters, encoding: .JSON, headers: headers)
                 request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response:Response<CreditCard, NSError>) -> Void in
@@ -1066,7 +1066,8 @@ public class RestClient
             [unowned self](headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/reactivate", parameters: nil, encoding: .JSON, headers: headers)
+                let parameters = ["causedBy" : causedBy.rawValue, "reason" : reason]
+                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/reactivate", parameters: parameters, encoding: .JSON, headers: headers)
                 request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response:Response<CreditCard, NSError>) -> Void in
@@ -1747,7 +1748,6 @@ public class RestClient
                     "offset" : "\(offset)"
                 ]
                 let request = self._manager.request(.GET, "\(API_BASE_URL)/users/\(userId)/creditCards/\(cardId)/transactions", parameters: parameters, encoding: .URL, headers: headers)
-                debugPrint(request)
                 request.validate().responseObject(
                 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
