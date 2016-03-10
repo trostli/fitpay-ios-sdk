@@ -1739,21 +1739,46 @@ public class RestClient
 
     /**
      Completion handler
-     
-     - parameter PackageConfirmation?: Provides PackageConfirmation object, or nil if error occurs
+    
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    public typealias ConfirmAPDUPackageHandler = (ApduPackage?, ErrorType?)->Void
+    public typealias ConfirmAPDUPackageHandler = (error:ErrorType?)->Void
 
     /**
      Endpoint to allow for returning responses to APDU execution
      
-     - parameter packageId:  package id
+     - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    public func confirmAPDUPackage(packageId:String, completion: ConfirmAPDUPackageHandler)
+    public func confirmAPDUPackage(package:ApduPackage, completion: ConfirmAPDUPackageHandler)
     {
-
+        guard package.packageId != nil else {
+            completion(error:NSError.error(code: ErrorCode.BadRequest, domain: RestClient.self, message: "packageId should not be nil"))
+            return
+        }
+        
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.POST, "\(API_BASE_URL)/apduPackages/\(package.packageId!)/confirm", parameters: package.dictoinary, encoding: .JSON, headers: headers)
+                request.validate().responseString
+                {
+                    (response:Response<String, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        completion(error:response.result.error)
+                    })
+                }
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(error: error)
+                })
+            }
+        }
     }
 
     // MARK: Assets
