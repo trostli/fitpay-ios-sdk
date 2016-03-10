@@ -773,11 +773,11 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter isPending: Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
-     - parameter card?:     Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter error?:    Provides error object, or nil if no error occurs
+     - parameter pending: Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter card?:   Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error?:  Provides error object, or nil if no error occurs
      */
-    public typealias AcceptTermsHandler = (isPending:Bool, card:CreditCard?, error:ErrorType?)->Void
+    public typealias AcceptTermsHandler = (pending:Bool, card:CreditCard?, error:ErrorType?)->Void
     
     /**
      Indicates a user has accepted the terms and conditions presented when the credit card was first added to the user's profile
@@ -804,19 +804,19 @@ public class RestClient
                         if let resultError = response.result.error
                         {
                             let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                            completion(isPending: false, card: nil, error: error)
+                            completion(pending: false, card: nil, error: error)
                         }
                         else if let value = response.result.value
                         {
-                            completion(isPending: false, card: value, error: nil)
+                            completion(pending: false, card: value, error: nil)
                         }
                         else if (response.response != nil && response.response!.statusCode == 202)
                         {
-                            completion(isPending: true, card: nil, error: nil)
+                            completion(pending: true, card: nil, error: nil)
                         }
                         else
                         {
-                            completion(isPending: false, card: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(pending: false, card: nil, error: NSError.unhandledError(RestClient.self))
                         }
                     })
                 })
@@ -826,7 +826,7 @@ public class RestClient
                 dispatch_async(dispatch_get_main_queue(),
                 {
                     () -> Void in
-                    completion(isPending: false, card: nil, error: error)
+                    completion(pending: false, card: nil, error: error)
                 })
             }
         }
@@ -835,11 +835,11 @@ public class RestClient
     /**
      Completion handler
      
-     - parameter isPending: Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
-     - parameter card:      Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter error:     Provides error object, or nil if no error occurs
+     - parameter pending: Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter card:    Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error:   Provides error object, or nil if no error occurs
      */
-    public typealias DeclineTermsHandler = (isPending:Bool, card:CreditCard?, error:ErrorType?)->Void
+    public typealias DeclineTermsHandler = (pending:Bool, card:CreditCard?, error:ErrorType?)->Void
     
     /**
      Indicates a user has declined the terms and conditions. Once declined the credit card will be in a final state, no other actions may be taken
@@ -866,19 +866,19 @@ public class RestClient
                         if let resultError = response.result.error
                         {
                             let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                            completion(isPending: false, card: nil, error: error)
+                            completion(pending: false, card: nil, error: error)
                         }
                         else if let value = response.result.value
                         {
-                            completion(isPending: false, card: value, error: nil)
+                            completion(pending: false, card: value, error: nil)
                         }
                         else if (response.response != nil && response.response!.statusCode == 202)
                         {
-                            completion(isPending: true, card: nil, error: nil)
+                            completion(pending: true, card: nil, error: nil)
                         }
                         else
                         {
-                            completion(isPending: false, card: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(pending: false, card: nil, error: NSError.unhandledError(RestClient.self))
                         }
                     })
                 })
@@ -888,7 +888,7 @@ public class RestClient
                 dispatch_async(dispatch_get_main_queue(),
                 {
                     () -> Void in
-                    completion(isPending: false, card: nil, error: error)
+                    completion(pending: false, card: nil, error: error)
                 })
             }
         }

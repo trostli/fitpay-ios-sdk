@@ -758,7 +758,7 @@ class RestClientTests: XCTestCase
 
     func testCreditCardVerify()
     {
-        let expectation = super.expectationWithDescription("'creditCard' select verification method")
+        let expectation = super.expectationWithDescription("'creditCard' verify card with id")
         
         self.session.login(username: self.username, password: self.password)
         {
