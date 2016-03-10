@@ -970,11 +970,11 @@ public class RestClient
     /**
      Completion handler
 
-     - parameter Bool:        Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
-     - parameter CreditCard?: Provides deactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter ErrorType?:  Provides error object, or nil if no error occurs
+     - parameter pending:    Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
+     - parameter creditCard: Provides deactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error:      Provides error object, or nil if no error occurs
      */
-    public typealias DeactivateHandler = (Bool, CreditCard?, ErrorType?)->Void
+    public typealias DeactivateHandler = (pending:Bool, creditCard:CreditCard?, error:ErrorType?)->Void
     
     /**
      Transition the credit card into a deactived state so that it may not be utilized for payment. This link will only be available for qualified credit cards that are currently in an active state.
@@ -987,7 +987,58 @@ public class RestClient
      */
     public func deactivate(creditCardId creditCardId:String, userId:String, causedBy:CreditCardInitiator, reason:String, completion:DeactivateHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/deactivate", parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<CreditCard, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(pending:false, creditCard:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(pending:false, creditCard:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            if let statusCode = response.response?.statusCode
+                            {
+                                switch statusCode
+                                {
+                                case 202:
+                                    completion(pending:true, creditCard:nil, error: nil)
+                                    
+                                default:
+                                    completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                            else
+                            {
+                                completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                            }
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        completion(pending:false, creditCard:nil, error: error)
+                })
+            }
+        }
     }
 
     /**
@@ -997,7 +1048,7 @@ public class RestClient
      - parameter CreditCard?: Provides reactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    public typealias ReactivateHandler = (CreditCard?, ErrorType?)->Void
+    public typealias ReactivateHandler = (pending:Bool, creditCard:CreditCard?, error:ErrorType?)->Void
 
     /**
      Transition the credit card into an active state where it can be utilized for payment. This link will only be available for qualified credit cards that are currently in a deactivated state.
@@ -1010,7 +1061,58 @@ public class RestClient
      */
     public func reactivate(creditCardId creditCardId:String, userId:String, causedBy:CreditCardInitiator, reason:String, completion:ReactivateHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/reactivate", parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<CreditCard, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(pending:false, creditCard:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(pending:false, creditCard:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            if let statusCode = response.response?.statusCode
+                            {
+                                switch statusCode
+                                {
+                                case 202:
+                                    completion(pending:true, creditCard:nil, error: nil)
+                                    
+                                default:
+                                    completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                            else
+                            {
+                                completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                            }
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    () -> Void in
+                    completion(pending:false, creditCard:nil, error: error)
+                })
+            }
+        }
     }
 
     /**

@@ -606,6 +606,16 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
+    func testDeactivateCreditCard()
+    {
+        XCTFail("TODO")
+    }
+    
+    func testReactivateCreditCard()
+    {
+        XCTFail("TODO")
+    }
+    
     func testCreditCardAcceptTerms()
     {
         let expectation = super.expectationWithDescription("'creditCard' accept terms")
