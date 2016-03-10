@@ -1015,11 +1015,11 @@ public class RestClient
 
     /**
      Completion handler
-     - parameter Bool:                Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
-     - parameter VerificationMethod?: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter ErrorType?:          Provides error object, or nil if no error occurs
+     - parameter pending:             Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
+     - parameter verificationMethod:  Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error:               Provides error object, or nil if no error occurs
      */
-    public typealias SelectVerificationTypeHandler = (Bool, VerificationMethod?, ErrorType?)->Void
+    public typealias SelectVerificationTypeHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:ErrorType?)->Void
     
     /**
      When an issuer requires additional authentication to verfiy the identity of the cardholder, this indicates the user has selected the specified verification method by the indicated verificationTypeId
@@ -1031,17 +1031,66 @@ public class RestClient
      */
     public func selectVerificationType(creditCardId creditCardId:String, userId:String, verificationTypeId:String, completion:SelectVerificationTypeHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/verificationMethods/\(verificationTypeId)/select", parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<VerificationMethod, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(pending:false, verificationMethod:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(pending:false, verificationMethod:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            if let statusCode = response.response?.statusCode
+                            {
+                                switch statusCode
+                                {
+                                case 202:
+                                    completion(pending:true, verificationMethod:nil, error: nil)
+                                    
+                                default:
+                                    completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                            else
+                            {
+                                completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                            }
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(pending:false, verificationMethod:nil, error: error)
+                })
+            }
+        }
     }
     
     /**
      Completion handler
      
-     - parameter Bool:                Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
-     - parameter VerificationMethod?: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter ErrorType?: Provides error object, or nil if no error occurs
+     - parameter pending:            Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that VerificationMethod object is nil in this case
+     - parameter verificationMethod: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error:              Provides error object, or nil if no error occurs
      */
-    public typealias VerifyHandler = (Bool, VerificationMethod?, ErrorType?)->Void
+    public typealias VerifyHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:ErrorType?)->Void
     
     /**
      If a verification method is selected that requires an entry of a pin code, this transition will be available. Not all verification methods will include a secondary verification step through the FitPay API
@@ -1054,7 +1103,60 @@ public class RestClient
      */
     public func verify(creditCardId creditCardId:String, userId:String, verificationTypeId:String, verificationCode:String, completion:VerifyHandler)
     {
-
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let params = [
+                    "verificationCode" : verificationCode
+                ]
+                
+                let request = self._manager.request(.POST, API_BASE_URL + "/users/" + userId + "/creditCards/" + creditCardId + "/verificationMethods/\(verificationTypeId)/verify", parameters: params, encoding: .JSON, headers: headers)
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response:Response<VerificationMethod, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            completion(pending:false, verificationMethod:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            completion(pending:false, verificationMethod:resultValue, error: nil)
+                        }
+                        else
+                        {
+                            if let statusCode = response.response?.statusCode
+                            {
+                                switch statusCode
+                                {
+                                case 202:
+                                    completion(pending:true, verificationMethod:nil, error: nil)
+                                    
+                                default:
+                                    completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                            else
+                            {
+                                completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                            }
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(pending:false, verificationMethod:nil, error: error)
+                })
+            }
+        }
     }
 
     // MARK: Devices

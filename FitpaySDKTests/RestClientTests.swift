@@ -701,7 +701,120 @@ class RestClientTests: XCTestCase
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
+    
+    func testCreditCardSelectVerificationMethod()
+    {
+        let expectation = super.expectationWithDescription("'creditCard' select verification method")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+            {
+                (card, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(card)
+                self.client.acceptTerms(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                {
+                    (updateLater, card, error) -> Void in
+                    XCTAssertNil(error)
+                    
+                    self.client.selectVerificationType(creditCardId: card!.creditCardId!, userId: self.session.userId!, verificationTypeId: "12345", completion:
+                    {
+                        (pending, verification, error) -> Void in
+                        XCTAssertNil(error)
+                        
+                        self.client.creditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                        {
+                            (creditCard, error) -> Void in
+                            XCTAssertNil(error)
+                            XCTAssertEqual(creditCard?.state, "PENDING_VERIFICATION")
+                            
+                            self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                            {
+                                (error) -> Void in
+                                XCTAssertNil(error)
+                                
+                                expectation.fulfill()
+                            })
+                        })
+                    })
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
 
+    func testCreditCardVerify()
+    {
+        let expectation = super.expectationWithDescription("'creditCard' select verification method")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+            {
+                (card, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(card)
+                self.client.acceptTerms(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                {
+                    (updateLater, card, error) -> Void in
+                    XCTAssertNil(error)
+                    self.client.selectVerificationType(creditCardId: card!.creditCardId!, userId: self.session.userId!, verificationTypeId: "12345", completion:
+                    {
+                        (pending, verification, error) -> Void in
+                        XCTAssertNil(error)
+                        
+                        self.client.verify(creditCardId: card!.creditCardId!, userId: self.session.userId!, verificationTypeId: "12345", verificationCode: "12345", completion:
+                        {
+                            (pending, verification, error) -> Void in
+                            XCTAssertNil(error)
+                            
+                            self.client.creditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                            {
+                                (creditCard, error) -> Void in
+                                XCTAssertNil(error)
+                                XCTAssertEqual(creditCard?.state, "ACTIVE")
+                                
+                                self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                {
+                                    (error) -> Void in
+                                    XCTAssertNil(error)
+                                    
+                                    expectation.fulfill()
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
     func testDeviceRetrievesDevicesByUserId()
     {
         let expectation = super.expectationWithDescription("test 'device' retrieves devices by user id")

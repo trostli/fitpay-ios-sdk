@@ -34,7 +34,6 @@ public class User : Mappable, SecretApplyable
     }
 }
 
-
 internal class UserInfo : Mappable
 {
     var firstName:String?
@@ -55,5 +54,3 @@ internal class UserInfo : Mappable
         self.email <- map["email"]
     }
 }
-
-
