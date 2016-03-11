@@ -1,0 +1,1 @@
+internal let RTM_WEBVIEW_BASE_URL = "https://gi-de.pagare.me/login"

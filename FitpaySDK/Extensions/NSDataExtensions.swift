@@ -1,5 +1,6 @@
 
 import Foundation
+import FPCrypto
 
 extension NSData
 {
@@ -57,5 +58,14 @@ extension NSData
         }
         
         return nil
+    }
+    
+    var SHA1:String?
+    {
+        let result = NSMutableData(length: Int(SHA_DIGEST_LENGTH*2))!
+        guard simpleSHA1(bytes, UInt(length), UnsafeMutablePointer<Int8>(result.mutableBytes)) else {
+            return nil
+        }
+        return String(data: result, encoding: NSUTF8StringEncoding)
     }
 }
