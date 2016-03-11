@@ -6,7 +6,7 @@ class RestClientTests: XCTestCase
 {
     let clientId = "pagare"
     let redirectUri = "http://demo.pagare.me"
-    let username = "testable@something.com"
+    let username = "testableuser@something.com"
     let password = "1029"
 
     var session:RestSession!
@@ -1274,7 +1274,7 @@ class RestClientTests: XCTestCase
     
     func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
     {
-        let deviceType = "ACTIVITY_TRACKER"
+        let deviceType = "WATCH"
         let manufacturerName = "Fitpay"
         let deviceName = "PSPS"
         let serialNumber = "074DCC022E14"

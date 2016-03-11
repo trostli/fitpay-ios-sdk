@@ -11,7 +11,7 @@ extension NSData {
 }
 
 extension String {
-    func base64URLencoded() -> NSString? {
+    func base64URLencoded() -> String? {
         return self.dataUsingEncoding(NSUTF8StringEncoding)?.base64URLencoded()
     }
     
