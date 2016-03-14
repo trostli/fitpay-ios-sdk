@@ -547,7 +547,6 @@ class RestClientTests: XCTestCase
         self.session.login(username: self.username, password: self.password)
         {
             [unowned self](error) -> Void in
-            
             XCTAssertNil(error)
             XCTAssertTrue(self.session.isAuthorized)
             
@@ -557,49 +556,56 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            self.client.creditCards(userId: self.session.userId!, excludeState:[], limit: 10, offset: 0, completion:
-            {
-                [unowned self](result, error) -> Void in
-                
-                XCTAssertNil(error)
-                XCTAssertNotNil(result)
-                XCTAssertNotNil(result?.limit)
-                XCTAssertNotNil(result?.offset)
-                XCTAssertNotNil(result?.totalResults)
-                XCTAssertNotNil(result?.results)
-                XCTAssertNotEqual(result?.results?.count, 0)
-                XCTAssertNotNil(result?.links)
-                
-                if let results = result?.results where result?.results?.count > 0
+            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                 {
-                    // pick one of the cards randomly
-                    let card = results[Int(arc4random() % UInt32(results.count))]
-                    XCTAssertNotNil(card.links)
-                    XCTAssertNotNil(card.creditCardId)
-                    XCTAssertNotNil(card.userId)
-                    XCTAssertNotNil(card.isDefault)
-                    XCTAssertNotNil(card.created)
-                    XCTAssertNotNil(card.createdEpoch)
-                    XCTAssertNotNil(card.state)
-                    XCTAssertNotNil(card.cardType)
-                    XCTAssertNotNil(card.cardMetaData)
-                    XCTAssertNotNil(card.deviceRelationships)
-                    XCTAssertNotEqual(card.deviceRelationships?.count, 0)
-                    XCTAssertNotNil(card.encryptedData)
-                    XCTAssertNotNil(card.info)
-                    XCTAssertNotNil(card.info?.address)
-                    XCTAssertNotNil(card.info?.cvv)
-                    XCTAssertNotNil(card.info?.expMonth)
-                    XCTAssertNotNil(card.info?.expYear)
-                    XCTAssertNotNil(card.info?.pan)
+                    (card, error) -> Void in
                     
-                    self.client.makeDefault(creditCardId: card.creditCardId!, userId: card.userId!, completion:
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(card)
+                    self.client.acceptTerms(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
                     {
-                        (pending, defaultCreditCard, error) -> Void in
+                        (updateLater, card, error) -> Void in
                         XCTAssertNil(error)
-                        expectation.fulfill()
+                        self.client.selectVerificationType(creditCardId: card!.creditCardId!, userId: self.session.userId!, verificationTypeId: "12345", completion:
+                        {
+                            (pending, verification, error) -> Void in
+                            XCTAssertNil(error)
+                            
+                            self.client.verify(creditCardId: card!.creditCardId!, userId: self.session.userId!, verificationTypeId: "12345", verificationCode: "12345", completion:
+                            {
+                                (pending, verification, error) -> Void in
+                                XCTAssertNil(error)
+                                    
+                                self.client.creditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                {
+                                    (creditCard, error) -> Void in
+                                    XCTAssertNil(error)
+                                    XCTAssertEqual(creditCard?.state, "ACTIVE")
+                                
+                                    self.client.makeDefault(creditCardId: creditCard!.creditCardId!, userId: creditCard!.userId!, completion:
+                                    {
+                                            (pending, defaultCreditCard, error) -> Void in
+                                            XCTAssertNil(error)
+                                            XCTAssertNotNil(defaultCreditCard)
+                                            XCTAssertNotNil(defaultCreditCard?.isDefault)
+                                        
+                                            if let isDefault = defaultCreditCard?.isDefault
+                                            {
+                                                XCTAssertTrue(isDefault)
+                                            }
+                                    
+                                            self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                                {
+                                                (error) -> Void in
+                                                    XCTAssertNil(error)
+                                                    expectation.fulfill()
+                                                })
+                                    })
+                                    
+                                })
+                            })
+                        })
                     })
-                }
             })
         }
         
@@ -608,12 +614,140 @@ class RestClientTests: XCTestCase
     
     func testDeactivateCreditCard()
     {
-        XCTFail("TODO")
+        let expectation = super.expectationWithDescription("'deactivateCreditCard' makes credit card deactivated")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                {
+                    (card, error) -> Void in
+                    
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(card)
+                    self.client.acceptTerms(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                        {
+                            (updateLater, card, error) -> Void in
+                            XCTAssertNil(error)
+                            self.client.selectVerificationType(creditCardId: card!.creditCardId!, userId: self.session.userId!, verificationTypeId: "12345", completion:
+                                {
+                                    (pending, verification, error) -> Void in
+                                    XCTAssertNil(error)
+                                    
+                                    self.client.verify(creditCardId: card!.creditCardId!, userId: self.session.userId!, verificationTypeId: "12345", verificationCode: "12345", completion:
+                                        {
+                                            (pending, verification, error) -> Void in
+                                            XCTAssertNil(error)
+                                            
+                                            self.client.creditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                                {
+                                                    (creditCard, error) -> Void in
+                                                    XCTAssertNil(error)
+                                                    XCTAssertEqual(creditCard?.state, "ACTIVE")
+                                                    
+                                                    self.client.deactivate(creditCardId: creditCard!.creditCardId!, userId: creditCard!.userId!, causedBy: .CARDHOLDER, reason: "lost card", completion:                                                         {
+                                                            (pending, deactivatedCreditCard, error) -> Void in
+                                                            XCTAssertNil(error)
+                                                            XCTAssertNotNil(deactivatedCreditCard)
+                                                            XCTAssertEqual(deactivatedCreditCard?.state, "DEACTIVATED")
+                                                            self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                                                {
+                                                                    (error) -> Void in
+                                                                    XCTAssertNil(error)
+                                                                    expectation.fulfill()
+                                                            })
+                                                    })
+                                                    
+                                            })
+                                    })
+                            })
+                    })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
-    func testReactivateCreditCard()
+    func testReactivateCreditCardActivatesCard()
     {
-        XCTFail("TODO")
+        let expectation = super.expectationWithDescription("'reactivateCreditCard' makes credit card activated")
+        
+        self.session.login(username: self.username, password: self.password)
+            {
+                [unowned self](error) -> Void in
+                XCTAssertNil(error)
+                XCTAssertTrue(self.session.isAuthorized)
+                
+                if !self.session.isAuthorized
+                {
+                    expectation.fulfill()
+                    return
+                }
+                
+                self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                    {
+                        (card, error) -> Void in
+                        
+                        XCTAssertNil(error)
+                        XCTAssertNotNil(card)
+                        self.client.acceptTerms(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                            {
+                                (updateLater, card, error) -> Void in
+                                XCTAssertNil(error)
+                                self.client.selectVerificationType(creditCardId: card!.creditCardId!, userId: self.session.userId!, verificationTypeId: "12345", completion:
+                                    {
+                                        (pending, verification, error) -> Void in
+                                        XCTAssertNil(error)
+                                        
+                                        self.client.verify(creditCardId: card!.creditCardId!, userId: self.session.userId!, verificationTypeId: "12345", verificationCode: "12345", completion:
+                                            {
+                                                (pending, verification, error) -> Void in
+                                                XCTAssertNil(error)
+                                                
+                                                self.client.creditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                                    {
+                                                        (creditCard, error) -> Void in
+                                                        XCTAssertNil(error)
+                                                        XCTAssertEqual(creditCard?.state, "ACTIVE")
+                                                        
+                                                        self.client.deactivate(creditCardId: creditCard!.creditCardId!, userId: creditCard!.userId!, causedBy: .CARDHOLDER, reason: "lost card", completion:                                                         {
+                                                            (pending, deactivatedCreditCard, error) -> Void in
+                                                            XCTAssertNil(error)
+                                                            XCTAssertNotNil(deactivatedCreditCard)
+                                                            XCTAssertEqual(deactivatedCreditCard?.state, "DEACTIVATED")
+                                                            self.client.reactivate(creditCardId: creditCard!.creditCardId!, userId: creditCard!.userId!, causedBy: .CARDHOLDER, reason: "found card", completion:                                                         {
+                                                                (pending, reactivatedCreditCard, error) -> Void in
+                                                                XCTAssertNil(error)
+                                                                XCTAssertNotNil(reactivatedCreditCard)
+                                                                XCTAssertEqual(reactivatedCreditCard?.state, "ACTIVE")
+                                                                self.client.deleteCreditCard(creditCardId: reactivatedCreditCard!.creditCardId!, userId: self.session.userId!, completion:
+                                                                    {
+                                                                        (error) -> Void in
+                                                                        XCTAssertNil(error)
+                                                                        expectation.fulfill()
+                                                                })
+                                                            })
+                                                        })
+                                                        
+                                                        
+                                                        
+                                                })
+                                        })
+                                })
+                        })
+                })
+        }
+        
+        super.waitForExpectationsWithTimeout(20, handler: nil)
     }
     
     func testCreditCardAcceptTerms()
