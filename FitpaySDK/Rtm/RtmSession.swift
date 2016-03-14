@@ -188,8 +188,6 @@ extension RtmSession : PTPusherPresenceChannelDelegate {
             return nil
         }
         
-        print("url=", RTM_WEBVIEW_BASE_URL + "?deviceData=" + base64String)
-        
         return NSURL(string: RTM_WEBVIEW_BASE_URL + "?deviceData=" + base64String)
     }
     
@@ -214,7 +212,7 @@ extension RtmSession : PTPusherPresenceChannelDelegate {
     
     internal func subscribeToEvents(channel: PTPusherPresenceChannel) {
         channel.bindToEventNamed(ChannelMessage.ClientWebViewKey.rawValue) {
-            [unowned self](event) -> Void in
+            [unowned self] (event) -> Void in
             
             if let wvPublicKey = event.data["publicKey"] as? String {
                 self.wvPublicKey = wvPublicKey
@@ -222,7 +220,7 @@ extension RtmSession : PTPusherPresenceChannelDelegate {
         }
         
         channel.bindToEventNamed(ChannelMessage.ClientDeviceKeyRequest.rawValue) {
-            [unowned self](event) -> Void in
+            [unowned self] (event) -> Void in
             if let publicKey = self.keyPair.publicKey {
                 channel.triggerEventNamed(ChannelMessage.ClientWebViewKeyRequest.rawValue, data: "{\"requester\":\"device\"}")
                 
@@ -246,7 +244,6 @@ extension RtmSession : PTPusherPresenceChannelDelegate {
                     onUserLogin(self.wvSessionData!)
                 }
                 
-                //TODO: do something
                 channel.triggerEventNamed(ChannelMessage.ClientUserDataAck.rawValue, data: "")
             } else {
                 channel.triggerEventNamed(ChannelMessage.ClientUserDataFailed.rawValue, data: "{\"error\":\(ErrorCode.UnknownError.rawValue)}")
@@ -254,12 +251,20 @@ extension RtmSession : PTPusherPresenceChannelDelegate {
         }
         
         channel.bindToEventNamed(ChannelMessage.ClientDeviceSync.rawValue) {
-            (event) -> Void in
+            [unowned self] (event) -> Void in
+            if let onSychronizationRequest = self.onSychronizationRequest {
+                onSychronizationRequest()
+            }
+            
             channel.triggerEventNamed(ChannelMessage.ClientDeviceSyncAck.rawValue, data: "")
             //TODO: retrieve the new commit
             channel.triggerEventNamed(ChannelMessage.ClientDeviceSyncDataRetrieved.rawValue, data: "")
             //TODO: commit applied to the device
             channel.triggerEventNamed(ChannelMessage.ClientDeviceSyncComplete.rawValue, data: "")
+            
+            if let onSychronizationComplete = self.onSychronizationComplete {
+                onSychronizationComplete(nil)
+            }
         }
     }
 }

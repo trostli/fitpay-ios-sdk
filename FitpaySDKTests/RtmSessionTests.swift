@@ -1,5 +1,6 @@
 import XCTest
 @testable import FitpaySDK
+@testable import RTMClientApp
 
 class RtmSessionTests: XCTestCase
 {
@@ -74,5 +75,39 @@ class RtmSessionTests: XCTestCase
         self.connect()
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testUserLogin()
+    {
+        let expectation = super.expectationWithDescription("connection check")
+        self.session.onConnect =
+        {
+            (url, error) -> Void in
+            
+            XCTAssertNil(error)
+            XCTAssertNotNil(url)
+            
+            if let delegate = UIApplication.sharedApplication().delegate as? AppDelegate, let window = delegate.window {
+                let webview = UIWebView(frame: UIScreen.mainScreen().bounds)
+                window.addSubview(webview)
+                webview.loadRequest(NSURLRequest(URL: url!))
+            }
+        }
+        
+        self.session.onUserLogin =
+        {
+            (sessionData) -> Void in
+            
+            XCTAssertNotNil(sessionData)
+            XCTAssertNotNil(sessionData.userId)
+            XCTAssertNotNil(sessionData.deviceId)
+            XCTAssertNotNil(sessionData.token)
+            
+            expectation.fulfill()
+        }
+        
+        self.connect()
+        
+        super.waitForExpectationsWithTimeout(1000, handler: nil)
     }
 }
