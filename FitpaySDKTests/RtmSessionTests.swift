@@ -27,6 +27,7 @@ class RtmSessionTests: XCTestCase
         self.session = nil
         self.restSession = nil
         
+        
         super.tearDown()
     }
     
@@ -67,11 +68,11 @@ class RtmSessionTests: XCTestCase
             XCTAssertNil(error)
             XCTAssertNotNil(url)
             
-//            expectation.fulfill()
+            expectation.fulfill()
         }
         
         self.connect()
         
-        super.waitForExpectationsWithTimeout(100, handler: nil)
+        super.waitForExpectationsWithTimeout(10, handler: nil)
     }
 }

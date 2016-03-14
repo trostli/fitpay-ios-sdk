@@ -1,6 +1,7 @@
 
 import Foundation
 import Pusher
+import ObjectMapper
 
 public enum SyncErrorCode : Int
 {
@@ -102,9 +103,13 @@ public class RtmSession : NSObject
     }
     
     internal var device : DeviceInfo?
+    internal var keyPair : SECP256R1KeyPair = SECP256R1KeyPair()
+    internal var wvPublicKey : String?
+    internal var wvSessionData : WebViewSessionData?
     
     public enum ErrorCode : Int, ErrorType, RawIntValue
     {
+        case UnknownError = 0
         case ConnectionProblem = 10001
     }
 }
@@ -145,21 +150,24 @@ extension RtmSession : PTPusherDelegate {
 extension RtmSession : PTPusherPresenceChannelDelegate {
     
     internal enum ChannelMessage : String {
-        case ClientDeviceKey            = "client-device-key"
-        case ClientWebViewKey           = "client-wv-key"
-        case ClientDeviceKeyRequest     = "client-device-key-request"
-        case ClientWebViewKeyRequest    = "client-wv-key-request"
-        case ClientUserData             = "client-user-data"
-        case ClientUserDataAck          = "client-user-data-ack"
-        case ClientDeviceSync           = "client-device-sync"
-        case ClientDeviceSyncAck        = "client-device-sync-ack"
-        case ClientDeviceSyncComplete   = "client-device-sync-complete"
+        case ClientDeviceKey                = "client-device-key"
+        case ClientWebViewKey               = "client-wv-key"
+        case ClientDeviceKeyRequest         = "client-device-key-request"
+        case ClientWebViewKeyRequest        = "client-wv-key-request"
+        case ClientUserData                 = "client-user-data"
+        case ClientUserDataAck              = "client-user-data-ack"
+        case ClientUserDataFailed           = "client-user-data-failed"
+        case ClientDeviceSync               = "client-device-sync"
+        case ClientDeviceSyncAck            = "client-device-sync-ack"
+        case ClientDeviceSyncDataRetrieved  = "client-device-sync-data-retrieved"
+        case ClientDeviceSyncComplete       = "client-device-sync-complete"
     }
     
     public func presenceChannelDidSubscribe(channel: PTPusherPresenceChannel!) {
         if let connectionCompletion = self.onConnect {
             connectionCompletion(self.device != nil ? self.webViewUrl(self.device!) : nil, nil)
         }
+        subscribeToEvents(channel)
         print(isChannelHasAllParticipants(channel))
     }
     
@@ -202,5 +210,56 @@ extension RtmSession : PTPusherPresenceChannelDelegate {
         }
         
         return true
+    }
+    
+    internal func subscribeToEvents(channel: PTPusherPresenceChannel) {
+        channel.bindToEventNamed(ChannelMessage.ClientWebViewKey.rawValue) {
+            [unowned self](event) -> Void in
+            
+            if let wvPublicKey = event.data["publicKey"] as? String {
+                self.wvPublicKey = wvPublicKey
+            }
+        }
+        
+        channel.bindToEventNamed(ChannelMessage.ClientDeviceKeyRequest.rawValue) {
+            [unowned self](event) -> Void in
+            if let publicKey = self.keyPair.publicKey {
+                channel.triggerEventNamed(ChannelMessage.ClientWebViewKeyRequest.rawValue, data: "{\"requester\":\"device\"}")
+                
+                var requester = "wv"
+                if let realRequester = event.data["requester"] as? String {
+                    requester = realRequester
+                }
+                
+                channel.triggerEventNamed(ChannelMessage.ClientDeviceKey.rawValue, data: "{\"publicKey\":\"\(publicKey)\",\"requester\":\"\(requester)\"}")
+            }
+        }
+        
+        channel.bindToEventNamed(ChannelMessage.ClientUserData.rawValue) {
+            [unowned self] (event) -> Void in
+            
+            if let session = Mapper<WebViewSessionData>().map(event.data), let wvPublicKey = self.wvPublicKey {
+                session.applySecret(self.keyPair.generateSecretForPublicKey(wvPublicKey)!, expectedKeyId: nil)
+                self.wvSessionData = session
+                
+                if let onUserLogin = self.onUserLogin {
+                    onUserLogin(self.wvSessionData!)
+                }
+                
+                //TODO: do something
+                channel.triggerEventNamed(ChannelMessage.ClientUserDataAck.rawValue, data: "")
+            } else {
+                channel.triggerEventNamed(ChannelMessage.ClientUserDataFailed.rawValue, data: "{\"error\":\(ErrorCode.UnknownError.rawValue)}")
+            }
+        }
+        
+        channel.bindToEventNamed(ChannelMessage.ClientDeviceSync.rawValue) {
+            (event) -> Void in
+            channel.triggerEventNamed(ChannelMessage.ClientDeviceSyncAck.rawValue, data: "")
+            //TODO: retrieve the new commit
+            channel.triggerEventNamed(ChannelMessage.ClientDeviceSyncDataRetrieved.rawValue, data: "")
+            //TODO: commit applied to the device
+            channel.triggerEventNamed(ChannelMessage.ClientDeviceSyncComplete.rawValue, data: "")
+        }
     }
 }
