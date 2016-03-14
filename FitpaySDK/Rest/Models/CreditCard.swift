@@ -2,7 +2,7 @@
 import Foundation
 import ObjectMapper
 
-public class CreditCard : Mappable, SecretApplyable
+public class CreditCard : ClientModel, Mappable, SecretApplyable
 {
     public var links:[ResourceLink]?
     public var creditCardId:String?
@@ -24,6 +24,33 @@ public class CreditCard : Mappable, SecretApplyable
     public var verificationMethods:[VerificationMethod]?
     public var externalTokenReference:String?
     internal var info:CardInfo?
+    private static let selfResource = "self"
+    private static let acceptTermsResource = "acceptTerms"
+    private static let declineTermsResource = "declineTerms"
+
+    private weak var _client:RestClient?
+    
+    internal var client:RestClient?
+    {
+        get
+        {
+            return self._client
+        }
+        
+        set
+        {
+            self._client = newValue
+            
+            if let verificationMethods = self.verificationMethods
+            {
+                for verificationMethod in verificationMethods
+                {
+                    verificationMethod.client = self.client
+                }
+            }
+        }
+    }
+    
     
     public required init?(_ map: Map)
     {
@@ -56,6 +83,62 @@ public class CreditCard : Mappable, SecretApplyable
     func applySecret(secret:Foundation.NSData, expectedKeyId:String?)
     {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
+    }
+    
+    public func delete(completion:RestClient.DeleteCreditCardHandler)
+    {
+        let resource = CreditCard.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.deleteCreditCard(url, completion: completion)
+        }
+        else
+        {
+            completion(error:NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func update(name name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:RestClient.UpdateCreditCardHandler)
+    {
+        let resource = CreditCard.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.updateCreditCard(url, name: name, street1: street1, street2: street2, city: city, state: state, postalCode: postalCode, countryCode: countryCode, completion: completion)
+        }
+        else
+        {
+            completion(creditCard:nil, error:NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func acceptTerms(completion:RestClient.AcceptTermsHandler)
+    {
+        let resource = CreditCard.acceptTermsResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.acceptTerms(url, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, card: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func declineTerms(completion:RestClient.DeclineTermsHandler)
+    {
+        let resource = CreditCard.declineTermsResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.declineTerms(url, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, card: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
     }
 }
 

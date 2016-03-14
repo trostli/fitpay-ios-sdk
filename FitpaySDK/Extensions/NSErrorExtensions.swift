@@ -3,6 +3,11 @@ import Foundation
 
 extension NSError
 {
+    class func error (code code:Int, domain:AnyClass, message:String) -> NSError
+    {
+        return NSError(domain: "\(domain.self)", code:code, userInfo: [NSLocalizedDescriptionKey : message])
+    }
+    
     class func error <T:RawIntValue>(code code:T, domain:AnyClass, message:String) -> NSError
     {
         return NSError(domain: "\(domain.self)", code:code.rawValue, userInfo: [NSLocalizedDescriptionKey : message])
@@ -38,5 +43,24 @@ extension NSError
     class func unhandledError(domain:AnyClass) -> NSError
     {
         return NSError(domain:"\(domain)", code:0, userInfo: [NSLocalizedDescriptionKey : "Unhandled error"])
+    }
+    
+    class func clientUrlError(domain domain:AnyClass, code:Int, client:RestClient?, url:String?, resource:String) -> NSError?
+    {
+        if let _ = client
+        {
+            if let _ = url
+            {
+                return nil
+            }
+            else
+            {
+                return NSError.error(code: 0, domain: domain, message: "Failed to retrieve url for resource '\(resource)'")
+            }
+        }
+        else
+        {
+            return NSError.error(code: 0, domain: domain, message: "\(RestClient.self) is not set.")
+        }
     }
 }
