@@ -17,6 +17,7 @@ public class VerificationMethod : ClientModel, Mappable
     public var verifiedEpoch:String?
     private static let selectResource = "select"
     private static let verifyResource = "verify"
+    private static let cardResource = "card"
     
     internal weak var client:RestClient?
     
@@ -41,7 +42,7 @@ public class VerificationMethod : ClientModel, Mappable
         self.verifiedEpoch <- map["verifiedTsEpoch"]
     }
     
-    internal func selectVerificationType(completion:RestClient.SelectVerificationTypeHandler)
+    public func selectVerificationType(completion:RestClient.SelectVerificationTypeHandler)
     {
         let resource = VerificationMethod.selectResource
         let url = self.links?.url(resource)
@@ -52,6 +53,34 @@ public class VerificationMethod : ClientModel, Mappable
         else
         {
             completion(pending: false, verificationMethod: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func verify(verificationCode:String, completion:RestClient.VerifyHandler)
+    {
+        let resource = VerificationMethod.verifyResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.verify(url, verificationCode:verificationCode, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, verificationMethod: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func retrieveCreditCard(completion:RestClient.CreditCardHandler)
+    {
+        let resource = VerificationMethod.cardResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.retrieveCreditCard(url, completion: completion)
+        }
+        else
+        {
+            completion(creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }

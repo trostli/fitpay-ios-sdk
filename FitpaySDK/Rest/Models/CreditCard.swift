@@ -27,6 +27,10 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
     private static let selfResource = "self"
     private static let acceptTermsResource = "acceptTerms"
     private static let declineTermsResource = "declineTerms"
+    private static let deactivateResource = "deactivate"
+    private static let reactivateResource = "reactivate"
+    private static let makeDefaultResource = "makeDefault"
+
 
     private weak var _client:RestClient?
     
@@ -138,6 +142,49 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         else
         {
             completion(pending: false, card: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func deactivate(causedBy causedBy:CreditCardInitiator, reason:String, completion:RestClient.DeactivateHandler)
+    {
+        let resource = CreditCard.deactivateResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.deactivate(url, causedBy: causedBy, reason: reason, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func reactivate(causedBy causedBy:CreditCardInitiator, reason:String, completion:RestClient.ReactivateHandler)
+    {
+        let resource = CreditCard.reactivateResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.reactivate(url, causedBy: causedBy, reason: reason, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func makeDefault(completion:RestClient.MakeDefaultHandler)
+    {
+        let resource = CreditCard.makeDefaultResource
+        let url = self.links?.url(resource)
+        print(links)
+        if  let url = url, client = self.client
+        {
+            client.makeDefault(url, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }

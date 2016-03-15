@@ -2532,25 +2532,142 @@ public class RestClient
     internal func selectVerificationType(url:String, completion:SelectVerificationTypeHandler)
     {
         self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    {
+                        [unowned self](response:Response<VerificationMethod, NSError>) -> Void in
+                        
+                        dispatch_async(dispatch_get_main_queue(),
+                        {
+                            if let resultError = response.result.error
+                            {
+                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                completion(pending:false, verificationMethod:nil, error: error)
+                            }
+                            else if let resultValue = response.result.value
+                            {
+                                resultValue.client = self
+                                completion(pending:false, verificationMethod:resultValue, error: nil)
+                            }
+                            else
+                            {
+                                if let statusCode = response.response?.statusCode
+                                {
+                                    switch statusCode
+                                    {
+                                    case 202:
+                                        completion(pending:true, verificationMethod:nil, error: nil)
+                                        
+                                    default:
+                                        completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                    }
+                                }
+                                else
+                                {
+                                    completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                        })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                    {
+                        completion(pending:false, verificationMethod:nil, error: error)
+                })
+            }
+        }
+    }
+    
+    internal func verify(url:String, verificationCode:String, completion:VerifyHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let params = [
+                    "verificationCode" : verificationCode
+                ]
+                
+                let request = self._manager.request(.POST, url, parameters: params, encoding: .JSON, headers: headers)
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    {
+                        [](response:Response<VerificationMethod, NSError>) -> Void in
+                        
+                        dispatch_async(dispatch_get_main_queue(),
+                        {
+                            if let resultError = response.result.error
+                            {
+                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                completion(pending:false, verificationMethod:nil, error: error)
+                            }
+                            else if let resultValue = response.result.value
+                            {
+                                resultValue.client = self
+                                completion(pending:false, verificationMethod:resultValue, error: nil)
+                            }
+                            else
+                            {
+                                if let statusCode = response.response?.statusCode
+                                {
+                                    switch statusCode
+                                    {
+                                    case 202:
+                                        completion(pending:true, verificationMethod:nil, error: nil)
+                                        
+                                    default:
+                                        completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                    }
+                                }
+                                else
+                                {
+                                    completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                        })
+                    })
+                }
+                else
+                {
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        completion(pending:false, verificationMethod:nil, error: error)
+                    })
+                }
+        }
+    }
+    
+    internal func deactivate(url:String, causedBy:CreditCardInitiator, reason:String, completion:DeactivateHandler)
+    {
+        self.prepareAuthAndKeyHeaders
             {
                 [unowned self](headers, error) -> Void in
                 if let headers = headers
                 {
-                    let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
+                    let parameters = ["causedBy" : causedBy.rawValue, "reason" : reason]
+                    let request = self._manager.request(.POST, url, parameters: parameters, encoding: .JSON, headers: headers)
                     request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
-                            (response:Response<VerificationMethod, NSError>) -> Void in
+                            [unowned self](response:Response<CreditCard, NSError>) -> Void in
                             
                             dispatch_async(dispatch_get_main_queue(),
                                 {
+                                    () -> Void in
                                     if let resultError = response.result.error
                                     {
                                         let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        completion(pending:false, verificationMethod:nil, error: error)
+                                        completion(pending:false, creditCard:nil, error: error)
                                     }
                                     else if let resultValue = response.result.value
                                     {
-                                        completion(pending:false, verificationMethod:resultValue, error: nil)
+                                        resultValue.client = self
+                                        completion(pending:false, creditCard:resultValue, error: nil)
                                     }
                                     else
                                     {
@@ -2559,15 +2676,15 @@ public class RestClient
                                             switch statusCode
                                             {
                                             case 202:
-                                                completion(pending:true, verificationMethod:nil, error: nil)
+                                                completion(pending:true, creditCard:nil, error: nil)
                                                 
                                             default:
-                                                completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                                completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
                                             }
                                         }
                                         else
                                         {
-                                            completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                            completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
                                         }
                                     }
                             })
@@ -2577,9 +2694,172 @@ public class RestClient
                 {
                     dispatch_async(dispatch_get_main_queue(),
                         {
-                            completion(pending:false, verificationMethod:nil, error: error)
+                            () -> Void in
+                            completion(pending:false, creditCard:nil, error: error)
                     })
                 }
         }
     }
+    
+    internal func reactivate(url:String, causedBy:CreditCardInitiator, reason:String, completion:ReactivateHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+            {
+                [unowned self](headers, error) -> Void in
+                if let headers = headers
+                {
+                    let parameters = ["causedBy" : causedBy.rawValue, "reason" : reason]
+                    let request = self._manager.request(.POST, url, parameters: parameters, encoding: .JSON, headers: headers)
+                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        {
+                            [unowned self](response:Response<CreditCard, NSError>) -> Void in
+                            
+                            dispatch_async(dispatch_get_main_queue(),
+                                {
+                                    () -> Void in
+                                    if let resultError = response.result.error
+                                    {
+                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                        completion(pending:false, creditCard:nil, error: error)
+                                    }
+                                    else if let resultValue = response.result.value
+                                    {
+                                        resultValue.client = self
+                                        completion(pending:false, creditCard:resultValue, error: nil)
+                                    }
+                                    else
+                                    {
+                                        if let statusCode = response.response?.statusCode
+                                        {
+                                            switch statusCode
+                                            {
+                                            case 202:
+                                                completion(pending:true, creditCard:nil, error: nil)
+                                                
+                                            default:
+                                                completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                                            }
+                                        }
+                                        else
+                                        {
+                                            completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                                        }
+                                    }
+                            })
+                    })
+                }
+                else
+                {
+                    dispatch_async(dispatch_get_main_queue(),
+                        {
+                            () -> Void in
+                            completion(pending:false, creditCard:nil, error: error)
+                    })
+                }
+        }
+    }
+    
+    internal func retrieveCreditCard(url:String, completion:CreditCardHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self](headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.GET, url, parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    {
+                        [unowned self](response:Response<CreditCard, NSError>) -> Void in
+                        
+                        dispatch_async(dispatch_get_main_queue(),
+                        {
+                            () -> Void in
+                            if let resultError = response.result.error
+                            {
+                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                completion(creditCard:nil, error: error)
+                            }
+                            else if let resultValue = response.result.value
+                            {
+                                resultValue.client = self
+                                resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                completion(creditCard:resultValue, error: nil)
+                            }
+                            else
+                            {
+                                completion(creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                            }
+                        })
+                    })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        completion(creditCard:nil, error: error)
+                })
+            }
+        }
+    }
+
+    internal func makeDefault(url:String, completion:MakeDefaultHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+            {
+                [unowned self](headers, error) -> Void in
+                if let headers = headers
+                {
+                    let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
+                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        {
+                            [unowned self](response:Response<CreditCard, NSError>) -> Void in
+                            
+                            dispatch_async(dispatch_get_main_queue(),
+                                {
+                                    () -> Void in
+                                    if let resultError = response.result.error
+                                    {
+                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                        completion(pending:false, creditCard:nil, error: error)
+                                    }
+                                    else if let resultValue = response.result.value
+                                    {
+                                        resultValue.client = self
+                                        completion(pending:false, creditCard:resultValue, error: nil)
+                                    }
+                                    else
+                                    {
+                                        if let statusCode = response.response?.statusCode
+                                        {
+                                            switch statusCode
+                                            {
+                                            case 202:
+                                                completion(pending:true, creditCard:nil, error: nil)
+                                                
+                                            default:
+                                                completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                                            }
+                                        }
+                                        else
+                                        {
+                                            completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                                        }
+                                    }
+                            })
+                    })
+                }
+                else
+                {
+                    dispatch_async(dispatch_get_main_queue(),
+                        {
+                            () -> Void in
+                            completion(pending:false, creditCard:nil, error: error)
+                    })
+                }
+        }
+        
+    }
+
+    
 }
