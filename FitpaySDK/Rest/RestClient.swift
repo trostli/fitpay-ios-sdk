@@ -2860,6 +2860,299 @@ public class RestClient
         }
         
     }
-
     
+    // MARK: Devices
+    public func devices(url:String, limit:Int, offset:Int, completion:DevicesHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self] (headers, error) -> Void in
+            if let headers = headers {
+                let parameters = [
+                    "limit" : "\(limit)",
+                    "offset" : "\(offset)"
+                ]
+                let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
+                request.validate().responseObject(
+                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    [unowned self] (response: Response<ResultCollection<DeviceInfo>, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(devices:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.client = self
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            
+                            completion(devices:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(devices: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(devices: nil, error: error)
+                })
+            }
+        }
+    }
+
+    public func createNewDevice(url:String, deviceType:String, manufacturerName:String, deviceName:String,
+        serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
+        softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
+        secureElementId:String, pairing:String, completion:CreateNewDeviceHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self] (headers, error) -> Void in
+            if let headers = headers {
+                let params = [
+                    "deviceType" : deviceType,
+                    "manufacturerName" : manufacturerName,
+                    "deviceName" : deviceName,
+                    "serialNumber" : serialNumber,
+                    "modelNumber" : modelNumber,
+                    "hardwareRevision" : hardwareRevision,
+                    "firmwareRevision" : firmwareRevision,
+                    "softwareRevision" : softwareRevision,
+                    "systemId" : systemId,
+                    "osName" : osName,
+                    "licenseKey" : licenseKey,
+                    "bdAddress" : bdAddress,
+                    "secureElementId" : secureElementId,
+                    "pairingTs" : pairing
+                ]
+                let request = self._manager.request(.POST, url, parameters: params, encoding: .JSON, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    [unowned self] (response: Response<DeviceInfo, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(device:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.client = self
+                            
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            completion(device:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(device: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(device: nil, error: error)
+                })
+            }
+        }
+    }
+    
+    public func deleteDevice(url:String, completion:DeleteDeviceHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self] (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseString
+                {
+                    (response:Response<String, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        completion(error:response.result.error)
+                    })
+                }
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(error: error)
+                })
+            }
+        }
+    }
+    
+    public func updateDevice(url:String, firmwareRevision:String?, softwareRevision:String?,
+        completion:UpdateDeviceHandler)
+    {
+        var paramsArray = [AnyObject]()
+        if let firmwareRevision = firmwareRevision {
+            paramsArray.append(["op" : "replace", "path" : "/firmwareRevision", "value" : firmwareRevision])
+        }
+        
+        if let softwareRevision = softwareRevision {
+            paramsArray.append(["op" : "replace", "path" : "/softwareRevision", "value" : softwareRevision])
+        }
+        
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self] (headers, error) -> Void in
+            if let headers = headers {
+                let params = ["params" : paramsArray]
+                let request = self._manager.request(.PATCH, url, parameters: params, encoding: .Custom({
+                    (convertible, params) in
+                    let mutableRequest = convertible.URLRequest.copy() as! NSMutableURLRequest
+                    let jsondata = try? NSJSONSerialization.dataWithJSONObject(params!["params"]!, options: NSJSONWritingOptions(rawValue: 0))
+                    if let jsondata = jsondata {
+                        mutableRequest.HTTPBody = jsondata
+                        mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    }
+                    return (mutableRequest, nil)
+                }), headers: headers)
+                request.validate().responseObject(
+                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    [unowned self] (response: Response<DeviceInfo, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(device:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.client = self
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            
+                            completion(device:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(device: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(device: nil, error: error)
+                })
+            }
+        }
+    }
+    
+    public func commits(url:String, commitsAfter:String, limit:Int, offset:Int,
+        completion:CommitsHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            [unowned self] (headers, error) -> Void in
+            if let headers = headers {
+                //TODO: commitsAfter make research how to use this property
+                let parameters = [
+                    "limit" : "\(limit)",
+                    "offset" : "\(offset)"
+                ]
+                let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
+                request.validate().responseObject(
+                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    [unowned self] (response: Response<ResultCollection<Commit>, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(commits: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.client = self
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            completion(commits: resultValue, error: response.result.error)
+                        }
+                        else
+                        {
+                            completion(commits: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(commits: nil, error: error)
+                })
+            }
+        }
+    }
+    
+    // MARK: User
+    public func user(url:String, completion:UserHandler)
+    {
+        self.prepareAuthAndKeyHeaders(
+        {
+            [unowned self] (headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.GET, url, parameters: nil, encoding: .JSON, headers: headers)
+                request.validate().responseObject(
+                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    [unowned self] (response: Response<User, NSError>) -> Void in
+                    
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(user:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.client = self
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            completion(user:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(user: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(user: nil, error: error)
+                })
+            }
+        })
+    }
 }

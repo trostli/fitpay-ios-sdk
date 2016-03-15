@@ -1198,23 +1198,28 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            self.client.devices(userId: self.session.userId!, limit: 10, offset: 0, completion:
+            self.client.user(id:self.session.userId!, completion:
             {
-                (devices, error) -> Void in
-                
+                (user, error) -> Void in
                 XCTAssertNil(error)
-                XCTAssertNotNil(devices)
-                XCTAssertNotNil(devices?.limit)
-                XCTAssertNotNil(devices?.totalResults)
-                XCTAssertNotNil(devices?.links)
-                XCTAssertNotNil(devices?.results)
-                
-                for deviceInfo in devices!.results! {
-                    XCTAssertNotNil(deviceInfo.deviceIdentifier)
-                    XCTAssertNotNil(deviceInfo.metadata)
-                }
-                
-                expectation.fulfill()
+                user?.listDevices(10, offset: 0, completion:
+                {
+                    (devices, error) -> Void in
+                    
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(devices)
+                    XCTAssertNotNil(devices?.limit)
+                    XCTAssertNotNil(devices?.totalResults)
+                    XCTAssertNotNil(devices?.links)
+                    XCTAssertNotNil(devices?.results)
+                    
+                    for deviceInfo in devices!.results! {
+                        XCTAssertNotNil(deviceInfo.deviceIdentifier)
+                        XCTAssertNotNil(deviceInfo.metadata)
+                    }
+                    
+                    expectation.fulfill()
+                })
             })
         }
         
@@ -1273,11 +1278,51 @@ class RestClientTests: XCTestCase
                 (device, error) -> Void in
                 XCTAssertNil(error)
                 
-                self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                device?.delete(
                 {
                     (error) -> Void in
                     XCTAssertNil(error)
                     expectation.fulfill()
+                })
+            })
+        }
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testDeviceRetrievesUser()
+    {
+        let expectation = super.expectationWithDescription("test 'device' user retrieving ")
+        
+        self.session.login(username: self.username, password: self.password)
+        {
+            [unowned self](error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(self.session.isAuthorized)
+            
+            if !self.session.isAuthorized
+            {
+                expectation.fulfill()
+                return
+            }
+            
+            self.createDefaultDevice(self.session.userId!, completion:
+            {
+                (device, error) -> Void in
+                XCTAssertNil(error)
+                
+                device?.user(
+                {
+                    (user, error) -> Void in
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(user)
+                    
+                    device?.delete(
+                    {
+                        (error) -> Void in
+                        XCTAssertNil(error)
+                        expectation.fulfill()
+                    })
                 })
             })
         }
@@ -1311,7 +1356,7 @@ class RestClientTests: XCTestCase
                     (device, error) -> Void in
                     XCTAssertNil(error)
                     XCTAssertNotNil(device)
-                    self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                    device?.delete(
                     {
                         (error) -> Void in
                         XCTAssertNil(error)
@@ -1347,7 +1392,7 @@ class RestClientTests: XCTestCase
                 
                 let firmwareRev = "2.7.7.7"
                 let softwareRev = "6.8.1"
-                self.client.updateDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, firmwareRevision: firmwareRev, softwareRevision: softwareRev, completion:
+                device?.update(firmwareRev, softwareRevision: softwareRev, completion:
                 {
                     (updatedDevice, error) -> Void in
                     XCTAssertNil(error)
@@ -1356,7 +1401,7 @@ class RestClientTests: XCTestCase
                     XCTAssertTrue(updatedDevice?.softwareRevision == softwareRev)
                     XCTAssertTrue(updatedDevice?.firmwareRevision == firmwareRev)
                     
-                    self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                    updatedDevice?.delete(
                     {
                         (error) -> Void in
                         XCTAssertNil(error)
@@ -1385,27 +1430,32 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            self.client.devices(userId: self.session.userId!, limit: 1, offset: 0, completion:
+            self.client.user(id:self.session.userId!, completion:
             {
-                (devices, error) -> Void in
+                (user, error) -> Void in
                 XCTAssertNil(error)
-                self.client.commits(deviceId: devices!.results![0].deviceIdentifier!, userId: self.session.userId!, commitsAfter: "", limit: 10, offset: 0, completion:
+                user?.listDevices(1, offset: 0, completion:
                 {
-                    (commits, error) -> Void in
+                    (devices, error) -> Void in
                     XCTAssertNil(error)
-                    XCTAssertNotNil(commits)
-                    XCTAssertNotNil(commits?.limit)
-                    XCTAssertNotNil(commits?.totalResults)
-                    XCTAssertNotNil(commits?.links)
-                    XCTAssertNotNil(commits?.results)
-                    
-                    for commit in commits!.results! {
-                        XCTAssertNotNil(commit.commitType)
-                        XCTAssertNotNil(commit.payload)
-                        XCTAssertNotNil(commit.commit)
-                    }
-                    
-                    expectation.fulfill()
+                    devices!.results![0].listCommits("", limit: 10, offset: 0, completion:
+                    {
+                        (commits, error) -> Void in
+                        XCTAssertNil(error)
+                        XCTAssertNotNil(commits)
+                        XCTAssertNotNil(commits?.limit)
+                        XCTAssertNotNil(commits?.totalResults)
+                        XCTAssertNotNil(commits?.links)
+                        XCTAssertNotNil(commits?.results)
+                        
+                        for commit in commits!.results! {
+                            XCTAssertNotNil(commit.commitType)
+                            XCTAssertNotNil(commit.payload)
+                            XCTAssertNotNil(commit.commit)
+                        }
+                        
+                        expectation.fulfill()
+                    })
                 })
             })
         }
@@ -1629,7 +1679,7 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(15, handler: nil)
     }
     
-    @available(*, deprecated=1.0) func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
+    func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
     {
         let deviceType = "ACTIVITY_TRACKER"
         let manufacturerName = "Fitpay"
@@ -1646,11 +1696,22 @@ class RestClientTests: XCTestCase
         let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
         let pairing = "2016-02-29T21:42:21.469Z"
         
-        self.client.createNewDevice(userId: self.session.userId!, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
+        self.client.user(id:userId, completion:
         {
-            (device, error) -> Void in
-            completion(device: device, error: error)
+            (user, error) -> Void in
+            
+            if (error != nil) {
+                completion(device: nil, error: error)
+                return
+            }
+            
+            user?.createNewDevice(deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
+            {
+                (device, error) -> Void in
+                completion(device: device, error: error)
+            })
         })
+        
     }
     
     func testAssetsRetrievesAsset()
