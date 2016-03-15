@@ -12,6 +12,7 @@ public class User : ClientModel, Mappable, SecretApplyable
     internal var encryptedData:String?
     internal var info:UserInfo?
     private static let creditCardsResource = "creditCards"
+    private static let devicesResource = "devices"
     internal weak var client:RestClient?
 
     
@@ -64,6 +65,37 @@ public class User : ClientModel, Mappable, SecretApplyable
         else
         {
             completion(result:nil, error: NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func listDevices(limit:Int, offset:Int, completion:RestClient.DevicesHandler)
+    {
+        let resource = User.devicesResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.devices(url, limit: limit, offset: offset, completion: completion)
+        }
+        else
+        {
+            completion(devices:nil, error: NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func createNewDevice(deviceType:String, manufacturerName:String, deviceName:String,
+        serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
+        softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
+        secureElementId:String, pairing:String, completion:RestClient.CreateNewDeviceHandler)
+    {
+        let resource = User.devicesResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.createNewDevice(url, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: secureElementId, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion: completion)
+        }
+        else
+        {
+            completion(device:nil, error: NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }

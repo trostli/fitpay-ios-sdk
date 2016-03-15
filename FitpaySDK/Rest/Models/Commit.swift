@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class Commit : Mappable, SecretApplyable
+public class Commit : ClientModel, Mappable, SecretApplyable
 {
     var links:[ResourceLink]?
     var commitType:CommitType?
@@ -9,6 +9,8 @@ public class Commit : Mappable, SecretApplyable
     var created:CLong?
     var previousCommit:String?
     var commit:String?
+    
+    internal weak var client:RestClient?
     
     internal var encryptedData:String?
     
