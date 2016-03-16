@@ -52,6 +52,26 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
                     verificationMethod.client = self.client
                 }
             }
+            
+            if let termsAssetReferences = self.termsAssetReferences
+            {
+                for termsAssetReference in termsAssetReferences
+                {
+                    termsAssetReference.client = self.client
+                }
+            }
+            
+            
+            self.cardMetaData?.client = self.client
+            
+            
+            if let deviceRelationships = self.deviceRelationships
+            {
+                for deviceRelationship in deviceRelationships
+                {
+                    deviceRelationship.client = self.client
+                }
+            }
         }
     }
     
@@ -177,7 +197,6 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
     {
         let resource = CreditCard.makeDefaultResource
         let url = self.links?.url(resource)
-        print(links)
         if  let url = url, client = self.client
         {
             client.makeDefault(url, completion: completion)
@@ -189,7 +208,7 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
     }
 }
 
-public class CardMetadata : Mappable
+public class CardMetadata : ClientModel, Mappable
 {
     public var labelColor:String?
     public var issuerName:String?
@@ -206,6 +225,67 @@ public class CardMetadata : Mappable
     public var coBrandLogo:[Image]?
     public var icon:[Image]?
     public var issuerLogo:[Image]?
+    private var _client:RestClient?
+    internal var client:RestClient?
+    {
+        get
+        {
+            return self._client
+        }
+        
+        set
+        {
+            self._client = newValue
+            
+            if let brandLogo = self.brandLogo
+            {
+                for image in brandLogo
+                {
+                    image.client = self.client
+                }
+            }
+            
+            if let cardBackground = self.cardBackground
+            {
+                for image in cardBackground
+                {
+                    image.client = self.client
+                }
+            }
+            
+            if let cardBackgroundCombined = self.cardBackgroundCombined
+            {
+                for image in cardBackgroundCombined
+                {
+                    image.client = self.client
+                }
+            }
+            
+            if let coBrandLogo = self.coBrandLogo
+            {
+                for image in coBrandLogo
+                {
+                    image.client = self.client
+                }
+            }
+            
+            if let icon = self.icon
+            {
+                for image in icon
+                {
+                    image.client = self.client
+                }
+            }
+            
+            if let issuerLogo = self.issuerLogo
+            {
+                for image in issuerLogo
+                {
+                    image.client = self.client
+                }
+            }
+        }
+    }
     
     public required init?(_ map: Map)
     {
@@ -232,12 +312,14 @@ public class CardMetadata : Mappable
     }
 }
 
-public class Image : Mappable
+public class Image : ClientModel, Mappable, AssetRetrivable
 {
     public var links: [ResourceLink]?
     public var mimeType:String?
     public var height:Int?
     public var width:Int?
+    internal var client:RestClient?
+    private static let selfResource = "self"
     
     public required init?(_ map: Map)
     {
@@ -250,6 +332,21 @@ public class Image : Mappable
         self.mimeType <- map["mimeType"]
         self.height <- map["height"]
         self.width <- map["width"]
+    }
+    
+    public func retrieveAsset(completion: RestClient.AssetsHandler)
+    {
+        let resource = Image.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.assets(url, completion: completion)
+        }
+        else
+        {
+            let error = NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource)
+            completion(asset: nil, error: error)
+        }
     }
 }
 
@@ -285,10 +382,12 @@ internal class ImageTransformType : TransformType
 }
 
 
-public class TermsAssetReferences : Mappable
+public class TermsAssetReferences : ClientModel, Mappable, AssetRetrivable
 {
     public var links: [ResourceLink]?
     public var mimeType:String?
+    internal var client:RestClient?
+    private static let selfResource = "self"
     
     public required init?(_ map: Map)
     {
@@ -299,6 +398,21 @@ public class TermsAssetReferences : Mappable
     {
         self.links <- (map["_links"], ResourceLinkTransformType())
         self.mimeType <- map["mimeType"]
+    }
+    
+    public func retrieveAsset(completion: RestClient.AssetsHandler)
+    {
+        let resource = TermsAssetReferences.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.assets(url, completion: completion)
+        }
+        else
+        {
+            let error = NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource)
+            completion(asset: nil, error: error)
+        }
     }
 }
 
@@ -333,7 +447,7 @@ internal class TermsAssetReferencesTransformType : TransformType
     }
 }
 
-public class DeviceRelationships : Mappable
+public class DeviceRelationships : ClientModel, Mappable
 {
     public var deviceType:String?
     public var links: [ResourceLink]?
@@ -349,6 +463,8 @@ public class DeviceRelationships : Mappable
     public var createdEpoch:CLong?
     public var osName:String?
     public var systemId:String?
+    
+    internal var client:RestClient?
     
     public required init?(_ map: Map)
     {
