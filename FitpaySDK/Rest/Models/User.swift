@@ -13,6 +13,7 @@ public class User : ClientModel, Mappable, SecretApplyable
     internal var info:UserInfo?
     private static let creditCardsResource = "creditCards"
     private static let devicesResource = "devices"
+    
     internal weak var client:RestClient?
 
     

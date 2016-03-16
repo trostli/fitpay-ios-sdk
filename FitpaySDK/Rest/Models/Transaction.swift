@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class Transaction : Mappable
+public class Transaction : ClientModel, Mappable
 {
     public var links:[ResourceLink]?
     public var transactionId:String?
@@ -14,6 +14,9 @@ public class Transaction : Mappable
     public var merchantName:String?
     public var merchantCode:String?
     public var merchantType:String?
+    
+    private static let selfResource = "self"
+    internal weak var client:RestClient?
     
     public required init?(_ map: Map)
     {

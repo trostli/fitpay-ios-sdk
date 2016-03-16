@@ -30,7 +30,7 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
     private static let deactivateResource = "deactivate"
     private static let reactivateResource = "reactivate"
     private static let makeDefaultResource = "makeDefault"
-
+    private static let transactionsResource = "transactions"
 
     private weak var _client:RestClient?
     
@@ -50,6 +50,14 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
                 for verificationMethod in verificationMethods
                 {
                     verificationMethod.client = self.client
+                }
+            }
+            
+            if let deviceRelationships = self.deviceRelationships
+            {
+                for deviceRelationship in deviceRelationships
+                {
+                    deviceRelationship.client = self.client
                 }
             }
         }
@@ -185,6 +193,20 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         else
         {
             completion(pending: false, creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    func listTransactions(limit:Int, offset:Int, completion:RestClient.TransactionsHandler)
+    {
+        let resource = CreditCard.transactionsResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.transactions(url, limit: limit, offset: offset, completion: completion)
+        }
+        else
+        {
+            completion(transactions: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }
@@ -333,7 +355,7 @@ internal class TermsAssetReferencesTransformType : TransformType
     }
 }
 
-public class DeviceRelationships : Mappable
+public class DeviceRelationships : ClientModel, Mappable
 {
     public var deviceType:String?
     public var links: [ResourceLink]?
@@ -349,6 +371,9 @@ public class DeviceRelationships : Mappable
     public var createdEpoch:CLong?
     public var osName:String?
     public var systemId:String?
+    
+    private static let selfResource = "self"
+    internal weak var client:RestClient?
     
     public required init?(_ map: Map)
     {
@@ -371,6 +396,19 @@ public class DeviceRelationships : Mappable
         self.createdEpoch <- map["createdTsEpoch"]
         self.osName <- map["osName"]
         self.systemId <- map["systemId"]
+    }
+    
+    func relationship(completion:RestClient.RelationshipHandler) {
+        let resource = DeviceRelationships.selfResource
+        let url = self.links?.url(resource)
+        if let url = url, client = self.client
+        {
+            client.relationship(url, completion: completion)
+        }
+        else
+        {
+            completion(relationship: nil, error: NSError.clientUrlError(domain:DeviceRelationships.self, code:0, client: client, url: url, resource: resource))
+        }
     }
 }
 

@@ -273,7 +273,7 @@ public class RestClient
      - parameter deviceId:     device id
      - parameter completion:   CreateRelationshipHandler closure
      */
-    @available(*, deprecated=1.0) public func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
+    public func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -298,6 +298,7 @@ public class RestClient
                         }
                         else if let resultValue = response.result.value
                         {
+                            resultValue.client = self
                             completion(relationship:resultValue, error:response.result.error)
                         }
                         else
@@ -3154,5 +3155,110 @@ public class RestClient
                 })
             }
         })
+    }
+    
+    // MARK: Relationship
+    public func relationship(url:String, completion:RelationshipHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.GET, url, parameters: nil, encoding: .URLEncodedInURL, headers: headers)
+                request.validate().responseObject(
+                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<Relationship, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(relationship:nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.client = self
+                            completion(relationship:resultValue, error:response.result.error)
+                        }
+                        else
+                        {
+                            completion(relationship: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                completion(relationship: nil, error: error)
+            }
+        }
+    }
+    
+    public func deleteRelationship(url:String, completion:DeleteRelationshipHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .URLEncodedInURL, headers: headers)
+                request.validate().responseString
+                {
+                    (response:Response<String, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        () -> Void in
+                        completion(error:response.result.error)
+                    })
+                }
+            }
+            else
+            {
+                completion(error: error)
+            }
+        }
+    }
+    
+    // MARK: transactions
+    public func transactions(url:String, limit:Int, offset:Int, completion:TransactionsHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.GET, url, parameters: nil, encoding: .URL, headers: headers)
+                request.validate().responseObject(
+                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<ResultCollection<Transaction>, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(transactions: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.client = self
+                            completion(transactions: resultValue, error: response.result.error)
+                        }
+                        else
+                        {
+                            completion(transactions: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(transactions: nil, error: error)
+                })
+            }
+        }
     }
 }

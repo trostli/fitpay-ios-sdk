@@ -466,6 +466,7 @@ class RestClientTests: XCTestCase
                                             XCTAssertNil(error)
                                             expectation.fulfill()
                                         }
+                                        break
                                     }
                                 }
                             }
@@ -1250,7 +1251,12 @@ class RestClientTests: XCTestCase
                 XCTAssertNotNil(device)
                 XCTAssertNotNil(device!.deviceIdentifier)
                 
-                expectation.fulfill()
+                device?.delete(
+                {
+                    (error) -> Void in
+                    XCTAssertNil(error)
+                    expectation.fulfill()
+                })
             })
         }
         
@@ -1282,7 +1288,22 @@ class RestClientTests: XCTestCase
                 {
                     (error) -> Void in
                     XCTAssertNil(error)
-                    expectation.fulfill()
+                    self.client.user(id:self.session.userId!, completion:
+                    {
+                        (user, error) -> Void in
+                        XCTAssertNil(error)
+                        user?.listDevices(20, offset: 0, completion:
+                        {
+                            (devices, error) -> Void in
+                            XCTAssertNil(error)
+                            
+                            for deviceItr in devices!.results! {
+                                XCTAssert(deviceItr.deviceIdentifier != device?.deviceIdentifier)
+                            }
+                            
+                            expectation.fulfill()
+                        })
+                    })
                 })
             })
         }
@@ -1317,45 +1338,6 @@ class RestClientTests: XCTestCase
                     XCTAssertNil(error)
                     XCTAssertNotNil(user)
                     
-                    device?.delete(
-                    {
-                        (error) -> Void in
-                        XCTAssertNil(error)
-                        expectation.fulfill()
-                    })
-                })
-            })
-        }
-        
-        super.waitForExpectationsWithTimeout(10, handler: nil)
-    }
-    
-    func testDeviceRetrievesDeviceById()
-    {
-        let expectation = super.expectationWithDescription("test 'device' delete device")
-        
-        self.session.login(username: self.username, password: self.password)
-        {
-            [unowned self](error) -> Void in
-            XCTAssertNil(error)
-            XCTAssertTrue(self.session.isAuthorized)
-            
-            if !self.session.isAuthorized
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            self.createDefaultDevice(self.session.userId!, completion:
-            {
-                (device, error) -> Void in
-                XCTAssertNil(error)
-                
-                self.client.device(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
-                {
-                    (device, error) -> Void in
-                    XCTAssertNil(error)
-                    XCTAssertNotNil(device)
                     device?.delete(
                     {
                         (error) -> Void in
@@ -1463,149 +1445,6 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
-    func testDeviceRetrievesCommitFromDeviceWithCommitId()
-    {
-        let expectation = super.expectationWithDescription("test 'device' retrieving commit from device")
-        
-        self.session.login(username: self.username, password: self.password)
-        {
-            [unowned self](error) -> Void in
-            XCTAssertNil(error)
-            XCTAssertTrue(self.session.isAuthorized)
-            
-            if !self.session.isAuthorized
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            self.client.devices(userId: self.session.userId!, limit: 1, offset: 0, completion:
-            {
-                (devices, error) -> Void in
-                XCTAssertNil(error)
-                XCTAssertNotNil(devices)
-                
-                if devices == nil
-                {
-                    expectation.fulfill()
-                }
-                
-                self.client.commits(deviceId: devices!.results![0].deviceIdentifier!, userId: self.session.userId!, commitsAfter: "", limit: 10, offset: 0, completion:
-                {
-                    (commits, error) -> Void in
-                    XCTAssertNil(error)
-                    XCTAssertNotNil(commits)
-                    XCTAssertNotNil(commits?.limit)
-                    XCTAssertNotNil(commits?.totalResults)
-                    XCTAssertNotNil(commits?.links)
-                    XCTAssertNotNil(commits?.results)
-                    
-                    var someCommitId = ""
-                    for commit in commits!.results! {
-                        XCTAssertNotNil(commit.commitType)
-                        XCTAssertNotNil(commit.payload)
-                        XCTAssertNotNil(commit.commit)
-                        someCommitId = commit.commit!
-                    }
-                    
-                    self.client.commit(commitId: someCommitId, deviceId: devices!.results![0].deviceIdentifier!, userId: self.session.userId!, completion:
-                    {
-                        (commit, error) -> Void in
-                        
-                        XCTAssertNil(error)
-                        XCTAssertNotNil(commit)
-                        XCTAssertNotNil(commit?.commitType)
-                        XCTAssertNotNil(commit?.payload)
-                        XCTAssertNotNil(commit?.commit)
-                        
-                        expectation.fulfill()
-                    })
-                })
-            })
-        }
-        
-        super.waitForExpectationsWithTimeout(15, handler: nil)
-    }
-    
-    func testRelationshipsRetrievesRelationshipsWithUserId()
-    {
-        let expectation = super.expectationWithDescription("test 'relationships' retrieving relationships with user id")
-        
-        self.session.login(username: self.username, password: self.password)
-        {
-            [unowned self](error) -> Void in
-            XCTAssertNil(error)
-            XCTAssertTrue(self.session.isAuthorized)
-            
-            if !self.session.isAuthorized
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
-            {
-                (card, error) -> Void in
-                
-                XCTAssertNil(error)
-                XCTAssertNotNil(card)
-                
-                self.createDefaultDevice(self.session.userId!, completion:
-                {
-                    (device, error) -> Void in
-                    
-                    XCTAssertNil(error)
-                    XCTAssertNotNil(device)
-                    
-                    self.client.createRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
-                    {
-                        (relationship, error) -> Void in
-                        
-                        XCTAssertNil(error)
-                        XCTAssertNotNil(device)
-                        
-                        XCTAssertNotNil(relationship?.device)
-                        XCTAssertNotNil(relationship?.card)
-                        
-                        self.client.relationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
-                        {
-                            (relationship, error) -> Void in
-                            XCTAssertNil(error)
-                            XCTAssertNotNil(relationship)
-                            XCTAssertNotNil(relationship?.device)
-                            XCTAssertNotNil(relationship?.card)
-                        
-                            self.client.deleteRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
-                            {
-                                (error) -> Void in
-                                
-                                XCTAssertNil(error)
-                                    
-                                self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
-                                {
-                                    (error) -> Void in
-                                    
-                                    XCTAssertNil(error)
-                                    
-                                    self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
-                                    {
-                                        (error) -> Void in
-                                        
-                                        XCTAssertNil(error)
-                                        
-                                        expectation.fulfill()
-                                    })
-                                })
-                            })
-                        })
-                    })
-                })
-            })
-        }
-        
-        super.waitForExpectationsWithTimeout(15, handler: nil)
-    }
-    
     func testRelationshipsCreatesAndDeletesRelationship()
     {
         let expectation = super.expectationWithDescription("test 'relationships' creates and deletes relationship")
@@ -1622,47 +1461,57 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            self.client.createCreditCard(userId: self.session.userId!, pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+            self.client.user(id: self.session.userId!, completion:
             {
-                (card, error) -> Void in
+                (user, error) -> Void in
                 
+                XCTAssertNotNil(user)
+                XCTAssertNotNil(user?.info)
+                XCTAssertNotNil(user?.created)
+                XCTAssertNotNil(user?.links)
+                XCTAssertNotNil(user?.createdEpoch)
+                XCTAssertNotNil(user?.encryptedData)
+                XCTAssertNotNil(user?.info?.email)
                 XCTAssertNil(error)
-                XCTAssertNotNil(card)
                 
-                self.createDefaultDevice(self.session.userId!, completion:
+                user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                 {
-                    (device, error) -> Void in
+                    
+                    (card, error) -> Void in
                     
                     XCTAssertNil(error)
-                    XCTAssertNotNil(device)
+                    XCTAssertNotNil(card)
                     
-                    self.client.createRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                    self.createDefaultDevice(self.session.userId!, completion:
                     {
-                        (relationship, error) -> Void in
+                        (device, error) -> Void in
                         
                         XCTAssertNil(error)
                         XCTAssertNotNil(device)
                         
-                        XCTAssertNotNil(relationship?.device)
-                        XCTAssertNotNil(relationship?.card)
-                        
-                        self.client.deleteRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                        self.client.createRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
                         {
-                            (error) -> Void in
+                            (relationship, error) -> Void in
                             
                             XCTAssertNil(error)
+                            XCTAssertNotNil(device)
                             
-                            self.client.relationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                            XCTAssertNotNil(relationship?.device)
+                            XCTAssertNotNil(relationship?.card)
+                            
+                            relationship?.delete(
                             {
-                                (relationship, error) -> Void in
-                                XCTAssertNotNil(error)
+                                (error) -> Void in
                                 
-                                self.client.deleteDevice(deviceId: device!.deviceIdentifier!, userId: self.session.userId!, completion:
+                                XCTAssertNil(error)
+                                
+                                device?.delete(
                                 {
                                     (error) -> Void in
                                     
                                     XCTAssertNil(error)
-                                    self.client.deleteCreditCard(creditCardId: card!.creditCardId!, userId: self.session.userId!, completion:
+                                    
+                                    card?.delete(
                                     {
                                         (error) -> Void in
                                         XCTAssertNil(error)
@@ -1711,7 +1560,6 @@ class RestClientTests: XCTestCase
                 completion(device: device, error: error)
             })
         })
-        
     }
     
     func testAssetsRetrievesAsset()
@@ -1759,99 +1607,42 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            self.client.creditCards(userId: self.session.userId!, excludeState: [], limit: 10, offset: 0, completion:
+            self.client.user(id: self.session.userId!, completion:
             {
-                (result, error) -> Void in
-                
-                XCTAssertNil(error)
-                XCTAssertNotNil(result)
-                
-                for card in result!.results! {
-                    self.client.transactions(userId: self.session.userId!, cardId:card.creditCardId!, limit:10, offset:0, completion:
-                    {
-                        (transactions, error) -> Void in
-                        
-                        XCTAssertNil(error)
-                        XCTAssertNotNil(transactions)
-                        XCTAssertNotNil(transactions?.limit)
-                        XCTAssertNotNil(transactions?.totalResults)
-                        XCTAssertNotNil(transactions?.links)
-                        XCTAssertNotNil(transactions?.results)
-                        
-                        if let transactionsResults = transactions!.results {
-                            if transactionsResults.count > 0 {
-                                for transactionInfo in transactionsResults {
-                                    XCTAssertNotNil(transactionInfo.transactionId)
-                                    XCTAssertNotNil(transactionInfo.transactionType)
-                                }
-                                
-                                expectation.fulfill()
-                            }
-                        }
-                    })
-                }
-            })
-        }
-        
-        super.waitForExpectationsWithTimeout(10, handler: nil)
-    }
-    
-    func testTransactionRetrievesTransactionById()
-    {
-        let expectation = super.expectationWithDescription("'transaction' retrieves transaction by id")
-        
-        self.session.login(username: self.username, password: self.password)
-        {
-            [unowned self](error) -> Void in
-            XCTAssertNil(error)
-            XCTAssertTrue(self.session.isAuthorized)
+                (user, error) -> Void in
             
-            if !self.session.isAuthorized
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            self.client.creditCards(userId: self.session.userId!, excludeState: [], limit: 10, offset: 0, completion:
-            {
-                (result, error) -> Void in
-                
-                XCTAssertNil(error)
-                XCTAssertNotNil(result)
-                
-                for card in result!.results! {
-                    self.client.transactions(userId: self.session.userId!, cardId:card.creditCardId!, limit:10, offset:0, completion:
-                    {
-                        (transactions, error) -> Void in
-                        
-                        XCTAssertNil(error)
-                        XCTAssertNotNil(transactions)
-                        XCTAssertNotNil(transactions?.limit)
-                        XCTAssertNotNil(transactions?.totalResults)
-                        XCTAssertNotNil(transactions?.links)
-                        XCTAssertNotNil(transactions?.results)
-                        
-                        if let transactionsResults = transactions!.results {
-                            if transactionsResults.count > 0 {
-                                for transactionInfo in transactionsResults {
+                user?.listCreditCards(excludeState: [], limit: 10, offset: 0, completion:
+                {
+                    (result, error) -> Void in
+                    
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(result)
+                    
+                    for card in result!.results! {
+                        card.listTransactions(10, offset:0, completion:
+                        {
+                            (transactions, error) -> Void in
+                            
+                            XCTAssertNil(error)
+                            XCTAssertNotNil(transactions)
+                            XCTAssertNotNil(transactions?.limit)
+                            XCTAssertNotNil(transactions?.totalResults)
+                            XCTAssertNotNil(transactions?.links)
+                            XCTAssertNotNil(transactions?.results)
+                            
+                            if let transactionsResults = transactions!.results {
+                                if transactionsResults.count > 0 {
+                                    for transactionInfo in transactionsResults {
+                                        XCTAssertNotNil(transactionInfo.transactionId)
+                                        XCTAssertNotNil(transactionInfo.transactionType)
+                                    }
                                     
-                                    self.client.transaction(transactionId: transactionInfo.transactionId!, userId: self.session.userId!, cardId:card.creditCardId!, completion:
-                                    {
-                                        (transaction, error) -> Void in
-                                        print(error)
-                                        XCTAssertNil(error)
-                                        XCTAssertNotNil(transaction?.transactionId)
-                                        XCTAssertNotNil(transaction?.transactionType)
-                                        
-                                        expectation.fulfill()
-                                    })
-                                    
-                                    break
+                                    expectation.fulfill()
                                 }
                             }
-                        }
-                    })
-                }
+                        })
+                    }
+                })
             })
         }
         

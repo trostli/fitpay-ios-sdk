@@ -185,4 +185,17 @@ public class CardRelationship : ClientModel, Mappable, SecretApplyable
             self.expYear = decryptedObj?.expYear
         }
     }
+    
+    func relationship(completion:RestClient.RelationshipHandler) {
+        let resource = CardRelationship.selfResource
+        let url = self.links?.url(resource)
+        if let url = url, client = self.client
+        {
+            client.relationship(url, completion: completion)
+        }
+        else
+        {
+            completion(relationship: nil, error: NSError.clientUrlError(domain:CardRelationship.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
 }
