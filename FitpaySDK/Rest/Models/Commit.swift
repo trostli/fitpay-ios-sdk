@@ -63,7 +63,8 @@ public enum CommitType : String
 
 public class Payload : Mappable
 {
-    var info = [String : AnyObject]()
+    internal var creditCard:CreditCard?
+    internal var apduPackage:[String : AnyObject]?
     
     public required init?(_ map: Map)
     {
@@ -72,6 +73,15 @@ public class Payload : Mappable
     
     public func mapping(map: Map)
     {
-        info = map.JSONDictionary
+        let info = map.JSONDictionary
+        
+        if let _ = info["cardMetaData"]
+        {
+            self.creditCard = Mapper<CreditCard>().map(info)
+        }
+        else
+        {
+            self.apduPackage = info
+        }
     }
 }

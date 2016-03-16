@@ -1651,14 +1651,17 @@ class RestClientTests: XCTestCase
                                                             
                                                             expectation.fulfill()
                                                         }
+                                                        break
                                                     }
                                                 }
 
                                             }
+                                           
                                             break
                                         }
                                     }
-                                    
+                                 
+                                    break
                                 }
                             }
                             
