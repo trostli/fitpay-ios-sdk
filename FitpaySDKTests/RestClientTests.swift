@@ -1578,14 +1578,97 @@ class RestClientTests: XCTestCase
                 return
             }
             
-            self.client.assets(adapterData:"401", adapterId: "1131178c-aab5-438b-ab9d-a6572cb64c8c", assetId:"143320683", completion:
-            {
-                (asset, error) -> Void in
-                XCTAssertNil(error)
-                XCTAssertNotNil(asset)
-                XCTAssertNotNil(asset?.image)
-                expectation.fulfill()
+            self.client.user(id: self.session.userId!, completion:
+                {
+                    (user, error) -> Void in
+                    
+                    XCTAssertNotNil(user)
+                    XCTAssertNotNil(user?.info)
+                    XCTAssertNotNil(user?.created)
+                    XCTAssertNotNil(user?.links)
+                    XCTAssertNotNil(user?.createdEpoch)
+                    XCTAssertNotNil(user?.encryptedData)
+                    XCTAssertNotNil(user?.info?.email)
+                    XCTAssertNil(error)
+                    
+                    user?.listCreditCards(excludeState:[], limit: 10, offset: 0, completion:
+                        {
+                            (result, error) -> Void in
+                            
+                            XCTAssertNil(error)
+                            XCTAssertNotNil(result)
+                            XCTAssertNotNil(result?.limit)
+                            XCTAssertNotNil(result?.offset)
+                            XCTAssertNotNil(result?.totalResults)
+                            XCTAssertNotNil(result?.results)
+                            XCTAssertNotEqual(result?.results?.count, 0)
+                            
+                            if let results = result?.results
+                            {
+                                for card in results
+                                {
+                                    XCTAssertNotNil(card.links)
+                                    XCTAssertNotNil(card.creditCardId)
+                                    XCTAssertNotNil(card.userId)
+                                    XCTAssertNotNil(card.isDefault)
+                                    XCTAssertNotNil(card.created)
+                                    XCTAssertNotNil(card.createdEpoch)
+                                    XCTAssertNotNil(card.state)
+                                    XCTAssertNotNil(card.cardType)
+                                    XCTAssertNotNil(card.cardMetaData)
+                                    XCTAssertNotNil(card.deviceRelationships)
+                                    XCTAssertNotEqual(card.deviceRelationships?.count, 0)
+                                    XCTAssertNotNil(card.encryptedData)
+                                    XCTAssertNotNil(card.info)
+                                    XCTAssertNotNil(card.info?.address)
+                                    XCTAssertNotNil(card.info?.cvv)
+                                    XCTAssertNotNil(card.info?.expMonth)
+                                    XCTAssertNotNil(card.info?.expYear)
+                                    XCTAssertNotNil(card.info?.pan)
+                                    
+                                    if let termsAssetReferences = card.termsAssetReferences
+                                    {
+                                        for termsAssetReference in termsAssetReferences
+                                        {
+                                            termsAssetReference.retrieveAsset
+                                            {
+                                                (asset, error) -> Void in
+                                                
+                                                XCTAssertNil(error)
+                                                XCTAssertNotNil(asset)
+                                                XCTAssertNotNil(asset?.text)
+                                                
+                                                if let brandLogo = card.cardMetaData?.brandLogo
+                                                {
+                                                    for brandLogoImage in brandLogo
+                                                    {
+                                                        brandLogoImage.retrieveAsset
+                                                        {
+                                                            (asset, error) -> Void in
+                                                            XCTAssertNil(error)
+                                                            XCTAssertNotNil(asset)
+                                                            XCTAssertNotNil(asset?.image)
+                                                            
+                                                            expectation.fulfill()
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                            break
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                            
+                            XCTAssertNotNil(result?.links)
+                            
+                            
+                    })
             })
+
+            
         }
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
