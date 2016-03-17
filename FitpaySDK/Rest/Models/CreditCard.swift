@@ -215,7 +215,7 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(transactions: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(result: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }

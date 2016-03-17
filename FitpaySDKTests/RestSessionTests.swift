@@ -63,9 +63,9 @@ class RestSessionTests: XCTestCase
     
     func testLoginFailsForWrongCredentials()
     {
-        let expectation = super.expectationWithDescription("'login' fails for wrond credentials")
+        let expectation = super.expectationWithDescription("'login' fails for wrong credentials")
         
-        self.session.login(username: "totally@wrong.abc", password:"this is wrong")
+        self.session.login(username: "totally@wrong.abc", password:"fail")
             {
                 [unowned self]
                 (error) -> Void in

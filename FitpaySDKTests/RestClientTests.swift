@@ -367,7 +367,7 @@ class RestClientTests: XCTestCase
                             (error) -> Void in
                             
                             XCTAssertNil(error)
-                            user?.listCreditCards(excludeState: [], limit: 0, offset: 0, completion: { (result, error) -> Void in
+                            user?.listCreditCards(excludeState: [], limit: 20, offset: 0, completion: { (result, error) -> Void in
                                 
                                 XCTAssertNil(error)
                                 
@@ -447,7 +447,7 @@ class RestClientTests: XCTestCase
                         XCTAssertNil(error)
                         XCTAssertNotNil(updatedCard)
 
-                        user?.listCreditCards(excludeState: [], limit: 0, offset: 0, completion: { (result, error) -> Void in
+                        user?.listCreditCards(excludeState: [], limit: 20, offset: 0, completion: { (result, error) -> Void in
                             
                             XCTAssertNil(error)
                             
@@ -1429,6 +1429,10 @@ class RestClientTests: XCTestCase
                         XCTAssertNotNil(commits?.totalResults)
                         XCTAssertNotNil(commits?.links)
                         XCTAssertNotNil(commits?.results)
+                        commits?.links?.forEach
+                        {
+                            print($0.target)
+                        }
                         
                         for commit in commits!.results! {
                             XCTAssertNotNil(commit.commitType)
@@ -1697,7 +1701,7 @@ class RestClientTests: XCTestCase
             {
                 (user, error) -> Void in
             
-                user?.listCreditCards(excludeState: [], limit: 10, offset: 0, completion:
+                user?.listCreditCards(excludeState: [], limit: 20, offset: 0, completion:
                 {
                     (result, error) -> Void in
                     
@@ -1705,7 +1709,14 @@ class RestClientTests: XCTestCase
                     XCTAssertNotNil(result)
                     
                     for card in result!.results! {
-                        card.listTransactions(10, offset:0, completion:
+                        
+                        print("STATE", card.state!)
+                        if card.state! != "ACTIVE"
+                        {
+                            continue
+                        }
+                        
+                        card.listTransactions(1, offset:0, completion:
                         {
                             (transactions, error) -> Void in
                             
@@ -1717,22 +1728,32 @@ class RestClientTests: XCTestCase
                             XCTAssertNotNil(transactions?.results)
                             
                             if let transactionsResults = transactions!.results {
+                                
+                                XCTAssertGreaterThan(transactionsResults.count, 0)
+
+                                
                                 if transactionsResults.count > 0 {
                                     for transactionInfo in transactionsResults {
                                         XCTAssertNotNil(transactionInfo.transactionId)
                                         XCTAssertNotNil(transactionInfo.transactionType)
                                     }
                                     
-                                    expectation.fulfill()
                                 }
                             }
+                            
+                            
+                            expectation.fulfill()
+
                         })
+                        
+                        
+                        break
                     }
                 })
             })
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectationsWithTimeout(1000, handler: nil)
     }
     
     func testAPDUPackageConfirm()

@@ -79,7 +79,7 @@ public class User : ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(devices:nil, error: NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
+            completion(result:nil, error: NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
         }
     }
     

@@ -1268,10 +1268,10 @@ public class RestClient
     /**
     Completion handler
     
-    - parameter devices: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
+    - parameter result: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DevicesHandler = (devices:ResultCollection<DeviceInfo>?, error:ErrorType?)->Void
+    public typealias DevicesHandler = (result:ResultCollection<DeviceInfo>?, error:ErrorType?)->Void
     
     /**
      For a single user, retrieve a pagable collection of devices in their profile
@@ -1302,17 +1302,17 @@ public class RestClient
                         {
                             let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
 
-                            completion(devices:nil, error: error)
+                            completion(result:nil, error: error)
                         }
                         else if let resultValue = response.result.value
                         {
                             resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
                             
-                            completion(devices:resultValue, error:response.result.error)
+                            completion(result:resultValue, error:response.result.error)
                         }
                         else
                         {
-                            completion(devices: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(result: nil, error: NSError.unhandledError(RestClient.self))
                         }
                     })
                 })
@@ -1321,7 +1321,7 @@ public class RestClient
             {
                 dispatch_async(dispatch_get_main_queue(),
                 {
-                    completion(devices: nil, error: error)
+                    completion(result: nil, error: error)
                 })
             }
         }
@@ -1604,7 +1604,7 @@ public class RestClient
      - parameter commits: Provides ResultCollection<Commit> object, or nil if error occurs
      - parameter error:   Provides error object, or nil if no error occurs
     */
-    public typealias CommitsHandler = (commits:ResultCollection<Commit>?, error:ErrorType?)->Void
+    public typealias CommitsHandler = (result:ResultCollection<Commit>?, error:ErrorType?)->Void
     
     /**
      Retrieves a collection of all events that should be committed to this device
@@ -1638,16 +1638,16 @@ public class RestClient
                             {
                                 let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
                                 
-                                completion(commits: nil, error: error)
+                                completion(result: nil, error: error)
                             }
                             else if let resultValue = response.result.value
                             {
                                 resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                                completion(commits: resultValue, error: response.result.error)
+                                completion(result: resultValue, error: response.result.error)
                             }
                             else
                             {
-                                completion(commits: nil, error: NSError.unhandledError(RestClient.self))
+                                completion(result: nil, error: NSError.unhandledError(RestClient.self))
                             }
                         })
                     })
@@ -1656,7 +1656,7 @@ public class RestClient
             {
                 dispatch_async(dispatch_get_main_queue(),
                 {
-                    completion(commits: nil, error: error)
+                    completion(result: nil, error: error)
                 })
             }
         }
@@ -1727,7 +1727,7 @@ public class RestClient
      - parameter transactions: Provides ResultCollection<Transaction> object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
     */
-    public typealias TransactionsHandler = (transactions:ResultCollection<Transaction>?, error:ErrorType?)->Void
+    public typealias TransactionsHandler = (result:ResultCollection<Transaction>?, error:ErrorType?)->Void
 
     /**
      Provides a transaction history (if available) for the user, results are limited by provider.
@@ -1759,15 +1759,15 @@ public class RestClient
                         {
                             let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
                             
-                            completion(transactions: nil, error: error)
+                            completion(result: nil, error: error)
                         }
                         else if let resultValue = response.result.value
                         {
-                            completion(transactions: resultValue, error: response.result.error)
+                            completion(result: resultValue, error: response.result.error)
                         }
                         else
                         {
-                            completion(transactions: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(result: nil, error: NSError.unhandledError(RestClient.self))
                         }
                     })
                 })
@@ -1776,7 +1776,7 @@ public class RestClient
             {
                 dispatch_async(dispatch_get_main_queue(),
                 {
-                    completion(transactions: nil, error: error)
+                    completion(result: nil, error: error)
                 })
             }
         }
@@ -2241,49 +2241,54 @@ public class RestClient
     
     internal func creditCards(url:String, excludeState:[String], limit:Int, offset:Int, completion:CreditCardsHandler)
     {
+        let parameters:[String : AnyObject] = ["excludeState" : excludeState.joinWithSeparator(","), "limit" : limit, "offest" : offset]
+        self.creditCards(url, parameters: parameters, completion: completion)
+    }
+    
+    internal func creditCards(url:String, parameters:[String:AnyObject]?, completion:CreditCardsHandler)
+    {
         self.prepareAuthAndKeyHeaders
-        {
-            [unowned self](headers, error) -> Void in
-            if let headers = headers
             {
-                let parameters:[String : AnyObject] = ["excludeState" : excludeState.joinWithSeparator(","), "limit" : limit, "offest" : offset]
-                let request = self._manager.request(.GET, url, parameters: parameters, encoding: .JSON, headers: headers)
-                
-                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                [unowned self](headers, error) -> Void in
+                if let headers = headers
                 {
-                    (response:Response<ResultCollection<CreditCard>, NSError>) -> Void in
+                    let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
                     
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        () -> Void in
-                        if let resultError = response.result.error
+                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                            completion(result:nil, error: error)
-                        }
-                        else if let resultValue = response.result.value
-                        {
-                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                        
-                            resultValue.client = self
+                            (response:Response<ResultCollection<CreditCard>, NSError>) -> Void in
                             
-                            completion(result:resultValue, error: nil)
-                        }
-                        else
-                        {
-                            completion(result:nil, error: NSError.unhandledError(RestClient.self))
-                        }
+                            dispatch_async(dispatch_get_main_queue(),
+                                {
+                                    () -> Void in
+                                    if let resultError = response.result.error
+                                    {
+                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                        completion(result:nil, error: error)
+                                    }
+                                    else if let resultValue = response.result.value
+                                    {
+                                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                        
+                                        resultValue.client = self
+                                        
+                                        completion(result:resultValue, error: nil)
+                                    }
+                                    else
+                                    {
+                                        completion(result:nil, error: NSError.unhandledError(RestClient.self))
+                                    }
+                            })
                     })
-                })
-            }
-            else
-            {
-                dispatch_async(dispatch_get_main_queue(),
+                }
+                else
                 {
-                    () -> Void in
-                    completion(result:nil, error: error)
-                })
-            }
+                    dispatch_async(dispatch_get_main_queue(),
+                        {
+                            () -> Void in
+                            completion(result:nil, error: error)
+                    })
+                }
         }
     }
 
@@ -2866,52 +2871,60 @@ public class RestClient
     }
     
     // MARK: Devices
-    public func devices(url:String, limit:Int, offset:Int, completion:DevicesHandler)
+    internal func devices(url:String, limit:Int, offset:Int, completion:DevicesHandler)
+    {
+        let parameters = [
+            "limit" : "\(limit)",
+            "offset" : "\(offset)"
+        ]
+
+        self.devices(url, parameters: parameters, completion: completion)
+    }
+    
+    internal func devices(url:String, parameters:[String : AnyObject]?, completion:DevicesHandler)
     {
         self.prepareAuthAndKeyHeaders
-        {
-            [unowned self] (headers, error) -> Void in
-            if let headers = headers {
-                let parameters = [
-                    "limit" : "\(limit)",
-                    "offset" : "\(offset)"
-                ]
-                let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
-                request.validate().responseObject(
-                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+            {
+                [unowned self] (headers, error) -> Void in
+                if let headers = headers {
+                    
+                    let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
+                    request.validate().responseObject(
+                        dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        {
+                            [unowned self] (response: Response<ResultCollection<DeviceInfo>, NSError>) -> Void in
+                            dispatch_async(dispatch_get_main_queue(),
+                                {
+                                    if let resultError = response.result.error
+                                    {
+                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                        
+                                        completion(result:nil, error: error)
+                                    }
+                                    else if let resultValue = response.result.value
+                                    {
+                                        resultValue.client = self
+                                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                        
+                                        completion(result:resultValue, error:response.result.error)
+                                    }
+                                    else
+                                    {
+                                        completion(result: nil, error: NSError.unhandledError(RestClient.self))
+                                    }
+                            })
+                        })
+                }
+                else
                 {
-                    [unowned self] (response: Response<ResultCollection<DeviceInfo>, NSError>) -> Void in
                     dispatch_async(dispatch_get_main_queue(),
                     {
-                        if let resultError = response.result.error
-                        {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                            
-                            completion(devices:nil, error: error)
-                        }
-                        else if let resultValue = response.result.value
-                        {
-                            resultValue.client = self
-                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                            
-                            completion(devices:resultValue, error:response.result.error)
-                        }
-                        else
-                        {
-                            completion(devices: nil, error: NSError.unhandledError(RestClient.self))
-                        }
+                        completion(result: nil, error: error)
                     })
-                })
-            }
-            else
-            {
-                dispatch_async(dispatch_get_main_queue(),
-                {
-                    completion(devices: nil, error: error)
-                })
-            }
+                }
         }
     }
+
 
     public func createNewDevice(url:String, deviceType:String, manufacturerName:String, deviceName:String,
         serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
@@ -3070,15 +3083,18 @@ public class RestClient
     public func commits(url:String, commitsAfter:String, limit:Int, offset:Int,
         completion:CommitsHandler)
     {
+        let parameters = [
+            "limit" : "\(limit)",
+            "offset" : "\(offset)",
+            "commitsAfter" : commitsAfter
+        ]
+        
         self.prepareAuthAndKeyHeaders
         {
             [unowned self] (headers, error) -> Void in
             if let headers = headers {
                 //TODO: commitsAfter make research how to use this property
-                let parameters = [
-                    "limit" : "\(limit)",
-                    "offset" : "\(offset)"
-                ]
+                
                 let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
                 request.validate().responseObject(
                     dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
@@ -3090,17 +3106,17 @@ public class RestClient
                         {
                             let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
                             
-                            completion(commits: nil, error: error)
+                            completion(result: nil, error: error)
                         }
                         else if let resultValue = response.result.value
                         {
                             resultValue.client = self
                             resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                            completion(commits: resultValue, error: response.result.error)
+                            completion(result: resultValue, error: response.result.error)
                         }
                         else
                         {
-                            completion(commits: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(result: nil, error: NSError.unhandledError(RestClient.self))
                         }
                     })
                 })
@@ -3109,9 +3125,54 @@ public class RestClient
             {
                 dispatch_async(dispatch_get_main_queue(),
                 {
-                    completion(commits: nil, error: error)
+                    completion(result: nil, error: error)
                 })
             }
+        }
+    }
+    
+    internal func commits(url:String, parameters:[String : AnyObject]?,
+        completion:CommitsHandler)
+    {
+        self.prepareAuthAndKeyHeaders
+            {
+                [unowned self] (headers, error) -> Void in
+                if let headers = headers {
+                    //TODO: commitsAfter make research how to use this property
+                    
+                    let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
+                    request.validate().responseObject(
+                        dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        {
+                            [unowned self] (response: Response<ResultCollection<Commit>, NSError>) -> Void in
+                            dispatch_async(dispatch_get_main_queue(),
+                                {
+                                    if let resultError = response.result.error
+                                    {
+                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                        
+                                        completion(result: nil, error: error)
+                                    }
+                                    else if let resultValue = response.result.value
+                                    {
+                                        resultValue.client = self
+                                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                        completion(result: resultValue, error: response.result.error)
+                                    }
+                                    else
+                                    {
+                                        completion(result: nil, error: NSError.unhandledError(RestClient.self))
+                                    }
+                            })
+                        })
+                }
+                else
+                {
+                    dispatch_async(dispatch_get_main_queue(),
+                        {
+                            completion(result: nil, error: error)
+                    })
+                }
         }
     }
     
@@ -3199,7 +3260,7 @@ public class RestClient
         }
     }
     
-    public func deleteRelationship(url:String, completion:DeleteRelationshipHandler)
+    internal func deleteRelationship(url:String, completion:DeleteRelationshipHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -3223,45 +3284,55 @@ public class RestClient
         }
     }
 
-    // MARK: transactions
-    public func transactions(url:String, limit:Int, offset:Int, completion:TransactionsHandler)
+    // MARK: Transactions
+    internal func transactions(url:String, limit:Int, offset:Int, completion:TransactionsHandler)
+    {
+        let parameters = [
+            "limit" : "\(limit)",
+            "offset" : "\(offset)",
+        ]
+        
+        self.transactions(url, parameters: parameters, completion: completion)
+    }
+    
+    internal func transactions(url:String, parameters:[String : AnyObject]?, completion:TransactionsHandler)
     {
         self.prepareAuthAndKeyHeaders
-        {
-            (headers, error) -> Void in
-            if let headers = headers {
-                let request = self._manager.request(.GET, url, parameters: nil, encoding: .URL, headers: headers)
-                request.validate().responseObject(
-                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
-                {
-                    (response: Response<ResultCollection<Transaction>, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        if let resultError = response.result.error
-                        {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                            
-                            completion(transactions: nil, error: error)
-                        }
-                        else if let resultValue = response.result.value
-                        {
-                            resultValue.client = self
-                            completion(transactions: resultValue, error: response.result.error)
-                        }
-                        else
-                        {
-                            completion(transactions: nil, error: NSError.unhandledError(RestClient.self))
-                        }
-                    })
-                })
-            }
-            else
             {
-                dispatch_async(dispatch_get_main_queue(),
+                (headers, error) -> Void in
+                if let headers = headers {
+                    let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
+                    request.validate().responseObject(
+                        dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        {
+                            (response: Response<ResultCollection<Transaction>, NSError>) -> Void in
+                            dispatch_async(dispatch_get_main_queue(),
+                                {
+                                    if let resultError = response.result.error
+                                    {
+                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                        
+                                        completion(result: nil, error: error)
+                                    }
+                                    else if let resultValue = response.result.value
+                                    {
+                                        resultValue.client = self
+                                        completion(result: resultValue, error: response.result.error)
+                                    }
+                                    else
+                                    {
+                                        completion(result: nil, error: NSError.unhandledError(RestClient.self))
+                                    }
+                            })
+                    })
+                }
+                else
                 {
-                    completion(transactions: nil, error: error)
-                })
-            }
+                    dispatch_async(dispatch_get_main_queue(),
+                        {
+                            completion(result: nil, error: error)
+                    })
+                }
         }
     }
 

@@ -132,7 +132,7 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(commits: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+            completion(result: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
