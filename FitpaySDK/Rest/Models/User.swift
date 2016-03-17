@@ -38,6 +38,23 @@ public class User : ClientModel, Mappable, SecretApplyable
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
     
+    /**
+     Add a single credit card to a user's profile. If the card owner has no default card, then the new card will become the default.
+     
+     - parameter pan:        pan
+     - parameter expMonth:   expiration month
+     - parameter expYear:    expiration year
+     - parameter cvv:        cvv code
+     - parameter name:       user name
+     - parameter street1:    address
+     - parameter street2:    address
+     - parameter street3:    street name
+     - parameter city:       address
+     - parameter state:      state
+     - parameter postalCode: postal code
+     - parameter country:    country
+     - parameter completion: CreateCreditCardHandler closure
+     */
     public func createCreditCard(pan pan:String, expMonth:Int, expYear:Int, cvv:String, name:String,
         street1:String, street2:String, street3:String, city:String, state:String, postalCode:String, country:String,
         completion:RestClient.CreateCreditCardHandler)
@@ -55,6 +72,14 @@ public class User : ClientModel, Mappable, SecretApplyable
 
     }
     
+    /**
+     Retrieves the details of an existing credit card. You need only supply the uniqueidentifier that was returned upon creation.
+     
+     - parameter excludeState: Exclude all credit cards in the specified state. If you desire to specify multiple excludeState values, then repeat this query parameter multiple times.
+     - parameter limit:        max number of profiles per page
+     - parameter offset:       start index position for list of entities returned
+     - parameter completion:   CreditCardsHandler closure
+     */
     public func listCreditCards(excludeState excludeState:[String], limit:Int, offset:Int, completion:RestClient.CreditCardsHandler)
     {
         let resource = User.creditCardsResource
@@ -69,6 +94,13 @@ public class User : ClientModel, Mappable, SecretApplyable
         }
     }
     
+    /**
+     For a single user, retrieve a pagable collection of devices in their profile
+     
+     - parameter limit:      max number of profiles per page
+     - parameter offset:     start index position for list of entities returned
+     - parameter completion: DevicesHandler closure
+     */
     public func listDevices(limit:Int, offset:Int, completion:RestClient.DevicesHandler)
     {
         let resource = User.devicesResource
@@ -83,6 +115,25 @@ public class User : ClientModel, Mappable, SecretApplyable
         }
     }
     
+    /**
+     For a single user, create a new device in their profile
+     
+     - parameter deviceType:       device type
+     - parameter manufacturerName: manufacturer name
+     - parameter deviceName:       device name
+     - parameter serialNumber:     serial number
+     - parameter modelNumber:      model number
+     - parameter hardwareRevision: hardware revision
+     - parameter firmwareRevision: firmware revision
+     - parameter softwareRevision: software revision
+     - parameter systemId:         system id
+     - parameter osName:           os name
+     - parameter licenseKey:       license key
+     - parameter bdAddress:        bd address //TODO: provide better description
+     - parameter secureElementId:  secure element id
+     - parameter pairing:          pairing date [MM-DD-YYYY]
+     - parameter completion:       CreateNewDeviceHandler closure
+     */
     public func createNewDevice(deviceType:String, manufacturerName:String, deviceName:String,
         serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
         softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,

@@ -3,6 +3,7 @@ import ObjectMapper
 
 public class Asset
 {
+    // Only one item available for specific context
     var text:String?
     var image:UIImage?
     var data:NSData?
