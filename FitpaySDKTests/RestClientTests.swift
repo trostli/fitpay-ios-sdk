@@ -6,7 +6,7 @@ class RestClientTests: XCTestCase
 {
     let clientId = "pagare"
     let redirectUri = "http://demo.pagare.me"
-    let username = "testableuser@something.com"
+    let username = "testableuser2@something.com"
     let password = "1029"
 
     var session:RestSession!
@@ -438,9 +438,19 @@ class RestClientTests: XCTestCase
                     XCTAssertNotNil(card?.info?.expYear)
                     XCTAssertNotNil(card?.info?.pan)
                     
-                    let name = "User\(NSDate().timeIntervalSince1970)"
+                    let name:String? = "User\(NSDate().timeIntervalSince1970)"
+                    let street1:String? = "Street1\(NSDate().timeIntervalSince1970)"
+                    let street2:String? = "Street2\(NSDate().timeIntervalSince1970)"
+                    let city:String? = "Beverly Hills"
                     
-                    card?.update(name:name, street1: nil, street2: nil, city: nil, state: nil, postalCode: nil, countryCode: nil, completion:
+                    let state = "MO"
+                    let postCode:String? = "90210"
+                    
+                    // TODO: Ask why this causes error 400 is passed
+                    let countryCode:String? = nil//"USA"
+
+                    
+                    card?.update(name:name, street1: street1, street2: street2, city: city, state: state, postalCode: postCode, countryCode: countryCode, completion:
                     {
                         (updatedCard, error) -> Void in
                         
@@ -460,6 +470,26 @@ class RestClientTests: XCTestCase
                                         XCTAssertEqual(updatedCard?.info?.name, name)
                                         XCTAssertEqual(updatedCard?.info?.name, currentCard.info?.name)
                                         
+                                        XCTAssertEqual(updatedCard?.info?.address?.street1, street1)
+                                        XCTAssertEqual(updatedCard?.info?.address?.street1, currentCard.info?.address?.street1)
+                                        
+                                        XCTAssertEqual(updatedCard?.info?.address?.street2, street2)
+                                        XCTAssertEqual(updatedCard?.info?.address?.street2, currentCard.info?.address?.street2)
+                                        
+                                        XCTAssertEqual(updatedCard?.info?.address?.city, city)
+                                        XCTAssertEqual(updatedCard?.info?.address?.city, currentCard.info?.address?.city)
+                                        
+                                        XCTAssertEqual(updatedCard?.info?.address?.state, state)
+                                        XCTAssertEqual(updatedCard?.info?.address?.state, currentCard.info?.address?.state)
+                                        
+                                        XCTAssertEqual(updatedCard?.info?.address?.postalCode, postCode)
+                                        XCTAssertEqual(updatedCard?.info?.address?.postalCode, currentCard.info?.address?.postalCode)
+                                        
+
+                                        //XCTAssertEqual(updatedCard?.info?.address?.countryCode, countryCode)
+                                        //XCTAssertEqual(updatedCard?.info?.address?.countryCode, currentCard.info?.address?.countryCode)
+                                        
+                                        
                                         updatedCard?.delete
                                         {
                                             (error) in
@@ -470,6 +500,7 @@ class RestClientTests: XCTestCase
                                     }
                                 }
                             }
+                            
                         })
                     })
                 })
@@ -1429,10 +1460,6 @@ class RestClientTests: XCTestCase
                         XCTAssertNotNil(commits?.totalResults)
                         XCTAssertNotNil(commits?.links)
                         XCTAssertNotNil(commits?.results)
-                        commits?.links?.forEach
-                        {
-                            print($0.target)
-                        }
                         
                         for commit in commits!.results! {
                             XCTAssertNotNil(commit.commitType)
@@ -1678,7 +1705,7 @@ class RestClientTests: XCTestCase
             
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectationsWithTimeout(30, handler: nil)
     }
     
     func testTransactionRetrievesTransactionsByUserId()
@@ -1710,7 +1737,6 @@ class RestClientTests: XCTestCase
                     
                     for card in result!.results! {
                         
-                        print("STATE", card.state!)
                         if card.state! != "ACTIVE"
                         {
                             continue
