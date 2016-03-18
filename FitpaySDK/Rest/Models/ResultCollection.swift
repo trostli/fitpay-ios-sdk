@@ -1,13 +1,46 @@
 
 import ObjectMapper
 
-public class ResultCollection<T: Mappable> : Mappable, SecretApplyable
+public class ResultCollection<T: Mappable> : ClientModel, Mappable, SecretApplyable
 {
     public var limit:Int?
     public var offset:Int?
     public var totalResults:Int?
     public var results:[T]?
     public var links:[ResourceLink]?
+    
+    internal var client:RestClient?
+    {
+        get
+        {
+            if let results = self.results
+            {
+                for result in results
+                {
+                    if var result = result as? ClientModel
+                    {
+                        return result.client
+                    }
+                }
+            }
+            
+            return nil
+        }
+        
+        set
+        {
+            if let results = self.results
+            {
+                for result in results
+                {
+                    if var result = result as? ClientModel
+                    {
+                        result.client = newValue
+                    }
+                }
+            }
+        }
+    }
     
     public required init?(_ map: Map)
     {

@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class VerificationMethod : Mappable
+public class VerificationMethod : ClientModel, Mappable
 {
     public var links:[ResourceLink]?
     public var verificationId:String?
@@ -15,6 +15,11 @@ public class VerificationMethod : Mappable
     public var lastModifiedEpoch:CLong?
     public var verified:String?
     public var verifiedEpoch:String?
+    private static let selectResource = "select"
+    private static let verifyResource = "verify"
+    private static let cardResource = "card"
+    
+    internal weak var client:RestClient?
     
     public required init?(_ map: Map)
     {
@@ -36,7 +41,48 @@ public class VerificationMethod : Mappable
         self.verified <- map["verifiedTs"]
         self.verifiedEpoch <- map["verifiedTsEpoch"]
     }
-
+    
+    public func selectVerificationType(completion:RestClient.SelectVerificationTypeHandler)
+    {
+        let resource = VerificationMethod.selectResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.selectVerificationType(url, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, verificationMethod: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func verify(verificationCode:String, completion:RestClient.VerifyHandler)
+    {
+        let resource = VerificationMethod.verifyResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.verify(url, verificationCode:verificationCode, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, verificationMethod: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func retrieveCreditCard(completion:RestClient.CreditCardHandler)
+    {
+        let resource = VerificationMethod.cardResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.retrieveCreditCard(url, completion: completion)
+        }
+        else
+        {
+            completion(creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
 }
 
 internal class VerificationMethodTransformType : TransformType

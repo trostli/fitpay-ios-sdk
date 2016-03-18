@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class DeviceInfo : Mappable, SecretApplyable
+public class DeviceInfo : ClientModel, Mappable, SecretApplyable
 {
     public var links:[ResourceLink]?
     public var deviceIdentifier:String?
@@ -22,9 +22,33 @@ public class DeviceInfo : Mappable, SecretApplyable
     public var bdAddress:String?
     public var pairing:String?
     public var secureElementId:String?
+    private static let userResource = "user"
+    private static let commitsResource = "commits"
+    private static let selfResource = "self"
+    private weak var _client:RestClient?
 
     // Extra metadata specific for a particural type of device
     public var metadata:[String : AnyObject]?
+    
+    internal var client:RestClient?
+    {
+        get
+        {
+            return self._client
+        }
+        set
+        {
+            self._client = newValue
+            
+            if let cardRelationships = self.cardRelationships
+            {
+                for cardRelationship in cardRelationships
+                {
+                    cardRelationship.client = self.client
+                }
+            }
+        }
+    }
     
     public required init?(_ map: Map)
     {
@@ -135,9 +159,61 @@ public class DeviceInfo : Mappable, SecretApplyable
         
         return String(data: jsonData, encoding: NSUTF8StringEncoding)
     }
+    
+    func delete(completion:RestClient.DeleteDeviceHandler) {
+        let resource = DeviceInfo.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.deleteDevice(url, completion: completion)
+        }
+        else
+        {
+            completion(error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    func update(firmwareRevision:String?, softwareRevision:String?, completion:RestClient.UpdateDeviceHandler) {
+        let resource = DeviceInfo.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, completion: completion)
+        }
+        else
+        {
+            completion(device: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    func listCommits(commitsAfter:String, limit:Int, offset:Int, completion:RestClient.CommitsHandler) {
+        let resource = DeviceInfo.commitsResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.commits(url, commitsAfter: commitsAfter, limit: limit, offset: offset, completion: completion)
+        }
+        else
+        {
+            completion(commits: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    func user(completion:RestClient.UserHandler) {
+        let resource = DeviceInfo.userResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.user(url, completion: completion)
+        }
+        else
+        {
+            completion(user: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
 }
 
-public class CardRelationship : Mappable, SecretApplyable
+public class CardRelationship : ClientModel, Mappable, SecretApplyable
 {
     public var links:[ResourceLink]?
     public var creditCardId:String?
@@ -146,6 +222,8 @@ public class CardRelationship : Mappable, SecretApplyable
     public var expYear:Int?
     
     internal var encryptedData:String?
+    private static let selfResource = "self"
+    internal weak var client:RestClient?
     
     public required init?(_ map: Map)
     {
@@ -168,6 +246,19 @@ public class CardRelationship : Mappable, SecretApplyable
             self.pan = decryptedObj?.pan
             self.expMonth = decryptedObj?.expMonth
             self.expYear = decryptedObj?.expYear
+        }
+    }
+    
+    func relationship(completion:RestClient.RelationshipHandler) {
+        let resource = CardRelationship.selfResource
+        let url = self.links?.url(resource)
+        if let url = url, client = self.client
+        {
+            client.relationship(url, completion: completion)
+        }
+        else
+        {
+            completion(relationship: nil, error: NSError.clientUrlError(domain:CardRelationship.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }

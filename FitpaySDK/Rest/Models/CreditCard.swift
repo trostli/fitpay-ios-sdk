@@ -2,7 +2,7 @@
 import Foundation
 import ObjectMapper
 
-public class CreditCard : Mappable, SecretApplyable
+public class CreditCard : ClientModel, Mappable, SecretApplyable
 {
     public var links:[ResourceLink]?
     public var creditCardId:String?
@@ -24,6 +24,55 @@ public class CreditCard : Mappable, SecretApplyable
     public var verificationMethods:[VerificationMethod]?
     public var externalTokenReference:String?
     internal var info:CardInfo?
+    private static let selfResource = "self"
+    private static let acceptTermsResource = "acceptTerms"
+    private static let declineTermsResource = "declineTerms"
+    private static let deactivateResource = "deactivate"
+    private static let reactivateResource = "reactivate"
+    private static let makeDefaultResource = "makeDefault"
+    private static let transactionsResource = "transactions"
+
+    private weak var _client:RestClient?
+    
+    internal var client:RestClient?
+    {
+        get
+        {
+            return self._client
+        }
+        
+        set
+        {
+            self._client = newValue
+            
+            if let verificationMethods = self.verificationMethods
+            {
+                for verificationMethod in verificationMethods
+                {
+                    verificationMethod.client = self.client
+                }
+            }
+            
+            if let termsAssetReferences = self.termsAssetReferences
+            {
+                for termsAssetReference in termsAssetReferences
+                {
+                    termsAssetReference.client = self.client
+                }
+            }
+            
+            if let deviceRelationships = self.deviceRelationships
+            {
+                for deviceRelationship in deviceRelationships
+                {
+                    deviceRelationship.client = self.client
+                }
+            }
+            
+            self.cardMetaData?.client = self.client
+        }
+    }
+    
     
     public required init?(_ map: Map)
     {
@@ -57,9 +106,121 @@ public class CreditCard : Mappable, SecretApplyable
     {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
+    
+    public func delete(completion:RestClient.DeleteCreditCardHandler)
+    {
+        let resource = CreditCard.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.deleteCreditCard(url, completion: completion)
+        }
+        else
+        {
+            completion(error:NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func update(name name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:RestClient.UpdateCreditCardHandler)
+    {
+        let resource = CreditCard.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.updateCreditCard(url, name: name, street1: street1, street2: street2, city: city, state: state, postalCode: postalCode, countryCode: countryCode, completion: completion)
+        }
+        else
+        {
+            completion(creditCard:nil, error:NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func acceptTerms(completion:RestClient.AcceptTermsHandler)
+    {
+        let resource = CreditCard.acceptTermsResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.acceptTerms(url, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, card: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func declineTerms(completion:RestClient.DeclineTermsHandler)
+    {
+        let resource = CreditCard.declineTermsResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.declineTerms(url, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, card: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func deactivate(causedBy causedBy:CreditCardInitiator, reason:String, completion:RestClient.DeactivateHandler)
+    {
+        let resource = CreditCard.deactivateResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.deactivate(url, causedBy: causedBy, reason: reason, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func reactivate(causedBy causedBy:CreditCardInitiator, reason:String, completion:RestClient.ReactivateHandler)
+    {
+        let resource = CreditCard.reactivateResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.reactivate(url, causedBy: causedBy, reason: reason, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    public func makeDefault(completion:RestClient.MakeDefaultHandler)
+    {
+        let resource = CreditCard.makeDefaultResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.makeDefault(url, completion: completion)
+        }
+        else
+        {
+            completion(pending: false, creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    func listTransactions(limit:Int, offset:Int, completion:RestClient.TransactionsHandler)
+    {
+        let resource = CreditCard.transactionsResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.transactions(url, limit: limit, offset: offset, completion: completion)
+        }
+        else
+        {
+            completion(transactions: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
 }
 
-public class CardMetadata : Mappable
+public class CardMetadata : ClientModel, Mappable
 {
     public var labelColor:String?
     public var issuerName:String?
@@ -76,6 +237,67 @@ public class CardMetadata : Mappable
     public var coBrandLogo:[Image]?
     public var icon:[Image]?
     public var issuerLogo:[Image]?
+    private var _client:RestClient?
+    internal var client:RestClient?
+    {
+        get
+        {
+            return self._client
+        }
+        
+        set
+        {
+            self._client = newValue
+            
+            if let brandLogo = self.brandLogo
+            {
+                for image in brandLogo
+                {
+                    image.client = self.client
+                }
+            }
+            
+            if let cardBackground = self.cardBackground
+            {
+                for image in cardBackground
+                {
+                    image.client = self.client
+                }
+            }
+            
+            if let cardBackgroundCombined = self.cardBackgroundCombined
+            {
+                for image in cardBackgroundCombined
+                {
+                    image.client = self.client
+                }
+            }
+            
+            if let coBrandLogo = self.coBrandLogo
+            {
+                for image in coBrandLogo
+                {
+                    image.client = self.client
+                }
+            }
+            
+            if let icon = self.icon
+            {
+                for image in icon
+                {
+                    image.client = self.client
+                }
+            }
+            
+            if let issuerLogo = self.issuerLogo
+            {
+                for image in issuerLogo
+                {
+                    image.client = self.client
+                }
+            }
+        }
+    }
     
     public required init?(_ map: Map)
     {
@@ -102,12 +324,14 @@ public class CardMetadata : Mappable
     }
 }
 
-public class Image : Mappable
+public class Image : ClientModel, Mappable, AssetRetrivable
 {
     public var links: [ResourceLink]?
     public var mimeType:String?
     public var height:Int?
     public var width:Int?
+    internal var client:RestClient?
+    private static let selfResource = "self"
     
     public required init?(_ map: Map)
     {
@@ -120,6 +344,21 @@ public class Image : Mappable
         self.mimeType <- map["mimeType"]
         self.height <- map["height"]
         self.width <- map["width"]
+    }
+    
+    public func retrieveAsset(completion: RestClient.AssetsHandler)
+    {
+        let resource = Image.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.assets(url, completion: completion)
+        }
+        else
+        {
+            let error = NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource)
+            completion(asset: nil, error: error)
+        }
     }
 }
 
@@ -155,10 +394,12 @@ internal class ImageTransformType : TransformType
 }
 
 
-public class TermsAssetReferences : Mappable
+public class TermsAssetReferences : ClientModel, Mappable, AssetRetrivable
 {
     public var links: [ResourceLink]?
     public var mimeType:String?
+    internal var client:RestClient?
+    private static let selfResource = "self"
     
     public required init?(_ map: Map)
     {
@@ -169,6 +410,21 @@ public class TermsAssetReferences : Mappable
     {
         self.links <- (map["_links"], ResourceLinkTransformType())
         self.mimeType <- map["mimeType"]
+    }
+    
+    public func retrieveAsset(completion: RestClient.AssetsHandler)
+    {
+        let resource = TermsAssetReferences.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.assets(url, completion: completion)
+        }
+        else
+        {
+            let error = NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource)
+            completion(asset: nil, error: error)
+        }
     }
 }
 
@@ -203,7 +459,7 @@ internal class TermsAssetReferencesTransformType : TransformType
     }
 }
 
-public class DeviceRelationships : Mappable
+public class DeviceRelationships : ClientModel, Mappable
 {
     public var deviceType:String?
     public var links: [ResourceLink]?
@@ -219,6 +475,9 @@ public class DeviceRelationships : Mappable
     public var createdEpoch:CLong?
     public var osName:String?
     public var systemId:String?
+    
+    private static let selfResource = "self"
+    internal var client:RestClient?
     
     public required init?(_ map: Map)
     {
@@ -241,6 +500,19 @@ public class DeviceRelationships : Mappable
         self.createdEpoch <- map["createdTsEpoch"]
         self.osName <- map["osName"]
         self.systemId <- map["systemId"]
+    }
+    
+    func relationship(completion:RestClient.RelationshipHandler) {
+        let resource = DeviceRelationships.selfResource
+        let url = self.links?.url(resource)
+        if let url = url, client = self.client
+        {
+            client.relationship(url, completion: completion)
+        }
+        else
+        {
+            completion(relationship: nil, error: NSError.clientUrlError(domain:DeviceRelationships.self, code:0, client: client, url: url, resource: resource))
+        }
     }
 }
 
