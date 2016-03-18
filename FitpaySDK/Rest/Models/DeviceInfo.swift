@@ -160,7 +160,12 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
         return String(data: jsonData, encoding: NSUTF8StringEncoding)
     }
     
-    func delete(completion:RestClient.DeleteDeviceHandler) {
+    /**
+     Delete a single device
+     
+     - parameter completion: DeleteDeviceHandler closure
+     */
+    public func delete(completion:RestClient.DeleteDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
@@ -173,7 +178,15 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
         }
     }
     
-    func update(firmwareRevision:String?, softwareRevision:String?, completion:RestClient.UpdateDeviceHandler) {
+    /**
+     Update the details of an existing device
+     (For optional? parameters use nil if field doesn't need to be updated) //TODO: consider adding default nil value
+
+     - parameter firmwareRevision?: firmware revision
+     - parameter softwareRevision?: software revision
+     - parameter completion:        UpdateDeviceHandler closure
+     */
+    public func update(firmwareRevision:String?, softwareRevision:String?, completion:RestClient.UpdateDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
@@ -186,7 +199,15 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
         }
     }
     
-    func listCommits(commitsAfter:String, limit:Int, offset:Int, completion:RestClient.CommitsHandler) {
+    /**
+     Retrieves a collection of all events that should be committed to this device
+     
+     - parameter commitsAfter: the last commit successfully applied. Query will return all subsequent commits which need to be applied.
+     - parameter limit:        max number of profiles per page
+     - parameter offset:       start index position for list of entities returned
+     - parameter completion:   CommitsHandler closure
+     */
+    public func listCommits(commitsAfter:String, limit:Int, offset:Int, completion:RestClient.CommitsHandler) {
         let resource = DeviceInfo.commitsResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
@@ -195,11 +216,11 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(commits: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+            completion(result: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
-    func user(completion:RestClient.UserHandler) {
+    public func user(completion:RestClient.UserHandler) {
         let resource = DeviceInfo.userResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
@@ -249,7 +270,12 @@ public class CardRelationship : ClientModel, Mappable, SecretApplyable
         }
     }
     
-    func relationship(completion:RestClient.RelationshipHandler) {
+    /**
+     Get a single relationship
+     
+     - parameter completion:   RelationshipHandler closure
+     */
+    public func relationship(completion:RestClient.RelationshipHandler) {
         let resource = CardRelationship.selfResource
         let url = self.links?.url(resource)
         if let url = url, client = self.client

@@ -165,7 +165,10 @@ extension RtmSession : PTPusherPresenceChannelDelegate {
     
     public func presenceChannelDidSubscribe(channel: PTPusherPresenceChannel!) {
         if let connectionCompletion = self.onConnect {
-            connectionCompletion(self.device != nil ? self.webViewUrl(self.device!) : nil, nil)
+            dispatch_async(dispatch_get_main_queue(),
+            {
+                connectionCompletion(self.device != nil ? self.webViewUrl(self.device!) : nil, nil)
+            })
         }
         subscribeToEvents(channel)
         print(isChannelHasAllParticipants(channel))
@@ -241,7 +244,10 @@ extension RtmSession : PTPusherPresenceChannelDelegate {
                 self.wvSessionData = session
                 
                 if let onUserLogin = self.onUserLogin {
-                    onUserLogin(self.wvSessionData!)
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        onUserLogin(self.wvSessionData!)
+                    })
                 }
                 
                 channel.triggerEventNamed(ChannelMessage.ClientUserDataAck.rawValue, data: "")
@@ -253,7 +259,10 @@ extension RtmSession : PTPusherPresenceChannelDelegate {
         channel.bindToEventNamed(ChannelMessage.ClientDeviceSync.rawValue) {
             [unowned self] (event) -> Void in
             if let onSychronizationRequest = self.onSychronizationRequest {
-                onSychronizationRequest()
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    onSychronizationRequest()
+                })
             }
             
             channel.triggerEventNamed(ChannelMessage.ClientDeviceSyncAck.rawValue, data: "")
@@ -263,7 +272,11 @@ extension RtmSession : PTPusherPresenceChannelDelegate {
             channel.triggerEventNamed(ChannelMessage.ClientDeviceSyncComplete.rawValue, data: "")
             
             if let onSychronizationComplete = self.onSychronizationComplete {
-                onSychronizationComplete(nil)
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    onSychronizationComplete(nil)
+                })
+                
             }
         }
     }

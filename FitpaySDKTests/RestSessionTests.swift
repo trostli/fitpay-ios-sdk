@@ -8,7 +8,7 @@ class RestSessionTests: XCTestCase
     var session:RestSession!
     let clientId = "pagare"
     let redirectUri = "http://demo.pagare.me"
-    let username = "testableuser@something.com"
+    let username = "testableuser2@something.com"
     let password = "1029"
     
     override func setUp()
@@ -63,9 +63,9 @@ class RestSessionTests: XCTestCase
     
     func testLoginFailsForWrongCredentials()
     {
-        let expectation = super.expectationWithDescription("'login' fails for wrond credentials")
+        let expectation = super.expectationWithDescription("'login' fails for wrong credentials")
         
-        self.session.login(username: "totally@wrong.abc", password:"this is wrong")
+        self.session.login(username: "totally@wrong.abc", password:"fail")
             {
                 [unowned self]
                 (error) -> Void in

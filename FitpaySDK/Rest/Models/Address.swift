@@ -26,6 +26,4 @@ public class Address : Mappable
         self.postalCode <- map["postalCode"]
         self.countryCode <- map["countryCode"]
     }
-    
-    
 }

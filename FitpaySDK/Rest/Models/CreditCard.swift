@@ -107,6 +107,11 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
     
+    /**
+     Delete a single credit card from a user's profile. If you delete a card that is currently the default source, then the most recently added source will become the new default.
+     
+     - parameter completion:   DeleteCreditCardHandler closure
+     */
     public func delete(completion:RestClient.DeleteCreditCardHandler)
     {
         let resource = CreditCard.selfResource
@@ -121,6 +126,18 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         }
     }
     
+    /**
+     Update the details of an existing credit card
+     
+     - parameter name:         name
+     - parameter street1:      address
+     - parameter street2:      address
+     - parameter city:         city
+     - parameter state:        state
+     - parameter postalCode:   postal code
+     - parameter countryCode:  country code
+     - parameter completion:   UpdateCreditCardHandler closure
+     */
     public func update(name name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:RestClient.UpdateCreditCardHandler)
     {
         let resource = CreditCard.selfResource
@@ -135,6 +152,11 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         }
     }
     
+    /**
+     Indicates a user has accepted the terms and conditions presented when the credit card was first added to the user's profile
+     
+     - parameter completion:   AcceptTermsHandler closure
+     */
     public func acceptTerms(completion:RestClient.AcceptTermsHandler)
     {
         let resource = CreditCard.acceptTermsResource
@@ -149,6 +171,11 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         }
     }
     
+    /**
+     Indicates a user has declined the terms and conditions. Once declined the credit card will be in a final state, no other actions may be taken
+     
+     - parameter completion:   DeclineTermsHandler closure
+     */
     public func declineTerms(completion:RestClient.DeclineTermsHandler)
     {
         let resource = CreditCard.declineTermsResource
@@ -163,6 +190,13 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         }
     }
     
+    /**
+     Transition the credit card into a deactived state so that it may not be utilized for payment. This link will only be available for qualified credit cards that are currently in an active state.
+     
+     - parameter causedBy:     deactivation initiator
+     - parameter reason:       deactivation reason
+     - parameter completion:   DeactivateHandler closure
+     */
     public func deactivate(causedBy causedBy:CreditCardInitiator, reason:String, completion:RestClient.DeactivateHandler)
     {
         let resource = CreditCard.deactivateResource
@@ -177,6 +211,13 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         }
     }
     
+    /**
+     Transition the credit card into an active state where it can be utilized for payment. This link will only be available for qualified credit cards that are currently in a deactivated state.
+     
+     - parameter causedBy:     reactivation initiator
+     - parameter reason:       reactivation reason
+     - parameter completion:   ReactivateHandler closure
+     */
     public func reactivate(causedBy causedBy:CreditCardInitiator, reason:String, completion:RestClient.ReactivateHandler)
     {
         let resource = CreditCard.reactivateResource
@@ -191,6 +232,11 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         }
     }
     
+    /**
+     Mark the credit card as the default payment instrument. If another card is currently marked as the default, the default will automatically transition to the indicated credit card
+     
+     - parameter completion:   MakeDefaultHandler closure
+     */
     public func makeDefault(completion:RestClient.MakeDefaultHandler)
     {
         let resource = CreditCard.makeDefaultResource
@@ -205,7 +251,14 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         }
     }
     
-    func listTransactions(limit:Int, offset:Int, completion:RestClient.TransactionsHandler)
+    /**
+     Provides a transaction history (if available) for the user, results are limited by provider.
+     
+     - parameter limit:      max number of profiles per page
+     - parameter offset:     start index position for list of entities returned
+     - parameter completion: TransactionsHandler closure
+     */
+    public func listTransactions(limit:Int, offset:Int, completion:RestClient.TransactionsHandler)
     {
         let resource = CreditCard.transactionsResource
         let url = self.links?.url(resource)
@@ -215,7 +268,7 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(transactions: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(result: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }
@@ -356,7 +409,7 @@ public class Image : ClientModel, Mappable, AssetRetrivable
         }
         else
         {
-            let error = NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource)
+            let error = NSError.clientUrlError(domain:Image.self, code:0, client: client, url: url, resource: resource)
             completion(asset: nil, error: error)
         }
     }
@@ -422,7 +475,7 @@ public class TermsAssetReferences : ClientModel, Mappable, AssetRetrivable
         }
         else
         {
-            let error = NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource)
+            let error = NSError.clientUrlError(domain:TermsAssetReferences.self, code:0, client: client, url: url, resource: resource)
             completion(asset: nil, error: error)
         }
     }
@@ -574,4 +627,16 @@ internal class CardInfo : Mappable
         self.address = Mapper<Address>().map(map["address"].currentValue)
         self.name <- map["name"]
     }
+}
+
+/**
+ Identifies the party initiating the deactivation/reactivation request
+ 
+ - CARDHOLDER: card holder
+ - ISSUER:     issuer
+ */
+public enum CreditCardInitiator: String
+{
+    case CARDHOLDER = "CARDHOLDER"
+    case ISSUER = "ISSUER"
 }

@@ -42,6 +42,11 @@ public class VerificationMethod : ClientModel, Mappable
         self.verifiedEpoch <- map["verifiedTsEpoch"]
     }
     
+    /**
+     When an issuer requires additional authentication to verfiy the identity of the cardholder, this indicates the user has selected the specified verification method by the indicated verificationTypeId
+     
+     - parameter completion:         SelectVerificationTypeHandler closure
+     */
     public func selectVerificationType(completion:RestClient.SelectVerificationTypeHandler)
     {
         let resource = VerificationMethod.selectResource
@@ -52,10 +57,15 @@ public class VerificationMethod : ClientModel, Mappable
         }
         else
         {
-            completion(pending: false, verificationMethod: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(pending: false, verificationMethod: nil, error: NSError.clientUrlError(domain:VerificationMethod.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
+    /**
+     If a verification method is selected that requires an entry of a pin code, this transition will be available. Not all verification methods will include a secondary verification step through the FitPay API
+     
+     - parameter completion:         VerifyHandler closure
+     */
     public func verify(verificationCode:String, completion:RestClient.VerifyHandler)
     {
         let resource = VerificationMethod.verifyResource
@@ -66,10 +76,15 @@ public class VerificationMethod : ClientModel, Mappable
         }
         else
         {
-            completion(pending: false, verificationMethod: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(pending: false, verificationMethod: nil, error: NSError.clientUrlError(domain:VerificationMethod.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
+    /**
+     Retrieves the details of an existing credit card. You need only supply the uniqueidentifier that was returned upon creation.
+     
+     - parameter completion:   CreditCardHandler closure
+     */
     public func retrieveCreditCard(completion:RestClient.CreditCardHandler)
     {
         let resource = VerificationMethod.cardResource
@@ -80,7 +95,7 @@ public class VerificationMethod : ClientModel, Mappable
         }
         else
         {
-            completion(creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(creditCard: nil, error: NSError.clientUrlError(domain:VerificationMethod.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }

@@ -23,7 +23,12 @@ public class Relationship : ClientModel, Mappable
         device <- map["device"]
     }
     
-    func delete(completion:RestClient.DeleteRelationshipHandler) {
+    /**
+     Removes a relationship between a device and a creditCard if it exists
+     
+        - parameter completion:   DeleteRelationshipHandler closure
+     */
+    public func delete(completion:RestClient.DeleteRelationshipHandler) {
         let resource = Relationship.selfResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
