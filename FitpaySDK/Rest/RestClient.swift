@@ -1481,10 +1481,12 @@ public class RestClient
                     "osName" : osName,
                     "licenseKey" : licenseKey,
                     "bdAddress" : bdAddress,
-                    "secureElementId" : secureElementId,
+                    "secureElement" : [
+                        "secureElementId" : secureElementId
+                    ],
                     "pairingTs" : pairing
                 ]
-                let request = self._manager.request(.POST, url, parameters: params, encoding: .JSON, headers: headers)
+                let request = self._manager.request(.POST, url, parameters: params as? [String : AnyObject], encoding: .JSON, headers: headers)
                 request.validate().responseObject(
                 dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {

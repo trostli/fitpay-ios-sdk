@@ -1561,7 +1561,7 @@ class RestClientTests: XCTestCase
     
     func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
     {
-        let deviceType = "ACTIVITY_TRACKER"
+        let deviceType = "WATCH"
         let manufacturerName = "Fitpay"
         let deviceName = "PSPS"
         let serialNumber = "074DCC022E14"

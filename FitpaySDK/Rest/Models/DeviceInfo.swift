@@ -6,6 +6,7 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
     public var links:[ResourceLink]?
     public var deviceIdentifier:String?
     public var deviceName:String?
+    public var deviceType:String?
     public var manufacturerName:String?
     public var serialNumber:String?
     public var modelNumber:String?
@@ -61,6 +62,7 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
         createdEpoch <- map["createdTsEpoch"]
         deviceIdentifier <- map["deviceIdentifier"]
         deviceName <- map["deviceName"]
+        deviceType <- map["deviceType"]
         manufacturerName <- map["manufacturerName"]
         serialNumber <- map["serialNumber"]
         modelNumber <- map["modelNumber"]
@@ -72,7 +74,9 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
         licenseKey <- map["licenseKey"]
         bdAddress <- map["bdAddress"]
         pairing <- map["pairing"]
-        secureElementId <- map["secureElementId"]
+        if let secureElement = map["secureElement"].currentValue as? [String:String] {
+            secureElementId = secureElement["secureElementId"]
+        }
         
         if let cardRelationships = map["cardRelationships"].currentValue as? [AnyObject] {
             if cardRelationships.count > 0 {
@@ -95,6 +99,65 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
                 modelObject.applySecret(secret, expectedKeyId: expectedKeyId)
             }
         }
+    }
+    
+    var shortRTMRepersentation:String? {
+        
+        var dic : [String:AnyObject] = [:]
+        
+        if let deviceType = self.deviceType {
+            dic["deviceType"] = deviceType
+        }
+        
+        if let deviceName = self.deviceName {
+            dic["deviceName"] = deviceName
+        }
+        
+        if let manufacturerName = self.manufacturerName {
+            dic["manufacturerName"] = manufacturerName
+        }
+        
+        if let modelNumber = self.modelNumber {
+            dic["modelNumber"] = modelNumber
+        }
+        
+        if let hardwareRevision = self.hardwareRevision {
+            dic["hardwareRevision"] = hardwareRevision
+        }
+        
+        if let firmwareRevision = self.firmwareRevision {
+            dic["firmwareRevision"] = firmwareRevision
+        }
+        
+        if let softwareRevision = self.softwareRevision {
+            dic["softwareRevision"] = softwareRevision
+        }
+        
+        if let systemId = self.systemId {
+            dic["systemId"] = systemId
+        }
+        
+        if let osName = self.osName {
+            dic["osName"] = osName
+        }
+        
+        if let licenseKey = self.licenseKey {
+            dic["licenseKey"] = licenseKey
+        }
+        
+        if let bdAddress = self.bdAddress {
+            dic["bdAddress"] = bdAddress
+        }
+        
+        if let secureElementId = self.secureElementId {
+            dic["secureElement"] = ["secureElementId" : secureElementId]
+        }
+        
+        guard let jsonData = try? NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0)) else {
+            return nil
+        }
+        
+        return String(data: jsonData, encoding: NSUTF8StringEncoding)
     }
     
     /**

@@ -12,6 +12,14 @@
 		0AD922AD1C1F7EFC007693AB /* FitpaySDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD922AC1C1F7EFC007693AB /* FitpaySDKTests.swift */; };
 		0AD9232C1C20BB38007693AB /* FitpaySDK.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD9232B1C20BB38007693AB /* FitpaySDK.swift */; };
 		354C63C62E4DFD9F17A403C9 /* Pods_FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE7CA63167C1F9C39FA4FA6C /* Pods_FitpaySDK.framework */; };
+		8426D24C1C91D139009AACFE /* RtmConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D24B1C91D139009AACFE /* RtmConstants.swift */; };
+		8426D2511C92BB9D009AACFE /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D2501C92BB9D009AACFE /* StringExtensions.swift */; };
+		8426D2531C92F428009AACFE /* RtmSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D2521C92F428009AACFE /* RtmSessionTests.swift */; };
+		8426D25B1C96F4AA009AACFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D25A1C96F4AA009AACFE /* AppDelegate.swift */; };
+		8426D25D1C96F4AA009AACFE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D25C1C96F4AA009AACFE /* ViewController.swift */; };
+		8426D2601C96F4AA009AACFE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8426D25E1C96F4AA009AACFE /* Main.storyboard */; };
+		8426D2621C96F4AA009AACFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8426D2611C96F4AA009AACFE /* Assets.xcassets */; };
+		8426D2651C96F4AA009AACFE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8426D2631C96F4AA009AACFE /* LaunchScreen.storyboard */; };
 		9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */; };
 		9A58466D1C96B65B00E4ABDC /* ClientModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A58466C1C96B65B00E4ABDC /* ClientModel.swift */; };
 		9A62E6B61C8DCA20004ED6C0 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A62E6B51C8DCA20004ED6C0 /* Asset.swift */; };
@@ -60,6 +68,13 @@
 			remoteGlobalIDString = 0AD9229C1C1F7EFC007693AB;
 			remoteInfo = FitpaySDK;
 		};
+		8426D26A1C96F4AF009AACFE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0AD922941C1F7EFC007693AB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8426D2571C96F4AA009AACFE;
+			remoteInfo = RTMClientApp;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +86,18 @@
 		0AD922AE1C1F7EFC007693AB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0AD9232B1C20BB38007693AB /* FitpaySDK.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FitpaySDK.swift; sourceTree = "<group>"; };
 		69AB4097308CF361456A6C47 /* Pods-FitpaySDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.debug.xcconfig"; sourceTree = "<group>"; };
+		8426D24B1C91D139009AACFE /* RtmConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmConstants.swift; sourceTree = "<group>"; };
+		8426D24D1C91D3BE009AACFE /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
+		8426D24F1C92B5D0009AACFE /* SHA1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SHA1.h; sourceTree = "<group>"; };
+		8426D2501C92BB9D009AACFE /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
+		8426D2521C92F428009AACFE /* RtmSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmSessionTests.swift; sourceTree = "<group>"; };
+		8426D2581C96F4AA009AACFE /* RTMClientApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTMClientApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8426D25A1C96F4AA009AACFE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8426D25C1C96F4AA009AACFE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		8426D25F1C96F4AA009AACFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8426D2611C96F4AA009AACFE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8426D2641C96F4AA009AACFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8426D2661C96F4AA009AACFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		9A58466C1C96B65B00E4ABDC /* ClientModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientModel.swift; sourceTree = "<group>"; };
 		9A62E6B51C8DCA20004ED6C0 /* Asset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Asset.swift; sourceTree = "<group>"; };
@@ -134,6 +161,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8426D2551C96F4AA009AACFE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -142,6 +176,7 @@
 			children = (
 				0AD9229F1C1F7EFC007693AB /* FitpaySDK */,
 				0AD922AB1C1F7EFC007693AB /* FitpaySDKTests */,
+				8426D2591C96F4AA009AACFE /* RTMClientApp */,
 				0AD9229E1C1F7EFC007693AB /* Products */,
 				AAC95219C4851808164A9861 /* Pods */,
 				B2C94647591B581A09E4A254 /* Frameworks */,
@@ -153,6 +188,7 @@
 			children = (
 				0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */,
 				0AD922A71C1F7EFC007693AB /* FitpaySDKTests.xctest */,
+				8426D2581C96F4AA009AACFE /* RTMClientApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -181,9 +217,31 @@
 				9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */,
 				9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */,
 				0AD922AC1C1F7EFC007693AB /* FitpaySDKTests.swift */,
+				8426D2521C92F428009AACFE /* RtmSessionTests.swift */,
 				0AD922AE1C1F7EFC007693AB /* Info.plist */,
 			);
 			path = FitpaySDKTests;
+			sourceTree = "<group>";
+		};
+		8426D24A1C91D0EA009AACFE /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				8426D24B1C91D139009AACFE /* RtmConstants.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		8426D2591C96F4AA009AACFE /* RTMClientApp */ = {
+			isa = PBXGroup;
+			children = (
+				8426D25A1C96F4AA009AACFE /* AppDelegate.swift */,
+				8426D25C1C96F4AA009AACFE /* ViewController.swift */,
+				8426D25E1C96F4AA009AACFE /* Main.storyboard */,
+				8426D2611C96F4AA009AACFE /* Assets.xcassets */,
+				8426D2631C96F4AA009AACFE /* LaunchScreen.storyboard */,
+				8426D2661C96F4AA009AACFE /* Info.plist */,
+			);
+			path = RTMClientApp;
 			sourceTree = "<group>";
 		};
 		9AB68E371C84A1EC00A0E172 /* JWE */ = {
@@ -218,6 +276,7 @@
 			children = (
 				9AB68E421C84A21000A0E172 /* AESGCM.h */,
 				9ACF305C1C7F4B010051DAF1 /* SECP256R1.h */,
+				8426D24F1C92B5D0009AACFE /* SHA1.h */,
 			);
 			path = FPCrypto;
 			sourceTree = "<group>";
@@ -234,6 +293,7 @@
 		B2C94647591B581A09E4A254 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8426D24D1C91D3BE009AACFE /* libcommonCrypto.tbd */,
 				9ACF2FB11C7F024E0051DAF1 /* libcrypto.a */,
 				9ACF2FB21C7F024E0051DAF1 /* libssl.a */,
 				AE7CA63167C1F9C39FA4FA6C /* Pods_FitpaySDK.framework */,
@@ -245,6 +305,7 @@
 			isa = PBXGroup;
 			children = (
 				CD0385FBA6E03879966B500B /* Models */,
+				8426D24A1C91D0EA009AACFE /* Constants */,
 				CD0384BCACD6EC5C570B9D0A /* RtmSession.swift */,
 			);
 			path = Rtm;
@@ -325,6 +386,7 @@
 				CD038C64E5144812C865F0AA /* NSDataExtensions.swift */,
 				9ABF39411C883AF7002EA8E5 /* JWEObjectExtensions.swift */,
 				9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */,
+				8426D2501C92BB9D009AACFE /* StringExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -383,11 +445,29 @@
 			);
 			dependencies = (
 				0AD922AA1C1F7EFC007693AB /* PBXTargetDependency */,
+				8426D26B1C96F4AF009AACFE /* PBXTargetDependency */,
 			);
 			name = FitpaySDKTests;
 			productName = FitpaySDKTests;
 			productReference = 0AD922A71C1F7EFC007693AB /* FitpaySDKTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8426D2571C96F4AA009AACFE /* RTMClientApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8426D2691C96F4AA009AACFE /* Build configuration list for PBXNativeTarget "RTMClientApp" */;
+			buildPhases = (
+				8426D2541C96F4AA009AACFE /* Sources */,
+				8426D2551C96F4AA009AACFE /* Frameworks */,
+				8426D2561C96F4AA009AACFE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RTMClientApp;
+			productName = RTMClientApp;
+			productReference = 8426D2581C96F4AA009AACFE /* RTMClientApp.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -405,6 +485,10 @@
 					};
 					0AD922A61C1F7EFC007693AB = {
 						CreatedOnToolsVersion = 7.2;
+						TestTargetID = 8426D2571C96F4AA009AACFE;
+					};
+					8426D2571C96F4AA009AACFE = {
+						CreatedOnToolsVersion = 7.2;
 					};
 				};
 			};
@@ -414,6 +498,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 0AD922931C1F7EFC007693AB;
 			productRefGroup = 0AD9229E1C1F7EFC007693AB /* Products */;
@@ -422,6 +507,7 @@
 			targets = (
 				0AD9229C1C1F7EFC007693AB /* FitpaySDK */,
 				0AD922A61C1F7EFC007693AB /* FitpaySDKTests */,
+				8426D2571C96F4AA009AACFE /* RTMClientApp */,
 			);
 		};
 /* End PBXProject section */
@@ -438,6 +524,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8426D2561C96F4AA009AACFE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8426D2651C96F4AA009AACFE /* LaunchScreen.storyboard in Resources */,
+				8426D2621C96F4AA009AACFE /* Assets.xcassets in Resources */,
+				8426D2601C96F4AA009AACFE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,6 +589,7 @@
 				CD03852C57B1C79751A86197 /* ApduPackage.swift in Sources */,
 				CD0387E96A4CCADE85CAA6B0 /* DeviceInfo.swift in Sources */,
 				CD0385EFB1AE91118505CC3E /* EncryptionKey.swift in Sources */,
+				8426D2511C92BB9D009AACFE /* StringExtensions.swift in Sources */,
 				CD038A69826DABAA4DE467C5 /* VerificationMethod.swift in Sources */,
 				CD038BD672C20128B6711869 /* CreditCard.swift in Sources */,
 				CD038A4098738EC358AD2751 /* Address.swift in Sources */,
@@ -515,6 +612,7 @@
 				CD0389401826E2E23F248906 /* SECP256R1KeyPair.swift in Sources */,
 				CD03864C52B317B02135FF7D /* NSDataExtensions.swift in Sources */,
 				CD03814935D90886A777D9EF /* SecretApplyable.swift in Sources */,
+				8426D24C1C91D139009AACFE /* RtmConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,7 +623,17 @@
 				9AA5BDAB1C7B54B600EDF2F6 /* RestSessionTests.swift in Sources */,
 				0AD922AD1C1F7EFC007693AB /* FitpaySDKTests.swift in Sources */,
 				9AB68E441C84A25B00A0E172 /* JWETests.swift in Sources */,
+				8426D2531C92F428009AACFE /* RtmSessionTests.swift in Sources */,
 				9AA50BDF1C7E096D000FA546 /* RestClientTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8426D2541C96F4AA009AACFE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8426D25D1C96F4AA009AACFE /* ViewController.swift in Sources */,
+				8426D25B1C96F4AA009AACFE /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,7 +645,31 @@
 			target = 0AD9229C1C1F7EFC007693AB /* FitpaySDK */;
 			targetProxy = 0AD922A91C1F7EFC007693AB /* PBXContainerItemProxy */;
 		};
+		8426D26B1C96F4AF009AACFE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8426D2571C96F4AA009AACFE /* RTMClientApp */;
+			targetProxy = 8426D26A1C96F4AF009AACFE /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		8426D25E1C96F4AA009AACFE /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8426D25F1C96F4AA009AACFE /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		8426D2631C96F4AA009AACFE /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8426D2641C96F4AA009AACFE /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		0AD922AF1C1F7EFC007693AB /* Debug */ = {
@@ -652,6 +784,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/FitpaySDK/Libraries/OpenSSL/lib",
+					"$(SDKROOT)/usr/lib/system",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -685,6 +818,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/FitpaySDK/Libraries/OpenSSL/lib",
+					"$(SDKROOT)/usr/lib/system",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDK;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -697,6 +831,7 @@
 		0AD922B51C1F7EFC007693AB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
 					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
@@ -705,12 +840,14 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RTMClientApp.app/RTMClientApp";
 			};
 			name = Debug;
 		};
 		0AD922B61C1F7EFC007693AB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
 					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
@@ -718,6 +855,29 @@
 				INFOPLIST_FILE = FitpaySDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RTMClientApp.app/RTMClientApp";
+			};
+			name = Release;
+		};
+		8426D2671C96F4AA009AACFE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = RTMClientApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.masterofcode-llc.RTMClientApp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		8426D2681C96F4AA009AACFE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = RTMClientApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.masterofcode-llc.RTMClientApp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -751,6 +911,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		8426D2691C96F4AA009AACFE /* Build configuration list for PBXNativeTarget "RTMClientApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8426D2671C96F4AA009AACFE /* Debug */,
+				8426D2681C96F4AA009AACFE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

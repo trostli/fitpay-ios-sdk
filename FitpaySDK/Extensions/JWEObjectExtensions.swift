@@ -8,16 +8,22 @@ extension JWEObject
         if let encryptedData = encryptedData
         {
             let jweResult = JWEObject.parse(payload: encryptedData)
-            
-            if let kid = jweResult?.header?.kid, let expectedKeyId = expectedKeyId
-            {
-                // decrypt only if keys match
-                if kid == expectedKeyId
+            if let expectedKeyId = expectedKeyId {
+                if let kid = jweResult?.header?.kid
                 {
-                    if let decryptResult = try? jweResult?.decrypt(secret)
+                    // decrypt only if keys match
+                    if kid == expectedKeyId
                     {
-                        return Mapper<T>().map(decryptResult)
+                        if let decryptResult = try? jweResult?.decrypt(secret)
+                        {
+                            return Mapper<T>().map(decryptResult)
+                        }
                     }
+                }
+            } else {
+                if let decryptResult = try? jweResult?.decrypt(secret)
+                {
+                    return Mapper<T>().map(decryptResult)
                 }
             }
         }
