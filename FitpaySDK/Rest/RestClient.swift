@@ -1620,8 +1620,8 @@ public class RestClient
     {
         let parameters = [
             "limit" : "\(limit)",
-            "offset" : "\(offset)",
-            "commitsAfter" : commitsAfter
+            "offset" : "\(offset)"/*,
+            "commitsAfter" : commitsAfter*/
         ]
         
         self.prepareAuthAndKeyHeaders
