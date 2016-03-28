@@ -1618,11 +1618,14 @@ public class RestClient
     public func commits(url:String, commitsAfter:String, limit:Int, offset:Int,
         completion:CommitsHandler)
     {
-        let parameters = [
+        var parameters = [
             "limit" : "\(limit)",
-            "offset" : "\(offset)"/*,
-            "commitsAfter" : commitsAfter*/
+            "offset" : "\(offset)"
         ]
+        
+        if commitsAfter.characters.count > 1 {
+            parameters["commitsAfter"] = commitsAfter
+        }
         
         self.prepareAuthAndKeyHeaders
         {

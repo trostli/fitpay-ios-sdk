@@ -1,4 +1,5 @@
 import XCTest
+import ObjectMapper
 @testable import FitpaySDK
 
 class PaymentDeviceTests: XCTestCase
@@ -39,9 +40,9 @@ class PaymentDeviceTests: XCTestCase
         super.waitForExpectationsWithTimeout(20, handler: nil)
     }
     
-    func testDisconnectionFromDeviceCheck()
+    func testDisconnectFromDeviceCheck()
     {
-        let expectation = super.expectationWithDescription("disconnection from device check")
+        let expectation = super.expectationWithDescription("disconnect from device check")
         self.paymentDevice.onDeviceConnected =
         {
             (deviceInfo, error) -> Void in
@@ -58,7 +59,7 @@ class PaymentDeviceTests: XCTestCase
         
         self.paymentDevice.connect()
         
-        super.waitForExpectationsWithTimeout(200, handler: nil)
+        super.waitForExpectationsWithTimeout(20, handler: nil)
     }
     
     func testSecurityNotification()
@@ -91,7 +92,7 @@ class PaymentDeviceTests: XCTestCase
         
         self.paymentDevice.connect()
         
-        super.waitForExpectationsWithTimeout(200, handler: nil)
+        super.waitForExpectationsWithTimeout(20, handler: nil)
     }
     
     func testAPDUPacket()
@@ -128,7 +129,47 @@ class PaymentDeviceTests: XCTestCase
         
         self.paymentDevice.connect()
         
-        super.waitForExpectationsWithTimeout(200, handler: nil)
+        super.waitForExpectationsWithTimeout(20, handler: nil)
     }
     
+    /*
+    func testSyncWithCommit()
+    {
+        let expectation = super.expectationWithDescription("test sync with commit")
+        
+        self.paymentDevice.onDeviceConnected =
+        {
+            (deviceInfo, error) -> Void in
+            
+            XCTAssertNil(error)
+            
+            let commitDictionary = [
+                "commitId" : "1uas473psn1k5l6",
+                "commitType" : "CREDITCARD_CREATED"
+            ]
+            
+            var card = self.paymentDevice.lastSynchronizedCommitId
+            
+            let commit = Mapper<Commit>().map(commitDictionary)
+            commit?.payload = Mapper<Payload>().map(["some":"data"])
+            
+            XCTAssertNil(self.paymentDevice.sync([commit!]))
+            
+            card = self.paymentDevice.lastSynchronizedCommitId
+            
+            
+            expectation.fulfill()
+        }
+        
+        self.paymentDevice.bindToSyncEvent(eventType: CommitType.CREDITCARD_CREATED)
+        {
+            (eventPayload) -> Void in
+            print("here I am")
+        }
+        
+        self.paymentDevice.connect()
+        
+        super.waitForExpectationsWithTimeout(20, handler: nil)
+    }
+    */
 }

@@ -14,4 +14,6 @@ internal protocol PaymentDeviceBaseInterface
     func sendAPDUData(data: NSData)
     
     func deviceInfo() -> DeviceInfo?
+    
+    func resetToDefaultState()
 }

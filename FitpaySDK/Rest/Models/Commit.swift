@@ -65,6 +65,7 @@ public class Payload : Mappable
 {
     internal var creditCard:CreditCard?
     internal var apduPackage:[String : AnyObject]?
+    internal var payloadDictionary:[String : AnyObject]?
     
     public required init?(_ map: Map)
     {
@@ -83,5 +84,7 @@ public class Payload : Mappable
         {
             self.apduPackage = info
         }
+        
+        self.payloadDictionary = info
     }
 }
