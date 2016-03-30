@@ -7,6 +7,8 @@ public class ApduPackage
     public var executedDuration:Int?
     public var apduResponses:[ApduResponse]?
     
+    public var commands : [NSData]?
+    
     public var dictoinary : [String:AnyObject] {
         get {
             var dic : [String:AnyObject] = [:]

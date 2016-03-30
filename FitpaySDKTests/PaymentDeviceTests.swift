@@ -132,44 +132,65 @@ class PaymentDeviceTests: XCTestCase
         super.waitForExpectationsWithTimeout(20, handler: nil)
     }
     
-    /*
-    func testSyncWithCommit()
+    func testSync()
     {
         let expectation = super.expectationWithDescription("test sync with commit")
         
-        self.paymentDevice.onDeviceConnected =
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_STARTED)
         {
-            (deviceInfo, error) -> Void in
-            
-            XCTAssertNil(error)
-            
-            let commitDictionary = [
-                "commitId" : "1uas473psn1k5l6",
-                "commitType" : "CREDITCARD_CREATED"
-            ]
-            
-            var card = self.paymentDevice.lastSynchronizedCommitId
-            
-            let commit = Mapper<Commit>().map(commitDictionary)
-            commit?.payload = Mapper<Payload>().map(["some":"data"])
-            
-            XCTAssertNil(self.paymentDevice.sync([commit!]))
-            
-            card = self.paymentDevice.lastSynchronizedCommitId
-            
-            
+            (eventPayload) -> Void in
+            print("sync started")
+        }
+        
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_FAILED)
+        {
+            (eventPayload) -> Void in
+            print("sync failed", eventPayload)
+        }
+        
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CREDITCARD_CREATED)
+        {
+            (eventPayload) -> Void in
+            print("creditcard created", eventPayload)
+        }
+        
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_FINISHED)
+        {
+            (eventPayload) -> Void in
+            print("sync finished", eventPayload)
             expectation.fulfill()
         }
         
-        self.paymentDevice.bindToSyncEvent(eventType: CommitType.CREDITCARD_CREATED)
+        let clientId = "pagare"
+        let redirectUri = "http://demo.pagare.me"
+        let username = "testableuser2@something.com"
+        let password = "1029"
+        
+        let restSession:RestSession = RestSession(clientId:clientId, redirectUri:redirectUri)
+        let restClient:RestClient = RestClient(session: restSession)
+
+        restSession.login(username: username, password: password)
         {
-            (eventPayload) -> Void in
-            print("here I am")
+            (error) -> Void in
+            XCTAssertNil(error)
+            XCTAssertTrue(restSession.isAuthorized)
+            
+            if !restSession.isAuthorized
+            {
+                return
+            }
+            
+            restClient.user(id: restSession.userId!, completion:
+            {
+                (user, error) -> Void in
+                
+                XCTAssertNil(error)
+                XCTAssertNotNil(user)
+                
+                SyncManager.sharedInstance.sync(user!)
+            })
         }
         
-        self.paymentDevice.connect()
-        
-        super.waitForExpectationsWithTimeout(20, handler: nil)
+        super.waitForExpectationsWithTimeout(500, handler: nil)
     }
-    */
 }

@@ -90,7 +90,6 @@ struct ContinuationControlMessage {
             uuid = CBUUID()
             crc32 = UInt32()
         }
-        
     }
 }
 

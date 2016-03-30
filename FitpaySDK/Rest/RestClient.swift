@@ -1922,6 +1922,50 @@ public class RestClient
             }
         })
     }
+    
+    
+    internal func collectionItems<T>(url:String, completion:(resultCollection:ResultCollection<T>?, error:ErrorType?) -> Void) -> T?
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.GET, url, parameters: nil, encoding: .URL, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<ResultCollection<T>, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(resultCollection: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.client = self
+                            completion(resultCollection: resultValue, error: response.result.error)
+                        }
+                        else
+                        {
+                            completion(resultCollection: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(resultCollection: nil, error: error)
+                })
+            }
+        }
+        
+        return nil
+    }
 }
 
 /**

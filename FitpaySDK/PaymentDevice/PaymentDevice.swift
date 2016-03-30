@@ -91,48 +91,6 @@ public class PaymentDevice : NSObject
     }
     
     /**
-     Completion handler
-     
-     - parameter eventPayload: Provides payload for event
-     */
-    public typealias SyncEventBlockHandler = (eventPayload:[String:AnyObject]) -> Void
-    
-    /**
-     Binds to the sync event using CommitType and a block as callback.
-     
-     - parameter eventType: type of event which you want to bind to
-     - parameter completion: completion handler which will be called when system receives commit with eventType
-     */
-    public func bindToSyncEvent(eventType eventType: CommitType, completion: SyncEventBlockHandler) {
-        self.syncEventsBlocks[eventType.rawValue] = completion
-    }
-    
-    /**
-     Removes bind with eventType.
-     */
-    public func removeSyncBinding(eventType eventType: CommitType) {
-        self.syncEventsBlocks.removeValueForKey(eventType.rawValue)
-    }
-    
-    /**
-     Removes all synchronization bindings.
-     */
-    public func removeAllSyncBindings() {
-        self.syncEventsBlocks = [:]
-    }
-    
-    /**
-     Returns commitId which was the last commit that was applied to payment device.
-     */
-    public var lastSynchronizedCommitId : String? {
-        guard let deviceInfo = self.deviceInfo, let serialNumber = deviceInfo.serialNumber else {
-            return nil
-        }
-        
-        return keychain[serialNumber]
-    }
-    
-    /**
      Allows to reset the secure element and prepare it to receive APDU and other commands.
      Calls onApplicationControlReceived on device reset?
      
@@ -155,17 +113,13 @@ public class PaymentDevice : NSObject
     
     
     internal var deviceInterface : PaymentDeviceBaseInterface!
-    internal var keychain : Keychain!
     
     internal typealias APDUResponseHandler = (apduResponse:ApduResultMessage?, error:ErrorType?)->Void
     internal var apduResponseHandler : APDUResponseHandler?
     
-    private var syncEventsBlocks : [String:SyncEventBlockHandler] = [:]
-    
     override init() {
         super.init()
         
-        self.keychain = Keychain(service: "com.masterofcode-llc.FitpaySDK")
         self.deviceInterface = PaymentDeviceBLEInterface(paymentDevice: self)
     }
     
@@ -174,33 +128,4 @@ public class PaymentDevice : NSObject
         self.deviceInterface.sendAPDUData(data)
     }
     
-    internal func sync(commits:[Commit]) -> ErrorType? {
-        guard self.deviceInfo != nil else {
-            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDevice.self, message: "Device data not collected.")
-        }
-        
-        for commit in commits {
-            guard let commitType = commit.commitType, payload = commit.payload?.payloadDictionary else {
-                continue
-            }
-            
-            if let syncEventCompletion = self.syncEventsBlocks[commitType.rawValue] {
-                syncEventCompletion(eventPayload: payload)
-            }
-        }
-        
-        if let commitId = commits.last?.commit {
-            saveLastSynchronizedCommitId(commitId)
-        }
-        
-        return nil
-    }
-    
-    internal func saveLastSynchronizedCommitId(commitId : String) {
-        guard let deviceInfo = self.deviceInfo, let serialNumber = deviceInfo.serialNumber else {
-            return
-        }
-        
-        keychain[serialNumber] = commitId
-    }
 }
