@@ -2,7 +2,7 @@ import KeychainAccess
 
 public class PaymentDevice : NSObject
 {
-    public enum ErrorCode : Int, ErrorType, RawIntValue
+    public enum ErrorCode : Int, ErrorType, RawIntValue, CustomStringConvertible
     {
         case UnknownError = 0
         case BadBLEState = 10001
@@ -10,6 +10,26 @@ public class PaymentDevice : NSObject
         case WaitingForAPDUResponse = 10003
         case APDUPacketCorrupted = 10004
         case OperationTimeout = 10005
+        case DeviceShouldBeDisconnected = 10006
+        
+        public var description : String {
+            switch self {
+            case .UnknownError:
+                return "Unknown error"
+            case .BadBLEState:
+                return "Can't connect to the device. BLE state: %d."
+            case .DeviceDataNotCollected:
+                return "Device data not collected."
+            case .WaitingForAPDUResponse:
+                return "Waiting for APDU response."
+            case .APDUPacketCorrupted:
+                return "APDU packet checksum is not equal."
+            case .OperationTimeout:
+                return "Connection timeout. Can't find device."
+            case .DeviceShouldBeDisconnected:
+                return "Payment device should be disconnected."
+            }
+        }
     }
     
     public enum SecurityState : Int
@@ -60,7 +80,7 @@ public class PaymentDevice : NSObject
                 if (!self.isConnected || self.deviceInfo == nil) {
                     self.deviceInterface.resetToDefaultState()
                     if let onDeviceConnected = self.onDeviceConnected {
-                        onDeviceConnected(deviceInfo: nil, error: NSError.error(code: PaymentDevice.ErrorCode.OperationTimeout, domain: PaymentDevice.self, message: "Connection timeout. Can't find device."))
+                        onDeviceConnected(deviceInfo: nil, error: NSError.error(code: PaymentDevice.ErrorCode.OperationTimeout, domain: PaymentDevice.self))
                     }
                 }
             }
@@ -111,6 +131,19 @@ public class PaymentDevice : NSObject
         return self.deviceInterface.writeSecurityState(state)
     }
     
+    /**
+     Changes interface with payment device. Default is BLE (PaymentDeviceBLEInterface).
+     If you want to implement your own interface than it should confirm PaymentDeviceBaseInterface protocol.
+     Can be changed if device disconnected.
+     */
+    public func changeDeviceInterface(interface: PaymentDeviceBaseInterface) -> ErrorType? {
+        if isConnected {
+            return NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeDisconnected, domain: PaymentDeviceBLEInterface.self)
+        }
+        
+        self.deviceInterface = interface
+        return nil
+    }
     
     internal var deviceInterface : PaymentDeviceBaseInterface!
     

@@ -1451,7 +1451,7 @@ class RestClientTests: XCTestCase
                 {
                     (devices, error) -> Void in
                     XCTAssertNil(error)
-                    devices!.results![0].listCommits("", limit: 10, offset: 0, completion:
+                    devices!.results![0].listCommits(nil, limit: 10, offset: 0, completion:
                     {
                         (commits, error) -> Void in
                         XCTAssertNil(error)

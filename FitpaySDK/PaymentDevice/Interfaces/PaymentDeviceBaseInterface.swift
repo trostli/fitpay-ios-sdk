@@ -1,4 +1,4 @@
-internal protocol PaymentDeviceBaseInterface
+public protocol PaymentDeviceBaseInterface
 {
     init(paymentDevice device:PaymentDevice)
     

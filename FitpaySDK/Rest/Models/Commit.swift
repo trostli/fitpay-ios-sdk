@@ -55,6 +55,7 @@ public enum CommitType : String
     case CREDITCARD_CREATED = "CREDITCARD_CREATED"
     case CREDITCARD_DEACTIVATED = "CREDITCARD_DEACTIVATED"
     case CREDITCARD_ACTIVATED = "CREDITCARD_ACTIVATED"
+    case CREDITCARD_REACTIVATED = "CREDITCARD_REACTIVATED"
     case CREDITCARD_DELETED = "CREDITCARD_DELETED"
     case RESET_DEFAULT_CREDITCARD = "RESET_DEFAULT_CREDITCARD"
     case SET_DEFAULT_CREDITCARD = "SET_DEFAULT_CREDITCARD"
@@ -64,8 +65,8 @@ public enum CommitType : String
 public class Payload : Mappable
 {
     internal var creditCard:CreditCard?
-    internal var apduPackage:[String : AnyObject]?
     internal var payloadDictionary:[String : AnyObject]?
+    internal var apduPackage:ApduPackage?
     
     public required init?(_ map: Map)
     {
@@ -80,10 +81,10 @@ public class Payload : Mappable
         {
             self.creditCard = Mapper<CreditCard>().map(info)
         }
-        else
-        {
-            self.apduPackage = info
-        }
+//        else
+//        {
+//            self.apduPackage = info
+//        }
         
         self.payloadDictionary = info
     }

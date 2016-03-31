@@ -73,7 +73,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         guard let wearablePeripheral = self.wearablePeripheral, apduControlCharacteristic = self.apduControlCharacteristic else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self, message: "Device data not collected."))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self))
             }
             return
         }
@@ -81,7 +81,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         guard !self.sendingAPDU else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.WaitingForAPDUResponse, domain: PaymentDeviceBLEInterface.self, message: "Waiting for APDU response."))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.WaitingForAPDUResponse, domain: PaymentDeviceBLEInterface.self))
             }
             return
         }
@@ -103,7 +103,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     
     func sendDeviceReset() -> ErrorType? {
         guard let deviceResetCharacteristic = self.deviceResetCharacteristic else {
-            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self, message: "Device data not collected.")
+            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
         }
         
         let msg = DeviceResetMessage.init().msg
@@ -114,7 +114,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     
     func writeSecurityState(state: PaymentDevice.SecurityState) -> ErrorType? {
         guard let wearablePeripheral = self.wearablePeripheral, securityWriteCharacteristic = self.securityWriteCharacteristic else {
-            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self, message: "Device data not collected.")
+            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
         }
         
         wearablePeripheral.writeValue(NSData(bytes: [UInt8(state.rawValue)] as [UInt8], length: 1), forCharacteristic: securityWriteCharacteristic, type: CBCharacteristicWriteType.WithResponse)
@@ -126,7 +126,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         guard let continuationCharacteristicPacket = self.continuationCharacteristicPacket else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self, message: "Device data not collected."))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self))
             }
             return
         }
@@ -164,7 +164,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         guard let continuationCharacteristicControl = self.continuationCharacteristicControl else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self, message: "Device data not collected."))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self))
             }
             return
         }
@@ -181,7 +181,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         guard let continuationCharacteristicControl = self.continuationCharacteristicControl else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self, message: "Device data not collected."))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self))
             }
             return
         }
@@ -221,7 +221,7 @@ extension PaymentDeviceBLEInterface : CBCentralManagerDelegate {
                     onDeviceDisconnected()
                 }
             } else if let onDeviceConnected = self.paymentDevice.onDeviceConnected {
-                onDeviceConnected(deviceInfo: nil, error: NSError.error(code: PaymentDevice.ErrorCode.BadBLEState, domain: PaymentDeviceBLEInterface.self, message: "Can't connect to the device. BLE state: \(central.state.rawValue)"))
+                onDeviceConnected(deviceInfo: nil, error: NSError.error(code: PaymentDevice.ErrorCode.BadBLEState, domain: PaymentDeviceBLEInterface.self, message: String(format: PaymentDevice.ErrorCode.BadBLEState.description,  central.state.rawValue)))
             }
         }
         
@@ -344,7 +344,7 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                 if (crc32 != continuationControlMessage.crc32) {
                     if let completion = self.paymentDevice.apduResponseHandler {
                         self.paymentDevice.apduResponseHandler = nil
-                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUPacketCorrupted, domain: PaymentDeviceBLEInterface.self, message: "APDU packet checksum is not equal."))
+                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUPacketCorrupted, domain: PaymentDeviceBLEInterface.self))
                     }
                     return
                 }
@@ -355,7 +355,7 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                 } else {
                     if let completion = self.paymentDevice.apduResponseHandler {
                         self.paymentDevice.apduResponseHandler = nil
-                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.UnknownError, domain: PaymentDeviceBLEInterface.self, message: "Received APDU response for unknown BLE characteristic."))
+                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.UnknownError, domain: PaymentDeviceBLEInterface.self))
                     }
                 }
                 

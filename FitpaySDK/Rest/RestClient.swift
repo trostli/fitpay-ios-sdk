@@ -1615,7 +1615,7 @@ public class RestClient
         }
     }
     
-    public func commits(url:String, commitsAfter:String, limit:Int, offset:Int,
+    public func commits(url:String, commitsAfter:String?, limit:Int, offset:Int,
         completion:CommitsHandler)
     {
         var parameters = [
@@ -1623,8 +1623,8 @@ public class RestClient
             "offset" : "\(offset)"
         ]
         
-        if commitsAfter.characters.count > 1 {
-            parameters["commitsAfter"] = commitsAfter
+        if (commitsAfter != nil && commitsAfter?.characters.count > 0) {
+            parameters["commitsAfter"] = commitsAfter!
         }
         
         self.prepareAuthAndKeyHeaders

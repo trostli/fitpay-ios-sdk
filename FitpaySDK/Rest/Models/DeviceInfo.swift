@@ -207,7 +207,7 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
      - parameter offset:       start index position for list of entities returned
      - parameter completion:   CommitsHandler closure
      */
-    public func listCommits(commitsAfter:String, limit:Int, offset:Int, completion:RestClient.CommitsHandler) {
+    public func listCommits(commitsAfter:String?, limit:Int, offset:Int, completion:RestClient.CommitsHandler) {
         let resource = DeviceInfo.commitsResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client

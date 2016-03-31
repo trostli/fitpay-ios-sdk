@@ -1,8 +1,12 @@
 
 public enum SyncEventType : String {
+    case CONNECTING_TO_DEVICE = "CONNECTING_TO_DEVICE"
+    case CONNECTING_TO_DEVICE_FAILED = "CONNECTING_TO_DEVICE_FAILED"
+    case CONNECTING_TO_DEVICE_COMPLETED = "CONNECTING_TO_DEVICE_COMPLETED"
     case SYNC_STARTED = "SYNC_STARTED"
     case SYNC_FAILED = "SYNC_FAILED"
     case SYNC_FINISHED = "SYNC_FINISHED"
+    case SYNC_PROGRESS = "SYNC_PROGRESS"
     case CREDITCARD_CREATED = "CREDITCARD_CREATED"
     case CREDITCARD_DEACTIVATED = "CREDITCARD_DEACTIVATED"
     case CREDITCARD_ACTIVATED = "CREDITCARD_ACTIVATED"
@@ -22,7 +26,10 @@ public class SyncManager {
     private var syncEventsBlocks : [SyncEventType:SyncEventBlockHandler] = [:]
     private var user : User?
     
+    private var commitsApplyer = CommitsApplyer()
+    
     private init() {
+        
     }
     
     public enum ErrorCode : Int, ErrorType, RawIntValue, CustomStringConvertible
@@ -32,6 +39,7 @@ public class SyncManager {
         case CantApplyAPDUCommand = 10002
         case CantFetchCommits = 10003
         case CantFindDeviceWithSerialNumber = 10004
+        case SyncAlreadyStarted = 10005
         
         public var description : String {
             switch self {
@@ -45,32 +53,55 @@ public class SyncManager {
                 return "Can't fetch commits from API."
             case .CantFindDeviceWithSerialNumber:
                 return "Can't find device with serial number of connected payment device."
+            case .SyncAlreadyStarted:
+                return "Sync already started."
             }
         }
     }
     
-    public func sync(user: User) {
+    public private(set) var isSyncing : Bool = false
+    
+    /**
+     Starts sync process with payment device. 
+     If device disconnected, than system tries to connect.
+     
+     - parameter user: user from API to whom device belongs to.
+     */
+    public func sync(user: User) -> ErrorType? {
+        if self.isSyncing {
+            return NSError.error(code: SyncManager.ErrorCode.SyncAlreadyStarted, domain: SyncManager.self)
+        }
+        
+        self.isSyncing = true
         self.user = user
         
         if self.paymentDevice.isConnected {
             startSync()
-            return
+            return nil
         }
         
         self.paymentDevice.onDeviceConnected =
         {
             [unowned self] (deviceInfo, error) -> Void in
             guard (error == nil && deviceInfo != nil) else {
-                if let syncFailedCompletion = self.syncEventsBlocks[SyncEventType.SYNC_FAILED] {
-                    syncFailedCompletion(eventPayload: ["error": NSError.error(code: SyncManager.ErrorCode.CantConnectToDevice, domain: SyncManager.self, message: SyncManager.ErrorCode.CantConnectToDevice.description)])
-                }
+                
+                self.callCompletionForSyncEvent(SyncEventType.CONNECTING_TO_DEVICE_COMPLETED, params: ["error": NSError.error(code: SyncManager.ErrorCode.CantConnectToDevice, domain: SyncManager.self)])
+                
+                self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.CantConnectToDevice, domain: SyncManager.self))
+                
                 return
             }
-                
+            
+            self.callCompletionForSyncEvent(SyncEventType.CONNECTING_TO_DEVICE_COMPLETED)
+            
             self.startSync()
         }
         
         self.paymentDevice.connect(self.paymentDeviceConnectionTimeoutInSecs)
+        
+        self.callCompletionForSyncEvent(SyncEventType.CONNECTING_TO_DEVICE)
+        
+        return nil
     }
     
     /**
@@ -104,6 +135,34 @@ public class SyncManager {
         self.syncEventsBlocks = [:]
     }
     
+    private func startSync() {
+        
+        self.callCompletionForSyncEvent(SyncEventType.SYNC_STARTED)
+        
+        getCommits(self.syncStorage.lastCommitId)
+        {
+            [unowned self] (commits, error) -> Void in
+            
+            guard (error == nil && commits != nil) else {
+                self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.CantFetchCommits, domain: SyncManager.self))
+                return
+            }
+            
+            let commits = self.___debug_appendAPDUCommits(commits!)
+            self.commitsApplyer.apply(commits, completion:
+            {
+                [unowned self] (error) -> Void in
+                
+                if let _ = error {
+                    self.syncFinished(error: error)
+                    return
+                }
+                
+                self.syncFinished(error: nil)
+            })
+        }
+    }
+    
     private func findDeviceInfo(itrSearchLimit: Int, searchOffset: Int, completion:(deviceInfo: DeviceInfo?, error: ErrorType?)->Void) {
         //let physicalDeviceInfo = self.paymentDevice.deviceInfo
         
@@ -126,7 +185,7 @@ public class SyncManager {
             }
         
             if result!.results!.count + searchOffset >= result!.totalResults! {
-                completion(deviceInfo: nil, error: NSError.error(code: SyncManager.ErrorCode.CantFindDeviceWithSerialNumber, domain: SyncManager.self, message: SyncManager.ErrorCode.CantFindDeviceWithSerialNumber.description))
+                completion(deviceInfo: nil, error: NSError.error(code: SyncManager.ErrorCode.CantFindDeviceWithSerialNumber, domain: SyncManager.self))
                 return
             }
             
@@ -140,7 +199,7 @@ public class SyncManager {
             (deviceInfo, error) -> Void in
             
             if let deviceInfo = deviceInfo {
-                deviceInfo.listCommits(lastCommitId ?? "", limit: 20, offset: 0, completion:
+                deviceInfo.listCommits(lastCommitId, limit: 20, offset: 0, completion:
                 {
                     (result, error) -> Void in
                     
@@ -180,120 +239,48 @@ public class SyncManager {
             }
         }
     }
+
+    internal func callCompletionForSyncEvent(event: SyncEventType, params: [String:AnyObject] = [:]) {
+        if let completion = self.syncEventsBlocks[event] {
+            dispatch_async(dispatch_get_main_queue(),
+            {
+                completion(eventPayload: params)
+            })
+        }
+    }
+
+    private func syncFinished(error error: ErrorType?) {
+        self.isSyncing = false
+        
+        if let error = error as? NSError {
+            callCompletionForSyncEvent(SyncEventType.SYNC_FAILED, params: ["error": error])
+        } else {
+            callCompletionForSyncEvent(SyncEventType.SYNC_FINISHED, params: [:])
+        }
+    }
     
-    private func getAPDUPackagesFromCommits(commits: [Commit]) -> [ApduPackage] {
-        //TODO: temp code, we should rewrite it when we get APDU structure
+    //TODO: debug code
+    private func ___debug_appendAPDUCommits(commits: [Commit]) -> [Commit] {
+        var commit = commits.last!
+        
+        for commitItr in commits {
+            if let _ = commitItr.commitType, let _ = commitItr.payload {
+                commit = commitItr
+                break
+            }
+        }
+        
+        commit.commitType = CommitType.APDU_PACKAGE
         let apduPackage = ApduPackage()
         apduPackage.packageId = "1745"
         apduPackage.commands = ["00A4040008A00000000410101100".hexToData()!, "84E20001B0B12C352E835CBC2CA5CA22A223C6D54F3EDF254EF5E468F34CFD507C889366C307C7C02554BDACCDB9E1250B40962193AD594915018CE9C55FB92D25B0672E9F404A142446C4A18447FEAD7377E67BAF31C47D6B68D1FBE6166CF39094848D6B46D7693166BAEF9225E207F9322E34388E62213EE44184ED892AAF3AD1ECB9C2AE8A1F0DC9A9F19C222CE9F19F2EFE1459BDC2132791E851A090440C67201175E2B91373800920FB61B6E256AC834B9D".hexToData()!]
         
-        let apduPackages = [apduPackage, apduPackage, apduPackage, apduPackage]
+        commit.payload?.apduPackage = apduPackage
         
-        return apduPackages
+        let apduPackages = [commit, commit, commit, commit, commit]
+        
+        return commits + apduPackages
     }
-    
-    private func startSync() {
-        
-        if let syncStartedCompletion = self.syncEventsBlocks[SyncEventType.SYNC_STARTED] {
-            syncStartedCompletion(eventPayload: [:])
-        }
-
-        getCommits(self.syncStorage.lastCommitId)
-        {
-            [unowned self] (commits, error) -> Void in
-    
-            guard (error == nil && commits != nil) else {
-                if let syncFailedCompletion = self.syncEventsBlocks[SyncEventType.SYNC_FAILED] {
-                    syncFailedCompletion(eventPayload: ["error": NSError.error(code: SyncManager.ErrorCode.CantFetchCommits, domain: SyncManager.self, message: SyncManager.ErrorCode.CantFetchCommits.description)])
-                }
-                return
-            }
-            
-            let apduPackages = self.getAPDUPackagesFromCommits(commits!)
-            
-            self.applyAPDUPackages(apduPackages, apduIndex: 0)
-            {
-                [unowned self] (error) -> Void in
-                                
-                if let _ = error, let syncFailedCompletion = self.syncEventsBlocks[SyncEventType.SYNC_FAILED] {
-                    syncFailedCompletion(eventPayload: ["error": NSError.error(code: SyncManager.ErrorCode.CantApplyAPDUCommand, domain: SyncManager.self, message: SyncManager.ErrorCode.CantApplyAPDUCommand.description)])
-                    
-                    return
-                }
-                
-                self.processNonAPDUCommits(commits!)
-                
-                if let commitId = commits?.last?.commit {
-                    self.syncStorage.lastCommitId = commitId
-                }
-                
-                if let syncFinishedCompletion = self.syncEventsBlocks[SyncEventType.SYNC_FINISHED] {
-                    syncFinishedCompletion(eventPayload: [:])
-                }
-            }
-        }
-    }
-    
-    private func processNonAPDUCommits(commits: [Commit]) {
-        for commit in commits {
-            guard let commitType = commit.commitType, payload = commit.payload?.payloadDictionary else {
-                continue
-            }
-            
-            if let eventType = SyncEventType(rawValue: commitType.rawValue) {
-                if let syncEventCompletion = self.syncEventsBlocks[eventType] {
-                    syncEventCompletion(eventPayload: payload)
-                }
-            }
-        }
-    }
-    
-    // uses recursion
-    private func applyAPDUPackages(apduPackages: [ApduPackage], apduIndex: Int, completion: (error:ErrorType?)->Void) {
-        let isFinished = apduPackages.count <= apduIndex
-        
-        if isFinished {
-            completion(error: nil)
-            return
-        }
-        
-        let apdu = apduPackages[apduIndex]
-        self.applyAPDUPackage(apdu, apduCommandIndex: 0)
-        {
-            [unowned self] (error) -> Void in
-            if let error = error {
-                completion(error: error)
-                return
-            }
-            
-            self.applyAPDUPackages(apduPackages, apduIndex: apduIndex+1, completion: completion)
-        }
-    }
-    
-    // uses recursion
-    private func applyAPDUPackage(apduPackage: ApduPackage, apduCommandIndex: Int, completion: (error:ErrorType?)->Void) {
-        let isFinished = apduPackage.commands?.count <= apduCommandIndex
-        
-        if isFinished {
-            completion(error: nil)
-            return
-        }
-        
-        let apdu = apduPackage.commands![apduCommandIndex]
-        self.paymentDevice.sendAPDUData(apdu, completion:
-        {
-            [unowned self] (apduResponse, error) -> Void in
-            
-            if let error = error {
-                completion(error: error)
-                return
-            }
-            
-            //TODO: send response here
-            
-            self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, completion: completion)
-        })
-    }
-
-
 }
+
+

@@ -136,6 +136,20 @@ class PaymentDeviceTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test sync with commit")
         
+        SyncManager.sharedInstance.syncStorage.lastCommitId = nil
+        
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CONNECTING_TO_DEVICE)
+        {
+            (eventPayload) -> Void in
+            print("connecting to device started")
+        }
+        
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CONNECTING_TO_DEVICE_COMPLETED)
+        {
+            (eventPayload) -> Void in
+            print("connecting to device finished")
+        }
+        
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_STARTED)
         {
             (eventPayload) -> Void in
@@ -146,12 +160,21 @@ class PaymentDeviceTests: XCTestCase
         {
             (eventPayload) -> Void in
             print("sync failed", eventPayload)
+            
+            XCTAssertNil(eventPayload)
+            expectation.fulfill()
         }
         
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CREDITCARD_CREATED)
         {
             (eventPayload) -> Void in
             print("creditcard created", eventPayload)
+        }
+        
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_PROGRESS)
+        {
+            (eventPayload) -> Void in
+            print("sync progress", eventPayload)
         }
         
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_FINISHED)
@@ -191,6 +214,6 @@ class PaymentDeviceTests: XCTestCase
             })
         }
         
-        super.waitForExpectationsWithTimeout(500, handler: nil)
+        super.waitForExpectationsWithTimeout(120, handler: nil)
     }
 }
