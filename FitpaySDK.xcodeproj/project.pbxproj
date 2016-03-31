@@ -21,8 +21,21 @@
 		8426D2621C96F4AA009AACFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8426D2611C96F4AA009AACFE /* Assets.xcassets */; };
 		8426D2651C96F4AA009AACFE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8426D2631C96F4AA009AACFE /* LaunchScreen.storyboard */; };
 		9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */; };
+		9A18CAB61CABDFD600658223 /* DevicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A18CAB51CABDFD600658223 /* DevicesViewController.swift */; };
+		9A18CAB81CABE79800658223 /* SingleCreditCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A18CAB71CABE79800658223 /* SingleCreditCardViewController.swift */; };
+		9A2E68C61CA14DE10061D5B3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2E68C51CA14DE10061D5B3 /* AppDelegate.swift */; };
+		9A2E68C81CA14DE10061D5B3 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2E68C71CA14DE10061D5B3 /* LoginViewController.swift */; };
+		9A2E68CD1CA14DE10061D5B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A2E68CC1CA14DE10061D5B3 /* Assets.xcassets */; };
+		9A2E68D01CA14DE10061D5B3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A2E68CE1CA14DE10061D5B3 /* LaunchScreen.storyboard */; };
+		9A2E68DB1CA14DE10061D5B3 /* FitpaySDKDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2E68DA1CA14DE10061D5B3 /* FitpaySDKDemoUITests.swift */; };
+		9A2E68E41CA154310061D5B3 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A2E68E31CA154310061D5B3 /* LoginViewController.xib */; };
 		9A58466D1C96B65B00E4ABDC /* ClientModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A58466C1C96B65B00E4ABDC /* ClientModel.swift */; };
 		9A62E6B61C8DCA20004ED6C0 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A62E6B51C8DCA20004ED6C0 /* Asset.swift */; };
+		9A668B8B1CAAC5BB00E70668 /* BaseTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A668B8A1CAAC5BB00E70668 /* BaseTableViewController.swift */; };
+		9A668B8D1CAACEF600E70668 /* CreditCardsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A668B8C1CAACEF600E70668 /* CreditCardsViewController.swift */; };
+		9A8D153D1CA29D4100A03E7F /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8D153B1CA29D4100A03E7F /* UserViewController.swift */; };
+		9A8D153E1CA29D4100A03E7F /* BaseTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A8D153C1CA29D4100A03E7F /* BaseTableViewController.xib */; };
+		9A8D15401CA29DC500A03E7F /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8D153F1CA29DC500A03E7F /* Utils.swift */; };
 		9AA50BDF1C7E096D000FA546 /* RestClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */; };
 		9AA5BDAB1C7B54B600EDF2F6 /* RestSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */; };
 		9AB68E3E1C84A1EC00A0E172 /* JWEHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E391C84A1EC00A0E172 /* JWEHeader.swift */; };
@@ -75,6 +88,13 @@
 			remoteGlobalIDString = 8426D2571C96F4AA009AACFE;
 			remoteInfo = RTMClientApp;
 		};
+		9A2E68D71CA14DE10061D5B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0AD922941C1F7EFC007693AB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9A2E68C21CA14DE10061D5B3;
+			remoteInfo = FitpaySDKDemo;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -99,8 +119,25 @@
 		8426D2641C96F4AA009AACFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8426D2661C96F4AA009AACFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
+		9A18CAB51CABDFD600658223 /* DevicesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevicesViewController.swift; sourceTree = "<group>"; };
+		9A18CAB71CABE79800658223 /* SingleCreditCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleCreditCardViewController.swift; sourceTree = "<group>"; };
+		9A2E68C31CA14DE10061D5B3 /* FitpaySDKDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitpaySDKDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A2E68C51CA14DE10061D5B3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		9A2E68C71CA14DE10061D5B3 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		9A2E68CC1CA14DE10061D5B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9A2E68CF1CA14DE10061D5B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		9A2E68D11CA14DE10061D5B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A2E68D61CA14DE10061D5B3 /* FitpaySDKDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitpaySDKDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A2E68DA1CA14DE10061D5B3 /* FitpaySDKDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitpaySDKDemoUITests.swift; sourceTree = "<group>"; };
+		9A2E68DC1CA14DE10061D5B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A2E68E31CA154310061D5B3 /* LoginViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginViewController.xib; sourceTree = "<group>"; };
 		9A58466C1C96B65B00E4ABDC /* ClientModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientModel.swift; sourceTree = "<group>"; };
 		9A62E6B51C8DCA20004ED6C0 /* Asset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Asset.swift; sourceTree = "<group>"; };
+		9A668B8A1CAAC5BB00E70668 /* BaseTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTableViewController.swift; sourceTree = "<group>"; };
+		9A668B8C1CAACEF600E70668 /* CreditCardsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreditCardsViewController.swift; sourceTree = "<group>"; };
+		9A8D153B1CA29D4100A03E7F /* UserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
+		9A8D153C1CA29D4100A03E7F /* BaseTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BaseTableViewController.xib; sourceTree = "<group>"; };
+		9A8D153F1CA29DC500A03E7F /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientTests.swift; sourceTree = "<group>"; };
 		9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestSessionTests.swift; sourceTree = "<group>"; };
 		9AB68E391C84A1EC00A0E172 /* JWEHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JWEHeader.swift; sourceTree = "<group>"; };
@@ -168,6 +205,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9A2E68C01CA14DE10061D5B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2E68D31CA14DE10061D5B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -177,6 +228,8 @@
 				0AD9229F1C1F7EFC007693AB /* FitpaySDK */,
 				0AD922AB1C1F7EFC007693AB /* FitpaySDKTests */,
 				8426D2591C96F4AA009AACFE /* RTMClientApp */,
+				9A2E68C41CA14DE10061D5B3 /* FitpaySDKDemo */,
+				9A2E68D91CA14DE10061D5B3 /* FitpaySDKDemoUITests */,
 				0AD9229E1C1F7EFC007693AB /* Products */,
 				AAC95219C4851808164A9861 /* Pods */,
 				B2C94647591B581A09E4A254 /* Frameworks */,
@@ -189,6 +242,8 @@
 				0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */,
 				0AD922A71C1F7EFC007693AB /* FitpaySDKTests.xctest */,
 				8426D2581C96F4AA009AACFE /* RTMClientApp.app */,
+				9A2E68C31CA14DE10061D5B3 /* FitpaySDKDemo.app */,
+				9A2E68D61CA14DE10061D5B3 /* FitpaySDKDemoUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -242,6 +297,35 @@
 				8426D2661C96F4AA009AACFE /* Info.plist */,
 			);
 			path = RTMClientApp;
+			sourceTree = "<group>";
+		};
+		9A2E68C41CA14DE10061D5B3 /* FitpaySDKDemo */ = {
+			isa = PBXGroup;
+			children = (
+				9A2E68C51CA14DE10061D5B3 /* AppDelegate.swift */,
+				9A2E68C71CA14DE10061D5B3 /* LoginViewController.swift */,
+				9A2E68CC1CA14DE10061D5B3 /* Assets.xcassets */,
+				9A2E68CE1CA14DE10061D5B3 /* LaunchScreen.storyboard */,
+				9A2E68D11CA14DE10061D5B3 /* Info.plist */,
+				9A2E68E31CA154310061D5B3 /* LoginViewController.xib */,
+				9A8D153B1CA29D4100A03E7F /* UserViewController.swift */,
+				9A8D153C1CA29D4100A03E7F /* BaseTableViewController.xib */,
+				9A8D153F1CA29DC500A03E7F /* Utils.swift */,
+				9A668B8A1CAAC5BB00E70668 /* BaseTableViewController.swift */,
+				9A668B8C1CAACEF600E70668 /* CreditCardsViewController.swift */,
+				9A18CAB51CABDFD600658223 /* DevicesViewController.swift */,
+				9A18CAB71CABE79800658223 /* SingleCreditCardViewController.swift */,
+			);
+			path = FitpaySDKDemo;
+			sourceTree = "<group>";
+		};
+		9A2E68D91CA14DE10061D5B3 /* FitpaySDKDemoUITests */ = {
+			isa = PBXGroup;
+			children = (
+				9A2E68DA1CA14DE10061D5B3 /* FitpaySDKDemoUITests.swift */,
+				9A2E68DC1CA14DE10061D5B3 /* Info.plist */,
+			);
+			path = FitpaySDKDemoUITests;
 			sourceTree = "<group>";
 		};
 		9AB68E371C84A1EC00A0E172 /* JWE */ = {
@@ -469,6 +553,41 @@
 			productReference = 8426D2581C96F4AA009AACFE /* RTMClientApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		9A2E68C21CA14DE10061D5B3 /* FitpaySDKDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9A2E68E11CA14DE10061D5B3 /* Build configuration list for PBXNativeTarget "FitpaySDKDemo" */;
+			buildPhases = (
+				9A2E68BF1CA14DE10061D5B3 /* Sources */,
+				9A2E68C01CA14DE10061D5B3 /* Frameworks */,
+				9A2E68C11CA14DE10061D5B3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FitpaySDKDemo;
+			productName = FitpaySDKDemo;
+			productReference = 9A2E68C31CA14DE10061D5B3 /* FitpaySDKDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9A2E68D51CA14DE10061D5B3 /* FitpaySDKDemoUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9A2E68E21CA14DE10061D5B3 /* Build configuration list for PBXNativeTarget "FitpaySDKDemoUITests" */;
+			buildPhases = (
+				9A2E68D21CA14DE10061D5B3 /* Sources */,
+				9A2E68D31CA14DE10061D5B3 /* Frameworks */,
+				9A2E68D41CA14DE10061D5B3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9A2E68D81CA14DE10061D5B3 /* PBXTargetDependency */,
+			);
+			name = FitpaySDKDemoUITests;
+			productName = FitpaySDKDemoUITests;
+			productReference = 9A2E68D61CA14DE10061D5B3 /* FitpaySDKDemoUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -490,6 +609,13 @@
 					8426D2571C96F4AA009AACFE = {
 						CreatedOnToolsVersion = 7.2;
 					};
+					9A2E68C21CA14DE10061D5B3 = {
+						CreatedOnToolsVersion = 7.2;
+					};
+					9A2E68D51CA14DE10061D5B3 = {
+						CreatedOnToolsVersion = 7.2;
+						TestTargetID = 9A2E68C21CA14DE10061D5B3;
+					};
 				};
 			};
 			buildConfigurationList = 0AD922971C1F7EFC007693AB /* Build configuration list for PBXProject "FitpaySDK" */;
@@ -508,6 +634,8 @@
 				0AD9229C1C1F7EFC007693AB /* FitpaySDK */,
 				0AD922A61C1F7EFC007693AB /* FitpaySDKTests */,
 				8426D2571C96F4AA009AACFE /* RTMClientApp */,
+				9A2E68C21CA14DE10061D5B3 /* FitpaySDKDemo */,
+				9A2E68D51CA14DE10061D5B3 /* FitpaySDKDemoUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -534,6 +662,24 @@
 				8426D2651C96F4AA009AACFE /* LaunchScreen.storyboard in Resources */,
 				8426D2621C96F4AA009AACFE /* Assets.xcassets in Resources */,
 				8426D2601C96F4AA009AACFE /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2E68C11CA14DE10061D5B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A2E68D01CA14DE10061D5B3 /* LaunchScreen.storyboard in Resources */,
+				9A8D153E1CA29D4100A03E7F /* BaseTableViewController.xib in Resources */,
+				9A2E68CD1CA14DE10061D5B3 /* Assets.xcassets in Resources */,
+				9A2E68E41CA154310061D5B3 /* LoginViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2E68D41CA14DE10061D5B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -637,6 +783,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9A2E68BF1CA14DE10061D5B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A2E68C81CA14DE10061D5B3 /* LoginViewController.swift in Sources */,
+				9A18CAB61CABDFD600658223 /* DevicesViewController.swift in Sources */,
+				9A8D153D1CA29D4100A03E7F /* UserViewController.swift in Sources */,
+				9A668B8B1CAAC5BB00E70668 /* BaseTableViewController.swift in Sources */,
+				9A668B8D1CAACEF600E70668 /* CreditCardsViewController.swift in Sources */,
+				9A18CAB81CABE79800658223 /* SingleCreditCardViewController.swift in Sources */,
+				9A2E68C61CA14DE10061D5B3 /* AppDelegate.swift in Sources */,
+				9A8D15401CA29DC500A03E7F /* Utils.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2E68D21CA14DE10061D5B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A2E68DB1CA14DE10061D5B3 /* FitpaySDKDemoUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -649,6 +818,11 @@
 			isa = PBXTargetDependency;
 			target = 8426D2571C96F4AA009AACFE /* RTMClientApp */;
 			targetProxy = 8426D26A1C96F4AF009AACFE /* PBXContainerItemProxy */;
+		};
+		9A2E68D81CA14DE10061D5B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9A2E68C21CA14DE10061D5B3 /* FitpaySDKDemo */;
+			targetProxy = 9A2E68D71CA14DE10061D5B3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -665,6 +839,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				8426D2641C96F4AA009AACFE /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		9A2E68CE1CA14DE10061D5B3 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9A2E68CF1CA14DE10061D5B3 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -776,7 +958,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/lib\"";
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
+					"\"$(SRCROOT)/FitpaySDK/FPCrypto\"",
 				);
 				INFOPLIST_FILE = FitpaySDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -810,7 +992,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/lib\"";
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
+					"\"$(SRCROOT)/FitpaySDK/FPCrypto\"",
 				);
 				INFOPLIST_FILE = FitpaySDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -882,6 +1064,60 @@
 			};
 			name = Release;
 		};
+		9A2E68DD1CA14DE10061D5B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
+					"\"$(SRCROOT)/FitpaySDK/FPCrypto\"",
+				);
+				INFOPLIST_FILE = FitpaySDKDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9A2E68DE1CA14DE10061D5B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
+					"\"$(SRCROOT)/FitpaySDK/FPCrypto\"",
+				);
+				INFOPLIST_FILE = FitpaySDKDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		9A2E68DF1CA14DE10061D5B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = FitpaySDKDemoUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKDemoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = FitpaySDKDemo;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		9A2E68E01CA14DE10061D5B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = FitpaySDKDemoUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKDemoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = FitpaySDKDemo;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -919,6 +1155,25 @@
 				8426D2681C96F4AA009AACFE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9A2E68E11CA14DE10061D5B3 /* Build configuration list for PBXNativeTarget "FitpaySDKDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A2E68DD1CA14DE10061D5B3 /* Debug */,
+				9A2E68DE1CA14DE10061D5B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9A2E68E21CA14DE10061D5B3 /* Build configuration list for PBXNativeTarget "FitpaySDKDemoUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A2E68DF1CA14DE10061D5B3 /* Debug */,
+				9A2E68E01CA14DE10061D5B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

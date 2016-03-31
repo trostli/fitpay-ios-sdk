@@ -7,7 +7,7 @@ public class ResultCollection<T: Mappable> : ClientModel, Mappable, SecretApplya
     public var offset:Int?
     public var totalResults:Int?
     public var results:[T]?
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     private let lastResourse = "last"
     private let nextResourse = "next"
     private let previousResource = "previous"

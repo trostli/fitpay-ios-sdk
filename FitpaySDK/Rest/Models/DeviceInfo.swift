@@ -236,7 +236,7 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
 
 public class CardRelationship : ClientModel, Mappable, SecretApplyable
 {
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     public var creditCardId:String?
     public var pan:String?
     public var expMonth:Int?

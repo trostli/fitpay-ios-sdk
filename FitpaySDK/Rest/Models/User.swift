@@ -14,6 +14,26 @@ public class User : ClientModel, Mappable, SecretApplyable
     private static let creditCardsResource = "creditCards"
     private static let devicesResource = "devices"
     
+    public var firstName:String?
+    {
+        return self.info?.firstName
+    }
+    
+    public var lastName:String?
+    {
+        return self.info?.lastName
+    }
+    
+    public var birthDate:String?
+    {
+        return self.info?.birthDate
+    }
+    
+    public var email:String?
+    {
+        return self.info?.email
+    }
+    
     internal weak var client:RestClient?
 
     

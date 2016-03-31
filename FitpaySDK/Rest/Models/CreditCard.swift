@@ -4,7 +4,7 @@ import ObjectMapper
 
 public class CreditCard : ClientModel, Mappable, SecretApplyable
 {
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     public var creditCardId:String?
     public var userId:String?
     public var isDefault:Bool?

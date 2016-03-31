@@ -3,7 +3,7 @@ import ObjectMapper
 
 public class VerificationMethod : ClientModel, Mappable
 {
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     public var verificationId:String?
     public var state:String? //TODO: consider creating enum
     public var methodType:String? //TODO: consider creating enum

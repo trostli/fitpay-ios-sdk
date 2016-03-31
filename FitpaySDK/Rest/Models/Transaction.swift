@@ -3,7 +3,7 @@ import ObjectMapper
 
 public class Transaction : ClientModel, Mappable
 {
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     public var transactionId:String?
     public var transactionType:String? //TODO: consider adding enum
     public var amount:Foundation.NSDecimalNumber? //TODO: consider keeping it as String
