@@ -11,7 +11,7 @@ public protocol PaymentDeviceBaseInterface
     
     func sendDeviceReset() -> ErrorType?
     
-    func sendAPDUData(data: NSData)
+    func sendAPDUData(data: NSData, sequenceNumber: UInt16)
     
     func deviceInfo() -> DeviceInfo?
     

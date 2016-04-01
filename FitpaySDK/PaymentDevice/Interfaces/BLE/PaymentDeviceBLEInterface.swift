@@ -69,7 +69,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         return self._deviceInfo
     }
     
-    func sendAPDUData(data: NSData) {
+    func sendAPDUData(data: NSData, sequenceNumber: UInt16) {
         guard let wearablePeripheral = self.wearablePeripheral, apduControlCharacteristic = self.apduControlCharacteristic else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
@@ -85,6 +85,8 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
             }
             return
         }
+        
+        self.sequenceId = sequenceNumber
         
         let apduPacket = NSMutableData()
         var sq16 = UInt16(littleEndian: sequenceId)
@@ -203,8 +205,6 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
             apduResponseHandler(apduResponse: packet, error: nil)
         }
     }
-    
-
 }
 
 extension PaymentDeviceBLEInterface : CBCentralManagerDelegate {

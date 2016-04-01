@@ -1782,45 +1782,45 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(1000, handler: nil)
     }
     
-    func testAPDUPackageConfirm()
-    {
-        let expectation = super.expectationWithDescription("'APDUPackage' confirms package")
-        
-        self.session.login(username: self.username, password: self.password)
-        {
-            [unowned self](error) -> Void in
-            XCTAssertNil(error)
-            XCTAssertTrue(self.session.isAuthorized)
-            
-            if !self.session.isAuthorized
-            {
-                expectation.fulfill()
-                return
-            }
-        
-            let package = ApduPackage()
-            package.packageId = "0828a2a8-2ad6-4ea5-9f3c-188983986f25"
-            package.state = "SUCCESSFUL"
-            package.executed = "2015-12-15T23:54:20.510Z"
-            package.executedDuration = 999
-
-            let resp = ApduResponse()
-            resp.commandId = "c3930e8d-0c87-454c-9d5c-bfda6e6e1eb1"
-            resp.responseCode = "9000"
-            resp.responseData = "011234567899000"
-            
-            package.apduResponses = [ resp ]
-            
-            self.client.confirmAPDUPackage(package, completion:
-            {
-                (error) -> Void in
-                
-                XCTAssertNil(error)
-                
-                expectation.fulfill()
-            })
-        }
-        
-        super.waitForExpectationsWithTimeout(10, handler: nil)
-    }
+//    func testAPDUPackageConfirm()
+//    {
+//        let expectation = super.expectationWithDescription("'APDUPackage' confirms package")
+//        
+//        self.session.login(username: self.username, password: self.password)
+//        {
+//            [unowned self](error) -> Void in
+//            XCTAssertNil(error)
+//            XCTAssertTrue(self.session.isAuthorized)
+//            
+//            if !self.session.isAuthorized
+//            {
+//                expectation.fulfill()
+//                return
+//            }
+//        
+//            let package = ApduPackage()
+//            package.packageId = "0828a2a8-2ad6-4ea5-9f3c-188983986f25"
+//            package.state = "SUCCESSFUL"
+//            package.executed = "2015-12-15T23:54:20.510Z"
+//            package.executedDuration = 999
+//
+//            let resp = APDUCommand()
+//            resp.commandId = "c3930e8d-0c87-454c-9d5c-bfda6e6e1eb1"
+//            resp.responseCode = "9000"
+//            resp.responseData = "011234567899000"
+//            
+//            package.apduCommands = [ resp ]
+//            
+//            self.client.confirmAPDUPackage(package, completion:
+//            {
+//                (error) -> Void in
+//                
+//                XCTAssertNil(error)
+//                
+//                expectation.fulfill()
+//            })
+//        }
+//        
+//        super.waitForExpectationsWithTimeout(10, handler: nil)
+//    }
 }

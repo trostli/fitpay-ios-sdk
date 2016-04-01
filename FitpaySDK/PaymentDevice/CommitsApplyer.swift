@@ -99,9 +99,17 @@ internal class CommitsApplyer {
         {
             (error) -> Void in
             
-            //TODO: send response here
+            if let error = error {
+                completion(error: error)
+                return
+            }
             
-            completion(error: error)
+            //TODO: uncomment this when apdu will be implemented on backend
+//            commit.confirmAPDU(
+//            {
+//                (error) -> Void in
+                completion(error: error)
+//            })
         }
     }
     
@@ -118,24 +126,22 @@ internal class CommitsApplyer {
     }
     
     private func applyAPDUPackage(apduPackage: ApduPackage, apduCommandIndex: Int, completion: (error:ErrorType?)->Void) {
-        let isFinished = apduPackage.commands?.count <= apduCommandIndex
+        let isFinished = apduPackage.apduCommands?.count <= apduCommandIndex
         
         if isFinished {
             completion(error: nil)
             return
         }
         
-        let apdu = apduPackage.commands![apduCommandIndex]
-        SyncManager.sharedInstance.paymentDevice.sendAPDUData(apdu, completion:
+        var apdu = apduPackage.apduCommands![apduCommandIndex]
+        SyncManager.sharedInstance.paymentDevice.executeAPDUCommand(&apdu, completion:
         {
-            [unowned self] (apduResponse, error) -> Void in
+            [unowned self] (apduPack, error) -> Void in
             
             if let error = error {
                 completion(error: error)
                 return
             }
-            
-            //TODO: save response here
             
             self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, completion: completion)
         })

@@ -457,7 +457,7 @@ public class RestClient
      - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    public func confirmAPDUPackage(package:ApduPackage, completion: ConfirmAPDUPackageHandler)
+    public func confirmAPDUPackage(url:String, package:ApduPackage, completion: ConfirmAPDUPackageHandler)
     {
         guard package.packageId != nil else {
             completion(error:NSError.error(code: ErrorCode.BadRequest, domain: RestClient.self, message: "packageId should not be nil"))
@@ -468,7 +468,7 @@ public class RestClient
         {
             (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.POST, "\(API_BASE_URL)/apduPackages/\(package.packageId!)/confirm", parameters: package.dictoinary, encoding: .JSON, headers: headers)
+                let request = self._manager.request(.POST, url, parameters: package.dictoinary, encoding: .JSON, headers: headers)
                 request.validate().responseString
                 {
                     (response:Response<String, NSError>) -> Void in
@@ -1946,6 +1946,7 @@ public class RestClient
                         else if let resultValue = response.result.value
                         {
                             resultValue.client = self
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
                             completion(resultCollection: resultValue, error: response.result.error)
                         }
                         else

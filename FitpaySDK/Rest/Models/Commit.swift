@@ -10,6 +10,8 @@ public class Commit : ClientModel, Mappable, SecretApplyable
     var previousCommit:String?
     var commit:String?
     
+    private static let apduResponseResource = "apduResponse"
+    
     internal weak var client:RestClient?
     
     internal var encryptedData:String?
@@ -31,22 +33,32 @@ public class Commit : ClientModel, Mappable, SecretApplyable
     
     internal func applySecret(secret:NSData, expectedKeyId:String?)
     {
-        if let encryptedData = self.encryptedData
-        {
-            let jweResult = JWEObject.parse(payload: encryptedData)
-            
-            if let kid = jweResult?.header?.kid, let expectedKeyId = expectedKeyId
-            {
-                // decrypt only if keys match
-                if kid == expectedKeyId
-                {
-                    if let decryptResult = try? jweResult?.decrypt(secret)
-                    {
-                        self.payload = Mapper<Payload>().map(decryptResult)
-                    }
-                }
-            }
+        self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
+    }
+    
+    internal func confirmAPDU(completion:RestClient.ConfirmAPDUPackageHandler) {
+        guard self.commitType == CommitType.APDU_PACKAGE else {
+            completion(error: NSError.unhandledError(Commit.self))
+            return
         }
+        
+        let resource = Commit.apduResponseResource
+        guard let url = self.links?.url(resource) else {
+            completion(error: NSError.clientUrlError(domain:Commit.self, code:0, client: client, url: nil, resource: resource))
+            return
+        }
+        
+        guard let client = self.client else {
+            completion(error: NSError.clientUrlError(domain:Commit.self, code:0, client: nil, url: url, resource: resource))
+            return
+        }
+        
+        guard let apduPackage = self.payload?.apduPackage else {
+            completion(error: NSError.unhandledError(Commit.self))
+            return
+        }
+        
+        client.confirmAPDUPackage(url, package: apduPackage, completion: completion)
     }
 }
 
@@ -81,10 +93,10 @@ public class Payload : Mappable
         {
             self.creditCard = Mapper<CreditCard>().map(info)
         }
-//        else
-//        {
-//            self.apduPackage = info
-//        }
+        else if let _ = info["packageId"]
+        {
+            self.apduPackage = Mapper<ApduPackage>().map(info)
+        }
         
         self.payloadDictionary = info
     }

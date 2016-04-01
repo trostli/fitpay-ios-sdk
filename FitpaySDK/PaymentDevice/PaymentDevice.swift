@@ -1,4 +1,3 @@
-import KeychainAccess
 
 public class PaymentDevice : NSObject
 {
@@ -9,8 +8,9 @@ public class PaymentDevice : NSObject
         case DeviceDataNotCollected = 10002
         case WaitingForAPDUResponse = 10003
         case APDUPacketCorrupted = 10004
-        case OperationTimeout = 10005
-        case DeviceShouldBeDisconnected = 10006
+        case APDUDataNotFull = 10005
+        case OperationTimeout = 10006
+        case DeviceShouldBeDisconnected = 10007
         
         public var description : String {
             switch self {
@@ -24,6 +24,8 @@ public class PaymentDevice : NSObject
                 return "Waiting for APDU response."
             case .APDUPacketCorrupted:
                 return "APDU packet checksum is not equal."
+            case .APDUDataNotFull:
+                return "APDU data not fully filled in."
             case .OperationTimeout:
                 return "Connection timeout. Can't find device."
             case .DeviceShouldBeDisconnected:
@@ -156,9 +158,31 @@ public class PaymentDevice : NSObject
         self.deviceInterface = PaymentDeviceBLEInterface(paymentDevice: self)
     }
     
-    internal func sendAPDUData(data: NSData, completion: APDUResponseHandler) {
+    internal func sendAPDUData(data: NSData, sequenceNumber: UInt16, completion: APDUResponseHandler) {
         self.apduResponseHandler = completion
-        self.deviceInterface.sendAPDUData(data)
+        self.deviceInterface.sendAPDUData(data, sequenceNumber: sequenceNumber)
     }
     
+    internal typealias APDUExecutionHandler = (apduCommand:APDUCommand?, error:ErrorType?)->Void
+    internal func executeAPDUCommand(inout apduCommand: APDUCommand, completion: APDUExecutionHandler) {
+        guard let commandData = apduCommand.command?.hexToData() else {
+            completion(apduCommand: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUDataNotFull, domain: PaymentDeviceBLEInterface.self))
+            return
+        }
+        
+        self.sendAPDUData(commandData, sequenceNumber: UInt16(apduCommand.sequence))
+        {
+            (apduResponse, error) -> Void in
+            
+            if let error = error {
+                completion(apduCommand: nil, error: error)
+                return
+            }
+            
+            apduCommand.responseData = apduResponse?.msg.hex
+            apduCommand.responseCode = apduResponse?.responseCode.hex
+            
+            completion(apduCommand: apduCommand, error: nil)
+        }
+    }
 }
