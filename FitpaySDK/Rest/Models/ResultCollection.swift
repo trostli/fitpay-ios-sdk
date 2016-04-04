@@ -96,10 +96,10 @@ public class ResultCollection<T: Mappable> : ClientModel, Mappable, SecretApplya
     public typealias CollectAllAvailableCompletion = (results: [T]?, error: ErrorType?) -> Void
     
     public func collectAllAvailable(completion: CollectAllAvailableCompletion) {
-        if let nextUrl = self.links?.url(self.nextResourse) ?? self.links?.url(self.lastResourse), _ = self.results{
+        if let nextUrl = self.links?.url(self.nextResourse), _ = self.results {
             self.collectAllAvailable(&self.results!, nextUrl: nextUrl, completion: completion)
         } else {
-            completion(results: nil, error: NSError.unhandledError(ResultCollection.self))
+            completion(results: nil, error: NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: nil, resource: self.nextResourse))
         }
     }
     

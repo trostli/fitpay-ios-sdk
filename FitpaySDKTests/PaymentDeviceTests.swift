@@ -181,7 +181,12 @@ class PaymentDeviceTests: XCTestCase
         {
             (eventPayload) -> Void in
             print("sync finished", eventPayload)
-            expectation.fulfill()
+//            expectation.fulfill()
+        }
+        
+        SyncManager.sharedInstance.paymentDevice.onReceivingTransactionNotification = {
+            (transactionData)->Void in
+            print("notification:", transactionData)
         }
         
         let clientId = "pagare"

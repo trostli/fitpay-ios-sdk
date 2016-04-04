@@ -17,7 +17,7 @@ enum FitpayPaymentCharacteristicUUID: String {
     case NotificationCharacteristic        = "37051cf0-d70e-4b3c-9e90-0f8e9278b4d3"
     case SecurityWriteCharacteristic       = "e4bbb38f-5aaa-4056-8cf0-57461082d598"
     case SecurityStateCharacteristic       = "ab1fe5e7-4e9d-4b8c-963f-5265dc7de466"
-    case DeviceResetCharacteristic         = "50b50f72-d10a-444b-945d-d574bd67ec91"
+    case DeviceControlCharacteristic         = "50b50f72-d10a-444b-945d-d574bd67ec91"
     case ApplicationControlCharacteristic  = "6fea71ab-14ca-4921-b166-e8742e349975"
 }
 
@@ -44,7 +44,7 @@ internal let PAYMENT_CHARACTERISTIC_UUID_TRANSACTION_NOTIFICATION = CBUUID(strin
 internal let PAYMENT_CHARACTERISTIC_UUID_SECURE_ELEMENT_ID = CBUUID(string: FitpayPaymentCharacteristicUUID.SecureElementIdCharacteristic.rawValue)
 internal let PAYMENT_CHARACTERISTIC_UUID_SECURITY_WRITE = CBUUID(string: FitpayPaymentCharacteristicUUID.SecurityWriteCharacteristic.rawValue)
 internal let PAYMENT_CHARACTERISTIC_UUID_SECURITY_READ = CBUUID(string: FitpayPaymentCharacteristicUUID.SecurityStateCharacteristic.rawValue)
-internal let PAYMENT_CHARACTERISTIC_UUID_DEVICE_RESET = CBUUID(string: FitpayPaymentCharacteristicUUID.DeviceResetCharacteristic.rawValue)
+internal let PAYMENT_CHARACTERISTIC_UUID_DEVICE_CONTROL = CBUUID(string: FitpayPaymentCharacteristicUUID.DeviceControlCharacteristic.rawValue)
 internal let PAYMENT_CHARACTERISTIC_UUID_APPLICATION_CONTROL = CBUUID(string: FitpayPaymentCharacteristicUUID.ApplicationControlCharacteristic.rawValue)
 
 internal let PAYMENT_CHARACTERISTIC_UUID_MANUFACTURER_NAME = CBUUID(string: FitpayDeviceInfoCharacteristicUUID.CHARACTERISTIC_MANUFACTURER_NAME_STRING.rawValue)

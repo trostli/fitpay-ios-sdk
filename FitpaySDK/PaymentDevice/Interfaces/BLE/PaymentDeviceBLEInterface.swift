@@ -11,7 +11,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     var continuationCharacteristicPacket: CBCharacteristic?
     var apduControlCharacteristic: CBCharacteristic?
     var securityWriteCharacteristic: CBCharacteristic?
-    var deviceResetCharacteristic: CBCharacteristic?
+    var deviceControlCharacteristic: CBCharacteristic?
     var applicationControlCharacteristic: CBCharacteristic?
     
     var continuation : Continuation = Continuation()
@@ -103,13 +103,13 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         }
     }
     
-    func sendDeviceReset() -> ErrorType? {
-        guard let deviceResetCharacteristic = self.deviceResetCharacteristic else {
+    func sendDeviceControl(state: PaymentDevice.DeviceControlState) -> ErrorType? {
+        guard let deviceControlCharacteristic = self.deviceControlCharacteristic else {
             return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
         }
         
-        let msg = DeviceResetMessage.init().msg
-        wearablePeripheral?.writeValue(msg, forCharacteristic: deviceResetCharacteristic, type: CBCharacteristicWriteType.WithResponse)
+        let msg = DeviceControlMessage.init(operation: state).msg
+        wearablePeripheral?.writeValue(msg, forCharacteristic: deviceControlCharacteristic, type: CBCharacteristicWriteType.WithResponse)
         
         return nil
     }
@@ -197,6 +197,14 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     }
     
     private func processAPDUResponse(packet:ApduResultMessage) {
+        if self.sequenceId != packet.sequenceId {
+            if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
+                self.paymentDevice.apduResponseHandler = nil
+                apduResponseHandler(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUWrongSequenceId, domain: PaymentDeviceBLEInterface.self))
+            }
+            return
+        }
+        
         self.sequenceId += 1
         self.sendingAPDU = false
         
@@ -210,7 +218,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
 extension PaymentDeviceBLEInterface : CBCentralManagerDelegate {
     func centralManagerDidUpdateState(central: CBCentralManager) {
         if central.state == CBCentralManagerState.PoweredOn {
-            central.scanForPeripheralsWithServices(nil, options: nil)
+            central.scanForPeripheralsWithServices(nil/*[PAYMENT_SERVICE_UUID_PAYMENT]*/, options: nil)
         } else {
             central.delegate = nil
             self.centralManager = nil
@@ -297,8 +305,8 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                 self.securityWriteCharacteristic = characteristic
             } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURE_ELEMENT_ID) {
                 peripheral.readValueForCharacteristic(characteristic)
-            } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_DEVICE_RESET) {
-                self.deviceResetCharacteristic = characteristic
+            } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_DEVICE_CONTROL) {
+                self.deviceControlCharacteristic = characteristic
             } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_APPLICATION_CONTROL) {
                 self.applicationControlCharacteristic = characteristic
                 wearablePeripheral?.setNotifyValue(true, forCharacteristic: characteristic)

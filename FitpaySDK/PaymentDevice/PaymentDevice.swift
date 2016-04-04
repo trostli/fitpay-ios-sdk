@@ -9,8 +9,9 @@ public class PaymentDevice : NSObject
         case WaitingForAPDUResponse = 10003
         case APDUPacketCorrupted = 10004
         case APDUDataNotFull = 10005
-        case OperationTimeout = 10006
-        case DeviceShouldBeDisconnected = 10007
+        case APDUWrongSequenceId = 10006
+        case OperationTimeout = 10007
+        case DeviceShouldBeDisconnected = 10008
         
         public var description : String {
             switch self {
@@ -30,15 +31,24 @@ public class PaymentDevice : NSObject
                 return "Connection timeout. Can't find device."
             case .DeviceShouldBeDisconnected:
                 return "Payment device should be disconnected."
+            case .APDUWrongSequenceId:
+                return "Received APDU with wrong sequenceId."
             }
         }
     }
     
     public enum SecurityState : Int
     {
-        case SecurityNFCStateDisabled = 0x00
-        case SecurityNFCStateEnabled = 0x01
+        case SecurityNFCStateDisabled         = 0x00
+        case SecurityNFCStateEnabled          = 0x01
         case SecurityNFCStateDoNotChangeState = 0xFF
+    }
+    
+    public enum DeviceControlState : Int
+    {
+        case ESEPowerOFF    = 0x00
+        case ESEPowerON     = 0x02
+        case ESEPowerReset  = 0x01
     }
     
     public typealias ConnectionHandler = (deviceInfo:DeviceInfo?, error:ErrorType?)->Void
@@ -113,13 +123,13 @@ public class PaymentDevice : NSObject
     }
     
     /**
-     Allows to reset the secure element and prepare it to receive APDU and other commands.
+     Allows to power on / off the secure element or to reset it in preparation for sending it APDU and other commandsю
      Calls onApplicationControlReceived on device reset?
      
      - parameter state: desired security state
      */
-    public func sendDeviceReset() -> ErrorType? {
-        return self.deviceInterface.sendDeviceReset()
+    public func sendDeviceControl(state: DeviceControlState) -> ErrorType? {
+        return self.deviceInterface.sendDeviceControl(state)
     }
     
     /**

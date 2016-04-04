@@ -9,7 +9,7 @@ public protocol PaymentDeviceBaseInterface
     
     func writeSecurityState(state:PaymentDevice.SecurityState) -> ErrorType?
     
-    func sendDeviceReset() -> ErrorType?
+    func sendDeviceControl(state: PaymentDevice.DeviceControlState) -> ErrorType?
     
     func sendAPDUData(data: NSData, sequenceNumber: UInt16)
     

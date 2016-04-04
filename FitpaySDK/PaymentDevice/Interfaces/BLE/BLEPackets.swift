@@ -140,15 +140,15 @@ public struct ApplicationControlMessage {
     }
 }
 
-struct DeviceResetMessage {
+struct DeviceControlMessage {
     let op : UInt8
     let msg : NSMutableData
     
-    init() {
-        op = 1
+    init(operation: PaymentDevice.DeviceControlState) {
+        op = UInt8(operation.rawValue)
         msg = NSMutableData()
-        var sq16 = UInt8(op)
-        msg.appendBytes(&sq16, length: sizeofValue(op))
+        var op8 = op
+        msg.appendBytes(&op8, length: sizeofValue(op))
     }
 }
 
