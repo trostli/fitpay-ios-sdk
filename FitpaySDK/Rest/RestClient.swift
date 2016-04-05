@@ -468,7 +468,7 @@ public class RestClient
         {
             (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.POST, url, parameters: package.dictoinary, encoding: .JSON, headers: headers)
+                let request = self._manager.request(.POST, url, parameters: package.responseDictionary, encoding: .JSON, headers: headers)
                 request.validate().responseString
                 {
                     (response:Response<String, NSError>) -> Void in

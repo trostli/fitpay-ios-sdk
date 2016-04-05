@@ -1,5 +1,11 @@
 import ObjectMapper
 
+public enum APDUPackageResponseState : String {
+    case SUCCESSFUL = "SUCCESSFUL"
+    case FAILED = "FAILED"
+    case EXPIRED = "EXPIRED"
+}
+
 public class ApduPackage : Mappable
 {
     public var links:[ResourceLink]?
@@ -11,9 +17,15 @@ public class ApduPackage : Mappable
     public var targetAid:String?
     public var apduCommands:[APDUCommand]?
     
-    public var state:String? //TODO: consider adding enum
-    public var executed:String?
+    public var state:APDUPackageResponseState?
+    public var executedEpoch:CLong?
     public var executedDuration:Int?
+    
+    public var validUntil:String?
+    public var validUntilEpoch:CLong?
+    public var apduPackageUrl:String?
+    
+    public static let successfullResponse = NSData(bytes: [0x90, 0x00] as [UInt8], length: 2)
     
     init() {
     }
@@ -31,9 +43,12 @@ public class ApduPackage : Mappable
         packageId <- map["packageId"]
         seId <- map["seId"]
         apduCommands <- map["commandApdus"]
+        validUntil <- map["validUntil"]
+        validUntilEpoch <- map["validUntilEpoch"]
+        apduPackageUrl <- map["apduPackageUrl"]
     }
     
-    public var dictoinary : [String:AnyObject] {
+    public var responseDictionary : [String:AnyObject] {
         get {
             var dic : [String:AnyObject] = [:]
             
@@ -42,11 +57,15 @@ public class ApduPackage : Mappable
             }
             
             if let state = self.state {
-                dic["state"] = state
+                dic["state"] = state.rawValue
             }
             
-            if let executed = self.executed {
-                dic["executedTs"] = executed
+            if let executed = self.executedEpoch {
+                dic["executedEpoch"] = executed
+            }
+            
+            if state == APDUPackageResponseState.EXPIRED {
+                return dic
             }
             
             if let executedDuration = self.executedDuration {
@@ -57,7 +76,7 @@ public class ApduPackage : Mappable
                 if apduResponses.count > 0 {
                     var responsesArray : [AnyObject] = []
                     for resp in apduResponses {
-                        responsesArray.append(resp.responseDictoinary)
+                        responsesArray.append(resp.responseDictionary)
                     }
                     
                     dic["apduResponses"] = responsesArray
@@ -69,7 +88,6 @@ public class ApduPackage : Mappable
     }
     
 }
-
 
 public class APDUCommand : Mappable {
     public var links:[ResourceLink]?
@@ -100,7 +118,7 @@ public class APDUCommand : Mappable {
         type <- map["type"]
     }
     
-    public var responseDictoinary : [String:AnyObject] {
+    public var responseDictionary : [String:AnyObject] {
         get {
             var dic : [String:AnyObject] = [:]
             

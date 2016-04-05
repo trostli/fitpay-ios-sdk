@@ -218,7 +218,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
 extension PaymentDeviceBLEInterface : CBCentralManagerDelegate {
     func centralManagerDidUpdateState(central: CBCentralManager) {
         if central.state == CBCentralManagerState.PoweredOn {
-            central.scanForPeripheralsWithServices(nil/*[PAYMENT_SERVICE_UUID_PAYMENT]*/, options: nil)
+            central.scanForPeripheralsWithServices(nil, options: nil)
         } else {
             central.delegate = nil
             self.centralManager = nil
@@ -377,8 +377,8 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
             let pos = Int(msg.sortOrder);
             continuation.data.insert(msg.data, atIndex: pos)
         } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_TRANSACTION_NOTIFICATION {
-            if let onReceivingTransactionNotification = self.paymentDevice.onReceivingTransactionNotification {
-                onReceivingTransactionNotification(transactionData: characteristic.value)
+            if let onTransactionNotificationReceived = self.paymentDevice.onTransactionNotificationReceived {
+                onTransactionNotificationReceived(transactionData: characteristic.value)
             }
         } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURITY_READ {
             if let value = characteristic.value {

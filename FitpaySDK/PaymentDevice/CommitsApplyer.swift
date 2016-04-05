@@ -95,21 +95,52 @@ internal class CommitsApplyer {
             return
         }
         
+        let applyingStartDate = NSDate().timeIntervalSince1970
+        
+        
+        if CLong(applyingStartDate) > apduPackage.validUntilEpoch {
+            apduPackage.state = APDUPackageResponseState.EXPIRED
+            
+            // is this error?
+            commit.confirmAPDU(
+            {
+                (error) -> Void in
+                completion(error: error)
+            })
+            
+            return
+        }
+        
         self.applyAPDUPackage(apduPackage, apduCommandIndex: 0)
         {
             (error) -> Void in
+
+            let currentTimestamp = NSDate().timeIntervalSince1970
             
-            if let error = error {
-                completion(error: error)
-                return
+            apduPackage.executedDuration = Int(currentTimestamp - applyingStartDate)
+            apduPackage.executedEpoch = CLong(currentTimestamp)
+            
+            var hasCommandError = false
+            for command in apduPackage.apduCommands! {
+                if command.responseCode != ApduPackage.successfullResponse.hex {
+                    hasCommandError = true
+                    break
+                }
+            }
+            
+            if (error != nil || hasCommandError) {
+                apduPackage.state = APDUPackageResponseState.FAILED
+            } else {
+                apduPackage.state = APDUPackageResponseState.SUCCESSFUL
             }
             
             //TODO: uncomment this when apdu will be implemented on backend
 //            commit.confirmAPDU(
 //            {
-//                (error) -> Void in
-                completion(error: error)
+//                (confirmError) -> Void in
+//                completion(error: error ?? confirmError)
 //            })
+            completion(error: error)
         }
     }
     

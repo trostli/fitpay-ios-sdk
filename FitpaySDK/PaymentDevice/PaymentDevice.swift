@@ -65,7 +65,7 @@ public class PaymentDevice : NSObject
     public var onDeviceDisconnected : DisconnectionHandler?
     
     /// Called when transaction was made
-    public var onReceivingTransactionNotification : TransactionHandler?
+    public var onTransactionNotificationReceived : TransactionHandler?
     
     /// Called when security event has taken place 
     /// (i.e. the wearable has been removed, the wearable has been activated/enabled/placed on person)

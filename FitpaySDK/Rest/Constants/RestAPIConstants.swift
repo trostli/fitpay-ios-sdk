@@ -1,4 +1,4 @@
-internal let API_BASE_URL = "https://gi-de.pagare.me/api"
-internal let AUTHORIZE_URL = "https://gi-de.pagare.me/oauth/authorize"
+internal let API_BASE_URL = "https://demo.pagare.me/api"
+internal let AUTHORIZE_URL = "https://demo.pagare.me/oauth/authorize"
 
 
