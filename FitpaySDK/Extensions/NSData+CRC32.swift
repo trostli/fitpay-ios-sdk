@@ -93,7 +93,7 @@ extension NSData
         var buf = buffer
         func DO1() {
             let toBuf = buf.memory
-            buf++
+            buf += 1
             crc1 = crcTable[Int((crc1 ^ UInt32(toBuf)) & 0xFF)] ^ crc1 >> 8
         }
         func DO2() { DO1(); DO1(); }
@@ -107,7 +107,8 @@ extension NSData
         if len != 0 {
             repeat {
                 DO1()
-            } while --len != 0
+                len -= 1
+            } while len != 0
         }
         
         return crc1 ^ 0xffffffff;

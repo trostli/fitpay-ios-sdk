@@ -1,26 +1,24 @@
 
 import ObjectMapper
 
-public enum SyncEventType : String {
-    case CONNECTING_TO_DEVICE = "CONNECTING_TO_DEVICE"
-    case CONNECTING_TO_DEVICE_FAILED = "CONNECTING_TO_DEVICE_FAILED"
-    case CONNECTING_TO_DEVICE_COMPLETED = "CONNECTING_TO_DEVICE_COMPLETED"
-    case SYNC_STARTED = "SYNC_STARTED"
-    case SYNC_FAILED = "SYNC_FAILED"
-    case SYNC_FINISHED = "SYNC_FINISHED"
-    case SYNC_PROGRESS = "SYNC_PROGRESS"
-    case CREDITCARD_CREATED = "CREDITCARD_CREATED"
-    case CREDITCARD_DEACTIVATED = "CREDITCARD_DEACTIVATED"
-    case CREDITCARD_ACTIVATED = "CREDITCARD_ACTIVATED"
-    case CREDITCARD_DELETED = "CREDITCARD_DELETED"
-    case RESET_DEFAULT_CREDITCARD = "RESET_DEFAULT_CREDITCARD"
-    case SET_DEFAULT_CREDITCARD = "SET_DEFAULT_CREDITCARD"
+public enum SyncEventType : Int {
+    case CONNECTING_TO_DEVICE = 0x1
+    case CONNECTING_TO_DEVICE_FAILED
+    case CONNECTING_TO_DEVICE_COMPLETED
+    
+    case SYNC_STARTED
+    case SYNC_FAILED
+    case SYNC_COMPLETED
+    case SYNC_PROGRESS
+    
+    case COMMIT_PROCESSED
 }
 
 public class SyncManager {
     static let sharedInstance = SyncManager()
     
     public let paymentDevice : PaymentDevice = PaymentDevice()
+    
     
     internal let syncStorage : SyncStorage = SyncStorage()
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
@@ -150,6 +148,7 @@ public class SyncManager {
                 return
             }
             
+            //TODO: delete this
             let commits = self.___debug_appendAPDUCommits(commits!)
             self.commitsApplyer.apply(commits, completion:
             {
@@ -257,7 +256,7 @@ public class SyncManager {
         if let error = error as? NSError {
             callCompletionForSyncEvent(SyncEventType.SYNC_FAILED, params: ["error": error])
         } else {
-            callCompletionForSyncEvent(SyncEventType.SYNC_FINISHED, params: [:])
+            callCompletionForSyncEvent(SyncEventType.SYNC_COMPLETED, params: [:])
         }
     }
     

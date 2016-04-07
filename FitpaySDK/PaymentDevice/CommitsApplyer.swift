@@ -23,7 +23,7 @@ internal class CommitsApplyer {
         self.commits = commits
         
         self.applyerCompletionHandler = completion
-        self.thread = NSThread(target: self, selector:"processCommits", object: nil)
+        self.thread = NSThread(target: self, selector:#selector(CommitsApplyer.processCommits), object: nil)
         self.thread?.start()
         
         return true
@@ -98,7 +98,7 @@ internal class CommitsApplyer {
         let applyingStartDate = NSDate().timeIntervalSince1970
         
         
-        if CLong(applyingStartDate) > apduPackage.validUntilEpoch {
+        if apduPackage.isExpired {
             apduPackage.state = APDUPackageResponseState.EXPIRED
             
             // is this error?
@@ -120,6 +120,18 @@ internal class CommitsApplyer {
             apduPackage.executedDuration = Int(currentTimestamp - applyingStartDate)
             apduPackage.executedEpoch = CLong(currentTimestamp)
             
+            if apduPackage.isExpired {
+                apduPackage.state = APDUPackageResponseState.EXPIRED
+                
+                commit.confirmAPDU(
+                {
+                    (error) -> Void in
+                    completion(error: error)
+                })
+                
+                return
+            }
+            
             var hasCommandError = false
             for command in apduPackage.apduCommands! {
                 if command.responseCode != ApduPackage.successfullResponse.hex {
@@ -128,10 +140,12 @@ internal class CommitsApplyer {
                 }
             }
             
-            if (error != nil || hasCommandError) {
+            if error != nil {
+                apduPackage.state = APDUPackageResponseState.ERROR
+            } else if hasCommandError {
                 apduPackage.state = APDUPackageResponseState.FAILED
             } else {
-                apduPackage.state = APDUPackageResponseState.SUCCESSFUL
+                apduPackage.state = APDUPackageResponseState.PROCESSED
             }
             
             //TODO: uncomment this when apdu will be implemented on backend
@@ -145,13 +159,12 @@ internal class CommitsApplyer {
     }
     
     private func processNonAPDUCommit(commit: Commit, completion: CommitCompletion) {
-        guard let commitType = commit.commitType else {
+        guard let _ = commit.commitType else {
             return
         }
         
-        if let eventType = SyncEventType(rawValue: commitType.rawValue) {
-            SyncManager.sharedInstance.callCompletionForSyncEvent(eventType, params: ["commit":commit])
-        }
+        SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.COMMIT_PROCESSED, params: ["commit":commit])
+        
         
         completion(error: nil)
     }

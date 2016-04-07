@@ -833,7 +833,7 @@ public class RestClient
             if let headers = headers
             {
                 let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .JSON, headers: headers)
-                request.validate().responseData(
+                request.validate().responseData(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response:Response<NSData, NSError>) -> Void in
                     

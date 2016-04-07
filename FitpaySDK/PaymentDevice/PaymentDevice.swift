@@ -37,11 +37,11 @@ public class PaymentDevice : NSObject
         }
     }
     
-    public enum SecurityState : Int
+    public enum SecurityNFCState : Int
     {
-        case SecurityNFCStateDisabled         = 0x00
-        case SecurityNFCStateEnabled          = 0x01
-        case SecurityNFCStateDoNotChangeState = 0xFF
+        case Disabled         = 0x00
+        case Enabled          = 0x01
+        case DoNotChangeState = 0xFF
     }
     
     public enum DeviceControlState : Int
@@ -54,7 +54,7 @@ public class PaymentDevice : NSObject
     public typealias ConnectionHandler = (deviceInfo:DeviceInfo?, error:ErrorType?)->Void
     public typealias DisconnectionHandler = ()->Void
     public typealias TransactionHandler = (transactionData:NSData?)->Void
-    public typealias SecurityStateHandler = (securityState:SecurityState)->Void
+    public typealias SecurityStateHandler = (securityState:SecurityNFCState)->Void
     public typealias ApplicationControlHandler = (applicationControl:ApplicationControlMessage) -> Void
     
     
@@ -122,6 +122,10 @@ public class PaymentDevice : NSObject
         return self.deviceInterface.deviceInfo()
     }
     
+    public var nfcState : SecurityNFCState? {
+        return self.deviceInterface.nfcState()
+    }
+    
     /**
      Allows to power on / off the secure element or to reset it in preparation for sending it APDU and other commandsю
      Calls onApplicationControlReceived on device reset?
@@ -139,7 +143,7 @@ public class PaymentDevice : NSObject
      - parameter state: desired security state
      */
     // TODO: shoud it be public?
-    internal func writeSecurityState(state:SecurityState) -> ErrorType? {
+    internal func writeSecurityState(state:SecurityNFCState) -> ErrorType? {
         return self.deviceInterface.writeSecurityState(state)
     }
     

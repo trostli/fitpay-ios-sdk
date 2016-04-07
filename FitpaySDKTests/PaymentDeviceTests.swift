@@ -16,6 +16,7 @@ class PaymentDeviceTests: XCTestCase
     override func tearDown()
     {
         self.paymentDevice = nil
+        SyncManager.sharedInstance.removeAllSyncBindings()
         super.tearDown()
     }
     
@@ -66,12 +67,16 @@ class PaymentDeviceTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("disconnection from device check")
         
-        var newState = PaymentDevice.SecurityState.SecurityNFCStateDisabled
+        var newState = PaymentDevice.SecurityNFCState.Disabled
         self.paymentDevice.onDeviceConnected =
         {
             (deviceInfo, error) -> Void in
             
             XCTAssertNil(error)
+            
+            if (self.paymentDevice.nfcState != nil && self.paymentDevice.nfcState == PaymentDevice.SecurityNFCState.Disabled) {
+                newState = PaymentDevice.SecurityNFCState.Enabled
+            }
             
             self.paymentDevice.writeSecurityState(newState)
         }
@@ -82,8 +87,8 @@ class PaymentDeviceTests: XCTestCase
             
             XCTAssert(newState == state)
             
-            if newState == PaymentDevice.SecurityState.SecurityNFCStateDisabled {
-                newState = PaymentDevice.SecurityState.SecurityNFCStateEnabled
+            if state == PaymentDevice.SecurityNFCState.Disabled {
+                newState = PaymentDevice.SecurityNFCState.Enabled
                 self.paymentDevice.writeSecurityState(newState)
             } else {
                 expectation.fulfill()
@@ -107,14 +112,14 @@ class PaymentDeviceTests: XCTestCase
             
             XCTAssertNil(error)
             
-            self.paymentDevice.sendAPDUData("00A4040008A00000000410101100".hexToData()!, sequenceNumber: 1, completion:
+            self.paymentDevice.sendAPDUData("00A4040008A00000000410101100".hexToData()!, sequenceNumber: 99, completion:
             {
                 (apduResponse, error) -> Void in
             
                 XCTAssertNil(error)
                 XCTAssertNotNil(apduResponse)
                 XCTAssert(apduResponse!.responseCode == successResponse)
-            self.paymentDevice.sendAPDUData("84E20001B0B12C352E835CBC2CA5CA22A223C6D54F3EDF254EF5E468F34CFD507C889366C307C7C02554BDACCDB9E1250B40962193AD594915018CE9C55FB92D25B0672E9F404A142446C4A18447FEAD7377E67BAF31C47D6B68D1FBE6166CF39094848D6B46D7693166BAEF9225E207F9322E34388E62213EE44184ED892AAF3AD1ECB9C2AE8A1F0DC9A9F19C222CE9F19F2EFE1459BDC2132791E851A090440C67201175E2B91373800920FB61B6E256AC834B9D".hexToData()!, sequenceNumber: 2, completion:
+            self.paymentDevice.sendAPDUData("84E20001B0B12C352E835CBC2CA5CA22A223C6D54F3EDF254EF5E468F34CFD507C889366C307C7C02554BDACCDB9E1250B40962193AD594915018CE9C55FB92D25B0672E9F404A142446C4A18447FEAD7377E67BAF31C47D6B68D1FBE6166CF39094848D6B46D7693166BAEF9225E207F9322E34388E62213EE44184ED892AAF3AD1ECB9C2AE8A1F0DC9A9F19C222CE9F19F2EFE1459BDC2132791E851A090440C67201175E2B91373800920FB61B6E256AC834B9D".hexToData()!, sequenceNumber: 100, completion:
                 {
                     (apduResponse, error) -> Void in
                     
@@ -165,10 +170,10 @@ class PaymentDeviceTests: XCTestCase
             expectation.fulfill()
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CREDITCARD_CREATED)
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.COMMIT_PROCESSED)
         {
             (eventPayload) -> Void in
-            print("creditcard created", eventPayload)
+            print("COMMIT_PROCESSED")
         }
         
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_PROGRESS)
@@ -177,14 +182,15 @@ class PaymentDeviceTests: XCTestCase
             print("sync progress", eventPayload)
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_FINISHED)
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_COMPLETED)
         {
             (eventPayload) -> Void in
             print("sync finished", eventPayload)
-//            expectation.fulfill()
+            expectation.fulfill()
         }
         
-        SyncManager.sharedInstance.paymentDevice.onTransactionNotificationReceived = {
+        SyncManager.sharedInstance.paymentDevice.onTransactionNotificationReceived =
+        {
             (transactionData)->Void in
             print("notification:", transactionData)
         }

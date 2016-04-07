@@ -18,6 +18,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     var deviceInfoCollector : BLEDeviceInfoCollector?
     
     private var _deviceInfo : DeviceInfo?
+    private var _nfcState : PaymentDevice.SecurityNFCState?
     
     let MaxPacketSize : Int = 20
     var sequenceId: UInt16 = 0
@@ -69,6 +70,10 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         return self._deviceInfo
     }
     
+    func nfcState() -> PaymentDevice.SecurityNFCState? {
+        return self._nfcState
+    }
+    
     func sendAPDUData(data: NSData, sequenceNumber: UInt16) {
         guard let wearablePeripheral = self.wearablePeripheral, apduControlCharacteristic = self.apduControlCharacteristic else {
             if let completion = self.paymentDevice.apduResponseHandler {
@@ -114,7 +119,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         return nil
     }
     
-    func writeSecurityState(state: PaymentDevice.SecurityState) -> ErrorType? {
+    func writeSecurityState(state: PaymentDevice.SecurityNFCState) -> ErrorType? {
         guard let wearablePeripheral = self.wearablePeripheral, securityWriteCharacteristic = self.securityWriteCharacteristic else {
             return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
         }
@@ -301,6 +306,7 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                 wearablePeripheral?.setNotifyValue(true, forCharacteristic: characteristic)
             } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURITY_READ) {
                 wearablePeripheral?.setNotifyValue(true, forCharacteristic: characteristic)
+                peripheral.readValueForCharacteristic(characteristic)
             } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURITY_WRITE) {
                 self.securityWriteCharacteristic = characteristic
             } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURE_ELEMENT_ID) {
@@ -383,8 +389,8 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
         } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURITY_READ {
             if let value = characteristic.value {
                 let msg = SecurityStateMessage(msg: value)
-                if let securityState = PaymentDevice.SecurityState(rawValue: Int(msg.nfcState)) {
-                    // New security state here, save it?
+                if let securityState = PaymentDevice.SecurityNFCState(rawValue: Int(msg.nfcState)) {
+                    _nfcState = securityState
                     
                     if let onSecurityStateChanged = self.paymentDevice.onSecurityStateChanged {
                         onSecurityStateChanged(securityState: securityState)

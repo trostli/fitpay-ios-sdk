@@ -1,8 +1,9 @@
 import ObjectMapper
 
 public enum APDUPackageResponseState : String {
-    case SUCCESSFUL = "SUCCESSFUL"
+    case PROCESSED = "PROCESSED"
     case FAILED = "FAILED"
+    case ERROR = "ERROR"
     case EXPIRED = "EXPIRED"
 }
 
@@ -46,6 +47,10 @@ public class ApduPackage : Mappable
         validUntil <- map["validUntil"]
         validUntilEpoch <- map["validUntilEpoch"]
         apduPackageUrl <- map["apduPackageUrl"]
+    }
+    
+    public var isExpired : Bool {
+        return validUntilEpoch <= CLong(NSDate().timeIntervalSince1970)
     }
     
     public var responseDictionary : [String:AnyObject] {
