@@ -4,11 +4,42 @@ import UIKit
 struct Item<T>
 {
     let id:T
-    let title:String
-    let details:String
-    let drilldown:Bool
-    let useSwitcher:Bool
-    let isSwitcherOn:Bool
+    var title:String
+    var details:String
+    var drilldown:Bool
+    var useSwitcher:Bool
+    var isSwitcherOn:Bool
+    var isSwitcherEnabled:Bool
+    
+    init(id: T, title: String, details:String, drilldown: Bool)
+    {
+        self.id = id
+        self.title = title
+        self.details = details
+        self.drilldown = drilldown
+        self.useSwitcher = false
+        self.isSwitcherOn = false
+        self.isSwitcherEnabled = false
+    }
+    
+    
+    init(id: T, title: String, details:String, drilldown: Bool, useSwitcher:Bool, isSwitcherOn:Bool, isSwitcherEnabled:Bool)
+    {
+        self.id = id
+        self.title = title
+        self.details = details
+        self.drilldown = drilldown
+        self.useSwitcher = useSwitcher
+        self.isSwitcherOn = isSwitcherOn
+        self.isSwitcherEnabled = isSwitcherEnabled
+    }
+    
+    init (id: T, title: String, details:String, drilldown: Bool, useSwitcher:Bool, isSwitcherOn:Bool)
+    {
+        self.init(id:id, title: title, details: details, drilldown: drilldown, useSwitcher: useSwitcher, isSwitcherOn: isSwitcherOn, isSwitcherEnabled: true)
+    }
+    
+    
     
 }
 
@@ -61,12 +92,10 @@ class GenericTableViewController<T> : BaseTableViewController
     
     override func setupTableView()
     {
-        self.prepareData()
-        
         self.tableViewDataSource.numberOfRowsInSection =
         {
             [unowned self](tableView, section) in
-              return self.sections[section].count
+              return self.sections.count > 0 ? self.sections[section].count : 0
         }
         
         self.tableViewDataSource.cellForRowAtIndexPath = self.cellForRowAtIndexPath
@@ -82,13 +111,21 @@ class GenericTableViewController<T> : BaseTableViewController
             let item = self.sections[indexPath.section][indexPath.row]
             self.processSelection(item.id, indexPath: indexPath)
         }
-        
-        self.tableView.reloadData()
+    }
+    
+    override func viewWillAppear(animated: Bool)
+    {
+        self.prepareData()
     }
     
     func prepareData()
     {
         
+    }
+    
+    func didFinishLoadingData()
+    {
+        self.tableView.reloadData()
     }
     
     func processSelection(row:T, indexPath:NSIndexPath)
@@ -127,6 +164,14 @@ class GenericTableViewController<T> : BaseTableViewController
             if let switcher = cell.switcher
             {
                 switcher.on = item.isSwitcherOn
+                switcher.valueChangeHandler = {
+                    [unowned self](sender) in
+                    if let switcherControl = sender as? UISwitch
+                    {
+                        self.processSwitchForRowAtIndexPath(switcher: switcherControl, indexPath: indexPath)
+                    }
+                }
+                switcher.enabled = item.isSwitcherEnabled
             }
 
         }
@@ -136,6 +181,11 @@ class GenericTableViewController<T> : BaseTableViewController
         }
         
         return cell
+    }
+    
+    func processSwitchForRowAtIndexPath(switcher switcher:UISwitch, indexPath:NSIndexPath)
+    {
+        
     }
 }
 

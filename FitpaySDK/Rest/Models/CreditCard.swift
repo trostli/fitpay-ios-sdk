@@ -2,6 +2,21 @@
 import Foundation
 import ObjectMapper
 
+public enum TokenizationState : String
+{
+    case NEW = "NEW",
+    NOT_ELIGIBLE = "NOT_ELIGIBLE",
+    ELIGIBLE = "ELIGIBLE",
+    DECLINED_TERMS_AND_CONDITIONS = "DECLINED_TERMS_AND_CONDITIONS",
+    PENDING_ACTIVE = "PENDING_ACTIVE",
+    PENDING_VERIFICATION = "PENDING_VERIFICATION",
+    DELETED = "DELETED",
+    ACTIVE = "ACTIVE",
+    DEACTIVATED = "DEACTIVATED",
+    ERROR = "ERROR",
+    DECLINED = "DECLINED"
+}
+
 public class CreditCard : ClientModel, Mappable, SecretApplyable
 {
     internal var links:[ResourceLink]?
@@ -10,7 +25,7 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
     public var isDefault:Bool?
     public var created:String?
     public var createdEpoch:CLong?
-    public var state:String?
+    public var state:TokenizationState?
     public var cardType:String?
     public var cardMetaData:CardMetadata?    
     public var termsAssetId:String?
@@ -73,6 +88,35 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
         }
     }
     
+    public var acceptTermsAvailable:Bool
+    {
+        return self.links?.url(CreditCard.acceptTermsResource) != nil
+    }
+    
+    public var declineTermsAvailable:Bool
+    {
+        return self.links?.url(CreditCard.declineTermsResource) != nil
+    }
+    
+    public var deactivateAvailable:Bool
+    {
+        return self.links?.url(CreditCard.deactivateResource) != nil
+    }
+    
+    public var reactivateAvailable:Bool
+    {
+        return self.links?.url(CreditCard.reactivateResource) != nil
+    }
+    
+    public var makeDefaultAvailable:Bool
+    {
+        return self.links?.url(CreditCard.makeDefaultResource) != nil
+    }
+    
+    public var listTransactionsAvailable:Bool
+    {
+        return self.links?.url(CreditCard.transactionsResource) != nil
+    }
     
     public required init?(_ map: Map)
     {
@@ -379,7 +423,7 @@ public class CardMetadata : ClientModel, Mappable
 
 public class Image : ClientModel, Mappable, AssetRetrivable
 {
-    public var links: [ResourceLink]?
+    internal var links: [ResourceLink]?
     public var mimeType:String?
     public var height:Int?
     public var width:Int?
@@ -449,7 +493,7 @@ internal class ImageTransformType : TransformType
 
 public class TermsAssetReferences : ClientModel, Mappable, AssetRetrivable
 {
-    public var links: [ResourceLink]?
+    internal var links: [ResourceLink]?
     public var mimeType:String?
     internal var client:RestClient?
     private static let selfResource = "self"
@@ -515,7 +559,7 @@ internal class TermsAssetReferencesTransformType : TransformType
 public class DeviceRelationships : ClientModel, Mappable
 {
     public var deviceType:String?
-    public var links: [ResourceLink]?
+    internal var links: [ResourceLink]?
     public var deviceIdentifier:String?
     public var manufacturerName:String?
     public var deviceName:String?

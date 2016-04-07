@@ -207,7 +207,7 @@ class RestClientTests: XCTestCase
                         XCTAssertNotNil(user?.info?.email)
                         XCTAssertNil(error)
                         
-                        user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                        user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                             {
                                 (card, error) -> Void in
                                 
@@ -338,7 +338,7 @@ class RestClientTests: XCTestCase
             {
                 (user, error) -> Void in
                 XCTAssertNil(error)
-                user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                     {
                         (card, error) -> Void in
                         
@@ -414,7 +414,7 @@ class RestClientTests: XCTestCase
             {
                 (user, error) -> Void in
                 XCTAssertNil(error)
-                user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                 {
                     (card, error) -> Void in
                     
@@ -530,7 +530,7 @@ class RestClientTests: XCTestCase
                 {
                     (user, error) -> Void in
                     XCTAssertNil(error)
-                    user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                    user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                         {
                             (card, error) -> Void in
                             
@@ -559,7 +559,7 @@ class RestClientTests: XCTestCase
                                     (pending, acceptedCard, error) in
                                     XCTAssertNil(error)
                                     XCTAssertNotNil(acceptedCard)
-                                    XCTAssertEqual(acceptedCard?.state, "PENDING_VERIFICATION")
+                                    XCTAssertEqual(acceptedCard?.state, .PENDING_VERIFICATION)
                                     
                                     if let verificationMethods = acceptedCard?.verificationMethods
                                     {
@@ -644,7 +644,7 @@ class RestClientTests: XCTestCase
                 {
                     (user, error) -> Void in
                     XCTAssertNil(error)
-                    user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                    user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                         {
                             (card, error) -> Void in
                             
@@ -673,7 +673,7 @@ class RestClientTests: XCTestCase
                                 (pending, acceptedCard, error) in
                                 XCTAssertNil(error)
                                 XCTAssertNotNil(acceptedCard)
-                                XCTAssertEqual(acceptedCard?.state, "PENDING_VERIFICATION")
+                                XCTAssertEqual(acceptedCard?.state, .PENDING_VERIFICATION)
                                 
                                 if let verificationMethods = acceptedCard?.verificationMethods
                                 {
@@ -699,7 +699,7 @@ class RestClientTests: XCTestCase
                                                             (pending, deactivatedCreditCard, error) -> Void in
                                                             XCTAssertNil(error)
                                                             XCTAssertNotNil(deactivatedCreditCard)
-                                                            XCTAssertEqual(deactivatedCreditCard?.state, "DEACTIVATED")
+                                                            XCTAssertEqual(deactivatedCreditCard?.state, .DEACTIVATED)
                                                             deactivatedCreditCard?.delete
                                                             {
                                                                 (error) -> Void in
@@ -755,7 +755,7 @@ class RestClientTests: XCTestCase
                     {
                         (user, error) -> Void in
                         XCTAssertNil(error)
-                        user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                        user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                             {
                                 (card, error) -> Void in
                                 
@@ -784,7 +784,7 @@ class RestClientTests: XCTestCase
                                         (pending, acceptedCard, error) in
                                         XCTAssertNil(error)
                                         XCTAssertNotNil(acceptedCard)
-                                        XCTAssertEqual(acceptedCard?.state, "PENDING_VERIFICATION")
+                                        XCTAssertEqual(acceptedCard?.state, .PENDING_VERIFICATION)
                                         
                                         if let verificationMethods = acceptedCard?.verificationMethods
                                         {
@@ -810,12 +810,12 @@ class RestClientTests: XCTestCase
                                         (pending, deactivatedCreditCard, error) -> Void in
                                         XCTAssertNil(error)
                                         XCTAssertNotNil(deactivatedCreditCard)
-                                        XCTAssertEqual(deactivatedCreditCard?.state, "DEACTIVATED")
+                                        XCTAssertEqual(deactivatedCreditCard?.state, .DEACTIVATED)
                                         
                                         deactivatedCreditCard?.reactivate(causedBy: .CARDHOLDER, reason: "found card", completion: { (pending, reactivatedCreditCard, error) -> Void in
                                             XCTAssertNil(error)
                                             XCTAssertNotNil(reactivatedCreditCard)
-                                            XCTAssertEqual(reactivatedCreditCard?.state, "ACTIVE")
+                                            XCTAssertEqual(reactivatedCreditCard?.state, .ACTIVE)
                                             reactivatedCreditCard?.delete
                                                 {
                                                     (error) -> Void in
@@ -872,7 +872,7 @@ class RestClientTests: XCTestCase
             {
                 (user, error) -> Void in
                 XCTAssertNil(error)
-                user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                     {
                         (card, error) -> Void in
                         
@@ -901,7 +901,7 @@ class RestClientTests: XCTestCase
                             (pending, acceptedCard, error) in
                             XCTAssertNil(error)
                             XCTAssertNotNil(acceptedCard)
-                            XCTAssertEqual(acceptedCard?.state, "PENDING_VERIFICATION")
+                            XCTAssertEqual(acceptedCard?.state, .PENDING_VERIFICATION)
                             acceptedCard?.delete
                             {
                                 (error) -> Void in
@@ -936,7 +936,7 @@ class RestClientTests: XCTestCase
             {
                 (user, error) -> Void in
                 XCTAssertNil(error)
-                user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                     {
                         (card, error) -> Void in
                         
@@ -965,7 +965,7 @@ class RestClientTests: XCTestCase
                             (pending, declinedCard, error) in
                             XCTAssertNil(error)
                             XCTAssertNotNil(declinedCard)
-                            XCTAssertEqual(declinedCard?.state, "DECLINED_TERMS_AND_CONDITIONS")
+                            XCTAssertEqual(declinedCard?.state, .DECLINED_TERMS_AND_CONDITIONS)
                             declinedCard?.delete
                             {
                                 (error) -> Void in
@@ -1003,7 +1003,7 @@ class RestClientTests: XCTestCase
             {
                 (user, error) -> Void in
                 XCTAssertNil(error)
-                user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                     {
                         (card, error) -> Void in
                         
@@ -1032,7 +1032,7 @@ class RestClientTests: XCTestCase
                             (pending, acceptedCard, error) in
                             XCTAssertNil(error)
                             XCTAssertNotNil(acceptedCard)
-                            XCTAssertEqual(acceptedCard?.state, "PENDING_VERIFICATION")
+                            XCTAssertEqual(acceptedCard?.state, .PENDING_VERIFICATION)
                             
                             if let verificationMethods = acceptedCard?.verificationMethods
                             {
@@ -1093,7 +1093,7 @@ class RestClientTests: XCTestCase
             {
                 (user, error) -> Void in
                 XCTAssertNil(error)
-                user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                     {
                         (card, error) -> Void in
                         
@@ -1122,7 +1122,7 @@ class RestClientTests: XCTestCase
                             (pending, acceptedCard, error) in
                             XCTAssertNil(error)
                             XCTAssertNotNil(acceptedCard)
-                            XCTAssertEqual(acceptedCard?.state, "PENDING_VERIFICATION")
+                            XCTAssertEqual(acceptedCard?.state, .PENDING_VERIFICATION)
                             
                             if let verificationMethods = acceptedCard?.verificationMethods
                             {
@@ -1132,7 +1132,7 @@ class RestClientTests: XCTestCase
                                     {
                                         (pending, verificationMethod, error) in
                                         XCTAssertNotNil(verificationMethod)
-                                        XCTAssertEqual(verificationMethod?.state, "AWAITING_VERIFICATION")
+                                        XCTAssertEqual(verificationMethod?.state, .AWAITING_VERIFICATION)
                                         XCTAssertNil(error)
                                         
                                         verificationMethod?.verify("12345", completion:
@@ -1140,7 +1140,7 @@ class RestClientTests: XCTestCase
                                             (pending, verificationMethod, error) -> Void in
                                             XCTAssertNil(error)
                                             XCTAssertNotNil(verificationMethod)
-                                            XCTAssertEqual(verificationMethod?.state, "VERIFIED")
+                                            XCTAssertEqual(verificationMethod?.state, .VERIFIED)
 
                                             
                                             acceptedCard?.delete
@@ -1505,13 +1505,19 @@ class RestClientTests: XCTestCase
                 XCTAssertNotNil(user?.info?.email)
                 XCTAssertNil(error)
                 
-                user?.createCreditCard(pan: "9999411111111114", expMonth: 2, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                 {
                     
                     (card, error) -> Void in
                     
                     XCTAssertNil(error)
                     XCTAssertNotNil(card)
+                    
+                    if error != nil
+                    {
+                        expectation.fulfill()
+                        return
+                    }
                     
                     self.createDefaultDevice(self.session.userId!, completion:
                     {
@@ -1737,7 +1743,7 @@ class RestClientTests: XCTestCase
                     
                     for card in result!.results! {
                         
-                        if card.state! != "ACTIVE"
+                        if card.state! != .ACTIVE
                         {
                             continue
                         }

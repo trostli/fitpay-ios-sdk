@@ -5,10 +5,10 @@ public class Transaction : ClientModel, Mappable
 {
     internal var links:[ResourceLink]?
     public var transactionId:String?
-    public var transactionType:String? //TODO: consider adding enum
+    public var transactionType:String?
     public var amount:Foundation.NSDecimalNumber? //TODO: consider keeping it as String
-    public var currencyCode:String?  //TODO: consider adding enum
-    public var authorizationStatus:String?  //TODO: consider adding enum
+    public var currencyCode:String?
+    public var authorizationStatus:String?
     public var transactionTime:String?
     public var transactionTimeEpoch:CLong?
     public var merchantName:String?

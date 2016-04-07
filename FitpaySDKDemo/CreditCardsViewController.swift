@@ -11,6 +11,8 @@ enum CreditCardsRow : Int
 class CreditCardsViewController: GenericTableViewController<CreditCardsRow>
 {
     var creditCardsResult:ResultCollection<CreditCard>?
+    var user:User?
+    
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?)
     {
@@ -24,20 +26,38 @@ class CreditCardsViewController: GenericTableViewController<CreditCardsRow>
     
     override func prepareData()
     {
-        if let creditCardsResult = self.creditCardsResult, let creditCards = creditCardsResult.results
+        self.view.busy = true
+        self.user?.listCreditCards(excludeState: [], limit: 20, offset: 0, completion:
         {
-            var items = [Item<CreditCardsRow>]()
-            for creditCard in creditCards
+            [unowned self](result, error) -> Void in
+            
+            if let result = result
             {
-                items.append( Item<CreditCardsRow>(id: .CreditCard, title: "Credit Card", details:(creditCard.cardType ?? ""), drilldown: true, useSwitcher:false, isSwitcherOn:false) )
+                if let creditCards = result.results
+                {
+                    var items = [Item<CreditCardsRow>]()
+                    for creditCard in creditCards
+                    {
+                        items.append( Item<CreditCardsRow>(id: .CreditCard, title: "Credit Card", details:(creditCard.cardType ?? ""), drilldown: true, useSwitcher:false, isSwitcherOn:false) )
+                    }
+                    
+                    self.sections = [items]
+                    self.didFinishLoadingData()
+                    self.creditCardsResult = result
+                }
+                else
+                {
+                    alert(title: "Error", message: "creditCardsResult is nil", cancelButtonTitle: "OK")
+                }
+
             }
-      
-            self.sections = [items]
-        }
-        else
-        {
-            alert(title: "Error", message: "creditCardsResult is nil", cancelButtonTitle: "OK")
-        }
+            else if let error = error as? NSError
+            {
+                alert(title: "Error", message:error.userInfo[NSLocalizedDescriptionKey] as? String, cancelButtonTitle: "OK")
+            }
+            
+            self.view.busy = false
+        })
     }
     
     override func processSelection(row:CreditCardsRow, indexPath:NSIndexPath)

@@ -55,6 +55,10 @@ public class ResultCollection<T: Mappable> : ClientModel, Mappable, SecretApplya
                     {
                         result.client = newValue
                     }
+                    else
+                    {
+                        print("Failed to convert \(result) to ClientModel")
+                    }
                 }
             }
         }

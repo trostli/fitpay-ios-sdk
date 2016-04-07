@@ -157,4 +157,54 @@ extension UITableViewCell
     }
 }
 
+import ObjectiveC.objc_runtime
+
+private class ClosureWrapper<T>
+{
+    var closure: ((type:T) -> Void)?
+    
+    init(_ closure: ((T) -> Void)?)
+    {
+        self.closure = closure
+    }
+}
+
+
+extension UIControl
+{
+    private struct AssociatedKeys
+    {
+        static var valueChangeHandlerKey = "\(UIControl.self)_valueChangeHandler"
+    }
+    
+    var valueChangeHandler:((UIControl) -> Void)?
+    {
+        set
+        {
+            if let handler = newValue
+            {
+                
+                self.addTarget(self, action: #selector(self.handleChange(_:)), forControlEvents: .ValueChanged)
+                objc_setAssociatedObject(self, &AssociatedKeys.valueChangeHandlerKey, ClosureWrapper<UIControl>(handler), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            }
+            else
+            {
+                self.removeTarget(self, action: #selector(self.handleChange(_:)), forControlEvents: .ValueChanged)
+                 objc_setAssociatedObject(self, &AssociatedKeys.valueChangeHandlerKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                
+            }
+        }
+        
+        get
+        {
+            return (objc_getAssociatedObject(self, &AssociatedKeys.valueChangeHandlerKey) as? ClosureWrapper<UIControl>)?.closure
+        }
+    }
+    
+    @objc private func handleChange(sender:UIControl)
+    {
+       self.valueChangeHandler?(sender)
+    }
+}
+
 

@@ -29,7 +29,7 @@ class LoginViewController : UIViewController
     {
         self.userNameTextField.text = "testableuser2@something.com"
         self.passwordTextField.text = "1029"
-        self.loginButton.addTarget(self, action: "login", forControlEvents: .TouchUpInside)
+        self.loginButton.addTarget(self, action: #selector(LoginViewController.login), forControlEvents: .TouchUpInside)
         
     }
     

@@ -1,14 +1,43 @@
 
 import ObjectMapper
 
+public enum VerificationMethodType : String
+{
+    case TEXT_TO_CARDHOLDER_NUMBER = "TEXT_TO_CARDHOLDER_NUMBER",
+    EMAIL_TO_CARDHOLDER_ADDRESS = "EMAIL_TO_CARDHOLDER_ADDRESS",
+    CARDHOLDER_TO_CALL_AUTOMATED_NUMBER = "CARDHOLDER_TO_CALL_AUTOMATED_NUMBER",
+    CARDHOLDER_TO_CALL_MANNED_NUMBER = "CARDHOLDER_TO_CALL_MANNED_NUMBER",
+    CARDHOLDER_TO_VISIT_WEBSITE = "CARDHOLDER_TO_VISIT_WEBSITE",
+    CARDHOLDER_TO_USE_MOBILE_APP = "CARDHOLDER_TO_USE_MOBILE_APP",
+    ISSUER_TO_CALL_CARDHOLDER_NUMBER = "ISSUER_TO_CALL_CARDHOLDER_NUMBER"
+}
+
+public enum VerificationState : String
+{
+    case AVAILABLE_FOR_SELECTION = "AVAILABLE_FOR_SELECTION",
+    AWAITING_VERIFICATION = "AWAITING_VERIFICATION",
+    EXPIRED = "EXPIRED",
+    VERIFIED = "VERIFIED"
+}
+
+public enum VerificationResult : String
+{
+    case SUCCESS = "SUCCESS",
+    INCORRECT_CODE = "INCORRECT_CODE",
+    INCORRECT_CODE_RETRIES_EXCEEDED = "INCORRECT_CODE_RETRIES_EXCEEDED",
+    EXPIRED_CODE = "EXPIRED_CODE",
+    INCORRECT_TAV = "INCORRECT_TAV",
+    EXPIRED_SESSION = "EXPIRED_SESSION"
+}
+
 public class VerificationMethod : ClientModel, Mappable
 {
     internal var links:[ResourceLink]?
     public var verificationId:String?
-    public var state:String? //TODO: consider creating enum
-    public var methodType:String? //TODO: consider creating enum
+    public var state:VerificationState?
+    public var methodType:VerificationMethodType?
     public var value:String?
-    public var verificationResult:String? //TODO: consider creating enum
+    public var verificationResult:VerificationResult? 
     public var created:String?
     public var createdEpoch:CLong?
     public var lastModified:String?
@@ -20,6 +49,21 @@ public class VerificationMethod : ClientModel, Mappable
     private static let cardResource = "card"
     
     internal weak var client:RestClient?
+    
+    public var selectAvailable:Bool
+    {
+        return self.links?.url(VerificationMethod.selectResource) != nil
+    }
+    
+    public var verifyAvailable:Bool
+    {
+        return self.links?.url(VerificationMethod.verifyResource) != nil
+    }
+    
+    public var cardAvailable:Bool
+    {
+        return self.links?.url(VerificationMethod.cardResource) != nil
+    }
     
     public required init?(_ map: Map)
     {

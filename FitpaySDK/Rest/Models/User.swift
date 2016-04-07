@@ -34,6 +34,16 @@ public class User : ClientModel, Mappable, SecretApplyable
         return self.info?.email
     }
     
+    public var listCreditCardsAvailable:Bool
+    {
+        return self.links?.url(User.creditCardsResource) != nil
+    }
+    
+    public var listDevicesAvailable:Bool
+    {
+        return self.links?.url(User.devicesResource) != nil
+    }
+    
     internal weak var client:RestClient?
 
     

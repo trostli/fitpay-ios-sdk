@@ -38,6 +38,8 @@ class UserInfoViewController : GenericTableViewController<UserRow>
                     Item<UserRow>(id: .devices, title: "Devices", details:"", drilldown: true, useSwitcher:false, isSwitcherOn:false),
                 ]
             ]
+            
+            self.didFinishLoadingData()
         }
         else
         {
@@ -60,6 +62,7 @@ class UserInfoViewController : GenericTableViewController<UserRow>
     
     private func loadCreditCards()
     {
+        /*
         self.view.busy = true
         self.user?.listCreditCards(excludeState: [], limit: 20, offset: 0, completion:
         {
@@ -71,7 +74,6 @@ class UserInfoViewController : GenericTableViewController<UserRow>
                 creditCardsViewController.title = "Credit Cards"
                 creditCardsViewController.creditCardsResult = result
                 self.navigationController?.pushViewController(creditCardsViewController, animated: true)
-                
             }
             else if let error = error as? NSError
             {
@@ -80,10 +82,17 @@ class UserInfoViewController : GenericTableViewController<UserRow>
             
             self.view.busy = false
         })
+        */
+        
+         let creditCardsViewController = CreditCardsViewController()
+         creditCardsViewController.title = "Credit Cards"
+         creditCardsViewController.user = self.user
+         self.navigationController?.pushViewController(creditCardsViewController, animated: true)
     }
     
     private func loadDevices()
     {
+        /*
         self.view.busy = true
         self.user?.listDevices(100, offset: 0, completion:
         {
@@ -103,6 +112,12 @@ class UserInfoViewController : GenericTableViewController<UserRow>
             
             self.view.busy = false
         })
+        */
+        
+        let devicesViewController = DevicesViewController()
+        devicesViewController.title = "Devices"
+        devicesViewController.user = self.user
+        self.navigationController?.pushViewController(devicesViewController, animated: true)
 
     }
 }
