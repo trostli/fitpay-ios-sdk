@@ -58,7 +58,7 @@ public class PaymentDevice : NSObject
     public typealias ApplicationControlHandler = (applicationControl:ApplicationControlMessage) -> Void
     
     
-    /// Called when phone connected to payment device
+    /// Called when phone is connected to payment device
     public var onDeviceConnected : ConnectionHandler?
     
     /// Called when connection with payment device was lost
@@ -71,7 +71,7 @@ public class PaymentDevice : NSObject
     /// (i.e. the wearable has been removed, the wearable has been activated/enabled/placed on person)
     public var onSecurityStateChanged : SecurityStateHandler?
     
-    /// Called when payment device made reset?
+    /// Called when payment device made reset? TODO:// Needs clarification
     public var onApplicationControlReceived : ApplicationControlHandler?
     
     /**

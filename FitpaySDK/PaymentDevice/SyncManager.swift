@@ -148,7 +148,7 @@ public class SyncManager {
                 return
             }
             
-            //TODO: delete this
+            //TODO: delete this once approved
             let commits = self.___debug_appendAPDUCommits(commits!)
             self.commitsApplyer.apply(commits, completion:
             {
@@ -165,6 +165,7 @@ public class SyncManager {
     }
     
     private func findDeviceInfo(itrSearchLimit: Int, searchOffset: Int, completion:(deviceInfo: DeviceInfo?, error: ErrorType?)->Void) {
+        //TODO: uncomment this once approved
         //let physicalDeviceInfo = self.paymentDevice.deviceInfo
         
         user?.listDevices(itrSearchLimit, offset: searchOffset, completion:
@@ -177,7 +178,7 @@ public class SyncManager {
             }
             
             for deviceInfo in result!.results! {
-                // TODO: uncomment this
+                // TODO: uncomment this once approved
                 // if deviceInfo.serialNumber == physicalDeviceInfo?.serialNumber {
                 if deviceInfo.deviceName == "PSPS" {
                     completion(deviceInfo: deviceInfo, error: nil)
@@ -260,7 +261,8 @@ public class SyncManager {
         }
     }
     
-    //TODO: debug code
+    //TODO: delete this once approved
+    // debug
     private func ___debug_appendAPDUCommits(commits: [Commit]) -> [Commit] {
         var commit = commits.last!
         

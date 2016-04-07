@@ -1,7 +1,7 @@
 import CoreBluetooth
 
 internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface {
-    var paymentDevice : PaymentDevice
+    weak var paymentDevice : PaymentDevice!
     
     var centralManager : CBCentralManager?
     var wearablePeripheral : CBPeripheral?
