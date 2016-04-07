@@ -1,10 +1,10 @@
 
 import Foundation
 
-public class ResourceLink
+internal class ResourceLink
 {
-    public var target:String?
-    public var href:String?
+    var target:String?
+    var href:String?
 }
 
 import ObjectMapper

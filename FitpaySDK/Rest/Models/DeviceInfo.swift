@@ -3,7 +3,7 @@ import ObjectMapper
 
 public class DeviceInfo : ClientModel, Mappable, SecretApplyable
 {
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     public var deviceIdentifier:String?
     public var deviceName:String?
     public var deviceType:String?
@@ -29,6 +29,16 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
 
     // Extra metadata specific for a particural type of device
     public var metadata:[String : AnyObject]?
+    
+    public var userAvailable:Bool
+    {
+        return self.links?.url(DeviceInfo.userResource) != nil
+    }
+    
+    public var listCommitsAvailable:Bool
+    {
+        return self.links?.url(DeviceInfo.commitsResource) != nil
+    }
     
     internal var client:RestClient?
     {
@@ -236,7 +246,7 @@ public class DeviceInfo : ClientModel, Mappable, SecretApplyable
 
 public class CardRelationship : ClientModel, Mappable, SecretApplyable
 {
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     public var creditCardId:String?
     public var pan:String?
     public var expMonth:Int?

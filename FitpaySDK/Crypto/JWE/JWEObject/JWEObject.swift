@@ -207,7 +207,7 @@ class JWEObject {
             aadUInt8 = UnsafeMutablePointer<UInt8>(aad!.bytes)
             aadLenght = aad!.length
         } else {
-            aadUInt8 = UnsafeMutablePointer<UInt8>()
+            aadUInt8 = UnsafeMutablePointer<UInt8>(nil)
             aadLenght = 0
         }
         
@@ -241,7 +241,7 @@ class JWEObject {
             aadUInt8 = UnsafeMutablePointer<UInt8>(aad!.bytes)
             aadLenght = aad!.length
         } else {
-            aadUInt8 = UnsafeMutablePointer<UInt8>()
+            aadUInt8 = UnsafeMutablePointer<UInt8>(nil)
             aadLenght = 0
         }
         let encryptResult = UnsafeMutablePointer<AESGCM_EncryptionResult>.alloc(sizeof(AESGCM_EncryptionResult))

@@ -93,7 +93,7 @@ extension NSData
         var buf = buffer
         func DO1() {
             let toBuf = buf.memory
-            buf += 1
+            buf = buf.successor()
             crc1 = crcTable[Int((crc1 ^ UInt32(toBuf)) & 0xFF)] ^ crc1 >> 8
         }
         func DO2() { DO1(); DO1(); }

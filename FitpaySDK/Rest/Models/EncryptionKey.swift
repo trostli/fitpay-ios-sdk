@@ -3,7 +3,7 @@ import ObjectMapper
 
 public class EncryptionKey : Mappable
 {
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     public var keyId:String?
     public var created:String?
     public var createdEpoch:CLong?

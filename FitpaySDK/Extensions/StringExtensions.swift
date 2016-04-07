@@ -20,10 +20,13 @@ extension String {
         
         let data = NSMutableData(capacity: trimmedString.characters.count / 2)
         
-        for var index = trimmedString.startIndex; index < trimmedString.endIndex; index = index.successor().successor() {
-            let byteString = trimmedString.substringWithRange(Range<String.Index>(start: index, end: index.successor().successor()))
+        var index = trimmedString.startIndex
+        while index < trimmedString.endIndex
+        {
+            let byteString = trimmedString.substringWithRange(index ..< index.successor().successor())
             let num = UInt8(byteString.withCString { strtoul($0, nil, 16) })
             data?.appendBytes([num] as [UInt8], length: 1)
+            index = index.successor().successor()
         }
         
         return data

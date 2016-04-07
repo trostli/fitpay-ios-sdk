@@ -9,7 +9,7 @@ public enum APDUPackageResponseState : String {
 
 public class ApduPackage : Mappable
 {
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     public var seIdType:String?
     public var targetDeviceType:String?
     public var targetDeviceId:String?
@@ -95,7 +95,7 @@ public class ApduPackage : Mappable
 }
 
 public class APDUCommand : Mappable {
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     public var commandId:String?
     public var groupId:Int = 0
     public var sequence:Int = 0

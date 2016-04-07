@@ -161,7 +161,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
             wearablePeripheral?.writeValue(continuationPacket, forCharacteristic: continuationCharacteristicPacket, type: CBCharacteristicWriteType.WithResponse)
             
             bytesSent = bytesSent + amountToSend
-            packetNumber++
+            packetNumber += 1
         }
         
         sendSignalAboutContiniationEnd(checkSumValue: data.CRC32HashValue)

@@ -88,7 +88,7 @@ extension NSData
         var outData = [UInt8](count: self.length, repeatedValue: 0)
         var outPos = inData.count;
         for i in 0 ..< inData.count {
-            outPos--
+            outPos -= 1
             outData[i] = inData[outPos]
         }
         let out = NSData(bytes: outData, length: outData.count)
