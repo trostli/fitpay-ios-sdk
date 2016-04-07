@@ -724,7 +724,7 @@ public class RestClient
                 
                 if let cardJSON = rawCard.JSONString
                 {
-                    if let jweObject = try? JWEObject.createNewObject("A256GCMKW", enc: "A256GCM", payload: cardJSON, keyId:headers[RestClient.fpKeyIdKey]!)
+                    if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: cardJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                     {
                         if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
                         {
@@ -929,7 +929,7 @@ public class RestClient
                     
                     if let updateJSON = operations.JSONString
                     {
-                        if let jweObject = try? JWEObject.createNewObject("A256GCMKW", enc: "A256GCM", payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
+                        if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                         {
                             if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
                             {

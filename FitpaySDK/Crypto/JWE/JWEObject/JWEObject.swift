@@ -1,6 +1,14 @@
 
 import FPCrypto
 
+enum JWEAlgorithm : String {
+    case A256GCMKW = "A256GCMKW"
+}
+
+enum JWEEncryption : String {
+    case A256GCM = "A256GCM"
+}
+
 enum JWEObjectError: ErrorType {
     case UnsupportedAlgorithm
     case UnsupportedEncryption
@@ -45,15 +53,8 @@ class JWEObject {
         return jweObject
     }
     
-    static func createNewObject(alg: String, enc: String, payload: String, keyId: String?) throws -> JWEObject?
+    static func createNewObject(alg: JWEAlgorithm, enc: JWEEncryption, payload: String, keyId: String?) throws -> JWEObject?
     {
-        guard JWEObject.isAlgorithmSupported(alg) else {
-            throw JWEObjectError.UnsupportedAlgorithm
-        }
-        
-        guard JWEObject.isEncryptionSupported(enc) else {
-            throw JWEObjectError.UnsupportedEncryption
-        }
         
         let jweObj = JWEObject()
         jweObj.header = JWEHeader(encryption: enc, algorithm: alg)
@@ -62,26 +63,6 @@ class JWEObject {
         jweObj.payloadToEncrypt = payload
         
         return jweObj
-    }
-    
-    static func isAlgorithmSupported(algorithm: String!) -> Bool
-    {
-        switch algorithm {
-        case "A256GCMKW":
-            return true
-        default:
-            return false
-        }
-    }
-    
-    static func isEncryptionSupported(encryption: String!) -> Bool
-    {
-        switch encryption {
-        case "A256GCM":
-            return true
-        default:
-            return false
-        }
     }
     
     func encrypt(sharedSecret: NSData) throws -> String?
@@ -94,15 +75,7 @@ class JWEObject {
             throw JWEObjectError.HeaderNotSpecified
         }
         
-        guard JWEObject.isAlgorithmSupported(header?.alg) else {
-            throw JWEObjectError.UnsupportedAlgorithm
-        }
-        
-        guard JWEObject.isEncryptionSupported(header?.enc) else {
-            throw JWEObjectError.UnsupportedEncryption
-        }
-        
-        if (header?.alg == "A256GCMKW" && header?.enc == "A256GCM") {
+        if (header?.alg == JWEAlgorithm.A256GCMKW && header?.enc == JWEEncryption.A256GCM) {
             let cek = String.random(JWEObject.CekSize).dataUsingEncoding(NSUTF8StringEncoding)
             let cekIV = String.random(JWEObject.CekIVSize).dataUsingEncoding(NSUTF8StringEncoding)
             
@@ -145,15 +118,7 @@ class JWEObject {
             throw JWEObjectError.HeaderNotSpecified
         }
         
-        guard JWEObject.isAlgorithmSupported(header?.alg) else {
-            throw JWEObjectError.UnsupportedAlgorithm
-        }
-        
-        guard JWEObject.isEncryptionSupported(header?.enc) else {
-            throw JWEObjectError.UnsupportedEncryption
-        }
-        
-        if (header?.alg == "A256GCMKW" && header?.enc == "A256GCM") {
+        if (header?.alg == JWEAlgorithm.A256GCMKW && header?.enc == JWEEncryption.A256GCM) {
             
             guard header!.iv != nil else {
                 throw JWEObjectError.HeadersIVNotSpecified

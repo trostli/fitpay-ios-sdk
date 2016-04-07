@@ -8,7 +8,7 @@ class JWETests: XCTestCase
     
     func testJWEEncryption()
     {
-        let jweObject = try? JWEObject.createNewObject("A256GCMKW", enc: "A256GCM", payload: plainText, keyId: nil)
+        let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: plainText, keyId: nil)
         XCTAssertNotNil(jweObject)
         
         let encryptResult = try? jweObject!!.encrypt(sharedSecret!)
