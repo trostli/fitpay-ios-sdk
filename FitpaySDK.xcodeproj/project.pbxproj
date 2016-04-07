@@ -1,1146 +1,3014 @@
-// !$*UTF8*$!
-{
-	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 46;
-	objects = {
-
-/* Begin PBXBuildFile section */
-		0AD922A11C1F7EFC007693AB /* FitpaySDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AD922A01C1F7EFC007693AB /* FitpaySDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0AD922A81C1F7EFC007693AB /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
-		0AD922AD1C1F7EFC007693AB /* FitpaySDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD922AC1C1F7EFC007693AB /* FitpaySDKTests.swift */; };
-		0AD9232C1C20BB38007693AB /* FitpaySDK.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD9232B1C20BB38007693AB /* FitpaySDK.swift */; };
-		117D0073384ECAB0308935AD /* Pods_FitpaySDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77350B7F3D4E4DE54B2807EB /* Pods_FitpaySDKTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		354C63C62E4DFD9F17A403C9 /* Pods_FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE7CA63167C1F9C39FA4FA6C /* Pods_FitpaySDK.framework */; };
-		8400F8A41CA036AE003F15B2 /* Pods_FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE7CA63167C1F9C39FA4FA6C /* Pods_FitpaySDK.framework */; };
-		8400F8A51CA036AE003F15B2 /* Pods_FitpaySDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AE7CA63167C1F9C39FA4FA6C /* Pods_FitpaySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8400F8AC1CA130C4003F15B2 /* NSData+CRC32.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8400F8AB1CA130C4003F15B2 /* NSData+CRC32.swift */; };
-		8425931B1CAA605B0006FFA6 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8425931A1CAA605B0006FFA6 /* SyncManager.swift */; };
-		8425931D1CAA613E0006FFA6 /* SyncStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8425931C1CAA613E0006FFA6 /* SyncStorage.swift */; };
-		8426D24C1C91D139009AACFE /* RtmConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D24B1C91D139009AACFE /* RtmConstants.swift */; };
-		8426D2511C92BB9D009AACFE /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D2501C92BB9D009AACFE /* StringExtensions.swift */; };
-		8426D2531C92F428009AACFE /* RtmSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D2521C92F428009AACFE /* RtmSessionTests.swift */; };
-		8426D25B1C96F4AA009AACFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D25A1C96F4AA009AACFE /* AppDelegate.swift */; };
-		8426D25D1C96F4AA009AACFE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D25C1C96F4AA009AACFE /* ViewController.swift */; };
-		8426D2601C96F4AA009AACFE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8426D25E1C96F4AA009AACFE /* Main.storyboard */; };
-		8426D2621C96F4AA009AACFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8426D2611C96F4AA009AACFE /* Assets.xcassets */; };
-		8426D2651C96F4AA009AACFE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8426D2631C96F4AA009AACFE /* LaunchScreen.storyboard */; };
-		8426D2931CA00243009AACFE /* PaymentDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D2921CA00243009AACFE /* PaymentDeviceTests.swift */; };
-		8456437C1CAD7F7200351C8E /* CommitsApplyer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8456437B1CAD7F7200351C8E /* CommitsApplyer.swift */; };
-		847264981CA5263400DE801D /* PaymentDeviceBaseInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847264971CA5263400DE801D /* PaymentDeviceBaseInterface.swift */; };
-		847264A01CA53D0800DE801D /* BLEConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472649C1CA53D0800DE801D /* BLEConstants.swift */; };
-		847264A11CA53D0800DE801D /* BLEDeviceInfoCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472649D1CA53D0800DE801D /* BLEDeviceInfoCollector.swift */; };
-		847264A21CA53D0800DE801D /* BLEPackets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472649E1CA53D0800DE801D /* BLEPackets.swift */; };
-		847264A31CA53D0800DE801D /* PaymentDeviceBLEInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8472649F1CA53D0800DE801D /* PaymentDeviceBLEInterface.swift */; };
-		8482FE881CA0338900966742 /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
-		8482FE891CA0338900966742 /* FitpaySDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */; };
-		9A58466D1C96B65B00E4ABDC /* ClientModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A58466C1C96B65B00E4ABDC /* ClientModel.swift */; };
-		9A62E6B61C8DCA20004ED6C0 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A62E6B51C8DCA20004ED6C0 /* Asset.swift */; };
-		9A7A54A7E661411C6C8DE135 /* Pods_RTMClientApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69821357DC697D6A3E09ABA4 /* Pods_RTMClientApp.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		9AA50BDF1C7E096D000FA546 /* RestClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */; };
-		9AA5BDAB1C7B54B600EDF2F6 /* RestSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */; };
-		9AB68E3E1C84A1EC00A0E172 /* JWEHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E391C84A1EC00A0E172 /* JWEHeader.swift */; };
-		9AB68E3F1C84A1EC00A0E172 /* JWEObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E3A1C84A1EC00A0E172 /* JWEObject.swift */; };
-		9AB68E401C84A1EC00A0E172 /* Base64Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E3C1C84A1EC00A0E172 /* Base64Utils.swift */; };
-		9AB68E411C84A1EC00A0E172 /* RandomString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E3D1C84A1EC00A0E172 /* RandomString.swift */; };
-		9AB68E441C84A25B00A0E172 /* JWETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E431C84A25B00A0E172 /* JWETests.swift */; };
-		9ABF39421C883AF7002EA8E5 /* JWEObjectExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABF39411C883AF7002EA8E5 /* JWEObjectExtensions.swift */; };
-		9ACF2FB31C7F024E0051DAF1 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9ACF2FB11C7F024E0051DAF1 /* libcrypto.a */; };
-		9ACF2FB41C7F024E0051DAF1 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9ACF2FB21C7F024E0051DAF1 /* libssl.a */; };
-		CD03806996B162B739B5C3C4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0387CEBA596BFB51256128 /* User.swift */; };
-		CD0380D8C5E628E5C1A755AC /* RestAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03818A549A1841A5ED64B3 /* RestAPIConstants.swift */; };
-		CD03811FA3F15932D1C0F66B /* RestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03892F10B569368C16273E /* RestSession.swift */; };
-		CD038125B3958A9F8CF17E26 /* WebViewSessionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03843A84ED76B33DA758D4 /* WebViewSessionData.swift */; };
-		CD03814935D90886A777D9EF /* SecretApplyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038189D3974D4BCE4A2509 /* SecretApplyable.swift */; };
-		CD038163A93FFC2353B572A0 /* DictionaryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03877A3C526340ECB9C853 /* DictionaryExtensions.swift */; };
-		CD0381C2A8FBB873B221A20F /* RawIntValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0385948875F054FFA4153B /* RawIntValue.swift */; };
-		CD03838AE5953B954AC82E50 /* ResultCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0387ACA27383C2A0D33CBC /* ResultCollection.swift */; };
-		CD03844FF2823EFCDF1972EE /* NSJSONSerializationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0386DA358049C9AC2135F6 /* NSJSONSerializationExtensions.swift */; };
-		CD03852C57B1C79751A86197 /* ApduPackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0387D62F4EB734531CCEA9 /* ApduPackage.swift */; };
-		CD0385C5EFAB73A715B73025 /* PaymentDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038CF70D8842F8B96D0963 /* PaymentDevice.swift */; };
-		CD0385EFB1AE91118505CC3E /* EncryptionKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038D1774A53D9340CFCFBE /* EncryptionKey.swift */; };
-		CD03864C52B317B02135FF7D /* NSDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038C64E5144812C865F0AA /* NSDataExtensions.swift */; };
-		CD0386948E879E2106699B3C /* RestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038E6F65A6788F30C11986 /* RestClient.swift */; };
-		CD0387E96A4CCADE85CAA6B0 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038A15D95F318EC41638F6 /* DeviceInfo.swift */; };
-		CD0389401826E2E23F248906 /* SECP256R1KeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0385B12671AFA04137F118 /* SECP256R1KeyPair.swift */; };
-		CD038952A85B6214173CC785 /* Commit.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038321306A4D9DE1077241 /* Commit.swift */; };
-		CD03895E2EB9EE7415958B59 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03815EA04C30427064A86B /* Transaction.swift */; };
-		CD038A4098738EC358AD2751 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03869312A30FB6257C3313 /* Address.swift */; };
-		CD038A69826DABAA4DE467C5 /* VerificationMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0385770D2621125F59B8DD /* VerificationMethod.swift */; };
-		CD038AFCBC933F1763715369 /* RtmSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0384BCACD6EC5C570B9D0A /* RtmSession.swift */; };
-		CD038BD672C20128B6711869 /* CreditCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038848A71603F14A4F8CD7 /* CreditCard.swift */; };
-		CD038D8BCA3144FBB29E8DE4 /* NSErrorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0382E7C3731302B80C1CBE /* NSErrorExtensions.swift */; };
-		CD038DC45BF133FC5A0D9A94 /* ResourceLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038EC1AB0F5F167433FC52 /* ResourceLink.swift */; };
-		CD038E19C412D95ED6F9F036 /* Relationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038236D1AEE3AC7A8155E3 /* Relationship.swift */; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		0AD922A91C1F7EFC007693AB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0AD922941C1F7EFC007693AB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0AD9229C1C1F7EFC007693AB;
-			remoteInfo = FitpaySDK;
-		};
-		8426D26A1C96F4AF009AACFE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0AD922941C1F7EFC007693AB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8426D2571C96F4AA009AACFE;
-			remoteInfo = RTMClientApp;
-		};
-		8482FE8A1CA0338900966742 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0AD922941C1F7EFC007693AB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0AD9229C1C1F7EFC007693AB;
-			remoteInfo = FitpaySDK;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		8482FE8C1CA0338B00966742 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				8400F8A51CA036AE003F15B2 /* Pods_FitpaySDK.framework in Embed Frameworks */,
-				8482FE891CA0338900966742 /* FitpaySDK.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
-/* Begin PBXFileReference section */
-		0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FitpaySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		0AD922A01C1F7EFC007693AB /* FitpaySDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FitpaySDK.h; sourceTree = "<group>"; };
-		0AD922A21C1F7EFC007693AB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0AD922A71C1F7EFC007693AB /* FitpaySDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitpaySDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0AD922AC1C1F7EFC007693AB /* FitpaySDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitpaySDKTests.swift; sourceTree = "<group>"; };
-		0AD922AE1C1F7EFC007693AB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0AD9232B1C20BB38007693AB /* FitpaySDK.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FitpaySDK.swift; sourceTree = "<group>"; };
-		58DBC1481B059BCF33878AA3 /* Pods-FitpaySDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests.release.xcconfig"; sourceTree = "<group>"; };
-		69821357DC697D6A3E09ABA4 /* Pods_RTMClientApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RTMClientApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		69AB4097308CF361456A6C47 /* Pods-FitpaySDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.debug.xcconfig"; sourceTree = "<group>"; };
-		77350B7F3D4E4DE54B2807EB /* Pods_FitpaySDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FitpaySDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8400F8AB1CA130C4003F15B2 /* NSData+CRC32.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+CRC32.swift"; sourceTree = "<group>"; };
-		8425931A1CAA605B0006FFA6 /* SyncManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
-		8425931C1CAA613E0006FFA6 /* SyncStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStorage.swift; sourceTree = "<group>"; };
-		8426D24B1C91D139009AACFE /* RtmConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmConstants.swift; sourceTree = "<group>"; };
-		8426D24D1C91D3BE009AACFE /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
-		8426D24F1C92B5D0009AACFE /* SHA1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SHA1.h; sourceTree = "<group>"; };
-		8426D2501C92BB9D009AACFE /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
-		8426D2521C92F428009AACFE /* RtmSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmSessionTests.swift; sourceTree = "<group>"; };
-		8426D2581C96F4AA009AACFE /* RTMClientApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTMClientApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8426D25A1C96F4AA009AACFE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8426D25C1C96F4AA009AACFE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		8426D25F1C96F4AA009AACFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		8426D2611C96F4AA009AACFE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		8426D2641C96F4AA009AACFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8426D2661C96F4AA009AACFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8426D2921CA00243009AACFE /* PaymentDeviceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentDeviceTests.swift; sourceTree = "<group>"; };
-		8456437B1CAD7F7200351C8E /* CommitsApplyer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommitsApplyer.swift; sourceTree = "<group>"; };
-		847264971CA5263400DE801D /* PaymentDeviceBaseInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentDeviceBaseInterface.swift; sourceTree = "<group>"; };
-		8472649C1CA53D0800DE801D /* BLEConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEConstants.swift; sourceTree = "<group>"; };
-		8472649D1CA53D0800DE801D /* BLEDeviceInfoCollector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEDeviceInfoCollector.swift; sourceTree = "<group>"; };
-		8472649E1CA53D0800DE801D /* BLEPackets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEPackets.swift; sourceTree = "<group>"; };
-		8472649F1CA53D0800DE801D /* PaymentDeviceBLEInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentDeviceBLEInterface.swift; sourceTree = "<group>"; };
-		9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
-		9A58466C1C96B65B00E4ABDC /* ClientModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientModel.swift; sourceTree = "<group>"; };
-		9A62E6B51C8DCA20004ED6C0 /* Asset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Asset.swift; sourceTree = "<group>"; };
-		9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientTests.swift; sourceTree = "<group>"; };
-		9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestSessionTests.swift; sourceTree = "<group>"; };
-		9AB68E391C84A1EC00A0E172 /* JWEHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JWEHeader.swift; sourceTree = "<group>"; };
-		9AB68E3A1C84A1EC00A0E172 /* JWEObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JWEObject.swift; sourceTree = "<group>"; };
-		9AB68E3C1C84A1EC00A0E172 /* Base64Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Base64Utils.swift; sourceTree = "<group>"; };
-		9AB68E3D1C84A1EC00A0E172 /* RandomString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomString.swift; sourceTree = "<group>"; };
-		9AB68E421C84A21000A0E172 /* AESGCM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AESGCM.h; sourceTree = "<group>"; };
-		9AB68E431C84A25B00A0E172 /* JWETests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JWETests.swift; sourceTree = "<group>"; };
-		9ABF39411C883AF7002EA8E5 /* JWEObjectExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JWEObjectExtensions.swift; sourceTree = "<group>"; };
-		9ACF2FB11C7F024E0051DAF1 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = FitpaySDK/Libraries/OpenSSL/lib/libcrypto.a; sourceTree = "<group>"; };
-		9ACF2FB21C7F024E0051DAF1 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = FitpaySDK/Libraries/OpenSSL/lib/libssl.a; sourceTree = "<group>"; };
-		9ACF305C1C7F4B010051DAF1 /* SECP256R1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SECP256R1.h; sourceTree = "<group>"; };
-		A1CDDE762C6631CF031451E0 /* Pods-FitpaySDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.release.xcconfig"; sourceTree = "<group>"; };
-		A8BA53F13D15C94042F5376E /* Pods-RTMClientApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RTMClientApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RTMClientApp/Pods-RTMClientApp.debug.xcconfig"; sourceTree = "<group>"; };
-		AE7CA63167C1F9C39FA4FA6C /* Pods_FitpaySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FitpaySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CD03815EA04C30427064A86B /* Transaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
-		CD038189D3974D4BCE4A2509 /* SecretApplyable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretApplyable.swift; sourceTree = "<group>"; };
-		CD03818A549A1841A5ED64B3 /* RestAPIConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestAPIConstants.swift; sourceTree = "<group>"; };
-		CD038236D1AEE3AC7A8155E3 /* Relationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Relationship.swift; sourceTree = "<group>"; };
-		CD0382E7C3731302B80C1CBE /* NSErrorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSErrorExtensions.swift; sourceTree = "<group>"; };
-		CD038321306A4D9DE1077241 /* Commit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Commit.swift; sourceTree = "<group>"; };
-		CD03843A84ED76B33DA758D4 /* WebViewSessionData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewSessionData.swift; sourceTree = "<group>"; };
-		CD0384BCACD6EC5C570B9D0A /* RtmSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmSession.swift; sourceTree = "<group>"; };
-		CD0385770D2621125F59B8DD /* VerificationMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerificationMethod.swift; sourceTree = "<group>"; };
-		CD0385948875F054FFA4153B /* RawIntValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RawIntValue.swift; sourceTree = "<group>"; };
-		CD0385B12671AFA04137F118 /* SECP256R1KeyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SECP256R1KeyPair.swift; sourceTree = "<group>"; };
-		CD03869312A30FB6257C3313 /* Address.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
-		CD0386DA358049C9AC2135F6 /* NSJSONSerializationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSJSONSerializationExtensions.swift; sourceTree = "<group>"; };
-		CD03877A3C526340ECB9C853 /* DictionaryExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryExtensions.swift; sourceTree = "<group>"; };
-		CD0387ACA27383C2A0D33CBC /* ResultCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultCollection.swift; sourceTree = "<group>"; };
-		CD0387CEBA596BFB51256128 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		CD0387D62F4EB734531CCEA9 /* ApduPackage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApduPackage.swift; sourceTree = "<group>"; };
-		CD038848A71603F14A4F8CD7 /* CreditCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreditCard.swift; sourceTree = "<group>"; };
-		CD03892F10B569368C16273E /* RestSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestSession.swift; sourceTree = "<group>"; };
-		CD038A15D95F318EC41638F6 /* DeviceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
-		CD038C64E5144812C865F0AA /* NSDataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataExtensions.swift; sourceTree = "<group>"; };
-		CD038CF70D8842F8B96D0963 /* PaymentDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentDevice.swift; sourceTree = "<group>"; };
-		CD038D1774A53D9340CFCFBE /* EncryptionKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionKey.swift; sourceTree = "<group>"; };
-		CD038E6F65A6788F30C11986 /* RestClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClient.swift; sourceTree = "<group>"; };
-		CD038EC1AB0F5F167433FC52 /* ResourceLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResourceLink.swift; sourceTree = "<group>"; };
-		DB3B273A3D2DCC775DA1BEFD /* Pods-FitpaySDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests.debug.xcconfig"; sourceTree = "<group>"; };
-		EC162556AB84B5CF93D60A0A /* Pods-RTMClientApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RTMClientApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-RTMClientApp/Pods-RTMClientApp.release.xcconfig"; sourceTree = "<group>"; };
-/* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		0AD922991C1F7EFC007693AB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9ACF2FB31C7F024E0051DAF1 /* libcrypto.a in Frameworks */,
-				9ACF2FB41C7F024E0051DAF1 /* libssl.a in Frameworks */,
-				354C63C62E4DFD9F17A403C9 /* Pods_FitpaySDK.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0AD922A41C1F7EFC007693AB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0AD922A81C1F7EFC007693AB /* FitpaySDK.framework in Frameworks */,
-				117D0073384ECAB0308935AD /* Pods_FitpaySDKTests.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8426D2551C96F4AA009AACFE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8482FE881CA0338900966742 /* FitpaySDK.framework in Frameworks */,
-				9A7A54A7E661411C6C8DE135 /* Pods_RTMClientApp.framework in Frameworks */,
-				8400F8A41CA036AE003F15B2 /* Pods_FitpaySDK.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
-/* Begin PBXGroup section */
-		0AD922931C1F7EFC007693AB = {
-			isa = PBXGroup;
-			children = (
-				0AD9229F1C1F7EFC007693AB /* FitpaySDK */,
-				0AD922AB1C1F7EFC007693AB /* FitpaySDKTests */,
-				8426D2591C96F4AA009AACFE /* RTMClientApp */,
-				0AD9229E1C1F7EFC007693AB /* Products */,
-				AAC95219C4851808164A9861 /* Pods */,
-				B2C94647591B581A09E4A254 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		0AD9229E1C1F7EFC007693AB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */,
-				0AD922A71C1F7EFC007693AB /* FitpaySDKTests.xctest */,
-				8426D2581C96F4AA009AACFE /* RTMClientApp.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		0AD9229F1C1F7EFC007693AB /* FitpaySDK */ = {
-			isa = PBXGroup;
-			children = (
-				9ACF305A1C7F4B010051DAF1 /* FPCrypto */,
-				0AD922A01C1F7EFC007693AB /* FitpaySDK.h */,
-				0AD922A21C1F7EFC007693AB /* Info.plist */,
-				0AD9232B1C20BB38007693AB /* FitpaySDK.swift */,
-				CD038511B6DB51958C59E6FC /* Rest */,
-				CD038444AAB4BDB6FF14D2D7 /* Rtm */,
-				CD0384F64FF8B4B91DDBC6AF /* PaymentDevice */,
-				CD0389AD6419ED1E01710351 /* Extensions */,
-				CD038D2F64FC83449F1AB8F3 /* Protocols */,
-				CD038477DF1934938D33A597 /* Crypto */,
-			);
-			path = FitpaySDK;
-			sourceTree = "<group>";
-		};
-		0AD922AB1C1F7EFC007693AB /* FitpaySDKTests */ = {
-			isa = PBXGroup;
-			children = (
-				9AB68E431C84A25B00A0E172 /* JWETests.swift */,
-				9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */,
-				9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */,
-				0AD922AC1C1F7EFC007693AB /* FitpaySDKTests.swift */,
-				8426D2521C92F428009AACFE /* RtmSessionTests.swift */,
-				8426D2921CA00243009AACFE /* PaymentDeviceTests.swift */,
-				0AD922AE1C1F7EFC007693AB /* Info.plist */,
-			);
-			path = FitpaySDKTests;
-			sourceTree = "<group>";
-		};
-		8426D24A1C91D0EA009AACFE /* Constants */ = {
-			isa = PBXGroup;
-			children = (
-				8426D24B1C91D139009AACFE /* RtmConstants.swift */,
-			);
-			path = Constants;
-			sourceTree = "<group>";
-		};
-		8426D2591C96F4AA009AACFE /* RTMClientApp */ = {
-			isa = PBXGroup;
-			children = (
-				8426D25A1C96F4AA009AACFE /* AppDelegate.swift */,
-				8426D25C1C96F4AA009AACFE /* ViewController.swift */,
-				8426D25E1C96F4AA009AACFE /* Main.storyboard */,
-				8426D2611C96F4AA009AACFE /* Assets.xcassets */,
-				8426D2631C96F4AA009AACFE /* LaunchScreen.storyboard */,
-				8426D2661C96F4AA009AACFE /* Info.plist */,
-			);
-			path = RTMClientApp;
-			sourceTree = "<group>";
-		};
-		847264961CA5261400DE801D /* Interfaces */ = {
-			isa = PBXGroup;
-			children = (
-				8472649B1CA53C9100DE801D /* BLE */,
-				847264971CA5263400DE801D /* PaymentDeviceBaseInterface.swift */,
-			);
-			path = Interfaces;
-			sourceTree = "<group>";
-		};
-		8472649B1CA53C9100DE801D /* BLE */ = {
-			isa = PBXGroup;
-			children = (
-				8472649C1CA53D0800DE801D /* BLEConstants.swift */,
-				8472649D1CA53D0800DE801D /* BLEDeviceInfoCollector.swift */,
-				8472649E1CA53D0800DE801D /* BLEPackets.swift */,
-				8472649F1CA53D0800DE801D /* PaymentDeviceBLEInterface.swift */,
-			);
-			path = BLE;
-			sourceTree = "<group>";
-		};
-		9AB68E371C84A1EC00A0E172 /* JWE */ = {
-			isa = PBXGroup;
-			children = (
-				9AB68E381C84A1EC00A0E172 /* JWEObject */,
-				9AB68E3B1C84A1EC00A0E172 /* Utils */,
-			);
-			path = JWE;
-			sourceTree = "<group>";
-		};
-		9AB68E381C84A1EC00A0E172 /* JWEObject */ = {
-			isa = PBXGroup;
-			children = (
-				9AB68E391C84A1EC00A0E172 /* JWEHeader.swift */,
-				9AB68E3A1C84A1EC00A0E172 /* JWEObject.swift */,
-			);
-			path = JWEObject;
-			sourceTree = "<group>";
-		};
-		9AB68E3B1C84A1EC00A0E172 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				9AB68E3C1C84A1EC00A0E172 /* Base64Utils.swift */,
-				9AB68E3D1C84A1EC00A0E172 /* RandomString.swift */,
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
-		9ACF305A1C7F4B010051DAF1 /* FPCrypto */ = {
-			isa = PBXGroup;
-			children = (
-				9AB68E421C84A21000A0E172 /* AESGCM.h */,
-				9ACF305C1C7F4B010051DAF1 /* SECP256R1.h */,
-				8426D24F1C92B5D0009AACFE /* SHA1.h */,
-			);
-			path = FPCrypto;
-			sourceTree = "<group>";
-		};
-		AAC95219C4851808164A9861 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				69AB4097308CF361456A6C47 /* Pods-FitpaySDK.debug.xcconfig */,
-				A1CDDE762C6631CF031451E0 /* Pods-FitpaySDK.release.xcconfig */,
-				A8BA53F13D15C94042F5376E /* Pods-RTMClientApp.debug.xcconfig */,
-				EC162556AB84B5CF93D60A0A /* Pods-RTMClientApp.release.xcconfig */,
-				DB3B273A3D2DCC775DA1BEFD /* Pods-FitpaySDKTests.debug.xcconfig */,
-				58DBC1481B059BCF33878AA3 /* Pods-FitpaySDKTests.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-		B2C94647591B581A09E4A254 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				8426D24D1C91D3BE009AACFE /* libcommonCrypto.tbd */,
-				9ACF2FB11C7F024E0051DAF1 /* libcrypto.a */,
-				9ACF2FB21C7F024E0051DAF1 /* libssl.a */,
-				AE7CA63167C1F9C39FA4FA6C /* Pods_FitpaySDK.framework */,
-				69821357DC697D6A3E09ABA4 /* Pods_RTMClientApp.framework */,
-				77350B7F3D4E4DE54B2807EB /* Pods_FitpaySDKTests.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		CD038444AAB4BDB6FF14D2D7 /* Rtm */ = {
-			isa = PBXGroup;
-			children = (
-				CD0385FBA6E03879966B500B /* Models */,
-				8426D24A1C91D0EA009AACFE /* Constants */,
-				CD0384BCACD6EC5C570B9D0A /* RtmSession.swift */,
-			);
-			path = Rtm;
-			sourceTree = "<group>";
-		};
-		CD038466328E4608CC137268 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				CD03815EA04C30427064A86B /* Transaction.swift */,
-				CD0387CEBA596BFB51256128 /* User.swift */,
-				CD038236D1AEE3AC7A8155E3 /* Relationship.swift */,
-				CD038321306A4D9DE1077241 /* Commit.swift */,
-				CD038EC1AB0F5F167433FC52 /* ResourceLink.swift */,
-				CD0387D62F4EB734531CCEA9 /* ApduPackage.swift */,
-				CD038A15D95F318EC41638F6 /* DeviceInfo.swift */,
-				CD038D1774A53D9340CFCFBE /* EncryptionKey.swift */,
-				CD0385770D2621125F59B8DD /* VerificationMethod.swift */,
-				CD038848A71603F14A4F8CD7 /* CreditCard.swift */,
-				CD03869312A30FB6257C3313 /* Address.swift */,
-				CD0387ACA27383C2A0D33CBC /* ResultCollection.swift */,
-				CD038189D3974D4BCE4A2509 /* SecretApplyable.swift */,
-				9A62E6B51C8DCA20004ED6C0 /* Asset.swift */,
-				9A58466C1C96B65B00E4ABDC /* ClientModel.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		CD038477DF1934938D33A597 /* Crypto */ = {
-			isa = PBXGroup;
-			children = (
-				9AB68E371C84A1EC00A0E172 /* JWE */,
-				CD0385B12671AFA04137F118 /* SECP256R1KeyPair.swift */,
-			);
-			path = Crypto;
-			sourceTree = "<group>";
-		};
-		CD0384F64FF8B4B91DDBC6AF /* PaymentDevice */ = {
-			isa = PBXGroup;
-			children = (
-				847264961CA5261400DE801D /* Interfaces */,
-				CD038CF70D8842F8B96D0963 /* PaymentDevice.swift */,
-				8425931A1CAA605B0006FFA6 /* SyncManager.swift */,
-				8425931C1CAA613E0006FFA6 /* SyncStorage.swift */,
-				8456437B1CAD7F7200351C8E /* CommitsApplyer.swift */,
-			);
-			path = PaymentDevice;
-			sourceTree = "<group>";
-		};
-		CD038511B6DB51958C59E6FC /* Rest */ = {
-			isa = PBXGroup;
-			children = (
-				CD038466328E4608CC137268 /* Models */,
-				CD03872D493D4CAEC8CA854A /* Constants */,
-				CD03892F10B569368C16273E /* RestSession.swift */,
-				CD038E6F65A6788F30C11986 /* RestClient.swift */,
-			);
-			path = Rest;
-			sourceTree = "<group>";
-		};
-		CD0385FBA6E03879966B500B /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				CD03843A84ED76B33DA758D4 /* WebViewSessionData.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		CD03872D493D4CAEC8CA854A /* Constants */ = {
-			isa = PBXGroup;
-			children = (
-				CD03818A549A1841A5ED64B3 /* RestAPIConstants.swift */,
-			);
-			path = Constants;
-			sourceTree = "<group>";
-		};
-		CD0389AD6419ED1E01710351 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				CD0386DA358049C9AC2135F6 /* NSJSONSerializationExtensions.swift */,
-				CD03877A3C526340ECB9C853 /* DictionaryExtensions.swift */,
-				CD0382E7C3731302B80C1CBE /* NSErrorExtensions.swift */,
-				CD038C64E5144812C865F0AA /* NSDataExtensions.swift */,
-				9ABF39411C883AF7002EA8E5 /* JWEObjectExtensions.swift */,
-				9A12277F1C89CF5C006968D7 /* ArrayExtensions.swift */,
-				8426D2501C92BB9D009AACFE /* StringExtensions.swift */,
-				8400F8AB1CA130C4003F15B2 /* NSData+CRC32.swift */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
-		CD038D2F64FC83449F1AB8F3 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				CD0385948875F054FFA4153B /* RawIntValue.swift */,
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
-/* End PBXGroup section */
-
-/* Begin PBXHeadersBuildPhase section */
-		0AD9229A1C1F7EFC007693AB /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0AD922A11C1F7EFC007693AB /* FitpaySDK.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
-/* Begin PBXNativeTarget section */
-		0AD9229C1C1F7EFC007693AB /* FitpaySDK */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0AD922B11C1F7EFC007693AB /* Build configuration list for PBXNativeTarget "FitpaySDK" */;
-			buildPhases = (
-				79020079ABF1C988C76C29A6 /* Check Pods Manifest.lock */,
-				0AD922981C1F7EFC007693AB /* Sources */,
-				0AD922991C1F7EFC007693AB /* Frameworks */,
-				0AD9229A1C1F7EFC007693AB /* Headers */,
-				0AD9229B1C1F7EFC007693AB /* Resources */,
-				449DF6A1184412BD75735649 /* Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = FitpaySDK;
-			productName = FitpaySDK;
-			productReference = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		0AD922A61C1F7EFC007693AB /* FitpaySDKTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0AD922B41C1F7EFC007693AB /* Build configuration list for PBXNativeTarget "FitpaySDKTests" */;
-			buildPhases = (
-				DDCF2739CBC122419F728384 /* Check Pods Manifest.lock */,
-				0AD922A31C1F7EFC007693AB /* Sources */,
-				0AD922A41C1F7EFC007693AB /* Frameworks */,
-				0AD922A51C1F7EFC007693AB /* Resources */,
-				C50539A02244046BC4091165 /* Embed Pods Frameworks */,
-				E962622B61F74B67310CAD2E /* Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0AD922AA1C1F7EFC007693AB /* PBXTargetDependency */,
-				8426D26B1C96F4AF009AACFE /* PBXTargetDependency */,
-			);
-			name = FitpaySDKTests;
-			productName = FitpaySDKTests;
-			productReference = 0AD922A71C1F7EFC007693AB /* FitpaySDKTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		8426D2571C96F4AA009AACFE /* RTMClientApp */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8426D2691C96F4AA009AACFE /* Build configuration list for PBXNativeTarget "RTMClientApp" */;
-			buildPhases = (
-				FFE9B3840EC0474F5FAA7E84 /* Check Pods Manifest.lock */,
-				8426D2541C96F4AA009AACFE /* Sources */,
-				8426D2551C96F4AA009AACFE /* Frameworks */,
-				8426D2561C96F4AA009AACFE /* Resources */,
-				8482FE8C1CA0338B00966742 /* Embed Frameworks */,
-				E34929AD64C35A83EEF4DAF0 /* Embed Pods Frameworks */,
-				8E83939B8ADCEC3EEA5B38F6 /* Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8482FE8B1CA0338900966742 /* PBXTargetDependency */,
-			);
-			name = RTMClientApp;
-			productName = RTMClientApp;
-			productReference = 8426D2581C96F4AA009AACFE /* RTMClientApp.app */;
-			productType = "com.apple.product-type.application";
-		};
-/* End PBXNativeTarget section */
-
-/* Begin PBXProject section */
-		0AD922941C1F7EFC007693AB /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0720;
-				ORGANIZATIONNAME = Fitpay;
-				TargetAttributes = {
-					0AD9229C1C1F7EFC007693AB = {
-						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = ZLW345FG82;
-					};
-					0AD922A61C1F7EFC007693AB = {
-						CreatedOnToolsVersion = 7.2;
-						TestTargetID = 8426D2571C96F4AA009AACFE;
-					};
-					8426D2571C96F4AA009AACFE = {
-						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = ZLW345FG82;
-						SystemCapabilities = {
-							com.apple.BackgroundModes = {
-								enabled = 1;
-							};
-						};
-					};
-				};
-			};
-			buildConfigurationList = 0AD922971C1F7EFC007693AB /* Build configuration list for PBXProject "FitpaySDK" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-				Base,
-			);
-			mainGroup = 0AD922931C1F7EFC007693AB;
-			productRefGroup = 0AD9229E1C1F7EFC007693AB /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				0AD9229C1C1F7EFC007693AB /* FitpaySDK */,
-				0AD922A61C1F7EFC007693AB /* FitpaySDKTests */,
-				8426D2571C96F4AA009AACFE /* RTMClientApp */,
-			);
-		};
-/* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		0AD9229B1C1F7EFC007693AB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0AD922A51C1F7EFC007693AB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8426D2561C96F4AA009AACFE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8426D2651C96F4AA009AACFE /* LaunchScreen.storyboard in Resources */,
-				8426D2621C96F4AA009AACFE /* Assets.xcassets in Resources */,
-				8426D2601C96F4AA009AACFE /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		449DF6A1184412BD75735649 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		79020079ABF1C988C76C29A6 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		8E83939B8ADCEC3EEA5B38F6 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RTMClientApp/Pods-RTMClientApp-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C50539A02244046BC4091165 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		DDCF2739CBC122419F728384 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		E34929AD64C35A83EEF4DAF0 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RTMClientApp/Pods-RTMClientApp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E962622B61F74B67310CAD2E /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		FFE9B3840EC0474F5FAA7E84 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		0AD922981C1F7EFC007693AB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0AD9232C1C20BB38007693AB /* FitpaySDK.swift in Sources */,
-				9ABF39421C883AF7002EA8E5 /* JWEObjectExtensions.swift in Sources */,
-				CD03895E2EB9EE7415958B59 /* Transaction.swift in Sources */,
-				CD03806996B162B739B5C3C4 /* User.swift in Sources */,
-				9AB68E3F1C84A1EC00A0E172 /* JWEObject.swift in Sources */,
-				9AB68E401C84A1EC00A0E172 /* Base64Utils.swift in Sources */,
-				CD038E19C412D95ED6F9F036 /* Relationship.swift in Sources */,
-				CD038952A85B6214173CC785 /* Commit.swift in Sources */,
-				CD038DC45BF133FC5A0D9A94 /* ResourceLink.swift in Sources */,
-				CD03852C57B1C79751A86197 /* ApduPackage.swift in Sources */,
-				8425931D1CAA613E0006FFA6 /* SyncStorage.swift in Sources */,
-				CD0387E96A4CCADE85CAA6B0 /* DeviceInfo.swift in Sources */,
-				CD0385EFB1AE91118505CC3E /* EncryptionKey.swift in Sources */,
-				847264A01CA53D0800DE801D /* BLEConstants.swift in Sources */,
-				8426D2511C92BB9D009AACFE /* StringExtensions.swift in Sources */,
-				847264A11CA53D0800DE801D /* BLEDeviceInfoCollector.swift in Sources */,
-				847264981CA5263400DE801D /* PaymentDeviceBaseInterface.swift in Sources */,
-				847264A31CA53D0800DE801D /* PaymentDeviceBLEInterface.swift in Sources */,
-				CD038A69826DABAA4DE467C5 /* VerificationMethod.swift in Sources */,
-				CD038BD672C20128B6711869 /* CreditCard.swift in Sources */,
-				CD038A4098738EC358AD2751 /* Address.swift in Sources */,
-				CD03838AE5953B954AC82E50 /* ResultCollection.swift in Sources */,
-				847264A21CA53D0800DE801D /* BLEPackets.swift in Sources */,
-				9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */,
-				9AB68E411C84A1EC00A0E172 /* RandomString.swift in Sources */,
-				CD0380D8C5E628E5C1A755AC /* RestAPIConstants.swift in Sources */,
-				CD038125B3958A9F8CF17E26 /* WebViewSessionData.swift in Sources */,
-				CD038AFCBC933F1763715369 /* RtmSession.swift in Sources */,
-				9A58466D1C96B65B00E4ABDC /* ClientModel.swift in Sources */,
-				CD03811FA3F15932D1C0F66B /* RestSession.swift in Sources */,
-				8400F8AC1CA130C4003F15B2 /* NSData+CRC32.swift in Sources */,
-				CD0386948E879E2106699B3C /* RestClient.swift in Sources */,
-				CD0385C5EFAB73A715B73025 /* PaymentDevice.swift in Sources */,
-				9AB68E3E1C84A1EC00A0E172 /* JWEHeader.swift in Sources */,
-				CD03844FF2823EFCDF1972EE /* NSJSONSerializationExtensions.swift in Sources */,
-				CD038163A93FFC2353B572A0 /* DictionaryExtensions.swift in Sources */,
-				9A62E6B61C8DCA20004ED6C0 /* Asset.swift in Sources */,
-				CD038D8BCA3144FBB29E8DE4 /* NSErrorExtensions.swift in Sources */,
-				CD0381C2A8FBB873B221A20F /* RawIntValue.swift in Sources */,
-				CD0389401826E2E23F248906 /* SECP256R1KeyPair.swift in Sources */,
-				8456437C1CAD7F7200351C8E /* CommitsApplyer.swift in Sources */,
-				CD03864C52B317B02135FF7D /* NSDataExtensions.swift in Sources */,
-				8425931B1CAA605B0006FFA6 /* SyncManager.swift in Sources */,
-				CD03814935D90886A777D9EF /* SecretApplyable.swift in Sources */,
-				8426D24C1C91D139009AACFE /* RtmConstants.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0AD922A31C1F7EFC007693AB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8426D2931CA00243009AACFE /* PaymentDeviceTests.swift in Sources */,
-				9AA5BDAB1C7B54B600EDF2F6 /* RestSessionTests.swift in Sources */,
-				0AD922AD1C1F7EFC007693AB /* FitpaySDKTests.swift in Sources */,
-				9AB68E441C84A25B00A0E172 /* JWETests.swift in Sources */,
-				8426D2531C92F428009AACFE /* RtmSessionTests.swift in Sources */,
-				9AA50BDF1C7E096D000FA546 /* RestClientTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8426D2541C96F4AA009AACFE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8426D25D1C96F4AA009AACFE /* ViewController.swift in Sources */,
-				8426D25B1C96F4AA009AACFE /* AppDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		0AD922AA1C1F7EFC007693AB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0AD9229C1C1F7EFC007693AB /* FitpaySDK */;
-			targetProxy = 0AD922A91C1F7EFC007693AB /* PBXContainerItemProxy */;
-		};
-		8426D26B1C96F4AF009AACFE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8426D2571C96F4AA009AACFE /* RTMClientApp */;
-			targetProxy = 8426D26A1C96F4AF009AACFE /* PBXContainerItemProxy */;
-		};
-		8482FE8B1CA0338900966742 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0AD9229C1C1F7EFC007693AB /* FitpaySDK */;
-			targetProxy = 8482FE8A1CA0338900966742 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		8426D25E1C96F4AA009AACFE /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8426D25F1C96F4AA009AACFE /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		8426D2631C96F4AA009AACFE /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8426D2641C96F4AA009AACFE /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
-/* Begin XCBuildConfiguration section */
-		0AD922AF1C1F7EFC007693AB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		0AD922B01C1F7EFC007693AB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		0AD922B21C1F7EFC007693AB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 69AB4097308CF361456A6C47 /* Pods-FitpaySDK.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/lib\"";
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
-				);
-				INFOPLIST_FILE = FitpaySDK/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/FitpaySDK/Libraries/OpenSSL/lib",
-					"$(SDKROOT)/usr/lib/system",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.masterofcode-llc.FitpaySDK";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-			};
-			name = Debug;
-		};
-		0AD922B31C1F7EFC007693AB /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A1CDDE762C6631CF031451E0 /* Pods-FitpaySDK.release.xcconfig */;
-			buildSettings = {
-				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/lib\"";
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
-				);
-				INFOPLIST_FILE = FitpaySDK/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/FitpaySDK/Libraries/OpenSSL/lib",
-					"$(SDKROOT)/usr/lib/system",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.masterofcode-llc.FitpaySDK";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
-			};
-			name = Release;
-		};
-		0AD922B51C1F7EFC007693AB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DB3B273A3D2DCC775DA1BEFD /* Pods-FitpaySDKTests.debug.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
-				);
-				INFOPLIST_FILE = FitpaySDKTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RTMClientApp.app/RTMClientApp";
-			};
-			name = Debug;
-		};
-		0AD922B61C1F7EFC007693AB /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 58DBC1481B059BCF33878AA3 /* Pods-FitpaySDKTests.release.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
-				);
-				INFOPLIST_FILE = FitpaySDKTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RTMClientApp.app/RTMClientApp";
-			};
-			name = Release;
-		};
-		8426D2671C96F4AA009AACFE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A8BA53F13D15C94042F5376E /* Pods-RTMClientApp.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				INFOPLIST_FILE = RTMClientApp/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.masterofcode-llc.FitpaySDK.RTMClientApp";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		8426D2681C96F4AA009AACFE /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = EC162556AB84B5CF93D60A0A /* Pods-RTMClientApp.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				INFOPLIST_FILE = RTMClientApp/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.masterofcode-llc.FitpaySDK.RTMClientApp";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-/* End XCBuildConfiguration section */
-
-/* Begin XCConfigurationList section */
-		0AD922971C1F7EFC007693AB /* Build configuration list for PBXProject "FitpaySDK" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0AD922AF1C1F7EFC007693AB /* Debug */,
-				0AD922B01C1F7EFC007693AB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0AD922B11C1F7EFC007693AB /* Build configuration list for PBXNativeTarget "FitpaySDK" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0AD922B21C1F7EFC007693AB /* Debug */,
-				0AD922B31C1F7EFC007693AB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0AD922B41C1F7EFC007693AB /* Build configuration list for PBXNativeTarget "FitpaySDKTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0AD922B51C1F7EFC007693AB /* Debug */,
-				0AD922B61C1F7EFC007693AB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8426D2691C96F4AA009AACFE /* Build configuration list for PBXNativeTarget "RTMClientApp" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8426D2671C96F4AA009AACFE /* Debug */,
-				8426D2681C96F4AA009AACFE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-/* End XCConfigurationList section */
-	};
-	rootObject = 0AD922941C1F7EFC007693AB /* Project object */;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>archiveVersion</key>
+	<string>1</string>
+	<key>classes</key>
+	<dict/>
+	<key>objectVersion</key>
+	<string>46</string>
+	<key>objects</key>
+	<dict>
+		<key>0AD922931C1F7EFC007693AB</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>0AD9229F1C1F7EFC007693AB</string>
+				<string>0AD922AB1C1F7EFC007693AB</string>
+				<string>8426D2591C96F4AA009AACFE</string>
+				<string>0AD9229E1C1F7EFC007693AB</string>
+				<string>AAC95219C4851808164A9861</string>
+				<string>B2C94647591B581A09E4A254</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0AD922941C1F7EFC007693AB</key>
+		<dict>
+			<key>attributes</key>
+			<dict>
+				<key>LastSwiftUpdateCheck</key>
+				<string>0720</string>
+				<key>LastUpgradeCheck</key>
+				<string>0720</string>
+				<key>ORGANIZATIONNAME</key>
+				<string>Fitpay</string>
+				<key>TargetAttributes</key>
+				<dict>
+					<key>0AD9229C1C1F7EFC007693AB</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>7.2</string>
+						<key>DevelopmentTeam</key>
+						<string>ZLW345FG82</string>
+					</dict>
+					<key>0AD922A61C1F7EFC007693AB</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>7.2</string>
+						<key>TestTargetID</key>
+						<string>8426D2571C96F4AA009AACFE</string>
+					</dict>
+					<key>8426D2571C96F4AA009AACFE</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>7.2</string>
+						<key>DevelopmentTeam</key>
+						<string>ZLW345FG82</string>
+						<key>SystemCapabilities</key>
+						<dict>
+							<key>com.apple.BackgroundModes</key>
+							<dict>
+								<key>enabled</key>
+								<string>1</string>
+							</dict>
+						</dict>
+					</dict>
+				</dict>
+			</dict>
+			<key>buildConfigurationList</key>
+			<string>0AD922971C1F7EFC007693AB</string>
+			<key>compatibilityVersion</key>
+			<string>Xcode 3.2</string>
+			<key>developmentRegion</key>
+			<string>English</string>
+			<key>hasScannedForEncodings</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXProject</string>
+			<key>knownRegions</key>
+			<array>
+				<string>en</string>
+				<string>Base</string>
+			</array>
+			<key>mainGroup</key>
+			<string>0AD922931C1F7EFC007693AB</string>
+			<key>productRefGroup</key>
+			<string>0AD9229E1C1F7EFC007693AB</string>
+			<key>projectDirPath</key>
+			<string></string>
+			<key>projectReferences</key>
+			<array/>
+			<key>projectRoot</key>
+			<string></string>
+			<key>targets</key>
+			<array>
+				<string>0AD9229C1C1F7EFC007693AB</string>
+				<string>0AD922A61C1F7EFC007693AB</string>
+				<string>8426D2571C96F4AA009AACFE</string>
+			</array>
+		</dict>
+		<key>0AD922971C1F7EFC007693AB</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>0AD922AF1C1F7EFC007693AB</string>
+				<string>0AD922B01C1F7EFC007693AB</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>0AD922981C1F7EFC007693AB</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>0AD9232C1C20BB38007693AB</string>
+				<string>9ABF39421C883AF7002EA8E5</string>
+				<string>CD03895E2EB9EE7415958B59</string>
+				<string>CD03806996B162B739B5C3C4</string>
+				<string>9AB68E3F1C84A1EC00A0E172</string>
+				<string>9AB68E401C84A1EC00A0E172</string>
+				<string>CD038E19C412D95ED6F9F036</string>
+				<string>CD038952A85B6214173CC785</string>
+				<string>CD038DC45BF133FC5A0D9A94</string>
+				<string>CD03852C57B1C79751A86197</string>
+				<string>8425931D1CAA613E0006FFA6</string>
+				<string>CD0387E96A4CCADE85CAA6B0</string>
+				<string>CD0385EFB1AE91118505CC3E</string>
+				<string>847264A01CA53D0800DE801D</string>
+				<string>8426D2511C92BB9D009AACFE</string>
+				<string>847264A11CA53D0800DE801D</string>
+				<string>847264981CA5263400DE801D</string>
+				<string>847264A31CA53D0800DE801D</string>
+				<string>CD038A69826DABAA4DE467C5</string>
+				<string>CD038BD672C20128B6711869</string>
+				<string>CD038A4098738EC358AD2751</string>
+				<string>CD03838AE5953B954AC82E50</string>
+				<string>847264A21CA53D0800DE801D</string>
+				<string>9A1227801C89CF5C006968D7</string>
+				<string>9AB68E411C84A1EC00A0E172</string>
+				<string>CD0380D8C5E628E5C1A755AC</string>
+				<string>CD038125B3958A9F8CF17E26</string>
+				<string>CD038AFCBC933F1763715369</string>
+				<string>9A58466D1C96B65B00E4ABDC</string>
+				<string>CD03811FA3F15932D1C0F66B</string>
+				<string>8400F8AC1CA130C4003F15B2</string>
+				<string>CD0386948E879E2106699B3C</string>
+				<string>CD0385C5EFAB73A715B73025</string>
+				<string>9AB68E3E1C84A1EC00A0E172</string>
+				<string>CD03844FF2823EFCDF1972EE</string>
+				<string>CD038163A93FFC2353B572A0</string>
+				<string>9A62E6B61C8DCA20004ED6C0</string>
+				<string>CD038D8BCA3144FBB29E8DE4</string>
+				<string>CD0381C2A8FBB873B221A20F</string>
+				<string>CD0389401826E2E23F248906</string>
+				<string>8456437C1CAD7F7200351C8E</string>
+				<string>CD03864C52B317B02135FF7D</string>
+				<string>8425931B1CAA605B0006FFA6</string>
+				<string>CD03814935D90886A777D9EF</string>
+				<string>8426D24C1C91D139009AACFE</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>0AD922991C1F7EFC007693AB</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>9ACF2FB31C7F024E0051DAF1</string>
+				<string>9ACF2FB41C7F024E0051DAF1</string>
+				<string>354C63C62E4DFD9F17A403C9</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>0AD9229A1C1F7EFC007693AB</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>0AD922A11C1F7EFC007693AB</string>
+			</array>
+			<key>isa</key>
+			<string>PBXHeadersBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>0AD9229B1C1F7EFC007693AB</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>0AD9229C1C1F7EFC007693AB</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>0AD922B11C1F7EFC007693AB</string>
+			<key>buildPhases</key>
+			<array>
+				<string>79020079ABF1C988C76C29A6</string>
+				<string>0AD922981C1F7EFC007693AB</string>
+				<string>0AD922991C1F7EFC007693AB</string>
+				<string>0AD9229A1C1F7EFC007693AB</string>
+				<string>0AD9229B1C1F7EFC007693AB</string>
+				<string>449DF6A1184412BD75735649</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>FitpaySDK</string>
+			<key>productName</key>
+			<string>FitpaySDK</string>
+			<key>productReference</key>
+			<string>0AD9229D1C1F7EFC007693AB</string>
+			<key>productType</key>
+			<string>com.apple.product-type.framework</string>
+		</dict>
+		<key>0AD9229D1C1F7EFC007693AB</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>FitpaySDK.framework</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>0AD9229E1C1F7EFC007693AB</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>0AD9229D1C1F7EFC007693AB</string>
+				<string>0AD922A71C1F7EFC007693AB</string>
+				<string>8426D2581C96F4AA009AACFE</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Products</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0AD9229F1C1F7EFC007693AB</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9ACF305A1C7F4B010051DAF1</string>
+				<string>0AD922A01C1F7EFC007693AB</string>
+				<string>0AD922A21C1F7EFC007693AB</string>
+				<string>0AD9232B1C20BB38007693AB</string>
+				<string>CD038511B6DB51958C59E6FC</string>
+				<string>CD038444AAB4BDB6FF14D2D7</string>
+				<string>CD0384F64FF8B4B91DDBC6AF</string>
+				<string>CD0389AD6419ED1E01710351</string>
+				<string>CD038D2F64FC83449F1AB8F3</string>
+				<string>CD038477DF1934938D33A597</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>FitpaySDK</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0AD922A01C1F7EFC007693AB</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>FitpaySDK.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0AD922A11C1F7EFC007693AB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0AD922A01C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>Public</string>
+				</array>
+			</dict>
+		</dict>
+		<key>0AD922A21C1F7EFC007693AB</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0AD922A31C1F7EFC007693AB</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>8426D2931CA00243009AACFE</string>
+				<string>9AA5BDAB1C7B54B600EDF2F6</string>
+				<string>0AD922AD1C1F7EFC007693AB</string>
+				<string>9AB68E441C84A25B00A0E172</string>
+				<string>8426D2531C92F428009AACFE</string>
+				<string>9AA50BDF1C7E096D000FA546</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>0AD922A41C1F7EFC007693AB</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>0AD922A81C1F7EFC007693AB</string>
+				<string>117D0073384ECAB0308935AD</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>0AD922A51C1F7EFC007693AB</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>0AD922A61C1F7EFC007693AB</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>0AD922B41C1F7EFC007693AB</string>
+			<key>buildPhases</key>
+			<array>
+				<string>DDCF2739CBC122419F728384</string>
+				<string>0AD922A31C1F7EFC007693AB</string>
+				<string>0AD922A41C1F7EFC007693AB</string>
+				<string>0AD922A51C1F7EFC007693AB</string>
+				<string>C50539A02244046BC4091165</string>
+				<string>E962622B61F74B67310CAD2E</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>0AD922AA1C1F7EFC007693AB</string>
+				<string>8426D26B1C96F4AF009AACFE</string>
+			</array>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>FitpaySDKTests</string>
+			<key>productName</key>
+			<string>FitpaySDKTests</string>
+			<key>productReference</key>
+			<string>0AD922A71C1F7EFC007693AB</string>
+			<key>productType</key>
+			<string>com.apple.product-type.bundle.unit-test</string>
+		</dict>
+		<key>0AD922A71C1F7EFC007693AB</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.cfbundle</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>FitpaySDKTests.xctest</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>0AD922A81C1F7EFC007693AB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0AD9229D1C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>0AD922A91C1F7EFC007693AB</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>0AD922941C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>0AD9229C1C1F7EFC007693AB</string>
+			<key>remoteInfo</key>
+			<string>FitpaySDK</string>
+		</dict>
+		<key>0AD922AA1C1F7EFC007693AB</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>0AD9229C1C1F7EFC007693AB</string>
+			<key>targetProxy</key>
+			<string>0AD922A91C1F7EFC007693AB</string>
+		</dict>
+		<key>0AD922AB1C1F7EFC007693AB</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9AB68E431C84A25B00A0E172</string>
+				<string>9AA50BDE1C7E096D000FA546</string>
+				<string>9AA5BDAA1C7B54B600EDF2F6</string>
+				<string>0AD922AC1C1F7EFC007693AB</string>
+				<string>8426D2521C92F428009AACFE</string>
+				<string>8426D2921CA00243009AACFE</string>
+				<string>0AD922AE1C1F7EFC007693AB</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>FitpaySDKTests</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0AD922AC1C1F7EFC007693AB</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>FitpaySDKTests.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0AD922AD1C1F7EFC007693AB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0AD922AC1C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>0AD922AE1C1F7EFC007693AB</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0AD922AF1C1F7EFC007693AB</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>YES</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_UNREACHABLE_CODE</key>
+				<string>YES</string>
+				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
+				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>NO</string>
+				<key>CURRENT_PROJECT_VERSION</key>
+				<string>1</string>
+				<key>DEBUG_INFORMATION_FORMAT</key>
+				<string>dwarf</string>
+				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
+				<string>YES</string>
+				<key>ENABLE_TESTABILITY</key>
+				<string>YES</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_DYNAMIC_NO_PIC</key>
+				<string>NO</string>
+				<key>GCC_NO_COMMON_BLOCKS</key>
+				<string>YES</string>
+				<key>GCC_OPTIMIZATION_LEVEL</key>
+				<string>0</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+				</array>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES_ERROR</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES_AGGRESSIVE</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>9.2</string>
+				<key>MTL_ENABLE_DEBUG_INFO</key>
+				<string>YES</string>
+				<key>ONLY_ACTIVE_ARCH</key>
+				<string>YES</string>
+				<key>SDKROOT</key>
+				<string>iphoneos</string>
+				<key>SWIFT_OPTIMIZATION_LEVEL</key>
+				<string>-Onone</string>
+				<key>TARGETED_DEVICE_FAMILY</key>
+				<string>1,2</string>
+				<key>VERSIONING_SYSTEM</key>
+				<string>apple-generic</string>
+				<key>VERSION_INFO_PREFIX</key>
+				<string></string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>0AD922B01C1F7EFC007693AB</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>YES</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_UNREACHABLE_CODE</key>
+				<string>YES</string>
+				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
+				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>NO</string>
+				<key>CURRENT_PROJECT_VERSION</key>
+				<string>1</string>
+				<key>DEBUG_INFORMATION_FORMAT</key>
+				<string>dwarf-with-dsym</string>
+				<key>ENABLE_NS_ASSERTIONS</key>
+				<string>NO</string>
+				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
+				<string>YES</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_NO_COMMON_BLOCKS</key>
+				<string>YES</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES_ERROR</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES_AGGRESSIVE</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>9.2</string>
+				<key>MTL_ENABLE_DEBUG_INFO</key>
+				<string>NO</string>
+				<key>SDKROOT</key>
+				<string>iphoneos</string>
+				<key>TARGETED_DEVICE_FAMILY</key>
+				<string>1,2</string>
+				<key>VALIDATE_PRODUCT</key>
+				<string>YES</string>
+				<key>VERSIONING_SYSTEM</key>
+				<string>apple-generic</string>
+				<key>VERSION_INFO_PREFIX</key>
+				<string></string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>0AD922B11C1F7EFC007693AB</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>0AD922B21C1F7EFC007693AB</string>
+				<string>0AD922B31C1F7EFC007693AB</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>0AD922B21C1F7EFC007693AB</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>69AB4097308CF361456A6C47</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES</key>
+				<string>NO</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>DEFINES_MODULE</key>
+				<string>YES</string>
+				<key>DYLIB_COMPATIBILITY_VERSION</key>
+				<string>1</string>
+				<key>DYLIB_CURRENT_VERSION</key>
+				<string>1</string>
+				<key>DYLIB_INSTALL_NAME_BASE</key>
+				<string>@rpath</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/lib"</string>
+				<key>HEADER_SEARCH_PATHS</key>
+				<array>
+					<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include"/**</string>
+					<string>"$(SRCROOT)/FitpaySDK/FPCrypto</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>FitpaySDK/Info.plist</string>
+				<key>INSTALL_PATH</key>
+				<string>$(LOCAL_LIBRARY_DIR)/Frameworks</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks @loader_path/Frameworks</string>
+				<key>LIBRARY_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(PROJECT_DIR)/FitpaySDK/Libraries/OpenSSL/lib</string>
+					<string>$(SDKROOT)/usr/lib/system</string>
+				</array>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.masterofcode-llc.FitpaySDK</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>PROVISIONING_PROFILE</key>
+				<string></string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
+				<string></string>
+				<key>SWIFT_OPTIMIZATION_LEVEL</key>
+				<string>-Onone</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>0AD922B31C1F7EFC007693AB</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>A1CDDE762C6631CF031451E0</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES</key>
+				<string>NO</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>DEFINES_MODULE</key>
+				<string>YES</string>
+				<key>DYLIB_COMPATIBILITY_VERSION</key>
+				<string>1</string>
+				<key>DYLIB_CURRENT_VERSION</key>
+				<string>1</string>
+				<key>DYLIB_INSTALL_NAME_BASE</key>
+				<string>@rpath</string>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/lib"</string>
+				<key>HEADER_SEARCH_PATHS</key>
+				<array>
+					<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include"/**</string>
+					<string>"$(SRCROOT)/FitpaySDK/FPCrypto</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>FitpaySDK/Info.plist</string>
+				<key>INSTALL_PATH</key>
+				<string>$(LOCAL_LIBRARY_DIR)/Frameworks</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks @loader_path/Frameworks</string>
+				<key>LIBRARY_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>$(PROJECT_DIR)/FitpaySDK/Libraries/OpenSSL/lib</string>
+					<string>$(SDKROOT)/usr/lib/system</string>
+				</array>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.masterofcode-llc.FitpaySDK</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>PROVISIONING_PROFILE</key>
+				<string></string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
+				<string></string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>0AD922B41C1F7EFC007693AB</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>0AD922B51C1F7EFC007693AB</string>
+				<string>0AD922B61C1F7EFC007693AB</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>0AD922B51C1F7EFC007693AB</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>DB3B273A3D2DCC775DA1BEFD</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>BUNDLE_LOADER</key>
+				<string>$(TEST_HOST)</string>
+				<key>HEADER_SEARCH_PATHS</key>
+				<array>
+					<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include"/**</string>
+					<string>"$(SRCROOT)/FitpaySDK/FPCrypto</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>FitpaySDKTests/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks @loader_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.fitpay.FitpaySDKTests</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>TEST_HOST</key>
+				<string>$(BUILT_PRODUCTS_DIR)/RTMClientApp.app/RTMClientApp</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>0AD922B61C1F7EFC007693AB</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>58DBC1481B059BCF33878AA3</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>BUNDLE_LOADER</key>
+				<string>$(TEST_HOST)</string>
+				<key>HEADER_SEARCH_PATHS</key>
+				<array>
+					<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include"/**</string>
+					<string>"$(SRCROOT)/FitpaySDK/FPCrypto</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>FitpaySDKTests/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks @loader_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.fitpay.FitpaySDKTests</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>TEST_HOST</key>
+				<string>$(BUILT_PRODUCTS_DIR)/RTMClientApp.app/RTMClientApp</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>0AD9232B1C20BB38007693AB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>FitpaySDK.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0AD9232C1C20BB38007693AB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0AD9232B1C20BB38007693AB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>117D0073384ECAB0308935AD</key>
+		<dict>
+			<key>fileRef</key>
+			<string>77350B7F3D4E4DE54B2807EB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>354C63C62E4DFD9F17A403C9</key>
+		<dict>
+			<key>fileRef</key>
+			<string>AE7CA63167C1F9C39FA4FA6C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>449DF6A1184412BD75735649</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>58DBC1481B059BCF33878AA3</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-FitpaySDKTests.release.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>69821357DC697D6A3E09ABA4</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>Pods_RTMClientApp.framework</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>69AB4097308CF361456A6C47</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-FitpaySDK.debug.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.debug.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>77350B7F3D4E4DE54B2807EB</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>Pods_FitpaySDKTests.framework</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>79020079ABF1C988C76C29A6</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>8400F8A41CA036AE003F15B2</key>
+		<dict>
+			<key>fileRef</key>
+			<string>AE7CA63167C1F9C39FA4FA6C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8400F8A51CA036AE003F15B2</key>
+		<dict>
+			<key>fileRef</key>
+			<string>AE7CA63167C1F9C39FA4FA6C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>CodeSignOnCopy</string>
+					<string>RemoveHeadersOnCopy</string>
+				</array>
+			</dict>
+		</dict>
+		<key>8400F8AB1CA130C4003F15B2</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>NSData+CRC32.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8400F8AC1CA130C4003F15B2</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8400F8AB1CA130C4003F15B2</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8425931A1CAA605B0006FFA6</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>SyncManager.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8425931B1CAA605B0006FFA6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8425931A1CAA605B0006FFA6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8425931C1CAA613E0006FFA6</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>SyncStorage.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8425931D1CAA613E0006FFA6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8425931C1CAA613E0006FFA6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8426D24A1C91D0EA009AACFE</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>8426D24B1C91D139009AACFE</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Constants</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D24B1C91D139009AACFE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>RtmConstants.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D24C1C91D139009AACFE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8426D24B1C91D139009AACFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8426D24D1C91D3BE009AACFE</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.text-based-dylib-definition</string>
+			<key>name</key>
+			<string>libcommonCrypto.tbd</string>
+			<key>path</key>
+			<string>usr/lib/system/libcommonCrypto.tbd</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>8426D24F1C92B5D0009AACFE</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>SHA1.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D2501C92BB9D009AACFE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>StringExtensions.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D2511C92BB9D009AACFE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8426D2501C92BB9D009AACFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8426D2521C92F428009AACFE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>RtmSessionTests.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D2531C92F428009AACFE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8426D2521C92F428009AACFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8426D2541C96F4AA009AACFE</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>8426D25D1C96F4AA009AACFE</string>
+				<string>8426D25B1C96F4AA009AACFE</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>8426D2551C96F4AA009AACFE</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>8482FE881CA0338900966742</string>
+				<string>9A7A54A7E661411C6C8DE135</string>
+				<string>8400F8A41CA036AE003F15B2</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>8426D2561C96F4AA009AACFE</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>8426D2651C96F4AA009AACFE</string>
+				<string>8426D2621C96F4AA009AACFE</string>
+				<string>8426D2601C96F4AA009AACFE</string>
+			</array>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>8426D2571C96F4AA009AACFE</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>8426D2691C96F4AA009AACFE</string>
+			<key>buildPhases</key>
+			<array>
+				<string>FFE9B3840EC0474F5FAA7E84</string>
+				<string>8426D2541C96F4AA009AACFE</string>
+				<string>8426D2551C96F4AA009AACFE</string>
+				<string>8426D2561C96F4AA009AACFE</string>
+				<string>8482FE8C1CA0338B00966742</string>
+				<string>E34929AD64C35A83EEF4DAF0</string>
+				<string>8E83939B8ADCEC3EEA5B38F6</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>8482FE8B1CA0338900966742</string>
+			</array>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>RTMClientApp</string>
+			<key>productName</key>
+			<string>RTMClientApp</string>
+			<key>productReference</key>
+			<string>8426D2581C96F4AA009AACFE</string>
+			<key>productType</key>
+			<string>com.apple.product-type.application</string>
+		</dict>
+		<key>8426D2581C96F4AA009AACFE</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.application</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>RTMClientApp.app</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>8426D2591C96F4AA009AACFE</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>8426D25A1C96F4AA009AACFE</string>
+				<string>8426D25C1C96F4AA009AACFE</string>
+				<string>8426D25E1C96F4AA009AACFE</string>
+				<string>8426D2611C96F4AA009AACFE</string>
+				<string>8426D2631C96F4AA009AACFE</string>
+				<string>8426D2661C96F4AA009AACFE</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>RTMClientApp</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D25A1C96F4AA009AACFE</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>AppDelegate.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D25B1C96F4AA009AACFE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8426D25A1C96F4AA009AACFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8426D25C1C96F4AA009AACFE</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D25D1C96F4AA009AACFE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8426D25C1C96F4AA009AACFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8426D25E1C96F4AA009AACFE</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>8426D25F1C96F4AA009AACFE</string>
+			</array>
+			<key>isa</key>
+			<string>PBXVariantGroup</string>
+			<key>name</key>
+			<string>Main.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D25F1C96F4AA009AACFE</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.storyboard</string>
+			<key>name</key>
+			<string>Base</string>
+			<key>path</key>
+			<string>Base.lproj/Main.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D2601C96F4AA009AACFE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8426D25E1C96F4AA009AACFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8426D2611C96F4AA009AACFE</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>folder.assetcatalog</string>
+			<key>path</key>
+			<string>Assets.xcassets</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D2621C96F4AA009AACFE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8426D2611C96F4AA009AACFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8426D2631C96F4AA009AACFE</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>8426D2641C96F4AA009AACFE</string>
+			</array>
+			<key>isa</key>
+			<string>PBXVariantGroup</string>
+			<key>name</key>
+			<string>LaunchScreen.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D2641C96F4AA009AACFE</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.storyboard</string>
+			<key>name</key>
+			<string>Base</string>
+			<key>path</key>
+			<string>Base.lproj/LaunchScreen.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D2651C96F4AA009AACFE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8426D2631C96F4AA009AACFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8426D2661C96F4AA009AACFE</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D2671C96F4AA009AACFE</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>A8BA53F13D15C94042F5376E</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>EMBEDDED_CONTENT_CONTAINS_SWIFT</key>
+				<string>YES</string>
+				<key>INFOPLIST_FILE</key>
+				<string>RTMClientApp/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.masterofcode-llc.FitpaySDK.RTMClientApp</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>8426D2681C96F4AA009AACFE</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>EC162556AB84B5CF93D60A0A</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>EMBEDDED_CONTENT_CONTAINS_SWIFT</key>
+				<string>YES</string>
+				<key>INFOPLIST_FILE</key>
+				<string>RTMClientApp/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.masterofcode-llc.FitpaySDK.RTMClientApp</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>8426D2691C96F4AA009AACFE</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>8426D2671C96F4AA009AACFE</string>
+				<string>8426D2681C96F4AA009AACFE</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>8426D26A1C96F4AF009AACFE</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>0AD922941C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>8426D2571C96F4AA009AACFE</string>
+			<key>remoteInfo</key>
+			<string>RTMClientApp</string>
+		</dict>
+		<key>8426D26B1C96F4AF009AACFE</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>8426D2571C96F4AA009AACFE</string>
+			<key>targetProxy</key>
+			<string>8426D26A1C96F4AF009AACFE</string>
+		</dict>
+		<key>8426D2921CA00243009AACFE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>PaymentDeviceTests.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8426D2931CA00243009AACFE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8426D2921CA00243009AACFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8456437B1CAD7F7200351C8E</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>CommitsApplyer.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8456437C1CAD7F7200351C8E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8456437B1CAD7F7200351C8E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>847264961CA5261400DE801D</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>8472649B1CA53C9100DE801D</string>
+				<string>847264971CA5263400DE801D</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Interfaces</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>847264971CA5263400DE801D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>PaymentDeviceBaseInterface.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>847264981CA5263400DE801D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>847264971CA5263400DE801D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8472649B1CA53C9100DE801D</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>8472649C1CA53D0800DE801D</string>
+				<string>8472649D1CA53D0800DE801D</string>
+				<string>8472649E1CA53D0800DE801D</string>
+				<string>8472649F1CA53D0800DE801D</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>BLE</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8472649C1CA53D0800DE801D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>BLEConstants.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8472649D1CA53D0800DE801D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>BLEDeviceInfoCollector.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8472649E1CA53D0800DE801D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>BLEPackets.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8472649F1CA53D0800DE801D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>PaymentDeviceBLEInterface.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>847264A01CA53D0800DE801D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8472649C1CA53D0800DE801D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>847264A11CA53D0800DE801D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8472649D1CA53D0800DE801D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>847264A21CA53D0800DE801D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8472649E1CA53D0800DE801D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>847264A31CA53D0800DE801D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8472649F1CA53D0800DE801D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8482FE881CA0338900966742</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0AD9229D1C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8482FE891CA0338900966742</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0AD9229D1C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>CodeSignOnCopy</string>
+					<string>RemoveHeadersOnCopy</string>
+				</array>
+			</dict>
+		</dict>
+		<key>8482FE8A1CA0338900966742</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>0AD922941C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>0AD9229C1C1F7EFC007693AB</string>
+			<key>remoteInfo</key>
+			<string>FitpaySDK</string>
+		</dict>
+		<key>8482FE8B1CA0338900966742</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>0AD9229C1C1F7EFC007693AB</string>
+			<key>targetProxy</key>
+			<string>8482FE8A1CA0338900966742</string>
+		</dict>
+		<key>8482FE8C1CA0338B00966742</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>dstPath</key>
+			<string></string>
+			<key>dstSubfolderSpec</key>
+			<string>10</string>
+			<key>files</key>
+			<array>
+				<string>8400F8A51CA036AE003F15B2</string>
+				<string>8482FE891CA0338900966742</string>
+			</array>
+			<key>isa</key>
+			<string>PBXCopyFilesBuildPhase</string>
+			<key>name</key>
+			<string>Embed Frameworks</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>8E83939B8ADCEC3EEA5B38F6</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-RTMClientApp/Pods-RTMClientApp-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>9A12277F1C89CF5C006968D7</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ArrayExtensions.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A1227801C89CF5C006968D7</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A12277F1C89CF5C006968D7</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A58466C1C96B65B00E4ABDC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ClientModel.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A58466D1C96B65B00E4ABDC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A58466C1C96B65B00E4ABDC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A62E6B51C8DCA20004ED6C0</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>Asset.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A62E6B61C8DCA20004ED6C0</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A62E6B51C8DCA20004ED6C0</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A7A54A7E661411C6C8DE135</key>
+		<dict>
+			<key>fileRef</key>
+			<string>69821357DC697D6A3E09ABA4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9AA50BDE1C7E096D000FA546</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>RestClientTests.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AA50BDF1C7E096D000FA546</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9AA50BDE1C7E096D000FA546</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9AA5BDAA1C7B54B600EDF2F6</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>RestSessionTests.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AA5BDAB1C7B54B600EDF2F6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9AA5BDAA1C7B54B600EDF2F6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9AB68E371C84A1EC00A0E172</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9AB68E381C84A1EC00A0E172</string>
+				<string>9AB68E3B1C84A1EC00A0E172</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>JWE</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AB68E381C84A1EC00A0E172</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9AB68E391C84A1EC00A0E172</string>
+				<string>9AB68E3A1C84A1EC00A0E172</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>JWEObject</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AB68E391C84A1EC00A0E172</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>JWEHeader.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AB68E3A1C84A1EC00A0E172</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>JWEObject.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AB68E3B1C84A1EC00A0E172</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9AB68E3C1C84A1EC00A0E172</string>
+				<string>9AB68E3D1C84A1EC00A0E172</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Utils</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AB68E3C1C84A1EC00A0E172</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>Base64Utils.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AB68E3D1C84A1EC00A0E172</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>RandomString.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AB68E3E1C84A1EC00A0E172</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9AB68E391C84A1EC00A0E172</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9AB68E3F1C84A1EC00A0E172</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9AB68E3A1C84A1EC00A0E172</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9AB68E401C84A1EC00A0E172</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9AB68E3C1C84A1EC00A0E172</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9AB68E411C84A1EC00A0E172</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9AB68E3D1C84A1EC00A0E172</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9AB68E421C84A21000A0E172</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>AESGCM.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AB68E431C84A25B00A0E172</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>JWETests.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AB68E441C84A25B00A0E172</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9AB68E431C84A25B00A0E172</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9ABF39411C883AF7002EA8E5</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>JWEObjectExtensions.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9ABF39421C883AF7002EA8E5</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9ABF39411C883AF7002EA8E5</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9ACF2FB11C7F024E0051DAF1</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>archive.ar</string>
+			<key>name</key>
+			<string>libcrypto.a</string>
+			<key>path</key>
+			<string>FitpaySDK/Libraries/OpenSSL/lib/libcrypto.a</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9ACF2FB21C7F024E0051DAF1</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>archive.ar</string>
+			<key>name</key>
+			<string>libssl.a</string>
+			<key>path</key>
+			<string>FitpaySDK/Libraries/OpenSSL/lib/libssl.a</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9ACF2FB31C7F024E0051DAF1</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9ACF2FB11C7F024E0051DAF1</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9ACF2FB41C7F024E0051DAF1</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9ACF2FB21C7F024E0051DAF1</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9ACF305A1C7F4B010051DAF1</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9AB68E421C84A21000A0E172</string>
+				<string>9ACF305C1C7F4B010051DAF1</string>
+				<string>8426D24F1C92B5D0009AACFE</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>FPCrypto</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9ACF305C1C7F4B010051DAF1</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>SECP256R1.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A1CDDE762C6631CF031451E0</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-FitpaySDK.release.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A8BA53F13D15C94042F5376E</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-RTMClientApp.debug.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-RTMClientApp/Pods-RTMClientApp.debug.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>AAC95219C4851808164A9861</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>69AB4097308CF361456A6C47</string>
+				<string>A1CDDE762C6631CF031451E0</string>
+				<string>A8BA53F13D15C94042F5376E</string>
+				<string>EC162556AB84B5CF93D60A0A</string>
+				<string>DB3B273A3D2DCC775DA1BEFD</string>
+				<string>58DBC1481B059BCF33878AA3</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Pods</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>AE7CA63167C1F9C39FA4FA6C</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>Pods_FitpaySDK.framework</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>B2C94647591B581A09E4A254</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>8426D24D1C91D3BE009AACFE</string>
+				<string>9ACF2FB11C7F024E0051DAF1</string>
+				<string>9ACF2FB21C7F024E0051DAF1</string>
+				<string>AE7CA63167C1F9C39FA4FA6C</string>
+				<string>69821357DC697D6A3E09ABA4</string>
+				<string>77350B7F3D4E4DE54B2807EB</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Frameworks</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>C50539A02244046BC4091165</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Embed Pods Frameworks</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests-frameworks.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>CD03806996B162B739B5C3C4</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD0387CEBA596BFB51256128</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD0380D8C5E628E5C1A755AC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD03818A549A1841A5ED64B3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD03811FA3F15932D1C0F66B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD03892F10B569368C16273E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038125B3958A9F8CF17E26</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD03843A84ED76B33DA758D4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD03814935D90886A777D9EF</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD038189D3974D4BCE4A2509</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD03815EA04C30427064A86B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>Transaction.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038163A93FFC2353B572A0</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD03877A3C526340ECB9C853</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038189D3974D4BCE4A2509</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>SecretApplyable.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD03818A549A1841A5ED64B3</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>RestAPIConstants.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0381C2A8FBB873B221A20F</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD0385948875F054FFA4153B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038236D1AEE3AC7A8155E3</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>Relationship.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0382E7C3731302B80C1CBE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>NSErrorExtensions.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038321306A4D9DE1077241</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>Commit.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD03838AE5953B954AC82E50</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD0387ACA27383C2A0D33CBC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD03843A84ED76B33DA758D4</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>WebViewSessionData.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038444AAB4BDB6FF14D2D7</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>CD0385FBA6E03879966B500B</string>
+				<string>8426D24A1C91D0EA009AACFE</string>
+				<string>CD0384BCACD6EC5C570B9D0A</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Rtm</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD03844FF2823EFCDF1972EE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD0386DA358049C9AC2135F6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038466328E4608CC137268</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>CD03815EA04C30427064A86B</string>
+				<string>CD0387CEBA596BFB51256128</string>
+				<string>CD038236D1AEE3AC7A8155E3</string>
+				<string>CD038321306A4D9DE1077241</string>
+				<string>CD038EC1AB0F5F167433FC52</string>
+				<string>CD0387D62F4EB734531CCEA9</string>
+				<string>CD038A15D95F318EC41638F6</string>
+				<string>CD038D1774A53D9340CFCFBE</string>
+				<string>CD0385770D2621125F59B8DD</string>
+				<string>CD038848A71603F14A4F8CD7</string>
+				<string>CD03869312A30FB6257C3313</string>
+				<string>CD0387ACA27383C2A0D33CBC</string>
+				<string>CD038189D3974D4BCE4A2509</string>
+				<string>9A62E6B51C8DCA20004ED6C0</string>
+				<string>9A58466C1C96B65B00E4ABDC</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Models</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038477DF1934938D33A597</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9AB68E371C84A1EC00A0E172</string>
+				<string>CD0385B12671AFA04137F118</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Crypto</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0384BCACD6EC5C570B9D0A</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>RtmSession.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0384F64FF8B4B91DDBC6AF</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>847264961CA5261400DE801D</string>
+				<string>CD038CF70D8842F8B96D0963</string>
+				<string>8425931A1CAA605B0006FFA6</string>
+				<string>8425931C1CAA613E0006FFA6</string>
+				<string>8456437B1CAD7F7200351C8E</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>PaymentDevice</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038511B6DB51958C59E6FC</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>CD038466328E4608CC137268</string>
+				<string>CD03872D493D4CAEC8CA854A</string>
+				<string>CD03892F10B569368C16273E</string>
+				<string>CD038E6F65A6788F30C11986</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Rest</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD03852C57B1C79751A86197</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD0387D62F4EB734531CCEA9</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD0385770D2621125F59B8DD</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>VerificationMethod.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0385948875F054FFA4153B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>RawIntValue.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0385B12671AFA04137F118</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>SECP256R1KeyPair.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0385C5EFAB73A715B73025</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD038CF70D8842F8B96D0963</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD0385EFB1AE91118505CC3E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD038D1774A53D9340CFCFBE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD0385FBA6E03879966B500B</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>CD03843A84ED76B33DA758D4</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Models</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD03864C52B317B02135FF7D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD038C64E5144812C865F0AA</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD03869312A30FB6257C3313</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>Address.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0386948E879E2106699B3C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD038E6F65A6788F30C11986</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD0386DA358049C9AC2135F6</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>NSJSONSerializationExtensions.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD03872D493D4CAEC8CA854A</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>CD03818A549A1841A5ED64B3</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Constants</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD03877A3C526340ECB9C853</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>DictionaryExtensions.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0387ACA27383C2A0D33CBC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ResultCollection.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0387CEBA596BFB51256128</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>User.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0387D62F4EB734531CCEA9</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ApduPackage.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0387E96A4CCADE85CAA6B0</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD038A15D95F318EC41638F6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038848A71603F14A4F8CD7</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>CreditCard.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD03892F10B569368C16273E</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>RestSession.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD0389401826E2E23F248906</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD0385B12671AFA04137F118</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038952A85B6214173CC785</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD038321306A4D9DE1077241</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD03895E2EB9EE7415958B59</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD03815EA04C30427064A86B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD0389AD6419ED1E01710351</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>CD0386DA358049C9AC2135F6</string>
+				<string>CD03877A3C526340ECB9C853</string>
+				<string>CD0382E7C3731302B80C1CBE</string>
+				<string>CD038C64E5144812C865F0AA</string>
+				<string>9ABF39411C883AF7002EA8E5</string>
+				<string>9A12277F1C89CF5C006968D7</string>
+				<string>8426D2501C92BB9D009AACFE</string>
+				<string>8400F8AB1CA130C4003F15B2</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Extensions</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038A15D95F318EC41638F6</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>DeviceInfo.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038A4098738EC358AD2751</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD03869312A30FB6257C3313</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038A69826DABAA4DE467C5</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD0385770D2621125F59B8DD</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038AFCBC933F1763715369</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD0384BCACD6EC5C570B9D0A</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038BD672C20128B6711869</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD038848A71603F14A4F8CD7</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038C64E5144812C865F0AA</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>NSDataExtensions.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038CF70D8842F8B96D0963</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>PaymentDevice.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038D1774A53D9340CFCFBE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>EncryptionKey.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038D2F64FC83449F1AB8F3</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>CD0385948875F054FFA4153B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>Protocols</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038D8BCA3144FBB29E8DE4</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD0382E7C3731302B80C1CBE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038DC45BF133FC5A0D9A94</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD038EC1AB0F5F167433FC52</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038E19C412D95ED6F9F036</key>
+		<dict>
+			<key>fileRef</key>
+			<string>CD038236D1AEE3AC7A8155E3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>CD038E6F65A6788F30C11986</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>RestClient.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>CD038EC1AB0F5F167433FC52</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ResourceLink.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>DB3B273A3D2DCC775DA1BEFD</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-FitpaySDKTests.debug.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests.debug.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>DDCF2739CBC122419F728384</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>E34929AD64C35A83EEF4DAF0</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Embed Pods Frameworks</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-RTMClientApp/Pods-RTMClientApp-frameworks.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>E962622B61F74B67310CAD2E</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-FitpaySDKTests/Pods-FitpaySDKTests-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>EC162556AB84B5CF93D60A0A</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-RTMClientApp.release.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-RTMClientApp/Pods-RTMClientApp.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>FFE9B3840EC0474F5FAA7E84</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+	</dict>
+	<key>rootObject</key>
+	<string>0AD922941C1F7EFC007693AB</string>
+</dict>
+</plist>
