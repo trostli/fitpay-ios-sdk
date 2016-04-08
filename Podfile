@@ -5,4 +5,19 @@ target 'FitpaySDK' do
     pod 'AlamofireObjectMapper', '~> 2.1.2'
     pod 'JWTDecode', '~> 1.0.0'
     pod 'libPusher', '~> 1.6.1'
+    pod 'KeychainAccess', '~> 2.3.4'
+end
+
+target 'FitpaySDKTests' do
+    pod 'AlamofireObjectMapper', '~> 2.1.2'
+    pod 'JWTDecode', '~> 1.0.0'
+    pod 'libPusher', '~> 1.6.1'
+    pod 'KeychainAccess', '~> 2.3.4'
+end
+
+target 'RTMClientApp' do
+    pod 'AlamofireObjectMapper', '~> 2.1.2'
+    pod 'JWTDecode', '~> 1.0.0'
+    pod 'libPusher', '~> 1.6.1'
+    pod 'KeychainAccess', '~> 2.3.4'
 end

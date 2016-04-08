@@ -2,8 +2,8 @@
 class JWEHeader
 {
     var cty : String?
-    var enc : String?
-    var alg : String?
+    var enc : JWEEncryption?
+    var alg : JWEAlgorithm?
     var iv  : NSData?
     var tag : NSData?
     var kid : String?
@@ -11,7 +11,7 @@ class JWEHeader
     var sender: String?
     var destination : String?
     
-    init(encryption: String, algorithm: String)
+    init(encryption: JWEEncryption, algorithm: JWEAlgorithm)
     {
         enc = encryption
         alg = algorithm
@@ -29,11 +29,17 @@ class JWEHeader
         }
         
         cty = mappedJson["cty"]
-        enc = mappedJson["enc"]
-        alg = mappedJson["alg"]
         kid = mappedJson["kid"]
         iv = mappedJson["iv"]?.base64URLdecoded()
         tag = mappedJson["tag"]?.base64URLdecoded()
+        
+        if let encStr = mappedJson["enc"] {
+            enc = JWEEncryption(rawValue: encStr)
+        }
+        
+        if let algStr = mappedJson["alg"] {
+            alg = JWEAlgorithm(rawValue: algStr)
+        }
     }
     
     func serialize() throws -> String?
@@ -60,8 +66,8 @@ class JWEHeader
             cty = "application/json"
         }
         
-        paramsDict["enc"] = enc!
-        paramsDict["alg"] = alg!
+        paramsDict["enc"] = enc?.rawValue
+        paramsDict["alg"] = alg?.rawValue
         paramsDict["iv"]  = iv!.base64URLencoded()
         paramsDict["tag"] = tag!.base64URLencoded()
         

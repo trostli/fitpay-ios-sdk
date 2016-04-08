@@ -14,6 +14,36 @@ public class User : ClientModel, Mappable, SecretApplyable
     private static let creditCardsResource = "creditCards"
     private static let devicesResource = "devices"
     
+    public var firstName:String?
+    {
+        return self.info?.firstName
+    }
+    
+    public var lastName:String?
+    {
+        return self.info?.lastName
+    }
+    
+    public var birthDate:String?
+    {
+        return self.info?.birthDate
+    }
+    
+    public var email:String?
+    {
+        return self.info?.email
+    }
+    
+    public var listCreditCardsAvailable:Bool
+    {
+        return self.links?.url(User.creditCardsResource) != nil
+    }
+    
+    public var listDevicesAvailable:Bool
+    {
+        return self.links?.url(User.devicesResource) != nil
+    }
+    
     internal weak var client:RestClient?
 
     
@@ -143,7 +173,7 @@ public class User : ClientModel, Mappable, SecretApplyable
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
         {
-            client.createNewDevice(url, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: secureElementId, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion: completion)
+            client.createNewDevice(url, deviceType: deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion: completion)
         }
         else
         {

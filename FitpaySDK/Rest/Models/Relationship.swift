@@ -3,7 +3,7 @@ import ObjectMapper
 
 public class Relationship : ClientModel, Mappable
 {
-    public var links:[ResourceLink]?
+    internal var links:[ResourceLink]?
     internal var card:CardInfo?
     public var device: DeviceInfo?
     

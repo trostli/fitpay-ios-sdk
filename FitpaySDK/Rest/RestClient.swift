@@ -457,7 +457,7 @@ public class RestClient
      - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    public func confirmAPDUPackage(package:ApduPackage, completion: ConfirmAPDUPackageHandler)
+    public func confirmAPDUPackage(url:String, package:ApduPackage, completion: ConfirmAPDUPackageHandler)
     {
         guard package.packageId != nil else {
             completion(error:NSError.error(code: ErrorCode.BadRequest, domain: RestClient.self, message: "packageId should not be nil"))
@@ -468,7 +468,7 @@ public class RestClient
         {
             (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.POST, "\(API_BASE_URL)/apduPackages/\(package.packageId!)/confirm", parameters: package.dictoinary, encoding: .JSON, headers: headers)
+                let request = self._manager.request(.POST, url, parameters: package.responseDictionary, encoding: .JSON, headers: headers)
                 request.validate().responseString
                 {
                     (response:Response<String, NSError>) -> Void in
@@ -724,7 +724,7 @@ public class RestClient
                 
                 if let cardJSON = rawCard.JSONString
                 {
-                    if let jweObject = try? JWEObject.createNewObject("A256GCMKW", enc: "A256GCM", payload: cardJSON, keyId:headers[RestClient.fpKeyIdKey]!)
+                    if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: cardJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                     {
                         if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
                         {
@@ -833,7 +833,7 @@ public class RestClient
             if let headers = headers
             {
                 let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .JSON, headers: headers)
-                request.validate().responseData(
+                request.validate().responseData(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response:Response<NSData, NSError>) -> Void in
                     
@@ -929,7 +929,7 @@ public class RestClient
                     
                     if let updateJSON = operations.JSONString
                     {
-                        if let jweObject = try? JWEObject.createNewObject("A256GCMKW", enc: "A256GCM", payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
+                        if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                         {
                             if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
                             {
@@ -1615,14 +1615,17 @@ public class RestClient
         }
     }
     
-    public func commits(url:String, commitsAfter:String, limit:Int, offset:Int,
+    public func commits(url:String, commitsAfter:String?, limit:Int, offset:Int,
         completion:CommitsHandler)
     {
-        let parameters = [
+        var parameters = [
             "limit" : "\(limit)",
-            "offset" : "\(offset)",
-            "commitsAfter" : commitsAfter
+            "offset" : "\(offset)"
         ]
+        
+        if (commitsAfter != nil && commitsAfter?.characters.count > 0) {
+            parameters["commitsAfter"] = commitsAfter!
+        }
         
         self.prepareAuthAndKeyHeaders
         {
@@ -1918,6 +1921,51 @@ public class RestClient
                 }
             }
         })
+    }
+    
+    
+    internal func collectionItems<T>(url:String, completion:(resultCollection:ResultCollection<T>?, error:ErrorType?) -> Void) -> T?
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.GET, url, parameters: nil, encoding: .URL, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<ResultCollection<T>, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(resultCollection: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.client = self
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            completion(resultCollection: resultValue, error: response.result.error)
+                        }
+                        else
+                        {
+                            completion(resultCollection: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(resultCollection: nil, error: error)
+                })
+            }
+        }
+        
+        return nil
     }
 }
 

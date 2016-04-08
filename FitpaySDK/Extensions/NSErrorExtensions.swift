@@ -8,6 +8,11 @@ extension NSError
         return NSError(domain: "\(domain.self)", code:code, userInfo: [NSLocalizedDescriptionKey : message])
     }
     
+    class func error (code code:protocol<RawIntValue, CustomStringConvertible>, domain:AnyClass, message:String? = nil) -> NSError
+    {
+        return NSError(domain: "\(domain.self)", code:code.rawValue, userInfo: [NSLocalizedDescriptionKey : message ?? code.description])
+    }
+    
     class func error <T:RawIntValue>(code code:T, domain:AnyClass, message:String) -> NSError
     {
         return NSError(domain: "\(domain.self)", code:code.rawValue, userInfo: [NSLocalizedDescriptionKey : message])
