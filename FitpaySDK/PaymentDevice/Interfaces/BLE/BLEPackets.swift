@@ -2,14 +2,29 @@ import CoreBluetooth
 
 struct Continuation {
     var uuid : CBUUID
-    var data : [NSData]
+    var dataParts : [Int:NSData]
     init()  {
         uuid = CBUUID()
-        data = [NSData]()
+        dataParts =  [Int:NSData]()
     }
     init(uuidValue: CBUUID) {
         uuid = uuidValue
-        data = [NSData]()
+        dataParts =  [Int:NSData]()
+    }
+    
+    var data : NSData? {
+        let dataFromParts = NSMutableData()
+        var expectedKey = 0
+        for (key, value) in dataParts {
+            if (key != expectedKey) {
+                return nil
+            }
+            
+            expectedKey += 1
+            
+            dataFromParts.appendData(value)
+        }
+        return dataFromParts
     }
 }
 
@@ -86,7 +101,6 @@ struct ContinuationControlMessage {
             data.getBytes(&u32, length: 4)
             crc32 = UInt32(littleEndian: u32)
         } else {
-            print("Continuation control data is not the correct length");
             uuid = CBUUID()
             crc32 = UInt32()
         }
@@ -144,7 +158,7 @@ struct DeviceControlMessage {
     let op : UInt8
     let msg : NSMutableData
     
-    init(operation: PaymentDevice.DeviceControlState) {
+    init(operation: DeviceControlState) {
         op = UInt8(operation.rawValue)
         msg = NSMutableData()
         var op8 = op

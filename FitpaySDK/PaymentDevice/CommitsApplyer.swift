@@ -4,6 +4,8 @@ internal class CommitsApplyer {
     private let semaphore = dispatch_semaphore_create(0)
     private var thread : NSThread?
     private var applyerCompletionHandler : ApplyerCompletionHandler!
+    private var totalApduCommands = 0
+    private var appliedApduCommands = 0
     
     internal var isRunning : Bool {
         guard let thread = self.thread else {
@@ -21,6 +23,16 @@ internal class CommitsApplyer {
         }
         
         self.commits = commits
+        
+        totalApduCommands = 0
+        appliedApduCommands = 0
+        for commit in commits {
+            if commit.commitType == CommitType.APDU_PACKAGE {
+                if let apduCommandsCount = commit.payload?.apduPackage?.apduCommands?.count {
+                    totalApduCommands += apduCommandsCount
+                }
+            }
+        }
         
         self.applyerCompletionHandler = completion
         self.thread = NSThread(target: self, selector:#selector(CommitsApplyer.processCommits), object: nil)
@@ -134,7 +146,7 @@ internal class CommitsApplyer {
             
             var hasCommandError = false
             for command in apduPackage.apduCommands! {
-                if command.responseCode != ApduPackage.successfullResponse.hex {
+                if command.responseType == APDUResponseType.Error {
                     hasCommandError = true
                     break
                 }
@@ -186,6 +198,10 @@ internal class CommitsApplyer {
                 completion(error: error)
                 return
             }
+            
+            self.appliedApduCommands += 1
+            
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.APDU_COMMANDS_PROGRESS, params: ["applied":self.appliedApduCommands, "total":self.totalApduCommands])
             
             self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, completion: completion)
         })

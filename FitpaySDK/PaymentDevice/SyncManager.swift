@@ -10,6 +10,7 @@ public enum SyncEventType : Int {
     case SYNC_FAILED
     case SYNC_COMPLETED
     case SYNC_PROGRESS
+    case APDU_COMMANDS_PROGRESS
     
     case COMMIT_PROCESSED
 }
@@ -34,12 +35,12 @@ public class SyncManager {
     
     public enum ErrorCode : Int, ErrorType, RawIntValue, CustomStringConvertible
     {
-        case UnknownError = 0
-        case CantConnectToDevice = 10001
-        case CantApplyAPDUCommand = 10002
-        case CantFetchCommits = 10003
+        case UnknownError                   = 0
+        case CantConnectToDevice            = 10001
+        case CantApplyAPDUCommand           = 10002
+        case CantFetchCommits               = 10003
         case CantFindDeviceWithSerialNumber = 10004
-        case SyncAlreadyStarted = 10005
+        case SyncAlreadyStarted             = 10005
         
         public var description : String {
             switch self {

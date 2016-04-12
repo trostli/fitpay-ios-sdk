@@ -67,15 +67,15 @@ class PaymentDeviceTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("disconnection from device check")
         
-        var newState = PaymentDevice.SecurityNFCState.Disabled
+        var newState = SecurityNFCState.Disabled
         self.paymentDevice.onDeviceConnected =
         {
             (deviceInfo, error) -> Void in
             
             XCTAssertNil(error)
             
-            if (self.paymentDevice.nfcState != nil && self.paymentDevice.nfcState == PaymentDevice.SecurityNFCState.Disabled) {
-                newState = PaymentDevice.SecurityNFCState.Enabled
+            if (self.paymentDevice.nfcState != nil && self.paymentDevice.nfcState == SecurityNFCState.Disabled) {
+                newState = SecurityNFCState.Enabled
             }
             
             self.paymentDevice.writeSecurityState(newState)
@@ -87,8 +87,8 @@ class PaymentDeviceTests: XCTestCase
             
             XCTAssert(newState == state)
             
-            if state == PaymentDevice.SecurityNFCState.Disabled {
-                newState = PaymentDevice.SecurityNFCState.Enabled
+            if state == SecurityNFCState.Disabled {
+                newState = SecurityNFCState.Enabled
                 self.paymentDevice.writeSecurityState(newState)
             } else {
                 expectation.fulfill()
@@ -182,6 +182,12 @@ class PaymentDeviceTests: XCTestCase
             print("sync progress", eventPayload)
         }
         
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.APDU_COMMANDS_PROGRESS)
+        {
+            (eventPayload) -> Void in
+            print("apdu progress", eventPayload)
+        }
+        
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_COMPLETED)
         {
             (eventPayload) -> Void in
@@ -189,10 +195,10 @@ class PaymentDeviceTests: XCTestCase
             expectation.fulfill()
         }
         
-        SyncManager.sharedInstance.paymentDevice.onTransactionNotificationReceived =
+        SyncManager.sharedInstance.paymentDevice.onNotificationReceived =
         {
-            (transactionData)->Void in
-            print("notification:", transactionData)
+            (notificationData)->Void in
+            print("notification:", notificationData)
         }
         
         let clientId = "pagare"

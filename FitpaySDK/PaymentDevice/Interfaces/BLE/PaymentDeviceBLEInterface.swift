@@ -13,14 +13,15 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     var securityWriteCharacteristic: CBCharacteristic?
     var deviceControlCharacteristic: CBCharacteristic?
     var applicationControlCharacteristic: CBCharacteristic?
+    var notificationCharacteristic: CBCharacteristic?
     
     var continuation : Continuation = Continuation()
     var deviceInfoCollector : BLEDeviceInfoCollector?
     
     private var _deviceInfo : DeviceInfo?
-    private var _nfcState : PaymentDevice.SecurityNFCState?
+    private var _nfcState : SecurityNFCState?
     
-    let MaxPacketSize : Int = 20
+    let maxPacketSize : Int = 20
     var sequenceId: UInt16 = 0
     var sendingAPDU : Bool = false
     
@@ -70,7 +71,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         return self._deviceInfo
     }
     
-    func nfcState() -> PaymentDevice.SecurityNFCState? {
+    func nfcState() -> SecurityNFCState? {
         return self._nfcState
     }
     
@@ -101,14 +102,14 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         
         self.sendingAPDU = true
         
-        if apduPacket.length <= MaxPacketSize {
+        if apduPacket.length <= maxPacketSize {
             wearablePeripheral.writeValue(apduPacket, forCharacteristic: apduControlCharacteristic, type: CBCharacteristicWriteType.WithResponse)
         } else {
             sendAPDUContinuation(apduPacket)
         }
     }
     
-    func sendDeviceControl(state: PaymentDevice.DeviceControlState) -> ErrorType? {
+    func sendDeviceControl(state: DeviceControlState) -> ErrorType? {
         guard let deviceControlCharacteristic = self.deviceControlCharacteristic else {
             return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
         }
@@ -119,7 +120,17 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         return nil
     }
     
-    func writeSecurityState(state: PaymentDevice.SecurityNFCState) -> ErrorType? {
+    func sendNotification(notificationData: NSData) -> ErrorType? {
+        guard let notificationCharacteristic = self.notificationCharacteristic else {
+            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
+        }
+        
+        wearablePeripheral?.writeValue(notificationData, forCharacteristic: notificationCharacteristic, type: CBCharacteristicWriteType.WithResponse)
+        
+        return nil
+    }
+    
+    func writeSecurityState(state: SecurityNFCState) -> ErrorType? {
         guard let wearablePeripheral = self.wearablePeripheral, securityWriteCharacteristic = self.securityWriteCharacteristic else {
             return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
         }
@@ -139,7 +150,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         }
         
         var packetNumber : UInt16 = 0
-        let maxDataSize = MaxPacketSize - sizeofValue(packetNumber)
+        let maxDataSize = maxPacketSize - sizeofValue(packetNumber)
         
         var bytesSent: Int = 0
         
@@ -298,22 +309,22 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
             } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_CONTINUATION_PACKET {
                 self.continuationCharacteristicPacket = characteristic
                 wearablePeripheral?.setNotifyValue(true, forCharacteristic: characteristic)
-            } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_APDU_CONTROL) {
+            } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_APDU_CONTROL {
                 self.apduControlCharacteristic = characteristic
-            } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_APDU_RESULT) {
+            } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_APDU_RESULT {
                 wearablePeripheral?.setNotifyValue(true, forCharacteristic: characteristic)
-            } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_TRANSACTION_NOTIFICATION) {
+            } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_NOTIFICATION {
                 wearablePeripheral?.setNotifyValue(true, forCharacteristic: characteristic)
-            } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURITY_READ) {
+            } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURITY_READ {
                 wearablePeripheral?.setNotifyValue(true, forCharacteristic: characteristic)
                 peripheral.readValueForCharacteristic(characteristic)
-            } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURITY_WRITE) {
+            } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURITY_WRITE {
                 self.securityWriteCharacteristic = characteristic
-            } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURE_ELEMENT_ID) {
+            } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURE_ELEMENT_ID {
                 peripheral.readValueForCharacteristic(characteristic)
-            } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_DEVICE_CONTROL) {
+            } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_DEVICE_CONTROL {
                 self.deviceControlCharacteristic = characteristic
-            } else if (characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_APPLICATION_CONTROL) {
+            } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_APPLICATION_CONTROL {
                 self.applicationControlCharacteristic = characteristic
                 wearablePeripheral?.setNotifyValue(true, forCharacteristic: characteristic)
             }
@@ -344,14 +355,17 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                     debugPrint("Previous continuation item exists")
                 }
                 continuation.uuid = continuationControlMessage.uuid
-                continuation.data.removeAll()
+                continuation.dataParts.removeAll()
                 
             } else {
-                //TODO: need to verify all packets received - change data structure to dictionary
-                let completeResponse = NSMutableData()
-                for packet in continuation.data {
-                    completeResponse.appendData(packet)
+                guard let completeResponse = continuation.data else {
+                    if let completion = self.paymentDevice.apduResponseHandler {
+                        self.paymentDevice.apduResponseHandler = nil
+                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUPacketCorrupted, domain: PaymentDeviceBLEInterface.self))
+                    }
+                    return
                 }
+                
                 let crc = completeResponse.CRC32HashValue
                 let crc32 = UInt32(littleEndian: UInt32(crc))
                 
@@ -363,7 +377,7 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                     return
                 }
                 
-                if (continuation.uuid.UUIDString == PAYMENT_CHARACTERISTIC_UUID_APDU_RESULT.UUIDString) {
+                if continuation.uuid.UUIDString == PAYMENT_CHARACTERISTIC_UUID_APDU_RESULT.UUIDString {
                     let apduResultMessage = ApduResultMessage(msg: completeResponse)
                     processAPDUResponse(apduResultMessage)
                 } else {
@@ -375,21 +389,21 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                 
                 // clear the continuation contents
                 continuation.uuid = CBUUID()
-                continuation.data.removeAll()
+                continuation.dataParts.removeAll()
             }
             
         } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_CONTINUATION_PACKET {
             let msg : ContinuationPacketMessage = ContinuationPacketMessage(msg: characteristic.value!)
             let pos = Int(msg.sortOrder);
-            continuation.data.insert(msg.data, atIndex: pos)
-        } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_TRANSACTION_NOTIFICATION {
-            if let onTransactionNotificationReceived = self.paymentDevice.onTransactionNotificationReceived {
-                onTransactionNotificationReceived(transactionData: characteristic.value)
+            continuation.dataParts[pos] = msg.data
+        } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_NOTIFICATION {
+            if let onNotificationReceived = self.paymentDevice.onNotificationReceived {
+                onNotificationReceived(notificationData: characteristic.value)
             }
         } else if characteristic.UUID == PAYMENT_CHARACTERISTIC_UUID_SECURITY_READ {
             if let value = characteristic.value {
                 let msg = SecurityStateMessage(msg: value)
-                if let securityState = PaymentDevice.SecurityNFCState(rawValue: Int(msg.nfcState)) {
+                if let securityState = SecurityNFCState(rawValue: Int(msg.nfcState)) {
                     _nfcState = securityState
                     
                     if let onSecurityStateChanged = self.paymentDevice.onSecurityStateChanged {

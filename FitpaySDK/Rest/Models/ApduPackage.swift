@@ -25,9 +25,7 @@ public class ApduPackage : Mappable
     public var validUntil:String?
     public var validUntilEpoch:CLong?
     public var apduPackageUrl:String?
-    
-    public static let successfullResponse = NSData(bytes: [0x90, 0x00] as [UInt8], length: 2)
-    
+        
     init() {
     }
     
@@ -94,6 +92,12 @@ public class ApduPackage : Mappable
     
 }
 
+public enum APDUResponseType : Int {
+    case Success = 0x0
+    case Warning
+    case Error
+}
+
 public class APDUCommand : Mappable {
     internal var links:[ResourceLink]?
     public var commandId:String?
@@ -104,6 +108,46 @@ public class APDUCommand : Mappable {
     
     public var responseCode:String?
     public var responseData:String?
+    
+    public var responseType : APDUResponseType? {
+        guard let responseCode = self.responseCode, responseData = responseCode.hexToData() else {
+            return nil
+        }
+        
+        for successCode in APDUCommand.successResponses {
+            if UInt8(responseData.bytes[0]) != successCode[0] {
+                continue
+            }
+            
+            if successCode.count == 1 {
+                return APDUResponseType.Success
+            }
+            
+            if responseData.length > 1 && successCode.count > 1 {
+                if UInt8(responseData.bytes[1]) == successCode[1] {
+                    return APDUResponseType.Success
+                }
+            }
+        }
+        
+        for warningCode in APDUCommand.warningResponses {
+            if UInt8(responseData.bytes[0]) != warningCode[0] {
+                continue
+            }
+            
+            if warningCode.count == 1 {
+                return APDUResponseType.Warning
+            }
+            
+            if responseData.length > 1 && warningCode.count > 1 {
+                if UInt8(responseData.bytes[1]) == warningCode[1] {
+                    return APDUResponseType.Warning
+                }
+            }
+        }
+        
+        return APDUResponseType.Error
+    }
     
     init() {
     }
@@ -142,4 +186,15 @@ public class APDUCommand : Mappable {
             return dic
         }
     }
+    
+    
+    internal static let successResponses : [[UInt8]] = [
+        [90, 00],
+        [61/*, XX */]
+    ]
+    
+    internal static let warningResponses : [[UInt8]] = [
+        [62/*, XX */],
+        [63/*, XX */]
+    ]
 }

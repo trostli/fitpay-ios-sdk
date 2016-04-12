@@ -1,16 +1,30 @@
 
+public enum SecurityNFCState : Int
+{
+    case Disabled         = 0x00
+    case Enabled          = 0x01
+    case DoNotChangeState = 0xFF
+}
+
+public enum DeviceControlState : Int
+{
+    case ESEPowerOFF    = 0x00
+    case ESEPowerON     = 0x02
+    case ESEPowerReset  = 0x01
+}
+
 public class PaymentDevice : NSObject
 {
     public enum ErrorCode : Int, ErrorType, RawIntValue, CustomStringConvertible
     {
-        case UnknownError = 0
-        case BadBLEState = 10001
-        case DeviceDataNotCollected = 10002
-        case WaitingForAPDUResponse = 10003
-        case APDUPacketCorrupted = 10004
-        case APDUDataNotFull = 10005
-        case APDUWrongSequenceId = 10006
-        case OperationTimeout = 10007
+        case UnknownError               = 0
+        case BadBLEState                = 10001
+        case DeviceDataNotCollected     = 10002
+        case WaitingForAPDUResponse     = 10003
+        case APDUPacketCorrupted        = 10004
+        case APDUDataNotFull            = 10005
+        case APDUWrongSequenceId        = 10006
+        case OperationTimeout           = 10007
         case DeviceShouldBeDisconnected = 10008
         
         public var description : String {
@@ -36,24 +50,10 @@ public class PaymentDevice : NSObject
             }
         }
     }
-    
-    public enum SecurityNFCState : Int
-    {
-        case Disabled         = 0x00
-        case Enabled          = 0x01
-        case DoNotChangeState = 0xFF
-    }
-    
-    public enum DeviceControlState : Int
-    {
-        case ESEPowerOFF    = 0x00
-        case ESEPowerON     = 0x02
-        case ESEPowerReset  = 0x01
-    }
-    
+
     public typealias ConnectionHandler = (deviceInfo:DeviceInfo?, error:ErrorType?)->Void
     public typealias DisconnectionHandler = ()->Void
-    public typealias TransactionHandler = (transactionData:NSData?)->Void
+    public typealias NotificationHandler = (notificationData:NSData?)->Void
     public typealias SecurityStateHandler = (securityState:SecurityNFCState)->Void
     public typealias ApplicationControlHandler = (applicationControl:ApplicationControlMessage) -> Void
     
@@ -64,8 +64,8 @@ public class PaymentDevice : NSObject
     /// Called when connection with payment device was lost
     public var onDeviceDisconnected : DisconnectionHandler?
     
-    /// Called when transaction was made
-    public var onTransactionNotificationReceived : TransactionHandler?
+    /// Called when received notification from payment device
+    public var onNotificationReceived : NotificationHandler?
     
     /// Called when security event has taken place 
     /// (i.e. the wearable has been removed, the wearable has been activated/enabled/placed on person)
@@ -122,6 +122,9 @@ public class PaymentDevice : NSObject
         return self.deviceInterface.deviceInfo()
     }
     
+    /**
+     Returns NFC state on payment device.
+     */
     public var nfcState : SecurityNFCState? {
         return self.deviceInterface.nfcState()
     }
@@ -134,6 +137,16 @@ public class PaymentDevice : NSObject
      */
     public func sendDeviceControl(state: DeviceControlState) -> ErrorType? {
         return self.deviceInterface.sendDeviceControl(state)
+    }
+    
+    /**
+     Sends a notification to the payment device. 
+     Payment devices can then provide visual or tactile feedback depending on their capabilities.
+     
+     - parameter notificationData: //TODO:????
+     */
+    public func sendNotification(notificationData: NSData) -> ErrorType? {
+        return self.deviceInterface.sendNotification(notificationData)
     }
     
     /**
