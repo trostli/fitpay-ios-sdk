@@ -23,9 +23,11 @@ public class PaymentDevice : NSObject
         case WaitingForAPDUResponse     = 10003
         case APDUPacketCorrupted        = 10004
         case APDUDataNotFull            = 10005
-        case APDUWrongSequenceId        = 10006
-        case OperationTimeout           = 10007
-        case DeviceShouldBeDisconnected = 10008
+        case APDUErrorResponse          = 10006
+        case APDUWrongSequenceId        = 10007
+        case APDUSendingTimeout         = 10008
+        case OperationTimeout           = 10009
+        case DeviceShouldBeDisconnected = 10010
         
         public var description : String {
             switch self {
@@ -45,8 +47,12 @@ public class PaymentDevice : NSObject
                 return "Connection timeout. Can't find device."
             case .DeviceShouldBeDisconnected:
                 return "Payment device should be disconnected."
+            case .APDUSendingTimeout:
+                return "APDU timeout error occurred."
             case .APDUWrongSequenceId:
                 return "Received APDU with wrong sequenceId."
+            case .APDUErrorResponse:
+                return "Received APDU command with error response."
             }
         }
     }
@@ -208,6 +214,11 @@ public class PaymentDevice : NSObject
             
             apduCommand.responseData = apduResponse?.msg.hex
             apduCommand.responseCode = apduResponse?.responseCode.hex
+            
+            if apduCommand.responseType == APDUResponseType.Error {
+                completion(apduCommand: apduCommand, error: NSError.error(code: PaymentDevice.ErrorCode.APDUErrorResponse, domain: PaymentDeviceBLEInterface.self))
+                return
+            }
             
             completion(apduCommand: apduCommand, error: nil)
         }

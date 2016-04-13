@@ -22,6 +22,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     private var _nfcState : SecurityNFCState?
     
     let maxPacketSize : Int = 20
+    let apduSecsTimeout : Double = 15
     var sequenceId: UInt16 = 0
     var sendingAPDU : Bool = false
     
@@ -106,6 +107,27 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
             wearablePeripheral.writeValue(apduPacket, forCharacteristic: apduControlCharacteristic, type: CBCharacteristicWriteType.WithResponse)
         } else {
             sendAPDUContinuation(apduPacket)
+        }
+        
+        startAPDUTimeoutTimer(self.apduSecsTimeout)
+    }
+    
+    func startAPDUTimeoutTimer(secs: Double) {
+        let currentSequence = self.sequenceId
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(UInt64(secs) * NSEC_PER_SEC))
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            [unowned self] () -> Void in
+            if (self.sendingAPDU && currentSequence == self.sequenceId) {
+                self.sendingAPDU = false
+                
+                self.continuation.uuid = CBUUID()
+                self.continuation.dataParts.removeAll()
+                
+                if let completion = self.paymentDevice.apduResponseHandler {
+                    self.paymentDevice.apduResponseHandler = nil
+                    completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUSendingTimeout, domain: PaymentDeviceBLEInterface.self))
+                }
+            }
         }
     }
     

@@ -79,7 +79,9 @@ public class ApduPackage : Mappable
                 if apduResponses.count > 0 {
                     var responsesArray : [AnyObject] = []
                     for resp in apduResponses {
-                        responsesArray.append(resp.responseDictionary)
+                        if let _ = resp.responseData {
+                            responsesArray.append(resp.responseDictionary)
+                        }
                     }
                     
                     dic["apduResponses"] = responsesArray

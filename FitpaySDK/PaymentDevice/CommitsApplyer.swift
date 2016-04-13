@@ -144,18 +144,10 @@ internal class CommitsApplyer {
                 return
             }
             
-            var hasCommandError = false
-            for command in apduPackage.apduCommands! {
-                if command.responseType == APDUResponseType.Error {
-                    hasCommandError = true
-                    break
-                }
-            }
-            
-            if error != nil {
-                apduPackage.state = APDUPackageResponseState.ERROR
-            } else if hasCommandError {
+            if (error != nil && error as? NSError != nil && (error as! NSError).code == PaymentDevice.ErrorCode.APDUErrorResponse.rawValue) {
                 apduPackage.state = APDUPackageResponseState.FAILED
+            } else if error != nil {
+                apduPackage.state = APDUPackageResponseState.ERROR
             } else {
                 apduPackage.state = APDUPackageResponseState.PROCESSED
             }
