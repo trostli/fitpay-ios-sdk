@@ -7,8 +7,7 @@
 //
 
 #import "ViewController.h"
-#import <FitpaySDK/FitpaySDK.h>
-
+#import <FitpaySDK/FitpaySDK-Swift.h>
 
 @interface ViewController ()
 
