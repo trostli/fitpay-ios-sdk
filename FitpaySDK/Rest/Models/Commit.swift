@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class Commit : ClientModel, Mappable, SecretApplyable
+public class Commit : NSObject, ClientModel, Mappable, SecretApplyable
 {
     var links:[ResourceLink]?
     var commitType:CommitType?

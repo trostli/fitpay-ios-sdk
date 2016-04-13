@@ -7,7 +7,7 @@ public enum APDUPackageResponseState : String {
     case EXPIRED = "EXPIRED"
 }
 
-public class ApduPackage : Mappable
+public class ApduPackage : NSObject, Mappable
 {
     internal var links:[ResourceLink]?
     public var seIdType:String?
@@ -28,7 +28,7 @@ public class ApduPackage : Mappable
     
     public static let successfullResponse = NSData(bytes: [0x90, 0x00] as [UInt8], length: 2)
     
-    init() {
+    override init() {
     }
     
     public required init?(_ map: Map)

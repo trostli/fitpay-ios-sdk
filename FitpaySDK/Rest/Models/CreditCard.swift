@@ -17,7 +17,7 @@ public enum TokenizationState : String
     DECLINED = "DECLINED"
 }
 
-public class CreditCard : ClientModel, Mappable, SecretApplyable
+public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links:[ResourceLink]?
     public var creditCardId:String?
@@ -317,7 +317,7 @@ public class CreditCard : ClientModel, Mappable, SecretApplyable
     }
 }
 
-public class CardMetadata : ClientModel, Mappable
+public class CardMetadata : NSObject, ClientModel, Mappable
 {
     public var labelColor:String?
     public var issuerName:String?

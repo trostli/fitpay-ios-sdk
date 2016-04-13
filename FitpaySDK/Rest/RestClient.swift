@@ -3,7 +3,7 @@ import Foundation
 import Alamofire
 import AlamofireObjectMapper
 
-public class RestClient
+public class RestClient : NSObject
 {
     /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
@@ -71,6 +71,7 @@ public class RestClient
     public func listUsers(limit limit:Int, offset:Int, completion: ListUsersHandler)
     {
         //TODO: Implement or remove this
+        assertionFailure("unimplemented functionality")
     }
 
     /**
@@ -93,6 +94,7 @@ public class RestClient
     public func createUser(firstName firstName:String, lastName:String, birthDate:String, email:String, completion:CreateUsersHandler)
     {
         //TODO: Implement or remove this
+        assertionFailure("unimplemented functionality")
     }
     
     /**
@@ -177,7 +179,7 @@ public class RestClient
      */
     public func updateUser(id id:String, firstName:String?, lastName:String?, birthDate:Int?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:UpdateUserHandler)
     {
-
+        assertionFailure("unimplemented functionality")
     }
     
     /**
@@ -195,7 +197,7 @@ public class RestClient
      */
      public func deleteUser(id id:String, completion:DeleteUserHandler)
     {
-
+        assertionFailure("unimplemented functionality")
     }
     
     
@@ -617,9 +619,9 @@ public class RestClient
         }
     }
     
-    typealias CreateKeyIfNeeded = CreateEncryptionKeyHandler
+    typealias CreateKeyIfNeededHandler = CreateEncryptionKeyHandler
     
-    private func createKeyIfNeeded(completion: CreateKeyIfNeeded)
+    private func createKeyIfNeeded(completion: CreateKeyIfNeededHandler)
     {
         if let key = self.key
         {
@@ -1459,7 +1461,7 @@ public class RestClient
     }
 
 
-    public func createNewDevice(url:String, deviceType:String, manufacturerName:String, deviceName:String,
+    internal func createNewDevice(url:String, deviceType:String, manufacturerName:String, deviceName:String,
         serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
         softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
         secureElementId:String, pairing:String, completion:CreateNewDeviceHandler)
@@ -1524,7 +1526,7 @@ public class RestClient
         }
     }
     
-    public func deleteDevice(url:String, completion:DeleteDeviceHandler)
+    internal func deleteDevice(url:String, completion:DeleteDeviceHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -1551,7 +1553,7 @@ public class RestClient
         }
     }
     
-    public func updateDevice(url:String, firmwareRevision:String?, softwareRevision:String?,
+    internal func updateDevice(url:String, firmwareRevision:String?, softwareRevision:String?,
         completion:UpdateDeviceHandler)
     {
         var paramsArray = [AnyObject]()

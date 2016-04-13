@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class Relationship : ClientModel, Mappable
+public class Relationship : NSObject, ClientModel, Mappable
 {
     internal var links:[ResourceLink]?
     internal var card:CardInfo?

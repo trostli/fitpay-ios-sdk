@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class ResultCollection<T: Mappable> : ClientModel, Mappable, SecretApplyable
+public class ResultCollection<T: Mappable> : NSObject, ClientModel, Mappable, SecretApplyable
 {
     public var limit:Int?
     public var offset:Int?

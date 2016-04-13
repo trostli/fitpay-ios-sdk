@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class User : ClientModel, Mappable, SecretApplyable
+public class User : NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links:[ResourceLink]?
     public var id:String?

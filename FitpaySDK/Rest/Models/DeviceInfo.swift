@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class DeviceInfo : ClientModel, Mappable, SecretApplyable
+public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links:[ResourceLink]?
     public var deviceIdentifier:String?

@@ -30,7 +30,7 @@ public enum VerificationResult : String
     EXPIRED_SESSION = "EXPIRED_SESSION"
 }
 
-public class VerificationMethod : ClientModel, Mappable
+public class VerificationMethod : NSObject, ClientModel, Mappable
 {
     internal var links:[ResourceLink]?
     public var verificationId:String?

@@ -12,6 +12,8 @@
 #include <string.h>
 #include <openssl/sha.h>
 
+
+
 static bool simpleSHA1(const void* input, unsigned long length, char* output)
 {
     unsigned char md[SHA_DIGEST_LENGTH];

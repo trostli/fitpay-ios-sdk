@@ -36,7 +36,7 @@ internal class AuthorizationDetails : Mappable
     }
 }
 
-public class RestSession
+public class RestSession : NSObject
 {
     public enum Error : Int, ErrorType, RawIntValue
     {

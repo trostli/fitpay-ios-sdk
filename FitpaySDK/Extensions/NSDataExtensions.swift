@@ -1,6 +1,7 @@
 
 import Foundation
 import FPCrypto
+import OpenSSL
 
 extension NSData
 {
