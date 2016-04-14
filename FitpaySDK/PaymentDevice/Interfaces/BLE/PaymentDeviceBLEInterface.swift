@@ -22,9 +22,11 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     private var _nfcState : SecurityNFCState?
     
     let maxPacketSize : Int = 20
-    let apduSecsTimeout : Double = 15
+    let apduSecsTimeout : Double = 5
     var sequenceId: UInt16 = 0
     var sendingAPDU : Bool = false
+    
+    var timeoutTimer : NSTimer?
     
     required init(paymentDevice device: PaymentDevice) {
         self.paymentDevice = device
@@ -93,6 +95,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
             return
         }
         
+        
         self.sequenceId = sequenceNumber
         
         let apduPacket = NSMutableData()
@@ -113,20 +116,25 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     }
     
     func startAPDUTimeoutTimer(secs: Double) {
-        let currentSequence = self.sequenceId
-        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(UInt64(secs) * NSEC_PER_SEC))
-        dispatch_after(delayTime, dispatch_get_main_queue()) {
-            [unowned self] () -> Void in
-            if (self.sendingAPDU && currentSequence == self.sequenceId) {
-                self.sendingAPDU = false
-                
-                self.continuation.uuid = CBUUID()
-                self.continuation.dataParts.removeAll()
-                
-                if let completion = self.paymentDevice.apduResponseHandler {
-                    self.paymentDevice.apduResponseHandler = nil
-                    completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUSendingTimeout, domain: PaymentDeviceBLEInterface.self))
-                }
+        timeoutTimer?.invalidate()
+        timeoutTimer = NSTimer.scheduledTimerWithTimeInterval(secs, target:self, selector: #selector(timeoutCheck), userInfo: nil, repeats: false)
+    }
+    
+    func stopAPDUTimeout() {
+        timeoutTimer?.invalidate()
+        timeoutTimer = nil
+    }
+    
+    func timeoutCheck() {
+        if (self.sendingAPDU) {
+            self.sendingAPDU = false
+            
+            self.continuation.uuid = CBUUID()
+            self.continuation.dataParts.removeAll()
+            
+            if let completion = self.paymentDevice.apduResponseHandler {
+                self.paymentDevice.apduResponseHandler = nil
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUSendingTimeout, domain: PaymentDeviceBLEInterface.self))
             }
         }
     }
@@ -235,6 +243,10 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     }
     
     private func processAPDUResponse(packet:ApduResultMessage) {
+        stopAPDUTimeout()
+        
+        self.sendingAPDU = false
+        
         if self.sequenceId != packet.sequenceId {
             if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
@@ -244,7 +256,6 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         }
         
         self.sequenceId += 1
-        self.sendingAPDU = false
         
         if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
             self.paymentDevice.apduResponseHandler = nil
@@ -396,6 +407,8 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                         self.paymentDevice.apduResponseHandler = nil
                         completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUPacketCorrupted, domain: PaymentDeviceBLEInterface.self))
                     }
+                    continuation.uuid = CBUUID()
+                    continuation.dataParts.removeAll()
                     return
                 }
                 

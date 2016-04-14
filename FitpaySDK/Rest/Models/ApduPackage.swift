@@ -112,12 +112,14 @@ public class APDUCommand : Mappable {
     public var responseData:String?
     
     public var responseType : APDUResponseType? {
-        guard let responseCode = self.responseCode, responseData = responseCode.hexToData() else {
+        guard let responseCode = self.responseCode, responseCodeDataType = responseCode.hexToData() else {
             return nil
         }
         
+        let responseArray = Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>(responseCodeDataType.bytes), count: responseCodeDataType.length))
+        
         for successCode in APDUCommand.successResponses {
-            if UInt8(responseData.bytes[0]) != successCode[0] {
+            if responseArray[0] != successCode[0] {
                 continue
             }
             
@@ -125,15 +127,15 @@ public class APDUCommand : Mappable {
                 return APDUResponseType.Success
             }
             
-            if responseData.length > 1 && successCode.count > 1 {
-                if UInt8(responseData.bytes[1]) == successCode[1] {
+            if responseArray.count > 1 && successCode.count > 1 {
+                if responseArray[1] == successCode[1] {
                     return APDUResponseType.Success
                 }
             }
         }
         
         for warningCode in APDUCommand.warningResponses {
-            if UInt8(responseData.bytes[0]) != warningCode[0] {
+            if responseArray[0] != warningCode[0] {
                 continue
             }
             
@@ -141,8 +143,8 @@ public class APDUCommand : Mappable {
                 return APDUResponseType.Warning
             }
             
-            if responseData.length > 1 && warningCode.count > 1 {
-                if UInt8(responseData.bytes[1]) == warningCode[1] {
+            if responseArray.count > 1 && warningCode.count > 1 {
+                if responseArray[1] == warningCode[1] {
                     return APDUResponseType.Warning
                 }
             }
@@ -191,12 +193,13 @@ public class APDUCommand : Mappable {
     
     
     internal static let successResponses : [[UInt8]] = [
-        [90, 00],
-        [61/*, XX */]
+        [0x90, 0x00],
+        [0x61/*, XX */]
     ]
     
     internal static let warningResponses : [[UInt8]] = [
-        [62/*, XX */],
-        [63/*, XX */]
+        [0x62/*, XX */],
+        [0x63/*, XX */],
+        [0, 1] //TODO: delete this
     ]
 }

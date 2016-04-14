@@ -28,6 +28,7 @@ public class PaymentDevice : NSObject
         case APDUSendingTimeout         = 10008
         case OperationTimeout           = 10009
         case DeviceShouldBeDisconnected = 10010
+        case DeviceShouldBeConnected    = 10011
         
         public var description : String {
             switch self {
@@ -47,6 +48,8 @@ public class PaymentDevice : NSObject
                 return "Connection timeout. Can't find device."
             case .DeviceShouldBeDisconnected:
                 return "Payment device should be disconnected."
+            case .DeviceShouldBeConnected:
+                return "Payment device should be connected."
             case .APDUSendingTimeout:
                 return "APDU timeout error occurred."
             case .APDUWrongSequenceId:
@@ -192,6 +195,11 @@ public class PaymentDevice : NSObject
     }
     
     internal func sendAPDUData(data: NSData, sequenceNumber: UInt16, completion: APDUResponseHandler) {
+        guard isConnected else {
+            completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeConnected, domain: PaymentDeviceBLEInterface.self))
+            return
+        }
+        
         self.apduResponseHandler = completion
         self.deviceInterface.sendAPDUData(data, sequenceNumber: sequenceNumber)
     }
@@ -208,7 +216,7 @@ public class PaymentDevice : NSObject
             (apduResponse, error) -> Void in
             
             if let error = error {
-                completion(apduCommand: nil, error: error)
+                completion(apduCommand: apduCommand, error: error)
                 return
             }
             

@@ -41,6 +41,8 @@ public class SyncManager {
         case CantFetchCommits               = 10003
         case CantFindDeviceWithSerialNumber = 10004
         case SyncAlreadyStarted             = 10005
+        case CommitsApplyerIsBusy           = 10006
+        case ConnectionWithDeviceWasLost    = 10007
         
         public var description : String {
             switch self {
@@ -56,6 +58,10 @@ public class SyncManager {
                 return "Can't find device with serial number of connected payment device."
             case .SyncAlreadyStarted:
                 return "Sync already started."
+            case .CommitsApplyerIsBusy:
+                return "Commits applyer is busy, sync already started?"
+            case .ConnectionWithDeviceWasLost:
+                return "Connection with device was lost."
             }
         }
     }
@@ -98,6 +104,10 @@ public class SyncManager {
             self.startSync()
         }
         
+        self.paymentDevice.onDeviceDisconnected = {
+            self.callCompletionForSyncEvent(SyncEventType.SYNC_FAILED, params: ["error": NSError.error(code: SyncManager.ErrorCode.ConnectionWithDeviceWasLost, domain: SyncManager.self)])
+        }
+        
         self.paymentDevice.connect(self.paymentDeviceConnectionTimeoutInSecs)
         
         self.callCompletionForSyncEvent(SyncEventType.CONNECTING_TO_DEVICE)
@@ -133,7 +143,7 @@ public class SyncManager {
      Removes all synchronization bindings.
      */
     public func removeAllSyncBindings() {
-        self.syncEventsBlocks = [:]
+        self.syncEventsBlocks.removeAll()
     }
     
     private func startSync() {
@@ -151,7 +161,7 @@ public class SyncManager {
             
             //TODO: delete this once approved
             let commits = self.___debug_appendAPDUCommits(commits!)
-            self.commitsApplyer.apply(commits, completion:
+            let applayerStarted = self.commitsApplyer.apply(commits, completion:
             {
                 [unowned self] (error) -> Void in
                 
@@ -162,6 +172,10 @@ public class SyncManager {
                 
                 self.syncFinished(error: nil)
             })
+            
+            if !applayerStarted {
+                self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.CommitsApplyerIsBusy, domain: SyncManager.self))
+            }
         }
     }
     

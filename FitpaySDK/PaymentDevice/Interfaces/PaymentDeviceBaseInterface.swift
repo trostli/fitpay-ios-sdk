@@ -7,7 +7,7 @@ public protocol PaymentDeviceBaseInterface
     
     func isConnected() -> Bool
     
-    func writeSecurityState(state:SecurityNFCState) -> ErrorType?
+    func writeSecurityState(state: SecurityNFCState) -> ErrorType?
     
     func sendDeviceControl(state: DeviceControlState) -> ErrorType?
     
