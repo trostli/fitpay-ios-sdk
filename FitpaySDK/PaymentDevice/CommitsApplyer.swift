@@ -117,6 +117,8 @@ internal class CommitsApplyer {
             return
         }
         
+        let applyingStartDate = NSDate().timeIntervalSince1970
+        
         if apduPackage.isExpired {
             apduPackage.state = APDUPackageResponseState.EXPIRED
             
@@ -134,6 +136,11 @@ internal class CommitsApplyer {
         {
             (error) -> Void in
 
+            let currentTimestamp = NSDate().timeIntervalSince1970
+
+            apduPackage.executedDuration = Int(currentTimestamp - applyingStartDate)
+            apduPackage.executedEpoch = CLong(currentTimestamp)
+            
             if (error != nil && error as? NSError != nil && (error as! NSError).code == PaymentDevice.ErrorCode.APDUErrorResponse.rawValue) {
                 apduPackage.state = APDUPackageResponseState.FAILED
             } else if error != nil {

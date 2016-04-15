@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public enum SyncEventType : Int {
+public enum SyncEventType : Int, FitpayEventTypeProtocol {
     case CONNECTING_TO_DEVICE = 0x1
     case CONNECTING_TO_DEVICE_FAILED
     case CONNECTING_TO_DEVICE_COMPLETED
@@ -13,6 +13,33 @@ public enum SyncEventType : Int {
     case APDU_COMMANDS_PROGRESS
     
     case COMMIT_PROCESSED
+    
+    func eventId() -> Int {
+        return rawValue
+    }
+    
+    func eventDescription() -> String {
+        switch self {
+        case .CONNECTING_TO_DEVICE:
+            return "Connecting to device"
+        case .CONNECTING_TO_DEVICE_FAILED:
+            return "Connecting to device failed"
+        case .CONNECTING_TO_DEVICE_COMPLETED:
+            return "Connecting to device completed"
+        case .SYNC_STARTED:
+            return "Sync started"
+        case .SYNC_FAILED:
+            return "Sync failed"
+        case .SYNC_COMPLETED:
+            return "Sync completed"
+        case .SYNC_PROGRESS:
+            return "Sync progress"
+        case .APDU_COMMANDS_PROGRESS:
+            return "APDU progress"
+        case .COMMIT_PROCESSED:
+            return "Precessed commit"
+        }
+    }
 }
 
 public class SyncManager {
@@ -24,7 +51,7 @@ public class SyncManager {
     internal let syncStorage : SyncStorage = SyncStorage()
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
-    private var syncEventsBlocks : [SyncEventType:SyncEventBlockHandler] = [:]
+    private let eventsDispatcher = FitpayEventDispatcher()
     private var user : User?
     
     private var commitsApplyer = CommitsApplyer()
@@ -118,9 +145,9 @@ public class SyncManager {
     /**
      Completion handler
      
-     - parameter eventPayload: Provides payload for event
+     - parameter event: Provides event with payload in eventData property
      */
-    public typealias SyncEventBlockHandler = (eventPayload:[String:AnyObject]) -> Void
+    public typealias SyncEventBlockHandler = (event:FitpayEvent) -> Void
     
     /**
      Binds to the sync event using SyncEventType and a block as callback.
@@ -128,22 +155,33 @@ public class SyncManager {
      - parameter eventType: type of event which you want to bind to
      - parameter completion: completion handler which will be called when system receives commit with eventType
      */
-    public func bindToSyncEvent(eventType eventType: SyncEventType, completion: SyncEventBlockHandler) {
-        self.syncEventsBlocks[eventType] = completion
+    public func bindToSyncEvent(eventType eventType: SyncEventType, completion: SyncEventBlockHandler) -> FitpayEventBinding? {
+        return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion), eventId: eventType)
     }
+    
+    /**
+     Binds to the sync event using SyncEventType and a block as callback.
+     
+     - parameter eventType: type of event which you want to bind to
+     - parameter completion: completion handler which will be called when system receives commit with eventType
+     - parameter queue: queue in which completion will be called
+     */
+    public func bindToSyncEvent(eventType eventType: SyncEventType, completion: SyncEventBlockHandler, queue: dispatch_queue_t) -> FitpayEventBinding? {
+        return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion, queue: queue), eventId: eventType)
+    }				
     
     /**
      Removes bind with eventType.
      */
-    public func removeSyncBinding(eventType eventType: SyncEventType) {
-        self.syncEventsBlocks.removeValueForKey(eventType)
+    public func removeSyncBinding(binding binding: FitpayEventBinding) {
+        eventsDispatcher.removeBinding(binding)
     }
     
     /**
      Removes all synchronization bindings.
      */
     public func removeAllSyncBindings() {
-        self.syncEventsBlocks.removeAll()
+        eventsDispatcher.removeAllBindings()
     }
     
     private func startSync() {
@@ -258,12 +296,7 @@ public class SyncManager {
     }
 
     internal func callCompletionForSyncEvent(event: SyncEventType, params: [String:AnyObject] = [:]) {
-        if let completion = self.syncEventsBlocks[event] {
-            dispatch_async(dispatch_get_main_queue(),
-            {
-                completion(eventPayload: params)
-            })
-        }
+        eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: params))
     }
 
     private func syncFinished(error error: ErrorType?) {
