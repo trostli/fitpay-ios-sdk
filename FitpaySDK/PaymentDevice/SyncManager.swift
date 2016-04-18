@@ -129,8 +129,8 @@ public class SyncManager {
         {
             [unowned self] (event) in
             
-            let deviceInfo = event.eventData["deviceInfo"]
-            let error = event.eventData["error"]
+            let deviceInfo = event.eventData["deviceInfo"] as? DeviceInfo
+            let error = event.eventData["error"] as? ErrorType
             
             guard (error == nil && deviceInfo != nil) else {
                 
