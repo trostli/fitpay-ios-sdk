@@ -56,6 +56,9 @@ public class SyncManager {
     
     private var commitsApplyer = CommitsApplyer()
     
+    private weak var deviceConnectedBinding : FitpayEventBinding?
+    private weak var deviceDisconnectedBinding : FitpayEventBinding?
+    
     private init() {
         
     }
@@ -114,9 +117,21 @@ public class SyncManager {
             return nil
         }
         
-        self.paymentDevice.onDeviceConnected =
+        if let binding = self.deviceConnectedBinding {
+            self.paymentDevice.removeBinding(binding: binding)
+        }
+        
+        if let binding = self.deviceDisconnectedBinding {
+            self.paymentDevice.removeBinding(binding: binding)
+        }
+        
+        self.deviceConnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
-            [unowned self] (deviceInfo, error) -> Void in
+            [unowned self] (event) in
+            
+            let deviceInfo = event.eventData["deviceInfo"]
+            let error = event.eventData["error"]
+            
             guard (error == nil && deviceInfo != nil) else {
                 
                 self.callCompletionForSyncEvent(SyncEventType.CONNECTING_TO_DEVICE_COMPLETED, params: ["error": NSError.error(code: SyncManager.ErrorCode.CantConnectToDevice, domain: SyncManager.self)])
@@ -129,11 +144,29 @@ public class SyncManager {
             self.callCompletionForSyncEvent(SyncEventType.CONNECTING_TO_DEVICE_COMPLETED)
             
             self.startSync()
-        }
+            
+            if let binding = self.deviceConnectedBinding {
+                self.paymentDevice.removeBinding(binding: binding)
+            }
+            
+            self.deviceConnectedBinding = nil
+        })
         
-        self.paymentDevice.onDeviceDisconnected = {
+        self.deviceDisconnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceDisconnected, completion: {
+            [unowned self] (event) in
             self.callCompletionForSyncEvent(SyncEventType.SYNC_FAILED, params: ["error": NSError.error(code: SyncManager.ErrorCode.ConnectionWithDeviceWasLost, domain: SyncManager.self)])
-        }
+            
+            if let binding = self.deviceConnectedBinding {
+                self.paymentDevice.removeBinding(binding: binding)
+            }
+            
+            if let binding = self.deviceDisconnectedBinding {
+                self.paymentDevice.removeBinding(binding: binding)
+            }
+            
+            self.deviceConnectedBinding = nil
+            self.deviceDisconnectedBinding = nil
+        })
         
         self.paymentDevice.connect(self.paymentDeviceConnectionTimeoutInSecs)
         
@@ -171,7 +204,7 @@ public class SyncManager {
     }				
     
     /**
-     Removes bind with eventType.
+     Removes bind.
      */
     public func removeSyncBinding(binding binding: FitpayEventBinding) {
         eventsDispatcher.removeBinding(binding)
@@ -307,6 +340,17 @@ public class SyncManager {
         } else {
             callCompletionForSyncEvent(SyncEventType.SYNC_COMPLETED, params: [:])
         }
+        
+        if let binding = self.deviceConnectedBinding {
+            self.paymentDevice.removeBinding(binding: binding)
+        }
+        
+        if let binding = self.deviceDisconnectedBinding {
+            self.paymentDevice.removeBinding(binding: binding)
+        }
+        
+        self.deviceConnectedBinding = nil
+        self.deviceDisconnectedBinding = nil
     }
     
     //TODO: delete this once approved

@@ -15,6 +15,7 @@ class PaymentDeviceTests: XCTestCase
     
     override func tearDown()
     {
+        self.paymentDevice.removeAllBindings()
         self.paymentDevice = nil
         SyncManager.sharedInstance.removeAllSyncBindings()
         super.tearDown()
@@ -23,9 +24,12 @@ class PaymentDeviceTests: XCTestCase
     func testConnectToDeviceCheck()
     {
         let expectation = super.expectationWithDescription("connection to device check")
-        self.paymentDevice.onDeviceConnected =
+        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
-            (deviceInfo , error) -> Void in
+            (event) in
+            
+            let deviceInfo = event.eventData["deviceInfo"] as AnyObject as? DeviceInfo
+            let error = event.eventData["error"]
             
             XCTAssertNil(error)
             XCTAssertNotNil(deviceInfo)
@@ -34,7 +38,7 @@ class PaymentDeviceTests: XCTestCase
             self.paymentDevice.disconnect()
             
             expectation.fulfill()
-        }
+        })
         
         self.paymentDevice.connect()
         
@@ -44,19 +48,22 @@ class PaymentDeviceTests: XCTestCase
     func testDisconnectFromDeviceCheck()
     {
         let expectation = super.expectationWithDescription("disconnect from device check")
-        self.paymentDevice.onDeviceConnected =
+        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
-            (deviceInfo, error) -> Void in
+            (event) in
+            
+            let error = event.eventData["error"]
             
             XCTAssertNil(error)
             
             self.paymentDevice.disconnect()
-        }
+        })
         
-        self.paymentDevice.onDeviceDisconnected =
+        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceDisconnected, completion:
         {
+            _ in
             expectation.fulfill()
-        }
+        })
         
         self.paymentDevice.connect()
         
@@ -68,9 +75,11 @@ class PaymentDeviceTests: XCTestCase
         let expectation = super.expectationWithDescription("disconnection from device check")
         
         var newState = SecurityNFCState.Disabled
-        self.paymentDevice.onDeviceConnected =
+        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
-            (deviceInfo, error) -> Void in
+            (event) in
+            
+            let error = event.eventData["error"]
             
             XCTAssertNil(error)
             
@@ -79,11 +88,16 @@ class PaymentDeviceTests: XCTestCase
             }
             
             self.paymentDevice.writeSecurityState(newState)
-        }
+        })
         
-        self.paymentDevice.onSecurityStateChanged =
+        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnSecurityStateChanged, completion:
         {
-            (state) -> Void in
+            (event) -> Void in
+            
+
+            let stateInt = event.eventData["securityState"] as AnyObject as! NSNumber
+            
+            let state = SecurityNFCState(rawValue: stateInt.integerValue)
             
             XCTAssert(newState == state)
             
@@ -93,7 +107,7 @@ class PaymentDeviceTests: XCTestCase
             } else {
                 expectation.fulfill()
             }
-        }
+        })
         
         self.paymentDevice.connect()
         
@@ -106,11 +120,16 @@ class PaymentDeviceTests: XCTestCase
         
         let successResponse = NSData(bytes: [0x90, 0x00] as [UInt8], length: 2)
         
-        self.paymentDevice.onDeviceConnected =
+        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
-            (deviceInfo, error) -> Void in
+            (event) in
+            let error = event.eventData["error"]
             
             XCTAssertNil(error)
+            if let _ = error {
+                expectation.fulfill()
+                return
+            }
             
             self.paymentDevice.sendAPDUData("00A4040008A00000000410101100".hexToData()!, sequenceNumber: 99, completion:
             {
@@ -130,7 +149,7 @@ class PaymentDeviceTests: XCTestCase
                     expectation.fulfill()
                 })
             })
-        }
+        })
         
         self.paymentDevice.connect()
         
@@ -200,11 +219,11 @@ class PaymentDeviceTests: XCTestCase
             expectation.fulfill()
         }
         
-        SyncManager.sharedInstance.paymentDevice.onNotificationReceived =
+        SyncManager.sharedInstance.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnNotificationReceived, completion:
         {
             (notificationData)->Void in
             print("notification:", notificationData)
-        }
+        })
         
         let clientId = "pagare"
         let redirectUri = "http://demo.pagare.me"
