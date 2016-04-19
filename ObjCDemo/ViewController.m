@@ -7,12 +7,9 @@
 //
 
 #import "ViewController.h"
-#import <FitpaySDK/FitpaySDK-Swift.h>
+#import "ObjCDemo-Swift.h"
 
 @interface ViewController ()
-
-@property (nonatomic, strong) RestSession * session;
-@property (nonatomic, strong) RestClient * rest;
 
 @end
 
@@ -21,18 +18,28 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-   
-    _session = [[RestSession alloc] initWithClientId:@"pagare" redirectUri:@"http://demo.pagare.me"];
-    ///_sess
-       Transaction * transaction;
-    NSString * transactionId = transaction.transactionId;
+      // NSLog(@"%@", _rest);
+    Transaction * transaction; transaction.transactionTimeEpochObjC;
+    
+    User * user;
+    Relationship * relationship;
+    Commit * c;
+    ApduPackage * apduPackage;
+    DeviceInfo * deviceInfo;
+    EncryptionKey * encryptionKey;
+    VerificationMethod * verification;
+    CreditCard * creditCard;
+    ResultCollectionObjC * resultCollection;
+    Asset * asset;
+    RestSession * restSession;
+    RestClient * restClient;
+    
+    NSString * ct = Commit.CommitType_CREDITCARD_CREATED;
+    
+    NSLog(@"AGogi:%@", [CreditCard TokenizationState_NEW]);
     
     
     
-    
-    
-    _rest = [[RestClient alloc] initWithSession:_session];
-   // NSLog(@"%@", _rest);
 }
 
 - (void)didReceiveMemoryWarning {

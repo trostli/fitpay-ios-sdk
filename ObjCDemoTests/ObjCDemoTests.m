@@ -7,8 +7,12 @@
 //
 
 #import <XCTest/XCTest.h>
+//#import <FitpaySDK/FitpaySDK.h>
+#import "ViewController.h"
 
 @interface ObjCDemoTests : XCTestCase
+
+
 
 @end
 

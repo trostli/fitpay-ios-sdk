@@ -103,14 +103,14 @@ public class RestClient : NSObject
      - parameter user: Provides User object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias UserHandler = (user:User?, error:ErrorType?)->Void
+    public typealias UserHandler = (user:User?, error:NSError?)->Void
     /**
      Retrieves the details of an existing user. You need only supply the unique user identifier that was returned upon user creation
      
      - parameter id:         user id
      - parameter completion: UserHandler closure
      */
-    public func user(id id:String, completion:UserHandler)
+    @objc public func user(id id:String, completion:UserHandler)
     {
         self.prepareAuthAndKeyHeaders(
         {
@@ -207,7 +207,7 @@ public class RestClient : NSObject
      - parameter relationship: Provides created Relationship object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias CreateRelationshipHandler = (relationship:Relationship?, error:ErrorType?)->Void
+    public typealias CreateRelationshipHandler = (relationship:Relationship?, error:NSError?)->Void
 
     /**
      Creates a relationship between a device and a creditCard
@@ -217,7 +217,7 @@ public class RestClient : NSObject
      - parameter deviceId:     device id
      - parameter completion:   CreateRelationshipHandler closure
      */
-    public func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
+    @objc public func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -264,7 +264,7 @@ public class RestClient : NSObject
      
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteRelationshipHandler = (error:ErrorType?)->Void
+    public typealias DeleteRelationshipHandler = (error:NSError?)->Void
     
     /**
     Completion handler
@@ -272,7 +272,7 @@ public class RestClient : NSObject
     - parameter creditCard: Provides credit card object, or nil if error occurs
     - parameter error:      Provides error object, or nil if no error occurs
     */
-    public typealias CreateCreditCardHandler = (creditCard:CreditCard?, error:ErrorType?)->Void
+    public typealias CreateCreditCardHandler = (creditCard:CreditCard?, error:NSError?)->Void
     
     /**
     Completion handler
@@ -280,7 +280,7 @@ public class RestClient : NSObject
     - parameter result: Provides collection of credit cards, or nil if error occurs
     - parameter error:  Provides error object, or nil if no error occurs
     */
-    public typealias CreditCardsHandler = (result:ResultCollection<CreditCard>?, error:ErrorType?) -> Void
+    public typealias CreditCardsHandler = (result:ResultCollection<CreditCard>?, error:NSError?) -> Void
 
     /**
      Completion handler
@@ -288,14 +288,14 @@ public class RestClient : NSObject
      - parameter creditCard: Provides credit card object, or nil if error occurs
      - parameter error:  Provides error object, or nil if no error occurs
      */
-    public typealias CreditCardHandler = (creditCard:CreditCard?, error:ErrorType?)->Void
+    public typealias CreditCardHandler = (creditCard:CreditCard?, error:NSError?)->Void
         
     /**
      Completion handler
      
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteCreditCardHandler = (error:ErrorType?)->Void
+    public typealias DeleteCreditCardHandler = (error:NSError?)->Void
     
     /**
      Completion handler
@@ -303,7 +303,7 @@ public class RestClient : NSObject
      - parameter creditCard: Provides credit card object, or nil if error occurs
      - parameter error:  Provides error object, or nil if no error occurs
      */
-    public typealias UpdateCreditCardHandler = (creditCard:CreditCard?, error:ErrorType?) -> Void
+    public typealias UpdateCreditCardHandler = (creditCard:CreditCard?, error:NSError?) -> Void
     
     /**
      Completion handler
@@ -312,7 +312,7 @@ public class RestClient : NSObject
      - parameter card?:   Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error?:  Provides error object, or nil if no error occurs
      */
-    public typealias AcceptTermsHandler = (pending:Bool, card:CreditCard?, error:ErrorType?)->Void
+    public typealias AcceptTermsHandler = (pending:Bool, card:CreditCard?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -321,7 +321,7 @@ public class RestClient : NSObject
      - parameter card:    Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:   Provides error object, or nil if no error occurs
      */
-    public typealias DeclineTermsHandler = (pending:Bool, card:CreditCard?, error:ErrorType?)->Void
+    public typealias DeclineTermsHandler = (pending:Bool, card:CreditCard?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -330,7 +330,7 @@ public class RestClient : NSObject
      - parameter creditCard: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:  Provides error object, or nil if no error occurs
      */
-    public typealias MakeDefaultHandler = (pending:Bool, creditCard:CreditCard?, error:ErrorType?)->Void
+    public typealias MakeDefaultHandler = (pending:Bool, creditCard:CreditCard?, error:NSError?)->Void
 
     /**
      Completion handler
@@ -339,7 +339,7 @@ public class RestClient : NSObject
      - parameter creditCard: Provides deactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:      Provides error object, or nil if no error occurs
      */
-    public typealias DeactivateHandler = (pending:Bool, creditCard:CreditCard?, error:ErrorType?)->Void
+    public typealias DeactivateHandler = (pending:Bool, creditCard:CreditCard?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -348,7 +348,7 @@ public class RestClient : NSObject
      - parameter CreditCard?: Provides reactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    public typealias ReactivateHandler = (pending:Bool, creditCard:CreditCard?, error:ErrorType?)->Void
+    public typealias ReactivateHandler = (pending:Bool, creditCard:CreditCard?, error:NSError?)->Void
 
     /**
      Completion handler
@@ -356,7 +356,7 @@ public class RestClient : NSObject
      - parameter verificationMethod:  Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:               Provides error object, or nil if no error occurs
      */
-    public typealias SelectVerificationTypeHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:ErrorType?)->Void
+    public typealias SelectVerificationTypeHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -365,7 +365,7 @@ public class RestClient : NSObject
      - parameter verificationMethod: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:              Provides error object, or nil if no error occurs
      */
-    public typealias VerifyHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:ErrorType?)->Void
+    public typealias VerifyHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -373,7 +373,7 @@ public class RestClient : NSObject
      - parameter relationship: Provides Relationship object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias RelationshipHandler = (relationship:Relationship?, error:ErrorType?)->Void
+    public typealias RelationshipHandler = (relationship:Relationship?, error:NSError?)->Void
     
     /**
     Completion handler
@@ -381,7 +381,7 @@ public class RestClient : NSObject
     - parameter result: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DevicesHandler = (result:ResultCollection<DeviceInfo>?, error:ErrorType?)->Void
+    public typealias DevicesHandler = (result:ResultCollection<DeviceInfo>?, error:NSError?)->Void
     
     /**
     Completion handler
@@ -389,7 +389,7 @@ public class RestClient : NSObject
     - parameter device: Provides created DeviceInfo object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias CreateNewDeviceHandler = (device:DeviceInfo?, error:ErrorType?)->Void
+    public typealias CreateNewDeviceHandler = (device:DeviceInfo?, error:NSError?)->Void
 
     /**
     Completion handler
@@ -397,7 +397,7 @@ public class RestClient : NSObject
     - parameter device: Provides existing DeviceInfo object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DeviceHandler = (device:DeviceInfo?, error:ErrorType?) -> Void
+    public typealias DeviceHandler = (device:DeviceInfo?, error:NSError?) -> Void
     
     /**
     Completion handler
@@ -405,14 +405,14 @@ public class RestClient : NSObject
     - parameter device: Provides updated DeviceInfo object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias UpdateDeviceHandler = (device:DeviceInfo?, error:ErrorType?) -> Void
+    public typealias UpdateDeviceHandler = (device:DeviceInfo?, error:NSError?) -> Void
 
     /**
     Completion handler
 
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DeleteDeviceHandler = (error:ErrorType?) -> Void
+    public typealias DeleteDeviceHandler = (error:NSError?) -> Void
 
     /**
      Completion handler
@@ -420,7 +420,7 @@ public class RestClient : NSObject
      - parameter commits: Provides ResultCollection<Commit> object, or nil if error occurs
      - parameter error:   Provides error object, or nil if no error occurs
     */
-    public typealias CommitsHandler = (result:ResultCollection<Commit>?, error:ErrorType?)->Void
+    public typealias CommitsHandler = (result:ResultCollection<Commit>?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -436,7 +436,7 @@ public class RestClient : NSObject
      - parameter transactions: Provides ResultCollection<Transaction> object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
     */
-    public typealias TransactionsHandler = (result:ResultCollection<Transaction>?, error:ErrorType?)->Void
+    public typealias TransactionsHandler = (result:ResultCollection<Transaction>?, error:NSError?)->Void
 
     /**
      Completion handler
@@ -444,14 +444,14 @@ public class RestClient : NSObject
      - parameter transaction: Provides Transaction object, or nil if error occurs
      - parameter error:       Provides error object, or nil if no error occurs
      */
-    public typealias TransactionHandler = (transaction:Transaction?, error:ErrorType?)->Void
+    public typealias TransactionHandler = (transaction:Transaction?, error:NSError?)->Void
 
     /**
      Completion handler
     
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    public typealias ConfirmAPDUPackageHandler = (error:ErrorType?)->Void
+    public typealias ConfirmAPDUPackageHandler = (error:NSError?)->Void
 
     /**
      Endpoint to allow for returning responses to APDU execution
@@ -496,7 +496,7 @@ public class RestClient : NSObject
      - parameter asset: Provides Asset object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias AssetsHandler = (asset:Asset?, error:ErrorType?)->Void
+    public typealias AssetsHandler = (asset:Asset?, error:NSError?)->Void
 
     // MARK: EncryptionKeys
 
@@ -506,7 +506,7 @@ public class RestClient : NSObject
      - parameter encryptionKey?: Provides created EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    internal typealias CreateEncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:ErrorType?)->Void
+    internal typealias CreateEncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:NSError?)->Void
 
     /**
      Creates a new encryption key pair
@@ -553,7 +553,7 @@ public class RestClient : NSObject
      - parameter encryptionKey?: Provides EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    internal typealias EncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:ErrorType?)->Void
+    internal typealias EncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:NSError?)->Void
 
     /**
      Retrieve and individual key pair
@@ -648,7 +648,7 @@ public class RestClient : NSObject
 
     
     // MARK: Request Signature Helpers
-    typealias CreateAuthHeaders = (headers:[String:String]?, error:ErrorType?) -> Void
+    typealias CreateAuthHeaders = (headers:[String:String]?, error:NSError?) -> Void
     private func createAuthHeaders(completion:CreateAuthHeaders)
     {
         if self._session.isAuthorized
@@ -662,7 +662,7 @@ public class RestClient : NSObject
     }
     
 
-    typealias PrepareAuthAndKeyHeaders = (headers:[String:String]?, error:ErrorType?) -> Void
+    typealias PrepareAuthAndKeyHeaders = (headers:[String:String]?, error:NSError?) -> Void
     private func prepareAuthAndKeyHeaders(completion:PrepareAuthAndKeyHeaders)
     {
         self.createAuthHeaders

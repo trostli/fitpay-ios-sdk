@@ -168,7 +168,7 @@ public class SyncManager {
         //TODO: uncomment this once approved
         //let physicalDeviceInfo = self.paymentDevice.deviceInfo
         
-        user?.listDevices(itrSearchLimit, offset: searchOffset, completion:
+        user?.listDevices(limit: itrSearchLimit, offset: searchOffset, completion:
         {
             [unowned self] (result, error) -> Void in
             
@@ -201,7 +201,7 @@ public class SyncManager {
             (deviceInfo, error) -> Void in
             
             if let deviceInfo = deviceInfo {
-                deviceInfo.listCommits(lastCommitId, limit: 20, offset: 0, completion:
+                deviceInfo.listCommits(commitsAfter: lastCommitId, limit: 20, offset: 0, completion:
                 {
                     (result, error) -> Void in
                     

@@ -91,7 +91,7 @@ public class VerificationMethod : NSObject, ClientModel, Mappable
      
      - parameter completion:         SelectVerificationTypeHandler closure
      */
-    public func selectVerificationType(completion:RestClient.SelectVerificationTypeHandler)
+    @objc public func selectVerificationType(completion:RestClient.SelectVerificationTypeHandler)
     {
         let resource = VerificationMethod.selectResource
         let url = self.links?.url(resource)
@@ -110,7 +110,7 @@ public class VerificationMethod : NSObject, ClientModel, Mappable
      
      - parameter completion:         VerifyHandler closure
      */
-    public func verify(verificationCode:String, completion:RestClient.VerifyHandler)
+    @objc public func verify(verificationCode:String, completion:RestClient.VerifyHandler)
     {
         let resource = VerificationMethod.verifyResource
         let url = self.links?.url(resource)
@@ -129,7 +129,7 @@ public class VerificationMethod : NSObject, ClientModel, Mappable
      
      - parameter completion:   CreditCardHandler closure
      */
-    public func retrieveCreditCard(completion:RestClient.CreditCardHandler)
+    @objc public func retrieveCreditCard(completion:RestClient.CreditCardHandler)
     {
         let resource = VerificationMethod.cardResource
         let url = self.links?.url(resource)

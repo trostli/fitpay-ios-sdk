@@ -4,17 +4,17 @@ import ObjectMapper
 
 public enum TokenizationState : String
 {
-    case NEW = "NEW",
-    NOT_ELIGIBLE = "NOT_ELIGIBLE",
-    ELIGIBLE = "ELIGIBLE",
-    DECLINED_TERMS_AND_CONDITIONS = "DECLINED_TERMS_AND_CONDITIONS",
-    PENDING_ACTIVE = "PENDING_ACTIVE",
-    PENDING_VERIFICATION = "PENDING_VERIFICATION",
-    DELETED = "DELETED",
-    ACTIVE = "ACTIVE",
-    DEACTIVATED = "DEACTIVATED",
-    ERROR = "ERROR",
-    DECLINED = "DECLINED"
+    case NEW,
+    NOT_ELIGIBLE,
+    ELIGIBLE,
+    DECLINED_TERMS_AND_CONDITIONS,
+    PENDING_ACTIVE,
+    PENDING_VERIFICATION,
+    DELETED,
+    ACTIVE,
+    DEACTIVATED,
+    ERROR,
+    DECLINED
 }
 
 public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
@@ -156,7 +156,7 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   DeleteCreditCardHandler closure
      */
-    public func delete(completion:RestClient.DeleteCreditCardHandler)
+    @objc public func deleteCreditCard(completion:RestClient.DeleteCreditCardHandler)
     {
         let resource = CreditCard.selfResource
         let url = self.links?.url(resource)
@@ -182,7 +182,7 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter countryCode:  country code
      - parameter completion:   UpdateCreditCardHandler closure
      */
-    public func update(name name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:RestClient.UpdateCreditCardHandler)
+    @objc public func update(name name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:RestClient.UpdateCreditCardHandler)
     {
         let resource = CreditCard.selfResource
         let url = self.links?.url(resource)
@@ -201,7 +201,7 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   AcceptTermsHandler closure
      */
-    public func acceptTerms(completion:RestClient.AcceptTermsHandler)
+    @objc public func acceptTerms(completion:RestClient.AcceptTermsHandler)
     {
         let resource = CreditCard.acceptTermsResource
         let url = self.links?.url(resource)
@@ -220,7 +220,7 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   DeclineTermsHandler closure
      */
-    public func declineTerms(completion:RestClient.DeclineTermsHandler)
+    @objc public func declineTerms(completion:RestClient.DeclineTermsHandler)
     {
         let resource = CreditCard.declineTermsResource
         let url = self.links?.url(resource)
@@ -281,7 +281,7 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   MakeDefaultHandler closure
      */
-    public func makeDefault(completion:RestClient.MakeDefaultHandler)
+     @objc public func makeDefault(completion:RestClient.MakeDefaultHandler)
     {
         let resource = CreditCard.makeDefaultResource
         let url = self.links?.url(resource)
@@ -302,7 +302,7 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter offset:     start index position for list of entities returned
      - parameter completion: TransactionsHandler closure
      */
-    public func listTransactions(limit:Int, offset:Int, completion:RestClient.TransactionsHandler)
+    public func listTransactions(limit limit:Int, offset:Int, completion:RestClient.TransactionsHandler)
     {
         let resource = CreditCard.transactionsResource
         let url = self.links?.url(resource)
@@ -421,7 +421,7 @@ public class CardMetadata : NSObject, ClientModel, Mappable
     }
 }
 
-public class Image : ClientModel, Mappable, AssetRetrivable
+public class Image : NSObject, ClientModel, Mappable, AssetRetrivable
 {
     internal var links: [ResourceLink]?
     public var mimeType:String?
@@ -491,7 +491,7 @@ internal class ImageTransformType : TransformType
 }
 
 
-public class TermsAssetReferences : ClientModel, Mappable, AssetRetrivable
+public class TermsAssetReferences : NSObject, ClientModel, Mappable, AssetRetrivable
 {
     internal var links: [ResourceLink]?
     public var mimeType:String?
@@ -509,7 +509,7 @@ public class TermsAssetReferences : ClientModel, Mappable, AssetRetrivable
         self.mimeType <- map["mimeType"]
     }
     
-    public func retrieveAsset(completion: RestClient.AssetsHandler)
+    @objc public func retrieveAsset(completion: RestClient.AssetsHandler)
     {
         let resource = TermsAssetReferences.selfResource
         let url = self.links?.url(resource)
@@ -556,7 +556,7 @@ internal class TermsAssetReferencesTransformType : TransformType
     }
 }
 
-public class DeviceRelationships : ClientModel, Mappable
+public class DeviceRelationships : NSObject, ClientModel, Mappable
 {
     public var deviceType:String?
     internal var links: [ResourceLink]?
@@ -599,7 +599,7 @@ public class DeviceRelationships : ClientModel, Mappable
         self.systemId <- map["systemId"]
     }
     
-    func relationship(completion:RestClient.RelationshipHandler) {
+    @objc func relationship(completion:RestClient.RelationshipHandler) {
         let resource = DeviceRelationships.selfResource
         let url = self.links?.url(resource)
         if let url = url, client = self.client
@@ -681,6 +681,6 @@ internal class CardInfo : Mappable
  */
 public enum CreditCardInitiator: String
 {
-    case CARDHOLDER = "CARDHOLDER"
-    case ISSUER = "ISSUER"
+    case CARDHOLDER
+    case ISSUER
 }

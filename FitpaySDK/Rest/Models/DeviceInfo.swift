@@ -175,7 +175,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion: DeleteDeviceHandler closure
      */
-    public func delete(completion:RestClient.DeleteDeviceHandler) {
+    @objc public func deleteDeviceInfo(completion:RestClient.DeleteDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
@@ -196,7 +196,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter softwareRevision?: software revision
      - parameter completion:        UpdateDeviceHandler closure
      */
-    public func update(firmwareRevision:String?, softwareRevision:String?, completion:RestClient.UpdateDeviceHandler) {
+    @objc public func update(firmwareRevision:String?, softwareRevision:String?, completion:RestClient.UpdateDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
@@ -217,7 +217,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter offset:       start index position for list of entities returned
      - parameter completion:   CommitsHandler closure
      */
-    public func listCommits(commitsAfter:String?, limit:Int, offset:Int, completion:RestClient.CommitsHandler) {
+    public func listCommits(commitsAfter commitsAfter:String?, limit:Int, offset:Int, completion:RestClient.CommitsHandler) {
         let resource = DeviceInfo.commitsResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
@@ -230,7 +230,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         }
     }
     
-    public func user(completion:RestClient.UserHandler) {
+    @objc public func user(completion:RestClient.UserHandler) {
         let resource = DeviceInfo.userResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
@@ -244,7 +244,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
     }
 }
 
-public class CardRelationship : ClientModel, Mappable, SecretApplyable
+public class CardRelationship : NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links:[ResourceLink]?
     public var creditCardId:String?
@@ -285,7 +285,7 @@ public class CardRelationship : ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   RelationshipHandler closure
      */
-    public func relationship(completion:RestClient.RelationshipHandler) {
+    @objc public func relationship(completion:RestClient.RelationshipHandler) {
         let resource = CardRelationship.selfResource
         let url = self.links?.url(resource)
         if let url = url, client = self.client

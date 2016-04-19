@@ -28,7 +28,7 @@ public class Relationship : NSObject, ClientModel, Mappable
      
         - parameter completion:   DeleteRelationshipHandler closure
      */
-    public func delete(completion:RestClient.DeleteRelationshipHandler) {
+    @objc public func deleteRelationship(completion:RestClient.DeleteRelationshipHandler) {
         let resource = Relationship.selfResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client

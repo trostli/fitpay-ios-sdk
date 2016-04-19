@@ -94,7 +94,7 @@ public class ApduPackage : NSObject, Mappable
     
 }
 
-public class APDUCommand : Mappable {
+public class APDUCommand : NSObject, Mappable {
     internal var links:[ResourceLink]?
     public var commandId:String?
     public var groupId:Int = 0
@@ -104,9 +104,6 @@ public class APDUCommand : Mappable {
     
     public var responseCode:String?
     public var responseData:String?
-    
-    init() {
-    }
     
     public required init?(_ map: Map)
     {
