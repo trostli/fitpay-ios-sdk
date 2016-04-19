@@ -1451,7 +1451,7 @@ class RestClientTests: XCTestCase
                 {
                     (devices, error) -> Void in
                     XCTAssertNil(error)
-                    devices!.results![0].listCommits(nil, limit: 10, offset: 0, completion:
+                    devices!.results![0].listCommits(commitsAfter: nil, limit: 10, offset: 0, completion:
                     {
                         (commits, error) -> Void in
                         XCTAssertNil(error)
@@ -1748,7 +1748,7 @@ class RestClientTests: XCTestCase
                             continue
                         }
                         
-                        card.listTransactions(1, offset:0, completion:
+                        card.listTransactions(limit: 1, offset:0, completion:
                         {
                             (transactions, error) -> Void in
                             
