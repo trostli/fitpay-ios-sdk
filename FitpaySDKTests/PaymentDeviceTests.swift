@@ -83,7 +83,7 @@ class PaymentDeviceTests: XCTestCase
             
             XCTAssertNil(error)
             
-            if (self.paymentDevice.nfcState != nil && self.paymentDevice.nfcState == SecurityNFCState.Disabled) {
+            if self.paymentDevice.nfcState == SecurityNFCState.Disabled {
                 newState = SecurityNFCState.Enabled
             }
             

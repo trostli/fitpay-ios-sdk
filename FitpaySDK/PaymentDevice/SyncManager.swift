@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public enum SyncEventType : Int, FitpayEventTypeProtocol {
+@objc public enum SyncEventType : Int, FitpayEventTypeProtocol {
     case CONNECTING_TO_DEVICE = 0x1
     case CONNECTING_TO_DEVICE_FAILED
     case CONNECTING_TO_DEVICE_COMPLETED
@@ -14,11 +14,11 @@ public enum SyncEventType : Int, FitpayEventTypeProtocol {
     
     case COMMIT_PROCESSED
     
-    func eventId() -> Int {
+    public func eventId() -> Int {
         return rawValue
     }
     
-    func eventDescription() -> String {
+    public func eventDescription() -> String {
         switch self {
         case .CONNECTING_TO_DEVICE:
             return "Connecting to device"
@@ -42,8 +42,8 @@ public enum SyncEventType : Int, FitpayEventTypeProtocol {
     }
 }
 
-public class SyncManager {
-    static let sharedInstance = SyncManager()
+public class SyncManager : NSObject {
+    public static let sharedInstance = SyncManager()
     
     public let paymentDevice : PaymentDevice = PaymentDevice()
     
@@ -59,8 +59,8 @@ public class SyncManager {
     private weak var deviceConnectedBinding : FitpayEventBinding?
     private weak var deviceDisconnectedBinding : FitpayEventBinding?
     
-    private init() {
-        
+    private override init() {
+        super.init()
     }
     
     public enum ErrorCode : Int, ErrorType, RawIntValue, CustomStringConvertible
@@ -104,7 +104,7 @@ public class SyncManager {
      
      - parameter user: user from API to whom device belongs to.
      */
-    public func sync(user: User) -> ErrorType? {
+    public func sync(user: User) -> NSError? {
         if self.isSyncing {
             return NSError.error(code: SyncManager.ErrorCode.SyncAlreadyStarted, domain: SyncManager.self)
         }
@@ -188,7 +188,7 @@ public class SyncManager {
      - parameter eventType: type of event which you want to bind to
      - parameter completion: completion handler which will be called when system receives commit with eventType
      */
-    public func bindToSyncEvent(eventType eventType: SyncEventType, completion: SyncEventBlockHandler) -> FitpayEventBinding? {
+    @objc public func bindToSyncEvent(eventType eventType: SyncEventType, completion: SyncEventBlockHandler) -> FitpayEventBinding? {
         return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion), eventId: eventType)
     }
     

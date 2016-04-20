@@ -601,3 +601,21 @@ public extension EncryptionKey
     }
 
 }
+
+public extension FitpayEvent
+{
+    public var eventIdObjC : NSNumber? {
+        return self.eventId.eventId()
+    }
+}
+
+public extension PaymentDevice
+{
+    public func connectObjC() {
+        self.connect()
+    }
+    
+    public func connectObjC(timeout:Int) {
+        self.connect(timeout)
+    }
+}

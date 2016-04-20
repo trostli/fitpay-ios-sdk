@@ -72,8 +72,8 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         return self._deviceInfo
     }
     
-    func nfcState() -> SecurityNFCState? {
-        return self._nfcState
+    func nfcState() -> SecurityNFCState {
+        return self._nfcState ?? SecurityNFCState.Disabled
     }
     
     func sendAPDUData(data: NSData, sequenceNumber: UInt16) {
@@ -137,7 +137,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         }
     }
     
-    func sendDeviceControl(state: DeviceControlState) -> ErrorType? {
+    func sendDeviceControl(state: DeviceControlState) -> NSError? {
         guard let deviceControlCharacteristic = self.deviceControlCharacteristic else {
             return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
         }
@@ -148,7 +148,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         return nil
     }
     
-    func sendNotification(notificationData: NSData) -> ErrorType? {
+    func sendNotification(notificationData: NSData) -> NSError? {
         guard let notificationCharacteristic = self.notificationCharacteristic else {
             return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
         }
@@ -158,7 +158,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         return nil
     }
     
-    func writeSecurityState(state: SecurityNFCState) -> ErrorType? {
+    func writeSecurityState(state: SecurityNFCState) -> NSError? {
         guard let wearablePeripheral = self.wearablePeripheral, securityWriteCharacteristic = self.securityWriteCharacteristic else {
             return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
         }

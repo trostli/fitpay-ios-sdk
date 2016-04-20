@@ -1,30 +1,30 @@
 
-public enum SecurityNFCState : Int
+@objc public enum SecurityNFCState : Int
 {
     case Disabled         = 0x00
     case Enabled          = 0x01
     case DoNotChangeState = 0xFF
 }
 
-public enum DeviceControlState : Int
+@objc public enum DeviceControlState : Int
 {
     case ESEPowerOFF    = 0x00
     case ESEPowerON     = 0x02
     case ESEPowerReset  = 0x01
 }
 
-public enum PaymentDeviceEventTypes : Int, FitpayEventTypeProtocol {
+@objc public enum PaymentDeviceEventTypes : Int, FitpayEventTypeProtocol {
     case OnDeviceConnected = 0
     case OnDeviceDisconnected
     case OnNotificationReceived
     case OnSecurityStateChanged
     case OnApplicationControlReceived
     
-    func eventId() -> Int {
+    public func eventId() -> Int {
         return rawValue
     }
     
-    func eventDescription() -> String {
+    public func eventDescription() -> String {
         switch self {
         case .OnDeviceConnected:
             return "On device connected or when error occurs, returns ['deviceInfo':DeviceInfo, 'error':ErrorType]."
@@ -178,7 +178,7 @@ public class PaymentDevice : NSObject
     /**
      Returns NFC state on payment device.
      */
-    public var nfcState : SecurityNFCState? {
+    public var nfcState : SecurityNFCState {
         return self.deviceInterface.nfcState()
     }
     
@@ -188,7 +188,7 @@ public class PaymentDevice : NSObject
      
      - parameter state: desired security state
      */
-    public func sendDeviceControl(state: DeviceControlState) -> ErrorType? {
+    public func sendDeviceControl(state: DeviceControlState) -> NSError? {
         return self.deviceInterface.sendDeviceControl(state)
     }
     
@@ -198,7 +198,7 @@ public class PaymentDevice : NSObject
      
      - parameter notificationData: //TODO:????
      */
-    public func sendNotification(notificationData: NSData) -> ErrorType? {
+    public func sendNotification(notificationData: NSData) -> NSError? {
         return self.deviceInterface.sendNotification(notificationData)
     }
     
@@ -209,7 +209,7 @@ public class PaymentDevice : NSObject
      - parameter state: desired security state
      */
     // TODO: shoud it be public?
-    internal func writeSecurityState(state:SecurityNFCState) -> ErrorType? {
+    internal func writeSecurityState(state:SecurityNFCState) -> NSError? {
         return self.deviceInterface.writeSecurityState(state)
     }
     
@@ -219,7 +219,7 @@ public class PaymentDevice : NSObject
      Also implementation should call PaymentDevice.callCompletionForEvent() for events.
      Can be changed if device disconnected.
      */
-    public func changeDeviceInterface(interface: PaymentDeviceBaseInterface) -> ErrorType? {
+    @objc public func changeDeviceInterface(interface: PaymentDeviceBaseInterface) -> NSError? {
         if isConnected {
             return NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeDisconnected, domain: PaymentDeviceBLEInterface.self)
         }

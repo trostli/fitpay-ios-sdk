@@ -29,7 +29,7 @@ extension FitpayBlockEventListener : FitpayEventListener {
         }
         
         dispatch_async(completionQueue) {
-            [unowned self] () -> Void in
+            _ in
             self.blockCompletion(event: event)
         }
     }

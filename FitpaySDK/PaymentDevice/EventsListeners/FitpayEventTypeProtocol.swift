@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol FitpayEventTypeProtocol {
+public protocol FitpayEventTypeProtocol {
     func eventId() -> Int
     func eventDescription() -> String
 }

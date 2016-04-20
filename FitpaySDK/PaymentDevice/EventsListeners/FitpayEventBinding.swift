@@ -6,7 +6,7 @@
 //  Copyright © 2016 Fitpay. All rights reserved.
 //
 
-public class FitpayEventBinding : Equatable {
+public class FitpayEventBinding : NSObject {
     static private var bindingIdCounter : Int = 0
     private let bindingId : Int
     
@@ -14,11 +14,14 @@ public class FitpayEventBinding : Equatable {
     var listener : FitpayEventListener
     
     init(eventId: FitpayEventTypeProtocol, listener: FitpayEventListener) {
+
         self.eventId = eventId
         self.listener = listener
         
         bindingId = FitpayEventBinding.bindingIdCounter
         FitpayEventBinding.bindingIdCounter += 1
+        
+        super.init()
     }
 }
 
