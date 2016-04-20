@@ -4,6 +4,10 @@ internal class CommitsApplyer {
     private let semaphore = dispatch_semaphore_create(0)
     private var thread : NSThread?
     private var applyerCompletionHandler : ApplyerCompletionHandler!
+    private var totalApduCommands = 0
+    private var appliedApduCommands = 0
+    private let maxCommitsRetries = 0
+    private let maxAPDUCommandsRetries = 2
     
     internal var isRunning : Bool {
         guard let thread = self.thread else {
@@ -22,6 +26,16 @@ internal class CommitsApplyer {
         
         self.commits = commits
         
+        totalApduCommands = 0
+        appliedApduCommands = 0
+        for commit in commits {
+            if commit.commitType == CommitType.APDU_PACKAGE {
+                if let apduCommandsCount = commit.payload?.apduPackage?.apduCommands?.count {
+                    totalApduCommands += apduCommandsCount
+                }
+            }
+        }
+        
         self.applyerCompletionHandler = completion
         self.thread = NSThread(target: self, selector:#selector(CommitsApplyer.processCommits), object: nil)
         self.thread?.start()
@@ -34,17 +48,25 @@ internal class CommitsApplyer {
         for commit in commits {
             var errorItr : ErrorType? = nil
             
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
-            {
-                self.processCommit(commit)
+            // retry if error occurred
+            for _ in 0 ..< maxCommitsRetries+1 {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
                 {
-                    (error) -> Void in
-                    errorItr = error
-                    dispatch_semaphore_signal(self.semaphore)
+                    self.processCommit(commit)
+                    {
+                        (error) -> Void in
+                        errorItr = error
+                        dispatch_semaphore_signal(self.semaphore)
+                    }
+                })
+                
+                dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER)
+                
+                // if there is no error than leave retry cycle
+                if errorItr == nil {
+                    break
                 }
-            })
-            
-            dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER)
+            }
             
             if let error = errorItr {
                 dispatch_async(dispatch_get_main_queue(),
@@ -97,7 +119,6 @@ internal class CommitsApplyer {
         
         let applyingStartDate = NSDate().timeIntervalSince1970
         
-        
         if apduPackage.isExpired {
             apduPackage.state = APDUPackageResponseState.EXPIRED
             
@@ -111,39 +132,19 @@ internal class CommitsApplyer {
             return
         }
         
-        self.applyAPDUPackage(apduPackage, apduCommandIndex: 0)
+        self.applyAPDUPackage(apduPackage, apduCommandIndex: 0, retryCount: 0)
         {
             (error) -> Void in
 
             let currentTimestamp = NSDate().timeIntervalSince1970
-            
+
             apduPackage.executedDuration = Int(currentTimestamp - applyingStartDate)
             apduPackage.executedEpoch = CLong(currentTimestamp)
             
-            if apduPackage.isExpired {
-                apduPackage.state = APDUPackageResponseState.EXPIRED
-                
-                commit.confirmAPDU(
-                {
-                    (error) -> Void in
-                    completion(error: error)
-                })
-                
-                return
-            }
-            
-            var hasCommandError = false
-            for command in apduPackage.apduCommands! {
-                if command.responseCode != ApduPackage.successfullResponse.hex {
-                    hasCommandError = true
-                    break
-                }
-            }
-            
-            if error != nil {
-                apduPackage.state = APDUPackageResponseState.ERROR
-            } else if hasCommandError {
+            if (error != nil && error as? NSError != nil && (error as! NSError).code == PaymentDevice.ErrorCode.APDUErrorResponse.rawValue) {
                 apduPackage.state = APDUPackageResponseState.FAILED
+            } else if error != nil {
+                apduPackage.state = APDUPackageResponseState.ERROR
             } else {
                 apduPackage.state = APDUPackageResponseState.PROCESSED
             }
@@ -165,11 +166,10 @@ internal class CommitsApplyer {
         
         SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.COMMIT_PROCESSED, params: ["commit":commit])
         
-        
         completion(error: nil)
     }
     
-    private func applyAPDUPackage(apduPackage: ApduPackage, apduCommandIndex: Int, completion: (error:ErrorType?)->Void) {
+    private func applyAPDUPackage(apduPackage: ApduPackage, apduCommandIndex: Int, retryCount: Int, completion: (error:ErrorType?)->Void) {
         let isFinished = apduPackage.apduCommands?.count <= apduCommandIndex
         
         if isFinished {
@@ -181,13 +181,20 @@ internal class CommitsApplyer {
         SyncManager.sharedInstance.paymentDevice.executeAPDUCommand(&apdu, completion:
         {
             [unowned self] (apduPack, error) -> Void in
-            
+
             if let error = error {
-                completion(error: error)
-                return
+                if retryCount >= self.maxAPDUCommandsRetries {
+                    completion(error: error)
+                } else {
+                    self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex, retryCount: retryCount + 1, completion: completion)
+                }
+            } else {
+                self.appliedApduCommands += 1
+                
+                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.APDU_COMMANDS_PROGRESS, params: ["applied":self.appliedApduCommands, "total":self.totalApduCommands])
+                
+                self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, retryCount: 0, completion: completion)
             }
-            
-            self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, completion: completion)
         })
     }
 }
