@@ -45,8 +45,7 @@ class LoginViewController : UIViewController
                 
                 self.view.busy = false
                 
-                if let error = error as? NSError
-                {
+                if let error = error {
                     alert(title: "Error", message:error.userInfo[NSLocalizedDescriptionKey] as? String, cancelButtonTitle: "OK")
                 }
                 else
@@ -64,7 +63,7 @@ class LoginViewController : UIViewController
                         }
                         else
                         {
-                            alert(title: "Error", message:(error as? NSError)?.userInfo[NSLocalizedDescriptionKey] as? String, cancelButtonTitle: "OK")
+                            alert(title: "Error", message:(error! as NSError).userInfo[NSLocalizedDescriptionKey] as? String, cancelButtonTitle: "OK")
                         }
                     })
                 }  

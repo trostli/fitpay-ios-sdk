@@ -51,7 +51,7 @@ class CreditCardsViewController: GenericTableViewController<CreditCardsRow>
                 }
 
             }
-            else if let error = error as? NSError
+            else if let error = error
             {
                 alert(title: "Error", message:error.userInfo[NSLocalizedDescriptionKey] as? String, cancelButtonTitle: "OK")
             }

@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class Asset
+public class Asset : NSObject
 {
     // Only one item available for specific context
     var text:String?

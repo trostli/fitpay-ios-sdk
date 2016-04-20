@@ -25,7 +25,7 @@ class DevicesViewController: GenericTableViewController<DeviceRow>
     override func prepareData()
     {
         self.view.busy = true
-        self.user?.listDevices(100, offset: 0, completion:
+        self.user?.listDevices(limit: 100, offset: 0, completion:
         {
             [unowned self](result, error) -> Void in
             if let devicesResult = result, let devices = devicesResult.results
@@ -40,7 +40,7 @@ class DevicesViewController: GenericTableViewController<DeviceRow>
                 self.devicesResult = devicesResult
                 self.didFinishLoadingData()
             }
-            else if let error = error as? NSError
+            else if let error = error
             {
                 alert(title: "Error", message:error.userInfo[NSLocalizedDescriptionKey] as? String, cancelButtonTitle: "OK")
             }

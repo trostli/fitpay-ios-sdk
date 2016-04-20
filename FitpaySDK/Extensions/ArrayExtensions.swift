@@ -22,3 +22,11 @@ extension _ArrayType where Generator.Element == ResourceLink
         return nil
     }
 }
+
+extension Array where Element : Equatable {
+    mutating func removeObject(object : Element) {
+        if let index = self.indexOf(object) {
+            self.removeAtIndex(index)
+        }
+    }
+}

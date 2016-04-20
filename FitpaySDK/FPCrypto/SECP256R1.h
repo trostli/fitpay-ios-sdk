@@ -122,7 +122,7 @@ struct SECP256R1_SharedSecret {
 
 typedef struct SECP256R1_SharedSecret SECP256R1_SharedSecret;
 
-static void secp256r1_generate_secret(SECP256R1_KeyPair * key_pair, char * public_key, SECP256R1_SharedSecret * secret)
+ static void secp256r1_generate_secret(SECP256R1_KeyPair * key_pair, char * public_key, SECP256R1_SharedSecret * secret)
 {
     static char ans1PubKeyEncoding[] = "3059301306072a8648ce3d020106082a8648ce3d03010703420004\0";
     
@@ -224,6 +224,4 @@ static void secp256r1_generate_secret(SECP256R1_KeyPair * key_pair, char * publi
     BN_CTX_free(bn_ctx);
     
     free(key_agreement);
-    
-    return secret;
 }

@@ -3,7 +3,7 @@ import Foundation
 import Alamofire
 import AlamofireObjectMapper
 
-public class RestClient
+public class RestClient : NSObject
 {
     /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
@@ -71,6 +71,7 @@ public class RestClient
     public func listUsers(limit limit:Int, offset:Int, completion: ListUsersHandler)
     {
         //TODO: Implement or remove this
+        assertionFailure("unimplemented functionality")
     }
 
     /**
@@ -93,6 +94,7 @@ public class RestClient
     public func createUser(firstName firstName:String, lastName:String, birthDate:String, email:String, completion:CreateUsersHandler)
     {
         //TODO: Implement or remove this
+        assertionFailure("unimplemented functionality")
     }
     
     /**
@@ -101,14 +103,14 @@ public class RestClient
      - parameter user: Provides User object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias UserHandler = (user:User?, error:ErrorType?)->Void
+    public typealias UserHandler = (user:User?, error:NSError?)->Void
     /**
      Retrieves the details of an existing user. You need only supply the unique user identifier that was returned upon user creation
      
      - parameter id:         user id
      - parameter completion: UserHandler closure
      */
-    public func user(id id:String, completion:UserHandler)
+    @objc public func user(id id:String, completion:UserHandler)
     {
         self.prepareAuthAndKeyHeaders(
         {
@@ -177,7 +179,7 @@ public class RestClient
      */
     public func updateUser(id id:String, firstName:String?, lastName:String?, birthDate:Int?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:UpdateUserHandler)
     {
-
+        assertionFailure("unimplemented functionality")
     }
     
     /**
@@ -195,7 +197,7 @@ public class RestClient
      */
      public func deleteUser(id id:String, completion:DeleteUserHandler)
     {
-
+        assertionFailure("unimplemented functionality")
     }
     
     
@@ -205,7 +207,7 @@ public class RestClient
      - parameter relationship: Provides created Relationship object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias CreateRelationshipHandler = (relationship:Relationship?, error:ErrorType?)->Void
+    public typealias CreateRelationshipHandler = (relationship:Relationship?, error:NSError?)->Void
 
     /**
      Creates a relationship between a device and a creditCard
@@ -215,7 +217,7 @@ public class RestClient
      - parameter deviceId:     device id
      - parameter completion:   CreateRelationshipHandler closure
      */
-    public func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
+    @objc public func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -262,7 +264,7 @@ public class RestClient
      
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteRelationshipHandler = (error:ErrorType?)->Void
+    public typealias DeleteRelationshipHandler = (error:NSError?)->Void
     
     /**
     Completion handler
@@ -270,7 +272,7 @@ public class RestClient
     - parameter creditCard: Provides credit card object, or nil if error occurs
     - parameter error:      Provides error object, or nil if no error occurs
     */
-    public typealias CreateCreditCardHandler = (creditCard:CreditCard?, error:ErrorType?)->Void
+    public typealias CreateCreditCardHandler = (creditCard:CreditCard?, error:NSError?)->Void
     
     /**
     Completion handler
@@ -278,7 +280,7 @@ public class RestClient
     - parameter result: Provides collection of credit cards, or nil if error occurs
     - parameter error:  Provides error object, or nil if no error occurs
     */
-    public typealias CreditCardsHandler = (result:ResultCollection<CreditCard>?, error:ErrorType?) -> Void
+    public typealias CreditCardsHandler = (result:ResultCollection<CreditCard>?, error:NSError?) -> Void
 
     /**
      Completion handler
@@ -286,14 +288,14 @@ public class RestClient
      - parameter creditCard: Provides credit card object, or nil if error occurs
      - parameter error:  Provides error object, or nil if no error occurs
      */
-    public typealias CreditCardHandler = (creditCard:CreditCard?, error:ErrorType?)->Void
+    public typealias CreditCardHandler = (creditCard:CreditCard?, error:NSError?)->Void
         
     /**
      Completion handler
      
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteCreditCardHandler = (error:ErrorType?)->Void
+    public typealias DeleteCreditCardHandler = (error:NSError?)->Void
     
     /**
      Completion handler
@@ -301,7 +303,7 @@ public class RestClient
      - parameter creditCard: Provides credit card object, or nil if error occurs
      - parameter error:  Provides error object, or nil if no error occurs
      */
-    public typealias UpdateCreditCardHandler = (creditCard:CreditCard?, error:ErrorType?) -> Void
+    public typealias UpdateCreditCardHandler = (creditCard:CreditCard?, error:NSError?) -> Void
     
     /**
      Completion handler
@@ -310,7 +312,7 @@ public class RestClient
      - parameter card?:   Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error?:  Provides error object, or nil if no error occurs
      */
-    public typealias AcceptTermsHandler = (pending:Bool, card:CreditCard?, error:ErrorType?)->Void
+    public typealias AcceptTermsHandler = (pending:Bool, card:CreditCard?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -319,7 +321,7 @@ public class RestClient
      - parameter card:    Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:   Provides error object, or nil if no error occurs
      */
-    public typealias DeclineTermsHandler = (pending:Bool, card:CreditCard?, error:ErrorType?)->Void
+    public typealias DeclineTermsHandler = (pending:Bool, card:CreditCard?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -328,7 +330,7 @@ public class RestClient
      - parameter creditCard: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:  Provides error object, or nil if no error occurs
      */
-    public typealias MakeDefaultHandler = (pending:Bool, creditCard:CreditCard?, error:ErrorType?)->Void
+    public typealias MakeDefaultHandler = (pending:Bool, creditCard:CreditCard?, error:NSError?)->Void
 
     /**
      Completion handler
@@ -337,7 +339,7 @@ public class RestClient
      - parameter creditCard: Provides deactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:      Provides error object, or nil if no error occurs
      */
-    public typealias DeactivateHandler = (pending:Bool, creditCard:CreditCard?, error:ErrorType?)->Void
+    public typealias DeactivateHandler = (pending:Bool, creditCard:CreditCard?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -346,7 +348,7 @@ public class RestClient
      - parameter CreditCard?: Provides reactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    public typealias ReactivateHandler = (pending:Bool, creditCard:CreditCard?, error:ErrorType?)->Void
+    public typealias ReactivateHandler = (pending:Bool, creditCard:CreditCard?, error:NSError?)->Void
 
     /**
      Completion handler
@@ -354,7 +356,7 @@ public class RestClient
      - parameter verificationMethod:  Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:               Provides error object, or nil if no error occurs
      */
-    public typealias SelectVerificationTypeHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:ErrorType?)->Void
+    public typealias SelectVerificationTypeHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -363,7 +365,7 @@ public class RestClient
      - parameter verificationMethod: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:              Provides error object, or nil if no error occurs
      */
-    public typealias VerifyHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:ErrorType?)->Void
+    public typealias VerifyHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -371,7 +373,7 @@ public class RestClient
      - parameter relationship: Provides Relationship object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias RelationshipHandler = (relationship:Relationship?, error:ErrorType?)->Void
+    public typealias RelationshipHandler = (relationship:Relationship?, error:NSError?)->Void
     
     /**
     Completion handler
@@ -379,7 +381,7 @@ public class RestClient
     - parameter result: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DevicesHandler = (result:ResultCollection<DeviceInfo>?, error:ErrorType?)->Void
+    public typealias DevicesHandler = (result:ResultCollection<DeviceInfo>?, error:NSError?)->Void
     
     /**
     Completion handler
@@ -387,7 +389,7 @@ public class RestClient
     - parameter device: Provides created DeviceInfo object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias CreateNewDeviceHandler = (device:DeviceInfo?, error:ErrorType?)->Void
+    public typealias CreateNewDeviceHandler = (device:DeviceInfo?, error:NSError?)->Void
 
     /**
     Completion handler
@@ -395,7 +397,7 @@ public class RestClient
     - parameter device: Provides existing DeviceInfo object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DeviceHandler = (device:DeviceInfo?, error:ErrorType?) -> Void
+    public typealias DeviceHandler = (device:DeviceInfo?, error:NSError?) -> Void
     
     /**
     Completion handler
@@ -403,14 +405,14 @@ public class RestClient
     - parameter device: Provides updated DeviceInfo object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias UpdateDeviceHandler = (device:DeviceInfo?, error:ErrorType?) -> Void
+    public typealias UpdateDeviceHandler = (device:DeviceInfo?, error:NSError?) -> Void
 
     /**
     Completion handler
 
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DeleteDeviceHandler = (error:ErrorType?) -> Void
+    public typealias DeleteDeviceHandler = (error:NSError?) -> Void
 
     /**
      Completion handler
@@ -418,7 +420,7 @@ public class RestClient
      - parameter commits: Provides ResultCollection<Commit> object, or nil if error occurs
      - parameter error:   Provides error object, or nil if no error occurs
     */
-    public typealias CommitsHandler = (result:ResultCollection<Commit>?, error:ErrorType?)->Void
+    public typealias CommitsHandler = (result:ResultCollection<Commit>?, error:NSError?)->Void
     
     /**
      Completion handler
@@ -434,7 +436,7 @@ public class RestClient
      - parameter transactions: Provides ResultCollection<Transaction> object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
     */
-    public typealias TransactionsHandler = (result:ResultCollection<Transaction>?, error:ErrorType?)->Void
+    public typealias TransactionsHandler = (result:ResultCollection<Transaction>?, error:NSError?)->Void
 
     /**
      Completion handler
@@ -442,14 +444,14 @@ public class RestClient
      - parameter transaction: Provides Transaction object, or nil if error occurs
      - parameter error:       Provides error object, or nil if no error occurs
      */
-    public typealias TransactionHandler = (transaction:Transaction?, error:ErrorType?)->Void
+    public typealias TransactionHandler = (transaction:Transaction?, error:NSError?)->Void
 
     /**
      Completion handler
     
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    public typealias ConfirmAPDUPackageHandler = (error:ErrorType?)->Void
+    public typealias ConfirmAPDUPackageHandler = (error:NSError?)->Void
 
     /**
      Endpoint to allow for returning responses to APDU execution
@@ -457,7 +459,7 @@ public class RestClient
      - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    public func confirmAPDUPackage(package:ApduPackage, completion: ConfirmAPDUPackageHandler)
+    public func confirmAPDUPackage(url:String, package:ApduPackage, completion: ConfirmAPDUPackageHandler)
     {
         guard package.packageId != nil else {
             completion(error:NSError.error(code: ErrorCode.BadRequest, domain: RestClient.self, message: "packageId should not be nil"))
@@ -468,7 +470,7 @@ public class RestClient
         {
             (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.POST, "\(API_BASE_URL)/apduPackages/\(package.packageId!)/confirm", parameters: package.dictoinary, encoding: .JSON, headers: headers)
+                let request = self._manager.request(.POST, url, parameters: package.responseDictionary, encoding: .JSON, headers: headers)
                 request.validate().responseString
                 {
                     (response:Response<String, NSError>) -> Void in
@@ -494,7 +496,7 @@ public class RestClient
      - parameter asset: Provides Asset object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias AssetsHandler = (asset:Asset?, error:ErrorType?)->Void
+    public typealias AssetsHandler = (asset:Asset?, error:NSError?)->Void
 
     // MARK: EncryptionKeys
 
@@ -504,7 +506,7 @@ public class RestClient
      - parameter encryptionKey?: Provides created EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    internal typealias CreateEncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:ErrorType?)->Void
+    internal typealias CreateEncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:NSError?)->Void
 
     /**
      Creates a new encryption key pair
@@ -551,7 +553,7 @@ public class RestClient
      - parameter encryptionKey?: Provides EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    internal typealias EncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:ErrorType?)->Void
+    internal typealias EncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:NSError?)->Void
 
     /**
      Retrieve and individual key pair
@@ -617,9 +619,9 @@ public class RestClient
         }
     }
     
-    typealias CreateKeyIfNeeded = CreateEncryptionKeyHandler
+    typealias CreateKeyIfNeededHandler = CreateEncryptionKeyHandler
     
-    private func createKeyIfNeeded(completion: CreateKeyIfNeeded)
+    private func createKeyIfNeeded(completion: CreateKeyIfNeededHandler)
     {
         if let key = self.key
         {
@@ -646,7 +648,7 @@ public class RestClient
 
     
     // MARK: Request Signature Helpers
-    typealias CreateAuthHeaders = (headers:[String:String]?, error:ErrorType?) -> Void
+    typealias CreateAuthHeaders = (headers:[String:String]?, error:NSError?) -> Void
     private func createAuthHeaders(completion:CreateAuthHeaders)
     {
         if self._session.isAuthorized
@@ -660,7 +662,7 @@ public class RestClient
     }
     
 
-    typealias PrepareAuthAndKeyHeaders = (headers:[String:String]?, error:ErrorType?) -> Void
+    typealias PrepareAuthAndKeyHeaders = (headers:[String:String]?, error:NSError?) -> Void
     private func prepareAuthAndKeyHeaders(completion:PrepareAuthAndKeyHeaders)
     {
         self.createAuthHeaders
@@ -724,7 +726,7 @@ public class RestClient
                 
                 if let cardJSON = rawCard.JSONString
                 {
-                    if let jweObject = try? JWEObject.createNewObject("A256GCMKW", enc: "A256GCM", payload: cardJSON, keyId:headers[RestClient.fpKeyIdKey]!)
+                    if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: cardJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                     {
                         if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
                         {
@@ -833,7 +835,7 @@ public class RestClient
             if let headers = headers
             {
                 let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .JSON, headers: headers)
-                request.validate().responseData(
+                request.validate().responseData(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response:Response<NSData, NSError>) -> Void in
                     
@@ -929,7 +931,7 @@ public class RestClient
                     
                     if let updateJSON = operations.JSONString
                     {
-                        if let jweObject = try? JWEObject.createNewObject("A256GCMKW", enc: "A256GCM", payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
+                        if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
                         {
                             if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
                             {
@@ -1459,7 +1461,7 @@ public class RestClient
     }
 
 
-    public func createNewDevice(url:String, deviceType:String, manufacturerName:String, deviceName:String,
+    internal func createNewDevice(url:String, deviceType:String, manufacturerName:String, deviceName:String,
         serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
         softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
         secureElementId:String, pairing:String, completion:CreateNewDeviceHandler)
@@ -1524,7 +1526,7 @@ public class RestClient
         }
     }
     
-    public func deleteDevice(url:String, completion:DeleteDeviceHandler)
+    internal func deleteDevice(url:String, completion:DeleteDeviceHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -1551,7 +1553,7 @@ public class RestClient
         }
     }
     
-    public func updateDevice(url:String, firmwareRevision:String?, softwareRevision:String?,
+    internal func updateDevice(url:String, firmwareRevision:String?, softwareRevision:String?,
         completion:UpdateDeviceHandler)
     {
         var paramsArray = [AnyObject]()
@@ -1615,14 +1617,17 @@ public class RestClient
         }
     }
     
-    public func commits(url:String, commitsAfter:String, limit:Int, offset:Int,
+    public func commits(url:String, commitsAfter:String?, limit:Int, offset:Int,
         completion:CommitsHandler)
     {
-        let parameters = [
+        var parameters = [
             "limit" : "\(limit)",
-            "offset" : "\(offset)",
-            "commitsAfter" : commitsAfter
+            "offset" : "\(offset)"
         ]
+        
+        if (commitsAfter != nil && commitsAfter?.characters.count > 0) {
+            parameters["commitsAfter"] = commitsAfter!
+        }
         
         self.prepareAuthAndKeyHeaders
         {
@@ -1918,6 +1923,51 @@ public class RestClient
                 }
             }
         })
+    }
+    
+    
+    internal func collectionItems<T>(url:String, completion:(resultCollection:ResultCollection<T>?, error:ErrorType?) -> Void) -> T?
+    {
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers {
+                let request = self._manager.request(.GET, url, parameters: nil, encoding: .URL, headers: headers)
+                request.validate().responseObject(
+                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                {
+                    (response: Response<ResultCollection<T>, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                    {
+                        if let resultError = response.result.error
+                        {
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            
+                            completion(resultCollection: nil, error: error)
+                        }
+                        else if let resultValue = response.result.value
+                        {
+                            resultValue.client = self
+                            resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                            completion(resultCollection: resultValue, error: response.result.error)
+                        }
+                        else
+                        {
+                            completion(resultCollection: nil, error: NSError.unhandledError(RestClient.self))
+                        }
+                    })
+                })
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue(),
+                {
+                    completion(resultCollection: nil, error: error)
+                })
+            }
+        }
+        
+        return nil
     }
 }
 

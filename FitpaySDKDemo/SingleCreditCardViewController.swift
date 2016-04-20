@@ -66,7 +66,7 @@ class SingleCreditCardViewController: GenericTableViewController<CreditCardRow>
                         
                         self.view.busy = false
                         
-                        if let error = error as? NSError
+                        if let error = error
                         {
                             alert(title: "Error", message: error.userInfo[NSLocalizedDescriptionKey] as? String ?? "", cancelButtonTitle: "OK")
                         }
@@ -85,7 +85,7 @@ class SingleCreditCardViewController: GenericTableViewController<CreditCardRow>
                 self.creditCard?.acceptTerms
                 {
                     [unowned self](pending, card, error) in
-                    if let error = error as? NSError
+                    if let error = error
                     {
                         alert(title: "Error", message: error.userInfo[NSLocalizedDescriptionKey] as? String ?? "", cancelButtonTitle: "OK")
                     }

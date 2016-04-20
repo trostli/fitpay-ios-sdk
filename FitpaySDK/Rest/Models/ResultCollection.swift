@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class ResultCollection<T: Mappable> : ClientModel, Mappable, SecretApplyable
+public class ResultCollection<T: Mappable> : NSObject, ClientModel, Mappable, SecretApplyable
 {
     public var limit:Int?
     public var offset:Int?
@@ -12,17 +12,17 @@ public class ResultCollection<T: Mappable> : ClientModel, Mappable, SecretApplya
     private let nextResourse = "next"
     private let previousResource = "previous"
     
-    public var hasNext:Bool
+    public var nextAvailable:Bool
     {
         return self.links?.url(self.nextResourse) != nil
     }
     
-    public var hasLast:Bool
+    public var lastAvailable:Bool
     {
         return self.links?.url(self.lastResourse) != nil
     }
     
-    public var hasPrevious:Bool
+    public var previousAvailable:Bool
     {
         return self.links?.url(self.previousResource) != nil
     }
@@ -94,6 +94,45 @@ public class ResultCollection<T: Mappable> : ClientModel, Mappable, SecretApplya
                     objectWithEncryptedData.applySecret(secret, expectedKeyId: expectedKeyId)
                 }
             }
+        }
+    }
+    
+    public typealias CollectAllAvailableCompletion = (results: [T]?, error: ErrorType?) -> Void
+    
+    public func collectAllAvailable(completion: CollectAllAvailableCompletion) {
+        if let nextUrl = self.links?.url(self.nextResourse), _ = self.results {
+            self.collectAllAvailable(&self.results!, nextUrl: nextUrl, completion: completion)
+        } else {
+            completion(results: nil, error: NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: nil, resource: self.nextResourse))
+        }
+    }
+    
+    private func collectAllAvailable(inout storage: [T], nextUrl: String, completion: CollectAllAvailableCompletion) {
+        if let client = self.client {
+            let _ : T? = client.collectionItems(nextUrl)
+            {
+                (resultCollection, error) -> Void in
+                
+                guard error == nil else {
+                    completion(results: nil, error: error)
+                    return
+                }
+                
+                guard let resultCollection = resultCollection, results = resultCollection.results else {
+                    completion(results: nil, error: NSError.unhandledError(ResultCollection.self))
+                    return
+                }
+                
+                storage += results
+                
+                if let nextUrlItr = resultCollection.links?.url(self.nextResourse) {
+                    self.collectAllAvailable(&storage, nextUrl: nextUrlItr, completion: completion)
+                } else {
+                    completion(results: storage, error: nil)
+                }
+            }
+        } else {
+            completion(results: nil, error: NSError.unhandledError(ResultCollection.self))
         }
     }
     

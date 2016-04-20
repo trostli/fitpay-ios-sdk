@@ -68,4 +68,30 @@ extension NSData
         }
         return String(data: result, encoding: NSUTF8StringEncoding)
     }
+    
+    var hex:String
+    {
+        var s = ""
+        
+        var byte: UInt8 = 0
+        for i in 0 ..< self.length {
+            self.getBytes(&byte, range: NSMakeRange(i, 1))
+            s += String(format: "%02x", byte)
+        }
+        
+        return s
+    }
+    
+    var reverseEndian:NSData {
+        var inData = [UInt8](count: self.length, repeatedValue: 0)
+        self.getBytes(&inData, length: self.length)
+        var outData = [UInt8](count: self.length, repeatedValue: 0)
+        var outPos = inData.count;
+        for i in 0 ..< inData.count {
+            outPos -= 1
+            outData[i] = inData[outPos]
+        }
+        let out = NSData(bytes: outData, length: outData.count)
+        return out
+    }
 }

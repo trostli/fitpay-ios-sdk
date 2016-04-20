@@ -30,7 +30,7 @@ class RtmSessionTests: XCTestCase
         self.restSession = nil
         
         if let deviceToDelete = self.deviceToDelete {
-            deviceToDelete.delete(
+            deviceToDelete.deleteDeviceInfo(
             { (_) -> Void in
                 
             })
@@ -56,7 +56,7 @@ class RtmSessionTests: XCTestCase
             {
                 (user, error) -> Void in
             
-                user?.listDevices(20, offset: 0, completion:
+                user?.listDevices(limit: 20, offset: 0, completion:
                 {
                     (devices, error) -> Void in
                     var secureElementFound = false

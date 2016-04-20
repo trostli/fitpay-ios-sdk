@@ -6,4 +6,29 @@ extension String {
         
         return nil
     }
+    
+    func hexToData() -> NSData? {
+        let trimmedString = self.stringByTrimmingCharactersInSet(NSCharacterSet(charactersInString: "<> ")).stringByReplacingOccurrencesOfString(" ", withString: "")
+        
+        let regex = try! NSRegularExpression(pattern: "^[0-9a-f]*$", options: .CaseInsensitive)
+        
+        let found = regex.firstMatchInString(trimmedString, options: [], range: NSMakeRange(0, trimmedString.characters.count))
+        
+        if found == nil || found?.range.location == NSNotFound || trimmedString.characters.count % 2 != 0 {
+            return nil
+        }
+        
+        let data = NSMutableData(capacity: trimmedString.characters.count / 2)
+        
+        var index = trimmedString.startIndex
+        while index < trimmedString.endIndex
+        {
+            let byteString = trimmedString.substringWithRange(index ..< index.successor().successor())
+            let num = UInt8(byteString.withCString { strtoul($0, nil, 16) })
+            data?.appendBytes([num] as [UInt8], length: 1)
+            index = index.successor().successor()
+        }
+        
+        return data
+    }
 }
