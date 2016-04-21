@@ -10,6 +10,30 @@
 	<string>46</string>
 	<key>objects</key>
 	<dict>
+		<key>0449CB17E5F108BBF8B2F6A3</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Embed Pods Frameworks</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-ObjCDemo/Pods-ObjCDemo-frameworks.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
 		<key>0AD922931C1F7EFC007693AB</key>
 		<dict>
 			<key>children</key>
@@ -17,6 +41,10 @@
 				<string>0AD9229F1C1F7EFC007693AB</string>
 				<string>0AD922AB1C1F7EFC007693AB</string>
 				<string>8426D2591C96F4AA009AACFE</string>
+				<string>9A2E68C41CA14DE10061D5B3</string>
+				<string>9A2E68D91CA14DE10061D5B3</string>
+				<string>9A2F7B801CB7FB5D00696D45</string>
+				<string>9A2F7B9A1CB7FB5D00696D45</string>
 				<string>0AD9229E1C1F7EFC007693AB</string>
 				<string>AAC95219C4851808164A9861</string>
 				<string>B2C94647591B581A09E4A254</string>
@@ -31,7 +59,7 @@
 			<key>attributes</key>
 			<dict>
 				<key>LastSwiftUpdateCheck</key>
-				<string>0720</string>
+				<string>0730</string>
 				<key>LastUpgradeCheck</key>
 				<string>0720</string>
 				<key>ORGANIZATIONNAME</key>
@@ -42,8 +70,6 @@
 					<dict>
 						<key>CreatedOnToolsVersion</key>
 						<string>7.2</string>
-						<key>DevelopmentTeam</key>
-						<string>ZLW345FG82</string>
 					</dict>
 					<key>0AD922A61C1F7EFC007693AB</key>
 					<dict>
@@ -66,6 +92,30 @@
 								<string>1</string>
 							</dict>
 						</dict>
+					</dict>
+					<key>9A2E68C21CA14DE10061D5B3</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>7.2</string>
+					</dict>
+					<key>9A2E68D51CA14DE10061D5B3</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>7.2</string>
+						<key>TestTargetID</key>
+						<string>9A2E68C21CA14DE10061D5B3</string>
+					</dict>
+					<key>9A2F7B7E1CB7FB5C00696D45</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>7.3</string>
+					</dict>
+					<key>9A2F7B961CB7FB5D00696D45</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>7.3</string>
+						<key>TestTargetID</key>
+						<string>9A2F7B7E1CB7FB5C00696D45</string>
 					</dict>
 				</dict>
 			</dict>
@@ -99,6 +149,10 @@
 				<string>0AD9229C1C1F7EFC007693AB</string>
 				<string>0AD922A61C1F7EFC007693AB</string>
 				<string>8426D2571C96F4AA009AACFE</string>
+				<string>9A2E68C21CA14DE10061D5B3</string>
+				<string>9A2E68D51CA14DE10061D5B3</string>
+				<string>9A2F7B7E1CB7FB5C00696D45</string>
+				<string>9A2F7B961CB7FB5D00696D45</string>
 			</array>
 		</dict>
 		<key>0AD922971C1F7EFC007693AB</key>
@@ -130,21 +184,26 @@
 				<string>CD038E19C412D95ED6F9F036</string>
 				<string>CD038952A85B6214173CC785</string>
 				<string>CD038DC45BF133FC5A0D9A94</string>
+				<string>9A7C787F1CC77F210097BAB9</string>
 				<string>CD03852C57B1C79751A86197</string>
 				<string>8425931D1CAA613E0006FFA6</string>
 				<string>CD0387E96A4CCADE85CAA6B0</string>
+				<string>9A7C78811CC77F210097BAB9</string>
 				<string>CD0385EFB1AE91118505CC3E</string>
 				<string>847264A01CA53D0800DE801D</string>
 				<string>8426D2511C92BB9D009AACFE</string>
 				<string>847264A11CA53D0800DE801D</string>
 				<string>847264981CA5263400DE801D</string>
+				<string>9A7C78821CC77F210097BAB9</string>
 				<string>847264A31CA53D0800DE801D</string>
 				<string>CD038A69826DABAA4DE467C5</string>
+				<string>9A7C78801CC77F210097BAB9</string>
 				<string>CD038BD672C20128B6711869</string>
 				<string>CD038A4098738EC358AD2751</string>
 				<string>CD03838AE5953B954AC82E50</string>
 				<string>847264A21CA53D0800DE801D</string>
 				<string>9A1227801C89CF5C006968D7</string>
+				<string>9A7C78841CC77F210097BAB9</string>
 				<string>9AB68E411C84A1EC00A0E172</string>
 				<string>CD0380D8C5E628E5C1A755AC</string>
 				<string>CD038125B3958A9F8CF17E26</string>
@@ -160,6 +219,7 @@
 				<string>9A62E6B61C8DCA20004ED6C0</string>
 				<string>CD038D8BCA3144FBB29E8DE4</string>
 				<string>CD0381C2A8FBB873B221A20F</string>
+				<string>9A7C78831CC77F210097BAB9</string>
 				<string>CD0389401826E2E23F248906</string>
 				<string>8456437C1CAD7F7200351C8E</string>
 				<string>CD03864C52B317B02135FF7D</string>
@@ -178,8 +238,6 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>9ACF2FB31C7F024E0051DAF1</string>
-				<string>9ACF2FB41C7F024E0051DAF1</string>
 				<string>354C63C62E4DFD9F17A403C9</string>
 			</array>
 			<key>isa</key>
@@ -259,6 +317,10 @@
 				<string>0AD9229D1C1F7EFC007693AB</string>
 				<string>0AD922A71C1F7EFC007693AB</string>
 				<string>8426D2581C96F4AA009AACFE</string>
+				<string>9A2E68C31CA14DE10061D5B3</string>
+				<string>9A2E68D61CA14DE10061D5B3</string>
+				<string>9A2F7B7F1CB7FB5D00696D45</string>
+				<string>9A2F7B971CB7FB5D00696D45</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -333,7 +395,6 @@
 			<array>
 				<string>8426D2931CA00243009AACFE</string>
 				<string>9AA5BDAB1C7B54B600EDF2F6</string>
-				<string>0AD922AD1C1F7EFC007693AB</string>
 				<string>9AB68E441C84A25B00A0E172</string>
 				<string>8426D2531C92F428009AACFE</string>
 				<string>9AA50BDF1C7E096D000FA546</string>
@@ -448,7 +509,6 @@
 				<string>9AB68E431C84A25B00A0E172</string>
 				<string>9AA50BDE1C7E096D000FA546</string>
 				<string>9AA5BDAA1C7B54B600EDF2F6</string>
-				<string>0AD922AC1C1F7EFC007693AB</string>
 				<string>8426D2521C92F428009AACFE</string>
 				<string>8426D2921CA00243009AACFE</string>
 				<string>0AD922AE1C1F7EFC007693AB</string>
@@ -459,24 +519,6 @@
 			<string>FitpaySDKTests</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
-		</dict>
-		<key>0AD922AC1C1F7EFC007693AB</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>FitpaySDKTests.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>0AD922AD1C1F7EFC007693AB</key>
-		<dict>
-			<key>fileRef</key>
-			<string>0AD922AC1C1F7EFC007693AB</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>0AD922AE1C1F7EFC007693AB</key>
 		<dict>
@@ -697,10 +739,10 @@
 				<key>DYLIB_INSTALL_NAME_BASE</key>
 				<string>@rpath</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/lib"</string>
+				<string></string>
 				<key>HEADER_SEARCH_PATHS</key>
 				<array>
-					<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include"/**</string>
+					<string>$(inherited)</string>
 					<string>"$(SRCROOT)/FitpaySDK/FPCrypto</string>
 				</array>
 				<key>INFOPLIST_FILE</key>
@@ -710,10 +752,7 @@
 				<key>LD_RUNPATH_SEARCH_PATHS</key>
 				<string>$(inherited) @executable_path/Frameworks @loader_path/Frameworks</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(PROJECT_DIR)/FitpaySDK/Libraries/OpenSSL/lib</string>
-				</array>
+				<string>$(inherited)</string>
 				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
 				<string>com.masterofcode-llc.FitpaySDK</string>
 				<key>PRODUCT_NAME</key>
@@ -755,10 +794,10 @@
 				<key>DYLIB_INSTALL_NAME_BASE</key>
 				<string>@rpath</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
-				<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/lib"</string>
+				<string></string>
 				<key>HEADER_SEARCH_PATHS</key>
 				<array>
-					<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include"/**</string>
+					<string>$(inherited)</string>
 					<string>"$(SRCROOT)/FitpaySDK/FPCrypto</string>
 				</array>
 				<key>INFOPLIST_FILE</key>
@@ -768,10 +807,7 @@
 				<key>LD_RUNPATH_SEARCH_PATHS</key>
 				<string>$(inherited) @executable_path/Frameworks @loader_path/Frameworks</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(PROJECT_DIR)/FitpaySDK/Libraries/OpenSSL/lib</string>
-				</array>
+				<string>$(inherited)</string>
 				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
 				<string>com.masterofcode-llc.FitpaySDK</string>
 				<key>PRODUCT_NAME</key>
@@ -887,12 +923,174 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>15CC29968B7BA0877FE3A393</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>30C4EE03382A4132094A635D</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-FitpaySDKDemo.release.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-FitpaySDKDemo/Pods-FitpaySDKDemo.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>354C63C62E4DFD9F17A403C9</key>
 		<dict>
 			<key>fileRef</key>
 			<string>AE7CA63167C1F9C39FA4FA6C</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
+		</dict>
+		<key>3891A7696FF7605B69136A33</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>39F68889E224C90DC97969EA</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-ObjCDemo/Pods-ObjCDemo-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>3A32D0161CC7CA68000BB0D8</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0AD9229D1C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>3A32D0171CC7CA68000BB0D8</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0AD9229D1C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>CodeSignOnCopy</string>
+					<string>RemoveHeadersOnCopy</string>
+				</array>
+			</dict>
+		</dict>
+		<key>3A32D0181CC7CA68000BB0D8</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>0AD922941C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>0AD9229C1C1F7EFC007693AB</string>
+			<key>remoteInfo</key>
+			<string>FitpaySDK</string>
+		</dict>
+		<key>3A32D0191CC7CA68000BB0D8</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>0AD9229C1C1F7EFC007693AB</string>
+			<key>targetProxy</key>
+			<string>3A32D0181CC7CA68000BB0D8</string>
+		</dict>
+		<key>3A32D01A1CC7CA68000BB0D8</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>dstPath</key>
+			<string></string>
+			<key>dstSubfolderSpec</key>
+			<string>10</string>
+			<key>files</key>
+			<array>
+				<string>3A32D0171CC7CA68000BB0D8</string>
+			</array>
+			<key>isa</key>
+			<string>PBXCopyFilesBuildPhase</string>
+			<key>name</key>
+			<string>Embed Frameworks</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
 		</dict>
 		<key>449DF6A1184412BD75735649</key>
 		<dict>
@@ -958,6 +1156,21 @@
 			<string>Pods-FitpaySDK.debug.xcconfig</string>
 			<key>path</key>
 			<string>Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.debug.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>6F21AC624EF18CF9C3CED67F</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-ObjCDemo.debug.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-ObjCDemo/Pods-ObjCDemo.debug.xcconfig</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -1750,6 +1963,19 @@ fi
 			<key>runOnlyForDeploymentPostprocessing</key>
 			<string>0</string>
 		</dict>
+		<key>84A84AE83E7EDF11F2655399</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>Pods_ObjCDemo.framework</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
 		<key>8E83939B8ADCEC3EEA5B38F6</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -1774,6 +2000,26 @@ fi
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
 		</dict>
+		<key>98FACC41D685B6ADCEA1DD7F</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>Pods_FitpaySDKDemo.framework</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>9A0A12A91CC0FF630088393E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0AD9229D1C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>9A12277F1C89CF5C006968D7</key>
 		<dict>
 			<key>fileEncoding</key>
@@ -1793,6 +2039,1193 @@ fi
 			<string>9A12277F1C89CF5C006968D7</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A18CAB51CABDFD600658223</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>DevicesViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A18CAB61CABDFD600658223</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A18CAB51CABDFD600658223</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A18CAB71CABE79800658223</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>SingleCreditCardViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A18CAB81CABE79800658223</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A18CAB71CABE79800658223</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2E68BF1CA14DE10061D5B3</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>9A2E68C81CA14DE10061D5B3</string>
+				<string>9A18CAB61CABDFD600658223</string>
+				<string>9A8D153D1CA29D4100A03E7F</string>
+				<string>9A668B8B1CAAC5BB00E70668</string>
+				<string>9A668B8D1CAACEF600E70668</string>
+				<string>9A18CAB81CABE79800658223</string>
+				<string>9A2E68C61CA14DE10061D5B3</string>
+				<string>9A8D15401CA29DC500A03E7F</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2E68C01CA14DE10061D5B3</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>3A32D0161CC7CA68000BB0D8</string>
+				<string>F238A9D2E3A12A3DE638D67D</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2E68C11CA14DE10061D5B3</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>9A2E68D01CA14DE10061D5B3</string>
+				<string>9A8D153E1CA29D4100A03E7F</string>
+				<string>9A2E68CD1CA14DE10061D5B3</string>
+				<string>9A2E68E41CA154310061D5B3</string>
+			</array>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2E68C21CA14DE10061D5B3</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>9A2E68E11CA14DE10061D5B3</string>
+			<key>buildPhases</key>
+			<array>
+				<string>15CC29968B7BA0877FE3A393</string>
+				<string>9A2E68BF1CA14DE10061D5B3</string>
+				<string>9A2E68C01CA14DE10061D5B3</string>
+				<string>9A2E68C11CA14DE10061D5B3</string>
+				<string>3A32D01A1CC7CA68000BB0D8</string>
+				<string>A036C8D606BB12E4198BE23E</string>
+				<string>E0F0FCE34C33AE6B4A434F25</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>3A32D0191CC7CA68000BB0D8</string>
+			</array>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>FitpaySDKDemo</string>
+			<key>productName</key>
+			<string>FitpaySDKDemo</string>
+			<key>productReference</key>
+			<string>9A2E68C31CA14DE10061D5B3</string>
+			<key>productType</key>
+			<string>com.apple.product-type.application</string>
+		</dict>
+		<key>9A2E68C31CA14DE10061D5B3</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.application</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>FitpaySDKDemo.app</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>9A2E68C41CA14DE10061D5B3</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9A2E68C51CA14DE10061D5B3</string>
+				<string>9A2E68C71CA14DE10061D5B3</string>
+				<string>9A2E68CC1CA14DE10061D5B3</string>
+				<string>9A2E68CE1CA14DE10061D5B3</string>
+				<string>9A2E68D11CA14DE10061D5B3</string>
+				<string>9A2E68E31CA154310061D5B3</string>
+				<string>9A8D153B1CA29D4100A03E7F</string>
+				<string>9A8D153C1CA29D4100A03E7F</string>
+				<string>9A8D153F1CA29DC500A03E7F</string>
+				<string>9A668B8A1CAAC5BB00E70668</string>
+				<string>9A668B8C1CAACEF600E70668</string>
+				<string>9A18CAB51CABDFD600658223</string>
+				<string>9A18CAB71CABE79800658223</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>FitpaySDKDemo</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68C51CA14DE10061D5B3</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>AppDelegate.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68C61CA14DE10061D5B3</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2E68C51CA14DE10061D5B3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2E68C71CA14DE10061D5B3</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>LoginViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68C81CA14DE10061D5B3</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2E68C71CA14DE10061D5B3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2E68CC1CA14DE10061D5B3</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>folder.assetcatalog</string>
+			<key>path</key>
+			<string>Assets.xcassets</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68CD1CA14DE10061D5B3</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2E68CC1CA14DE10061D5B3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2E68CE1CA14DE10061D5B3</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9A2E68CF1CA14DE10061D5B3</string>
+			</array>
+			<key>isa</key>
+			<string>PBXVariantGroup</string>
+			<key>name</key>
+			<string>LaunchScreen.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68CF1CA14DE10061D5B3</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.storyboard</string>
+			<key>name</key>
+			<string>Base</string>
+			<key>path</key>
+			<string>Base.lproj/LaunchScreen.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68D01CA14DE10061D5B3</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2E68CE1CA14DE10061D5B3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2E68D11CA14DE10061D5B3</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68D21CA14DE10061D5B3</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>9A2E68DB1CA14DE10061D5B3</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2E68D31CA14DE10061D5B3</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2E68D41CA14DE10061D5B3</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2E68D51CA14DE10061D5B3</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>9A2E68E21CA14DE10061D5B3</string>
+			<key>buildPhases</key>
+			<array>
+				<string>9A2E68D21CA14DE10061D5B3</string>
+				<string>9A2E68D31CA14DE10061D5B3</string>
+				<string>9A2E68D41CA14DE10061D5B3</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>9A2E68D81CA14DE10061D5B3</string>
+			</array>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>FitpaySDKDemoUITests</string>
+			<key>productName</key>
+			<string>FitpaySDKDemoUITests</string>
+			<key>productReference</key>
+			<string>9A2E68D61CA14DE10061D5B3</string>
+			<key>productType</key>
+			<string>com.apple.product-type.bundle.ui-testing</string>
+		</dict>
+		<key>9A2E68D61CA14DE10061D5B3</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.cfbundle</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>FitpaySDKDemoUITests.xctest</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>9A2E68D71CA14DE10061D5B3</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>0AD922941C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>9A2E68C21CA14DE10061D5B3</string>
+			<key>remoteInfo</key>
+			<string>FitpaySDKDemo</string>
+		</dict>
+		<key>9A2E68D81CA14DE10061D5B3</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>9A2E68C21CA14DE10061D5B3</string>
+			<key>targetProxy</key>
+			<string>9A2E68D71CA14DE10061D5B3</string>
+		</dict>
+		<key>9A2E68D91CA14DE10061D5B3</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9A2E68DA1CA14DE10061D5B3</string>
+				<string>9A2E68DC1CA14DE10061D5B3</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>FitpaySDKDemoUITests</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68DA1CA14DE10061D5B3</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>FitpaySDKDemoUITests.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68DB1CA14DE10061D5B3</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2E68DA1CA14DE10061D5B3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2E68DC1CA14DE10061D5B3</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68DD1CA14DE10061D5B3</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>EAB82CE6C221FA584A2AEF85</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>EMBEDDED_CONTENT_CONTAINS_SWIFT</key>
+				<string>YES</string>
+				<key>HEADER_SEARCH_PATHS</key>
+				<array>
+					<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include"/**</string>
+					<string>"$(SRCROOT)/FitpaySDK/FPCrypto"</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>FitpaySDKDemo/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.fitpay.FitpaySDKDemo</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>9A2E68DE1CA14DE10061D5B3</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>30C4EE03382A4132094A635D</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>CODE_SIGN_IDENTITY</key>
+				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
+				<string>iPhone Developer</string>
+				<key>EMBEDDED_CONTENT_CONTAINS_SWIFT</key>
+				<string>YES</string>
+				<key>HEADER_SEARCH_PATHS</key>
+				<array>
+					<string>"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include"/**</string>
+					<string>"$(SRCROOT)/FitpaySDK/FPCrypto"</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>FitpaySDKDemo/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.fitpay.FitpaySDKDemo</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>9A2E68DF1CA14DE10061D5B3</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>INFOPLIST_FILE</key>
+				<string>FitpaySDKDemoUITests/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks @loader_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.fitpay.FitpaySDKDemoUITests</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>TEST_TARGET_NAME</key>
+				<string>FitpaySDKDemo</string>
+				<key>USES_XCTRUNNER</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>9A2E68E01CA14DE10061D5B3</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>INFOPLIST_FILE</key>
+				<string>FitpaySDKDemoUITests/Info.plist</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks @loader_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.fitpay.FitpaySDKDemoUITests</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>TEST_TARGET_NAME</key>
+				<string>FitpaySDKDemo</string>
+				<key>USES_XCTRUNNER</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>9A2E68E11CA14DE10061D5B3</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>9A2E68DD1CA14DE10061D5B3</string>
+				<string>9A2E68DE1CA14DE10061D5B3</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>9A2E68E21CA14DE10061D5B3</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>9A2E68DF1CA14DE10061D5B3</string>
+				<string>9A2E68E01CA14DE10061D5B3</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>9A2E68E31CA154310061D5B3</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.xib</string>
+			<key>path</key>
+			<string>LoginViewController.xib</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2E68E41CA154310061D5B3</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2E68E31CA154310061D5B3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2F7B7B1CB7FB5C00696D45</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>9A2F7B891CB7FB5D00696D45</string>
+				<string>9A2F7B861CB7FB5D00696D45</string>
+				<string>9AD23A451CBE942D007CB9CF</string>
+				<string>9AD23A421CBE8EB5007CB9CF</string>
+				<string>9A2F7B831CB7FB5D00696D45</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2F7B7C1CB7FB5C00696D45</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>9AD23A3F1CBE78E5007CB9CF</string>
+				<string>B4908F350220523AD13B0928</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2F7B7D1CB7FB5C00696D45</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>9A2F7B911CB7FB5D00696D45</string>
+				<string>9A2F7B8E1CB7FB5D00696D45</string>
+				<string>9A2F7B8C1CB7FB5D00696D45</string>
+			</array>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2F7B7E1CB7FB5C00696D45</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>9A2F7BA21CB7FB5D00696D45</string>
+			<key>buildPhases</key>
+			<array>
+				<string>3891A7696FF7605B69136A33</string>
+				<string>9A2F7B7B1CB7FB5C00696D45</string>
+				<string>9A2F7B7C1CB7FB5C00696D45</string>
+				<string>9A2F7B7D1CB7FB5C00696D45</string>
+				<string>0449CB17E5F108BBF8B2F6A3</string>
+				<string>39F68889E224C90DC97969EA</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>9A49E9F91CBBA03E009811D4</string>
+			</array>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>ObjCDemo</string>
+			<key>productName</key>
+			<string>ObjCDemo</string>
+			<key>productReference</key>
+			<string>9A2F7B7F1CB7FB5D00696D45</string>
+			<key>productType</key>
+			<string>com.apple.product-type.application</string>
+		</dict>
+		<key>9A2F7B7F1CB7FB5D00696D45</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.application</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>ObjCDemo.app</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>9A2F7B801CB7FB5D00696D45</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9A2F7B841CB7FB5D00696D45</string>
+				<string>9A2F7B851CB7FB5D00696D45</string>
+				<string>9A2F7B871CB7FB5D00696D45</string>
+				<string>9A2F7B881CB7FB5D00696D45</string>
+				<string>9A2F7B8A1CB7FB5D00696D45</string>
+				<string>9A2F7B8D1CB7FB5D00696D45</string>
+				<string>9A2F7B8F1CB7FB5D00696D45</string>
+				<string>9A2F7B921CB7FB5D00696D45</string>
+				<string>9A2F7B811CB7FB5D00696D45</string>
+				<string>9AD23A411CBE8EB5007CB9CF</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>ObjCDemo</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B811CB7FB5D00696D45</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9A2F7B821CB7FB5D00696D45</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Supporting Files</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B821CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>main.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B831CB7FB5D00696D45</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2F7B821CB7FB5D00696D45</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2F7B841CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>AppDelegate.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B851CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>AppDelegate.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B861CB7FB5D00696D45</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2F7B851CB7FB5D00696D45</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2F7B871CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>ViewController.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B881CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>ViewController.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B891CB7FB5D00696D45</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2F7B881CB7FB5D00696D45</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2F7B8A1CB7FB5D00696D45</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9A2F7B8B1CB7FB5D00696D45</string>
+			</array>
+			<key>isa</key>
+			<string>PBXVariantGroup</string>
+			<key>name</key>
+			<string>Main.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B8B1CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.storyboard</string>
+			<key>name</key>
+			<string>Base</string>
+			<key>path</key>
+			<string>Base.lproj/Main.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B8C1CB7FB5D00696D45</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2F7B8A1CB7FB5D00696D45</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2F7B8D1CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>folder.assetcatalog</string>
+			<key>path</key>
+			<string>Assets.xcassets</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B8E1CB7FB5D00696D45</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2F7B8D1CB7FB5D00696D45</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2F7B8F1CB7FB5D00696D45</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9A2F7B901CB7FB5D00696D45</string>
+			</array>
+			<key>isa</key>
+			<string>PBXVariantGroup</string>
+			<key>name</key>
+			<string>LaunchScreen.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B901CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.storyboard</string>
+			<key>name</key>
+			<string>Base</string>
+			<key>path</key>
+			<string>Base.lproj/LaunchScreen.storyboard</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B911CB7FB5D00696D45</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2F7B8F1CB7FB5D00696D45</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2F7B921CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B931CB7FB5D00696D45</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>9A2F7B9C1CB7FB5D00696D45</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2F7B941CB7FB5D00696D45</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>9A0A12A91CC0FF630088393E</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2F7B951CB7FB5D00696D45</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>9A2F7B961CB7FB5D00696D45</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>9A2F7BA31CB7FB5D00696D45</string>
+			<key>buildPhases</key>
+			<array>
+				<string>9A2F7B931CB7FB5D00696D45</string>
+				<string>9A2F7B941CB7FB5D00696D45</string>
+				<string>9A2F7B951CB7FB5D00696D45</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>9A2F7B991CB7FB5D00696D45</string>
+			</array>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>ObjCDemoTests</string>
+			<key>productName</key>
+			<string>ObjCDemoTests</string>
+			<key>productReference</key>
+			<string>9A2F7B971CB7FB5D00696D45</string>
+			<key>productType</key>
+			<string>com.apple.product-type.bundle.unit-test</string>
+		</dict>
+		<key>9A2F7B971CB7FB5D00696D45</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.cfbundle</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>ObjCDemoTests.xctest</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>9A2F7B981CB7FB5D00696D45</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>0AD922941C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>9A2F7B7E1CB7FB5C00696D45</string>
+			<key>remoteInfo</key>
+			<string>ObjCDemo</string>
+		</dict>
+		<key>9A2F7B991CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>9A2F7B7E1CB7FB5C00696D45</string>
+			<key>targetProxy</key>
+			<string>9A2F7B981CB7FB5D00696D45</string>
+		</dict>
+		<key>9A2F7B9A1CB7FB5D00696D45</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9A2F7B9B1CB7FB5D00696D45</string>
+				<string>9A2F7B9D1CB7FB5D00696D45</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>ObjCDemoTests</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B9B1CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>ObjCDemoTests.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B9C1CB7FB5D00696D45</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A2F7B9B1CB7FB5D00696D45</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A2F7B9D1CB7FB5D00696D45</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A2F7B9E1CB7FB5D00696D45</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>6F21AC624EF18CF9C3CED67F</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES</key>
+				<string>NO</string>
+				<key>CLANG_ANALYZER_NONNULL</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>DEFINES_MODULE</key>
+				<string>YES</string>
+				<key>HEADER_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>"$(SRCROOT)/FitpaySDK/FPCrypto</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>ObjCDemo/Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>9.3</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks</string>
+				<key>LIBRARY_SEARCH_PATHS</key>
+				<string>$(inherited)</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.masterofcode-llc.ObjCDemo</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>SWIFT_OPTIMIZATION_LEVEL</key>
+				<string>-Onone</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>9A2F7B9F1CB7FB5D00696D45</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>9DE52F7096B647CEA17CA45A</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES</key>
+				<string>NO</string>
+				<key>CLANG_ANALYZER_NONNULL</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>DEFINES_MODULE</key>
+				<string>YES</string>
+				<key>HEADER_SEARCH_PATHS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>"$(SRCROOT)/FitpaySDK/FPCrypto</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>ObjCDemo/Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>9.3</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks</string>
+				<key>LIBRARY_SEARCH_PATHS</key>
+				<string>$(inherited)</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.masterofcode-llc.ObjCDemo</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>9A2F7BA01CB7FB5D00696D45</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>BUNDLE_LOADER</key>
+				<string>$(TEST_HOST)</string>
+				<key>CLANG_ANALYZER_NONNULL</key>
+				<string>YES</string>
+				<key>INFOPLIST_FILE</key>
+				<string>ObjCDemoTests/Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>9.3</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks @loader_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.masterofcode-llc.ObjCDemoTests</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>TEST_HOST</key>
+				<string>$(BUILT_PRODUCTS_DIR)/ObjCDemo.app/ObjCDemo</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>9A2F7BA11CB7FB5D00696D45</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>BUNDLE_LOADER</key>
+				<string>$(TEST_HOST)</string>
+				<key>CLANG_ANALYZER_NONNULL</key>
+				<string>YES</string>
+				<key>INFOPLIST_FILE</key>
+				<string>ObjCDemoTests/Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>9.3</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks @loader_path/Frameworks</string>
+				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+				<string>com.masterofcode-llc.ObjCDemoTests</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>TEST_HOST</key>
+				<string>$(BUILT_PRODUCTS_DIR)/ObjCDemo.app/ObjCDemo</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>9A2F7BA21CB7FB5D00696D45</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>9A2F7B9E1CB7FB5D00696D45</string>
+				<string>9A2F7B9F1CB7FB5D00696D45</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>9A2F7BA31CB7FB5D00696D45</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>9A2F7BA01CB7FB5D00696D45</string>
+				<string>9A2F7BA11CB7FB5D00696D45</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>9A49E9F61CBB9E4C009811D4</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>Pods_FitpaySDK.framework</string>
+			<key>path</key>
+			<string>../../../../../../Library/Developer/Xcode/DerivedData/FitpaySDK-aagshttificgflagwbycucggeqhc/Build/Products/Debug-iphonesimulator/Pods_FitpaySDK.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A49E9F81CBBA03E009811D4</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>0AD922941C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>0AD9229C1C1F7EFC007693AB</string>
+			<key>remoteInfo</key>
+			<string>FitpaySDK</string>
+		</dict>
+		<key>9A49E9F91CBBA03E009811D4</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>0AD9229C1C1F7EFC007693AB</string>
+			<key>targetProxy</key>
+			<string>9A49E9F81CBBA03E009811D4</string>
 		</dict>
 		<key>9A58466C1C96B65B00E4ABDC</key>
 		<dict>
@@ -1834,10 +3267,260 @@ fi
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>9A668B8A1CAAC5BB00E70668</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>BaseTableViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A668B8B1CAAC5BB00E70668</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A668B8A1CAAC5BB00E70668</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A668B8C1CAACEF600E70668</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>CreditCardsViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A668B8D1CAACEF600E70668</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A668B8C1CAACEF600E70668</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>9A7A54A7E661411C6C8DE135</key>
 		<dict>
 			<key>fileRef</key>
 			<string>69821357DC697D6A3E09ABA4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A7C78781CC77F130097BAB9</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9A7C78791CC77F210097BAB9</string>
+				<string>9A7C787A1CC77F210097BAB9</string>
+				<string>9A7C787B1CC77F210097BAB9</string>
+				<string>9A7C787C1CC77F210097BAB9</string>
+				<string>9A7C787D1CC77F210097BAB9</string>
+				<string>9A7C787E1CC77F210097BAB9</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>EventListeners</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A7C78791CC77F210097BAB9</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>name</key>
+			<string>FitpayBlockEventListener.swift</string>
+			<key>path</key>
+			<string>EventsListeners/FitpayBlockEventListener.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A7C787A1CC77F210097BAB9</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>name</key>
+			<string>FitpayEvent.swift</string>
+			<key>path</key>
+			<string>EventsListeners/FitpayEvent.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A7C787B1CC77F210097BAB9</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>name</key>
+			<string>FitpayEventBinding.swift</string>
+			<key>path</key>
+			<string>EventsListeners/FitpayEventBinding.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A7C787C1CC77F210097BAB9</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>name</key>
+			<string>FitpayEventDispatcher.swift</string>
+			<key>path</key>
+			<string>EventsListeners/FitpayEventDispatcher.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A7C787D1CC77F210097BAB9</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>name</key>
+			<string>FitpayEventListener.swift</string>
+			<key>path</key>
+			<string>EventsListeners/FitpayEventListener.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A7C787E1CC77F210097BAB9</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>name</key>
+			<string>FitpayEventTypeProtocol.swift</string>
+			<key>path</key>
+			<string>EventsListeners/FitpayEventTypeProtocol.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A7C787F1CC77F210097BAB9</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A7C78791CC77F210097BAB9</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A7C78801CC77F210097BAB9</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A7C787A1CC77F210097BAB9</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A7C78811CC77F210097BAB9</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A7C787B1CC77F210097BAB9</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A7C78821CC77F210097BAB9</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A7C787C1CC77F210097BAB9</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A7C78831CC77F210097BAB9</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A7C787D1CC77F210097BAB9</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A7C78841CC77F210097BAB9</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A7C787E1CC77F210097BAB9</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A8D153B1CA29D4100A03E7F</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>UserViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A8D153C1CA29D4100A03E7F</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file.xib</string>
+			<key>path</key>
+			<string>BaseTableViewController.xib</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A8D153D1CA29D4100A03E7F</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A8D153B1CA29D4100A03E7F</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A8D153E1CA29D4100A03E7F</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A8D153C1CA29D4100A03E7F</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9A8D153F1CA29DC500A03E7F</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>Utils.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9A8D15401CA29DC500A03E7F</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9A8D153F1CA29DC500A03E7F</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
@@ -2080,20 +3763,6 @@ fi
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>9ACF2FB31C7F024E0051DAF1</key>
-		<dict>
-			<key>fileRef</key>
-			<string>9ACF2FB11C7F024E0051DAF1</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>9ACF2FB41C7F024E0051DAF1</key>
-		<dict>
-			<key>fileRef</key>
-			<string>9ACF2FB21C7F024E0051DAF1</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
 		<key>9ACF305A1C7F4B010051DAF1</key>
 		<dict>
 			<key>children</key>
@@ -2119,6 +3788,92 @@ fi
 			<string>SECP256R1.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AD23A3F1CBE78E5007CB9CF</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0AD9229D1C1F7EFC007693AB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9AD23A411CBE8EB5007CB9CF</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>MySwiftClass.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AD23A421CBE8EB5007CB9CF</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9AD23A411CBE8EB5007CB9CF</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9AD23A431CBE9426007CB9CF</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ObjCCompatibilityExtensions.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9AD23A451CBE942D007CB9CF</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9AD23A431CBE9426007CB9CF</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>9DE52F7096B647CEA17CA45A</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-ObjCDemo.release.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-ObjCDemo/Pods-ObjCDemo.release.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A036C8D606BB12E4198BE23E</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Embed Pods Frameworks</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-FitpaySDKDemo/Pods-FitpaySDKDemo-frameworks.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
 		</dict>
 		<key>A1CDDE762C6631CF031451E0</key>
 		<dict>
@@ -2160,6 +3915,10 @@ fi
 				<string>EC162556AB84B5CF93D60A0A</string>
 				<string>DB3B273A3D2DCC775DA1BEFD</string>
 				<string>58DBC1481B059BCF33878AA3</string>
+				<string>6F21AC624EF18CF9C3CED67F</string>
+				<string>9DE52F7096B647CEA17CA45A</string>
+				<string>EAB82CE6C221FA584A2AEF85</string>
+				<string>30C4EE03382A4132094A635D</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -2185,12 +3944,15 @@ fi
 		<dict>
 			<key>children</key>
 			<array>
+				<string>9A49E9F61CBB9E4C009811D4</string>
 				<string>8426D24D1C91D3BE009AACFE</string>
 				<string>9ACF2FB11C7F024E0051DAF1</string>
 				<string>9ACF2FB21C7F024E0051DAF1</string>
 				<string>AE7CA63167C1F9C39FA4FA6C</string>
 				<string>69821357DC697D6A3E09ABA4</string>
 				<string>77350B7F3D4E4DE54B2807EB</string>
+				<string>84A84AE83E7EDF11F2655399</string>
+				<string>98FACC41D685B6ADCEA1DD7F</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -2198,6 +3960,13 @@ fi
 			<string>Frameworks</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
+		</dict>
+		<key>B4908F350220523AD13B0928</key>
+		<dict>
+			<key>fileRef</key>
+			<string>84A84AE83E7EDF11F2655399</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
 		</dict>
 		<key>C50539A02244046BC4091165</key>
 		<dict>
@@ -2450,6 +4219,7 @@ fi
 		<dict>
 			<key>children</key>
 			<array>
+				<string>9A7C78781CC77F130097BAB9</string>
 				<string>847264961CA5261400DE801D</string>
 				<string>CD038CF70D8842F8B96D0963</string>
 				<string>8425931A1CAA605B0006FFA6</string>
@@ -2715,6 +4485,7 @@ fi
 		<dict>
 			<key>children</key>
 			<array>
+				<string>9AD23A431CBE9426007CB9CF</string>
 				<string>CD0386DA358049C9AC2135F6</string>
 				<string>CD03877A3C526340ECB9C853</string>
 				<string>CD0382E7C3731302B80C1CBE</string>
@@ -2916,6 +4687,30 @@ fi
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
 		</dict>
+		<key>E0F0FCE34C33AE6B4A434F25</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Target Support Files/Pods-FitpaySDKDemo/Pods-FitpaySDKDemo-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
 		<key>E34929AD64C35A83EEF4DAF0</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -2964,6 +4759,21 @@ fi
 			<key>showEnvVarsInLog</key>
 			<string>0</string>
 		</dict>
+		<key>EAB82CE6C221FA584A2AEF85</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-FitpaySDKDemo.debug.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Target Support Files/Pods-FitpaySDKDemo/Pods-FitpaySDKDemo.debug.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>EC162556AB84B5CF93D60A0A</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -2978,6 +4788,13 @@ fi
 			<string>Pods/Target Support Files/Pods-RTMClientApp/Pods-RTMClientApp.release.xcconfig</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
+		</dict>
+		<key>F238A9D2E3A12A3DE638D67D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>98FACC41D685B6ADCEA1DD7F</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
 		</dict>
 		<key>FFE9B3840EC0474F5FAA7E84</key>
 		<dict>

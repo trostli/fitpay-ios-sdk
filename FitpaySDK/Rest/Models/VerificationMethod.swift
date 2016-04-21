@@ -2,6 +2,7 @@
 import ObjectMapper
 
 public enum VerificationMethodType : String
+
 {
     case TEXT_TO_CARDHOLDER_NUMBER = "TEXT_TO_CARDHOLDER_NUMBER",
     EMAIL_TO_CARDHOLDER_ADDRESS = "EMAIL_TO_CARDHOLDER_ADDRESS",
@@ -30,7 +31,7 @@ public enum VerificationResult : String
     EXPIRED_SESSION = "EXPIRED_SESSION"
 }
 
-public class VerificationMethod : ClientModel, Mappable
+public class VerificationMethod : NSObject, ClientModel, Mappable
 {
     internal var links:[ResourceLink]?
     public var verificationId:String?
@@ -91,7 +92,7 @@ public class VerificationMethod : ClientModel, Mappable
      
      - parameter completion:         SelectVerificationTypeHandler closure
      */
-    public func selectVerificationType(completion:RestClient.SelectVerificationTypeHandler)
+    @objc public func selectVerificationType(completion:RestClient.SelectVerificationTypeHandler)
     {
         let resource = VerificationMethod.selectResource
         let url = self.links?.url(resource)
@@ -110,7 +111,7 @@ public class VerificationMethod : ClientModel, Mappable
      
      - parameter completion:         VerifyHandler closure
      */
-    public func verify(verificationCode:String, completion:RestClient.VerifyHandler)
+    @objc public func verify(verificationCode:String, completion:RestClient.VerifyHandler)
     {
         let resource = VerificationMethod.verifyResource
         let url = self.links?.url(resource)
@@ -129,7 +130,7 @@ public class VerificationMethod : ClientModel, Mappable
      
      - parameter completion:   CreditCardHandler closure
      */
-    public func retrieveCreditCard(completion:RestClient.CreditCardHandler)
+    @objc public func retrieveCreditCard(completion:RestClient.CreditCardHandler)
     {
         let resource = VerificationMethod.cardResource
         let url = self.links?.url(resource)

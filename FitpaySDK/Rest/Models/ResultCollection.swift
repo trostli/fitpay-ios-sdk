@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class ResultCollection<T: Mappable> : ClientModel, Mappable, SecretApplyable
+public class ResultCollection<T: Mappable> : NSObject, ClientModel, Mappable, SecretApplyable
 {
     public var limit:Int?
     public var offset:Int?
@@ -12,17 +12,17 @@ public class ResultCollection<T: Mappable> : ClientModel, Mappable, SecretApplya
     private let nextResourse = "next"
     private let previousResource = "previous"
     
-    public var hasNext:Bool
+    public var nextAvailable:Bool
     {
         return self.links?.url(self.nextResourse) != nil
     }
     
-    public var hasLast:Bool
+    public var lastAvailable:Bool
     {
         return self.links?.url(self.lastResourse) != nil
     }
     
-    public var hasPrevious:Bool
+    public var previousAvailable:Bool
     {
         return self.links?.url(self.previousResource) != nil
     }

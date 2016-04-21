@@ -362,7 +362,7 @@ class RestClientTests: XCTestCase
                         XCTAssertNotNil(card?.info?.expYear)
                         XCTAssertNotNil(card?.info?.pan)
                         
-                        card?.delete
+                        card?.deleteCreditCard
                         {
                             (error) -> Void in
                             
@@ -490,7 +490,7 @@ class RestClientTests: XCTestCase
                                         //XCTAssertEqual(updatedCard?.info?.address?.countryCode, currentCard.info?.address?.countryCode)
                                         
                                         
-                                        updatedCard?.delete
+                                        updatedCard?.deleteCreditCard
                                         {
                                             (error) in
                                             XCTAssertNil(error)
@@ -588,7 +588,7 @@ class RestClientTests: XCTestCase
                                                                     (pending, defaultCreditCard, error) -> Void in
                                                                     XCTAssertNil(error)
                                                                     XCTAssertNotNil(defaultCreditCard)
-                                                                    defaultCreditCard?.delete
+                                                                    defaultCreditCard?.deleteCreditCard
                                                                     {
                                                                         (error) -> Void in
                                                                         XCTAssertNil(error)
@@ -607,7 +607,7 @@ class RestClientTests: XCTestCase
                                     else
                                     {
                                         XCTFail("Failed to find verification methods")
-                                        card?.delete
+                                        card?.deleteCreditCard
                                             {
                                                 (error) -> Void in
                                                 XCTAssertNil(error)
@@ -700,7 +700,7 @@ class RestClientTests: XCTestCase
                                                             XCTAssertNil(error)
                                                             XCTAssertNotNil(deactivatedCreditCard)
                                                             XCTAssertEqual(deactivatedCreditCard?.state, .DEACTIVATED)
-                                                            deactivatedCreditCard?.delete
+                                                            deactivatedCreditCard?.deleteCreditCard
                                                             {
                                                                 (error) -> Void in
                                                                 XCTAssertNil(error)
@@ -717,7 +717,7 @@ class RestClientTests: XCTestCase
                                 else
                                 {
                                     XCTFail("Failed to find verification methods")
-                                    card?.delete
+                                    card?.deleteCreditCard
                                         {
                                             (error) -> Void in
                                             XCTAssertNil(error)
@@ -816,7 +816,7 @@ class RestClientTests: XCTestCase
                                             XCTAssertNil(error)
                                             XCTAssertNotNil(reactivatedCreditCard)
                                             XCTAssertEqual(reactivatedCreditCard?.state, .ACTIVE)
-                                            reactivatedCreditCard?.delete
+                                            reactivatedCreditCard?.deleteCreditCard
                                                 {
                                                     (error) -> Void in
                                                     XCTAssertNil(error)
@@ -836,11 +836,11 @@ class RestClientTests: XCTestCase
                                         else
                                         {
                                             XCTFail("Failed to find verification methods")
-                                            card?.delete
-                                                {
-                                                    (error) -> Void in
-                                                    XCTAssertNil(error)
-                                                    expectation.fulfill()
+                                            card?.deleteCreditCard
+                                            {
+                                                (error) -> Void in
+                                                XCTAssertNil(error)
+                                                expectation.fulfill()
                                             }
                                         }
                                 }
@@ -902,7 +902,7 @@ class RestClientTests: XCTestCase
                             XCTAssertNil(error)
                             XCTAssertNotNil(acceptedCard)
                             XCTAssertEqual(acceptedCard?.state, .PENDING_VERIFICATION)
-                            acceptedCard?.delete
+                            acceptedCard?.deleteCreditCard
                             {
                                 (error) -> Void in
                                 XCTAssertNil(error)
@@ -965,8 +965,7 @@ class RestClientTests: XCTestCase
                             (pending, declinedCard, error) in
                             XCTAssertNil(error)
                             XCTAssertNotNil(declinedCard)
-                            XCTAssertEqual(declinedCard?.state, .DECLINED_TERMS_AND_CONDITIONS)
-                            declinedCard?.delete
+                            declinedCard?.deleteCreditCard
                             {
                                 (error) -> Void in
                                 XCTAssertNil(error)
@@ -1044,7 +1043,7 @@ class RestClientTests: XCTestCase
                                         (pending, verificationMethod, error) in
                                         XCTAssertNotNil(verificationMethod)
                                         XCTAssertNil(error)
-                                        acceptedCard?.delete
+                                        acceptedCard?.deleteCreditCard
                                         {
                                                 (error) -> Void in
                                                 XCTAssertNil(error)
@@ -1058,7 +1057,7 @@ class RestClientTests: XCTestCase
                             else
                             {
                                 XCTFail("Failed to find verification methods")
-                                card?.delete
+                                card?.deleteCreditCard
                                 {
                                     (error) -> Void in
                                     XCTAssertNil(error)
@@ -1143,7 +1142,7 @@ class RestClientTests: XCTestCase
                                             XCTAssertEqual(verificationMethod?.state, .VERIFIED)
 
                                             
-                                            acceptedCard?.delete
+                                            acceptedCard?.deleteCreditCard
                                             {
                                                 (error) -> Void in
                                                 XCTAssertNil(error)
@@ -1158,7 +1157,7 @@ class RestClientTests: XCTestCase
                             else
                             {
                                 XCTFail("Failed to find verification methods")
-                                card?.delete
+                                card?.deleteCreditCard
                                     {
                                         (error) -> Void in
                                         XCTAssertNil(error)
@@ -1234,7 +1233,7 @@ class RestClientTests: XCTestCase
             {
                 (user, error) -> Void in
                 XCTAssertNil(error)
-                user?.listDevices(10, offset: 0, completion:
+                user?.listDevices(limit: 10, offset: 0, completion:
                 {
                     (devices, error) -> Void in
                     
@@ -1282,7 +1281,7 @@ class RestClientTests: XCTestCase
                 XCTAssertNotNil(device)
                 XCTAssertNotNil(device!.deviceIdentifier)
                 
-                device?.delete(
+                device?.deleteDeviceInfo(
                 {
                     (error) -> Void in
                     XCTAssertNil(error)
@@ -1315,7 +1314,7 @@ class RestClientTests: XCTestCase
                 (device, error) -> Void in
                 XCTAssertNil(error)
                 
-                device?.delete(
+                device?.deleteDeviceInfo(
                 {
                     (error) -> Void in
                     XCTAssertNil(error)
@@ -1323,7 +1322,7 @@ class RestClientTests: XCTestCase
                     {
                         (user, error) -> Void in
                         XCTAssertNil(error)
-                        user?.listDevices(20, offset: 0, completion:
+                        user?.listDevices(limit: 20, offset: 0, completion:
                         {
                             (devices, error) -> Void in
                             XCTAssertNil(error)
@@ -1369,7 +1368,7 @@ class RestClientTests: XCTestCase
                     XCTAssertNil(error)
                     XCTAssertNotNil(user)
                     
-                    device?.delete(
+                    device?.deleteDeviceInfo(
                     {
                         (error) -> Void in
                         XCTAssertNil(error)
@@ -1414,7 +1413,7 @@ class RestClientTests: XCTestCase
                     XCTAssertTrue(updatedDevice?.softwareRevision == softwareRev)
                     XCTAssertTrue(updatedDevice?.firmwareRevision == firmwareRev)
                     
-                    updatedDevice?.delete(
+                    updatedDevice?.deleteDeviceInfo(
                     {
                         (error) -> Void in
                         XCTAssertNil(error)
@@ -1447,11 +1446,11 @@ class RestClientTests: XCTestCase
             {
                 (user, error) -> Void in
                 XCTAssertNil(error)
-                user?.listDevices(1, offset: 0, completion:
+                user?.listDevices(limit: 1, offset: 0, completion:
                 {
                     (devices, error) -> Void in
                     XCTAssertNil(error)
-                    devices!.results![0].listCommits(nil, limit: 10, offset: 0, completion:
+                    devices!.results![0].listCommits(commitsAfter: nil, limit: 10, offset: 0, completion:
                     {
                         (commits, error) -> Void in
                         XCTAssertNil(error)
@@ -1536,19 +1535,19 @@ class RestClientTests: XCTestCase
                             XCTAssertNotNil(relationship?.device)
                             XCTAssertNotNil(relationship?.card)
                             
-                            relationship?.delete(
+                            relationship?.deleteRelationship(
                             {
                                 (error) -> Void in
                                 
                                 XCTAssertNil(error)
                                 
-                                device?.delete(
+                                device?.deleteDeviceInfo(
                                 {
                                     (error) -> Void in
                                     
                                     XCTAssertNil(error)
                                     
-                                    card?.delete(
+                                    card?.deleteCreditCard(
                                     {
                                         (error) -> Void in
                                         XCTAssertNil(error)
@@ -1748,7 +1747,7 @@ class RestClientTests: XCTestCase
                             continue
                         }
                         
-                        card.listTransactions(1, offset:0, completion:
+                        card.listTransactions(limit: 1, offset:0, completion:
                         {
                             (transactions, error) -> Void in
                             

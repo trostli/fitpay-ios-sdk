@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class EncryptionKey : Mappable
+public class EncryptionKey : NSObject, Mappable
 {
     internal var links:[ResourceLink]?
     public var keyId:String?

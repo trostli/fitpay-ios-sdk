@@ -1,4 +1,4 @@
-public protocol PaymentDeviceBaseInterface
+@objc public protocol PaymentDeviceBaseInterface
 {
     init(paymentDevice device:PaymentDevice)
     
@@ -7,14 +7,16 @@ public protocol PaymentDeviceBaseInterface
     
     func isConnected() -> Bool
     
-    func writeSecurityState(state:PaymentDevice.SecurityNFCState) -> ErrorType?
+    func writeSecurityState(state: SecurityNFCState) -> NSError?
     
-    func sendDeviceControl(state: PaymentDevice.DeviceControlState) -> ErrorType?
+    func sendDeviceControl(state: DeviceControlState) -> NSError?
+    
+    func sendNotification(notificationData: NSData) -> NSError?
     
     func sendAPDUData(data: NSData, sequenceNumber: UInt16)
     
     func deviceInfo() -> DeviceInfo?
-    func nfcState() -> PaymentDevice.SecurityNFCState?
+    func nfcState() -> SecurityNFCState
     
     func resetToDefaultState()
 }

@@ -36,7 +36,7 @@ internal class AuthorizationDetails : Mappable
     }
 }
 
-public class RestSession
+public class RestSession : NSObject
 {
     public enum Error : Int, ErrorType, RawIntValue
     {
@@ -69,13 +69,13 @@ public class RestSession
         self.redirectUri = redirectUri
     }
 
-    public typealias LoginHandler = (error:ErrorType?)->Void
+    public typealias LoginHandler = (error:NSError?)->Void
 
-    public func login(username username:String, password:String, completion:LoginHandler)
+    @objc public func login(username username:String, password:String, completion:LoginHandler)
     {
         self.acquireAccessToken(clientId: self.clientId, redirectUri: self.redirectUri, username: username, password:password, completion:
         {
-            (details:AuthorizationDetails?, error:ErrorType?)->Void in
+            (details:AuthorizationDetails?, error:NSError?)->Void in
 
             dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
             {
@@ -141,7 +141,7 @@ public class RestSession
         })
     }
 
-    internal typealias AcquireAccessTokenHandler = (AuthorizationDetails?, ErrorType?)->Void
+    internal typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?)->Void
 
     internal func acquireAccessToken(clientId clientId:String, redirectUri:String, username:String, password:String, completion:AcquireAccessTokenHandler)
     {

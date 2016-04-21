@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class Transaction : ClientModel, Mappable
+public class Transaction : NSObject, ClientModel, Mappable
 {
     internal var links:[ResourceLink]?
     public var transactionId:String?

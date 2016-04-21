@@ -1,14 +1,14 @@
 
 import ObjectMapper
 
-public class Commit : ClientModel, Mappable, SecretApplyable
+public class Commit : NSObject, ClientModel, Mappable, SecretApplyable
 {
     var links:[ResourceLink]?
-    var commitType:CommitType?
-    var payload:Payload?
-    var created:CLong?
-    var previousCommit:String?
-    var commit:String?
+    public var commitType:CommitType?
+    internal var payload:Payload?
+    public var created:CLong?
+    public var previousCommit:String?
+    public var commit:String?
     
     private static let apduResponseResource = "apduResponse"
     
@@ -74,7 +74,7 @@ public enum CommitType : String
     case APDU_PACKAGE = "APDU_PACKAGE"
 }
 
-public class Payload : Mappable
+public class Payload : NSObject, Mappable
 {
     internal var creditCard:CreditCard?
     internal var payloadDictionary:[String : AnyObject]?

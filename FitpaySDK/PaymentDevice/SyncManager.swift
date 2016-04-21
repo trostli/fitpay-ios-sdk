@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public enum SyncEventType : Int {
+@objc public enum SyncEventType : Int, FitpayEventTypeProtocol {
     case CONNECTING_TO_DEVICE = 0x1
     case CONNECTING_TO_DEVICE_FAILED
     case CONNECTING_TO_DEVICE_COMPLETED
@@ -10,12 +10,40 @@ public enum SyncEventType : Int {
     case SYNC_FAILED
     case SYNC_COMPLETED
     case SYNC_PROGRESS
+    case APDU_COMMANDS_PROGRESS
     
     case COMMIT_PROCESSED
+    
+    public func eventId() -> Int {
+        return rawValue
+    }
+    
+    public func eventDescription() -> String {
+        switch self {
+        case .CONNECTING_TO_DEVICE:
+            return "Connecting to device"
+        case .CONNECTING_TO_DEVICE_FAILED:
+            return "Connecting to device failed"
+        case .CONNECTING_TO_DEVICE_COMPLETED:
+            return "Connecting to device completed"
+        case .SYNC_STARTED:
+            return "Sync started"
+        case .SYNC_FAILED:
+            return "Sync failed"
+        case .SYNC_COMPLETED:
+            return "Sync completed"
+        case .SYNC_PROGRESS:
+            return "Sync progress"
+        case .APDU_COMMANDS_PROGRESS:
+            return "APDU progress"
+        case .COMMIT_PROCESSED:
+            return "Precessed commit"
+        }
+    }
 }
 
-public class SyncManager {
-    static let sharedInstance = SyncManager()
+public class SyncManager : NSObject {
+    public static let sharedInstance = SyncManager()
     
     public let paymentDevice : PaymentDevice = PaymentDevice()
     
@@ -23,23 +51,28 @@ public class SyncManager {
     internal let syncStorage : SyncStorage = SyncStorage()
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
-    private var syncEventsBlocks : [SyncEventType:SyncEventBlockHandler] = [:]
+    private let eventsDispatcher = FitpayEventDispatcher()
     private var user : User?
     
     private var commitsApplyer = CommitsApplyer()
     
-    private init() {
-        
+    private weak var deviceConnectedBinding : FitpayEventBinding?
+    private weak var deviceDisconnectedBinding : FitpayEventBinding?
+    
+    private override init() {
+        super.init()
     }
     
     public enum ErrorCode : Int, ErrorType, RawIntValue, CustomStringConvertible
     {
-        case UnknownError = 0
-        case CantConnectToDevice = 10001
-        case CantApplyAPDUCommand = 10002
-        case CantFetchCommits = 10003
+        case UnknownError                   = 0
+        case CantConnectToDevice            = 10001
+        case CantApplyAPDUCommand           = 10002
+        case CantFetchCommits               = 10003
         case CantFindDeviceWithSerialNumber = 10004
-        case SyncAlreadyStarted = 10005
+        case SyncAlreadyStarted             = 10005
+        case CommitsApplyerIsBusy           = 10006
+        case ConnectionWithDeviceWasLost    = 10007
         
         public var description : String {
             switch self {
@@ -55,6 +88,10 @@ public class SyncManager {
                 return "Can't find device with serial number of connected payment device."
             case .SyncAlreadyStarted:
                 return "Sync already started."
+            case .CommitsApplyerIsBusy:
+                return "Commits applyer is busy, sync already started?"
+            case .ConnectionWithDeviceWasLost:
+                return "Connection with device was lost."
             }
         }
     }
@@ -67,7 +104,7 @@ public class SyncManager {
      
      - parameter user: user from API to whom device belongs to.
      */
-    public func sync(user: User) -> ErrorType? {
+    public func sync(user: User) -> NSError? {
         if self.isSyncing {
             return NSError.error(code: SyncManager.ErrorCode.SyncAlreadyStarted, domain: SyncManager.self)
         }
@@ -80,9 +117,21 @@ public class SyncManager {
             return nil
         }
         
-        self.paymentDevice.onDeviceConnected =
+        if let binding = self.deviceConnectedBinding {
+            self.paymentDevice.removeBinding(binding: binding)
+        }
+        
+        if let binding = self.deviceDisconnectedBinding {
+            self.paymentDevice.removeBinding(binding: binding)
+        }
+        
+        self.deviceConnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
-            [unowned self] (deviceInfo, error) -> Void in
+            [unowned self] (event) in
+            
+            let deviceInfo = event.eventData["deviceInfo"] as? DeviceInfo
+            let error = event.eventData["error"] as? ErrorType
+            
             guard (error == nil && deviceInfo != nil) else {
                 
                 self.callCompletionForSyncEvent(SyncEventType.CONNECTING_TO_DEVICE_COMPLETED, params: ["error": NSError.error(code: SyncManager.ErrorCode.CantConnectToDevice, domain: SyncManager.self)])
@@ -95,7 +144,29 @@ public class SyncManager {
             self.callCompletionForSyncEvent(SyncEventType.CONNECTING_TO_DEVICE_COMPLETED)
             
             self.startSync()
-        }
+            
+            if let binding = self.deviceConnectedBinding {
+                self.paymentDevice.removeBinding(binding: binding)
+            }
+            
+            self.deviceConnectedBinding = nil
+        })
+        
+        self.deviceDisconnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceDisconnected, completion: {
+            [unowned self] (event) in
+            self.callCompletionForSyncEvent(SyncEventType.SYNC_FAILED, params: ["error": NSError.error(code: SyncManager.ErrorCode.ConnectionWithDeviceWasLost, domain: SyncManager.self)])
+            
+            if let binding = self.deviceConnectedBinding {
+                self.paymentDevice.removeBinding(binding: binding)
+            }
+            
+            if let binding = self.deviceDisconnectedBinding {
+                self.paymentDevice.removeBinding(binding: binding)
+            }
+            
+            self.deviceConnectedBinding = nil
+            self.deviceDisconnectedBinding = nil
+        })
         
         self.paymentDevice.connect(self.paymentDeviceConnectionTimeoutInSecs)
         
@@ -107,9 +178,9 @@ public class SyncManager {
     /**
      Completion handler
      
-     - parameter eventPayload: Provides payload for event
+     - parameter event: Provides event with payload in eventData property
      */
-    public typealias SyncEventBlockHandler = (eventPayload:[String:AnyObject]) -> Void
+    public typealias SyncEventBlockHandler = (event:FitpayEvent) -> Void
     
     /**
      Binds to the sync event using SyncEventType and a block as callback.
@@ -117,22 +188,33 @@ public class SyncManager {
      - parameter eventType: type of event which you want to bind to
      - parameter completion: completion handler which will be called when system receives commit with eventType
      */
-    public func bindToSyncEvent(eventType eventType: SyncEventType, completion: SyncEventBlockHandler) {
-        self.syncEventsBlocks[eventType] = completion
+    @objc public func bindToSyncEvent(eventType eventType: SyncEventType, completion: SyncEventBlockHandler) -> FitpayEventBinding? {
+        return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion), eventId: eventType)
     }
     
     /**
-     Removes bind with eventType.
+     Binds to the sync event using SyncEventType and a block as callback.
+     
+     - parameter eventType: type of event which you want to bind to
+     - parameter completion: completion handler which will be called when system receives commit with eventType
+     - parameter queue: queue in which completion will be called
      */
-    public func removeSyncBinding(eventType eventType: SyncEventType) {
-        self.syncEventsBlocks.removeValueForKey(eventType)
+    public func bindToSyncEvent(eventType eventType: SyncEventType, completion: SyncEventBlockHandler, queue: dispatch_queue_t) -> FitpayEventBinding? {
+        return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion, queue: queue), eventId: eventType)
+    }				
+    
+    /**
+     Removes bind.
+     */
+    public func removeSyncBinding(binding binding: FitpayEventBinding) {
+        eventsDispatcher.removeBinding(binding)
     }
     
     /**
      Removes all synchronization bindings.
      */
     public func removeAllSyncBindings() {
-        self.syncEventsBlocks = [:]
+        eventsDispatcher.removeAllBindings()
     }
     
     private func startSync() {
@@ -150,7 +232,7 @@ public class SyncManager {
             
             //TODO: delete this once approved
             let commits = self.___debug_appendAPDUCommits(commits!)
-            self.commitsApplyer.apply(commits, completion:
+            let applayerStarted = self.commitsApplyer.apply(commits, completion:
             {
                 [unowned self] (error) -> Void in
                 
@@ -161,6 +243,10 @@ public class SyncManager {
                 
                 self.syncFinished(error: nil)
             })
+            
+            if !applayerStarted {
+                self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.CommitsApplyerIsBusy, domain: SyncManager.self))
+            }
         }
     }
     
@@ -168,7 +254,7 @@ public class SyncManager {
         //TODO: uncomment this once approved
         //let physicalDeviceInfo = self.paymentDevice.deviceInfo
         
-        user?.listDevices(itrSearchLimit, offset: searchOffset, completion:
+        user?.listDevices(limit: itrSearchLimit, offset: searchOffset, completion:
         {
             [unowned self] (result, error) -> Void in
             
@@ -201,7 +287,7 @@ public class SyncManager {
             (deviceInfo, error) -> Void in
             
             if let deviceInfo = deviceInfo {
-                deviceInfo.listCommits(lastCommitId, limit: 20, offset: 0, completion:
+                deviceInfo.listCommits(commitsAfter: lastCommitId, limit: 20, offset: 0, completion:
                 {
                     (result, error) -> Void in
                     
@@ -243,12 +329,7 @@ public class SyncManager {
     }
 
     internal func callCompletionForSyncEvent(event: SyncEventType, params: [String:AnyObject] = [:]) {
-        if let completion = self.syncEventsBlocks[event] {
-            dispatch_async(dispatch_get_main_queue(),
-            {
-                completion(eventPayload: params)
-            })
-        }
+        eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: params))
     }
 
     private func syncFinished(error error: ErrorType?) {
@@ -259,6 +340,17 @@ public class SyncManager {
         } else {
             callCompletionForSyncEvent(SyncEventType.SYNC_COMPLETED, params: [:])
         }
+        
+        if let binding = self.deviceConnectedBinding {
+            self.paymentDevice.removeBinding(binding: binding)
+        }
+        
+        if let binding = self.deviceDisconnectedBinding {
+            self.paymentDevice.removeBinding(binding: binding)
+        }
+        
+        self.deviceConnectedBinding = nil
+        self.deviceDisconnectedBinding = nil
     }
     
     //TODO: delete this once approved

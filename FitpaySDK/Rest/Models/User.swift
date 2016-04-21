@@ -1,7 +1,7 @@
 
 import ObjectMapper
 
-public class User : ClientModel, Mappable, SecretApplyable
+public class User : NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links:[ResourceLink]?
     public var id:String?
@@ -85,7 +85,7 @@ public class User : ClientModel, Mappable, SecretApplyable
      - parameter country:    country
      - parameter completion: CreateCreditCardHandler closure
      */
-    public func createCreditCard(pan pan:String, expMonth:Int, expYear:Int, cvv:String, name:String,
+    @objc public func createCreditCard(pan pan:String, expMonth:Int, expYear:Int, cvv:String, name:String,
         street1:String, street2:String, street3:String, city:String, state:String, postalCode:String, country:String,
         completion:RestClient.CreateCreditCardHandler)
     {
@@ -131,7 +131,7 @@ public class User : ClientModel, Mappable, SecretApplyable
      - parameter offset:     start index position for list of entities returned
      - parameter completion: DevicesHandler closure
      */
-    public func listDevices(limit:Int, offset:Int, completion:RestClient.DevicesHandler)
+    public func listDevices(limit limit:Int, offset:Int, completion:RestClient.DevicesHandler)
     {
         let resource = User.devicesResource
         let url = self.links?.url(resource)
@@ -164,7 +164,7 @@ public class User : ClientModel, Mappable, SecretApplyable
      - parameter pairing:          pairing date [MM-DD-YYYY]
      - parameter completion:       CreateNewDeviceHandler closure
      */
-    public func createNewDevice(deviceType:String, manufacturerName:String, deviceName:String,
+    @objc public func createNewDevice(deviceType:String, manufacturerName:String, deviceName:String,
         serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
         softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
         secureElementId:String, pairing:String, completion:RestClient.CreateNewDeviceHandler)
