@@ -27,8 +27,8 @@ class PaymentDeviceTests: XCTestCase
         self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
             (event) in
-            
-            let deviceInfo = event.eventData["deviceInfo"] as AnyObject as? DeviceInfo
+            debugPrint("event: \(event), eventData: \(event.eventData)")
+            let deviceInfo = event.eventData["deviceInfo"] as? DeviceInfo
             let error = event.eventData["error"]
             
             XCTAssertNil(error)
