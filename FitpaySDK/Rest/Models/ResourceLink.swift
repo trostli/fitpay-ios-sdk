@@ -1,10 +1,15 @@
 
 import Foundation
 
-internal class ResourceLink
+internal class ResourceLink : CustomStringConvertible
 {
     var target:String?
     var href:String?
+    
+    var description: String
+    {
+        return "\(ResourceLink.self)(\(target):\(href))"
+    }
 }
 
 import ObjectMapper
