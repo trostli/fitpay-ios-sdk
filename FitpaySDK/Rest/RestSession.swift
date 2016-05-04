@@ -112,6 +112,7 @@ public class RestSession : NSObject
                             {
                                 [unowned self] () -> Void in
 
+                                debugPrint("successful login for user: \(userId)")
                                 self.userId = userId
                                 self.accessToken = accessToken
                                 completion(error:nil)
