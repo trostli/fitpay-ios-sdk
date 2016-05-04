@@ -219,19 +219,12 @@ class RestClientTests: XCTestCase
                 {
                     [unowned self]
                     (loginError) -> Void in
-                    
                     XCTAssertNil(loginError)
                     debugPrint("user isAuthorized: \(self.session.isAuthorized)")
-                    XCTAssertTrue(self.session.isAuthorized)
+                    XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
                     
-                    if !self.session.isAuthorized
-                    {
-                        expectation.fulfill()
-                    }
+                    expectation.fulfill()
                 })
-                XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
-                
-                expectation.fulfill()
         })
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
