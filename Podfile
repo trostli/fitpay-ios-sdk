@@ -6,7 +6,7 @@ target 'FitpaySDK' do
     pod 'JWTDecode', '~> 1.0.0'
     pod 'libPusher', '~> 1.6.1'
     pod 'KeychainAccess', '~> 2.3.4'
-    pod 'OpenSSL-Universal', :git => 'https://github.com/krzyzanowskim/OpenSSL.git', :branch => :master
+    pod 'FPCrypto', :git => 'https://github.com/fitpay/FPCrypto.git', :branch => :master
 end
 
 target 'FitpaySDKDemo' do
@@ -14,7 +14,7 @@ target 'FitpaySDKDemo' do
     pod 'JWTDecode', '~> 1.0.0'
     pod 'libPusher', '~> 1.6.1'
     pod 'KeychainAccess', '~> 2.3.4'
-    pod 'OpenSSL-Universal', :git => 'https://github.com/krzyzanowskim/OpenSSL.git', :branch => :master
+    pod 'FPCrypto', :git => 'https://github.com/fitpay/FPCrypto.git', :branch => :master
 end
 
 target 'FitpaySDKTests' do
@@ -29,7 +29,7 @@ target 'RTMClientApp' do
     pod 'JWTDecode', '~> 1.0.0'
     pod 'libPusher', '~> 1.6.1'
     pod 'KeychainAccess', '~> 2.3.4'
-    pod 'OpenSSL-Universal', :git => 'https://github.com/krzyzanowskim/OpenSSL.git', :branch => :master
+    pod 'FPCrypto', :git => 'https://github.com/fitpay/FPCrypto.git', :branch => :master
 end
 
 target 'ObjCDemo' do
@@ -37,5 +37,9 @@ target 'ObjCDemo' do
     pod 'JWTDecode', '~> 1.0.0'
     pod 'libPusher', '~> 1.6.1'
     pod 'KeychainAccess', '~> 2.3.4'
-    pod 'OpenSSL-Universal', :git => 'https://github.com/krzyzanowskim/OpenSSL.git', :branch => :master
+    pod 'FPCrypto', :git => 'https://github.com/fitpay/FPCrypto.git', :branch => :master
+end
+
+post_install do |installer|
+  `cp module.modulemap ./Pods/FPCrypto/source/`
 end
