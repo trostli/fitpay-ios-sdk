@@ -1,22 +1,22 @@
 
 import ObjectMapper
 
-public class Address : Mappable
+internal class Address : Mappable
 {
-    public var street1:String?
-    public var street2:String?
-    public var street3:String?
-    public var city:String?
-    public var state:String?
-    public var postalCode:String?
-    public var countryCode:String?
+    var street1:String?
+    var street2:String?
+    var street3:String?
+    var city:String?
+    var state:String?
+    var postalCode:String?
+    var countryCode:String?
     
-    public required init?(_ map: Map)
+    required init?(_ map: Map)
     {
         
     }
     
-    public func mapping(map: Map)
+    func mapping(map: Map)
     {
         self.street1 <- map["street1"]
         self.street2 <- map["street2"]

@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.summary = 'Swift based library for the Fitpay Platform'
   s.homepage = 'https://github.com/fitpay/fitpay-ios-sdk'
   s.authors = { 'Ben Walford' => 'ben@fit-pay.com' }
-  s.source = { :git => 'https://github.com/fitpay/fitpay-ios-sdk.git', :tag => s.version }
+  s.source = { :git => 'https://github.com/fitpay/fitpay-ios-sdk.git', :branch => 'external_fpcrypto' }
   s.source_files = 'FitpaySDK/**/*.swift'
   s.dependency 'Alamofire', '~> 3.0'
 end
