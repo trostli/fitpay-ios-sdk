@@ -20,8 +20,8 @@ internal enum SyncJS: String {
 }
 
 public class RtmNative : NSObject, WKScriptMessageHandler {
-    // let url = API_BASE_URL
-    let url = "http://localhost:8001"
+    let url = API_BASE_URL
+//    let url = "http://192.168.128.170:8001"
 
     let rtmConfig: RtmConfig?
     let restSession: RestSession?
@@ -29,14 +29,17 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
     
-    public init(config:RtmConfig, webview:WKWebView?) {
+    public init(config:RtmConfig) {
         // set the config and webview
         self.rtmConfig = config
-        self.webview = webview
         
         // initialize a RestSession and RestClient
         self.restSession = RestSession(clientId: rtmConfig!.clientId, redirectUri: rtmConfig!.redirectUri)
         self.restClient = RestClient(session: restSession!)
+    }
+    
+    public func setWebView(webview:WKWebView!) {
+        self.webview = webview
     }
     
     /**
@@ -72,6 +75,7 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
             print("received user session data from web-view")
             
             do {
+                print("extracting data")
                 let jsonData = try NSJSONSerialization.dataWithJSONObject(sentData["data"]!, options: NSJSONWritingOptions.PrettyPrinted)
                 let jsonString = NSString(data: jsonData, encoding: NSUTF8StringEncoding)! as String
                 let webViewSessionData = Mapper<WebViewSessionData>().map(jsonString)
@@ -87,27 +91,15 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     private func handleSync() -> Void {
         self.callWebView(SyncJS.function.rawValue, args: SyncJS.syncBeginSuccess.rawValue)
         
-        let userId = webViewSessionData!.userId!
-        let deviceId = webViewSessionData?.deviceId!
-        let commitUrl = "\(url)/users/\(userId)/devices/\(deviceId)/commits"
+//        now go sync somehow
+//        let userId = webViewSessionData!.userId!
+//        let deviceId = webViewSessionData?.deviceId!
+//        let commitUrl = "\(url)/users/\(userId)/devices/\(deviceId)/commits"
         
-        restClient?.commits(commitUrl, parameters: nil, completion: {
-            (commits, error) -> Void in
-            
-            if error != nil {
-                self.callWebView(SyncJS.function.rawValue, args: SyncJS.getCommitsFailed.rawValue)
-            } else {
-                self.callWebView(SyncJS.function.rawValue, args: SyncJS.getCommitsSuccess.rawValue)
-                
-                // now what should we do with the commits?
-                for commit in commits!.results! {
-                    print(commit.commitType)
-                    // return apply success for now
-                    self.callWebView(SyncJS.function.rawValue, args: SyncJS.applyCommitsSuccess.rawValue)
-                }
-            }
+        _ = setTimeout(1.5, block: { () -> Void in
+            self.callWebView(SyncJS.function.rawValue, args: SyncJS.applyCommitsSuccess.rawValue)
         })
-        
+
     }
     
     private func handleSessionData(webViewSessionData:WebViewSessionData) -> Void {
@@ -117,7 +109,20 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     }
     
     private func callWebView(function:String, args:String) {
-        self.webview!.evaluateJavaScript("\(function)(\(args))", completionHandler: nil)
+        print("calling: \(function)(\(args))")
+        self.webview!.evaluateJavaScript("\(function)(\(args));", completionHandler: {
+            (result, error) in
+            if error != nil {
+                print(error)
+            } else {
+                print("js call success")
+                print(result)
+            }
+        })
+    }
+    
+    func setTimeout(delay:NSTimeInterval, block:()->Void) -> NSTimer {
+        return NSTimer.scheduledTimerWithTimeInterval(delay, target: NSBlockOperation(block: block), selector: #selector(NSOperation.main), userInfo: nil, repeats: false)
     }
 }
 

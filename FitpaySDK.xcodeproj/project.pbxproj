@@ -911,7 +911,7 @@
 					};
 					8426D2571C96F4AA009AACFE = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = ZLW345FG82;
+						DevelopmentTeam = 52C5E9ZJ2D;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -920,6 +920,7 @@
 					};
 					9A2E68C21CA14DE10061D5B3 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 52C5E9ZJ2D;
 					};
 					9A2E68D51CA14DE10061D5B3 = {
 						CreatedOnToolsVersion = 7.2;
@@ -1673,6 +1674,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -1692,6 +1694,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
