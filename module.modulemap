@@ -1,6 +1,0 @@
-module FPCrypto [system] {
-    header "SECP256R1.h"
-    header "AESGCM.h"
-    header "SHA1.h"
-    export *
-}

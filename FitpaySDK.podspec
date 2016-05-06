@@ -11,4 +11,6 @@ Pod::Spec.new do |s|
   s.source = { :git => 'https://github.com/fitpay/fitpay-ios-sdk.git', :branch => 'external_fpcrypto' }
   s.source_files = 'FitpaySDK/**/*.swift'
   s.dependency 'Alamofire', '~> 3.0'
+  s.dependency 'ObjectMapper', '~> 1.2.0'
+  s.dependency 'FPCrypto', '~> 1.0.0'
 end

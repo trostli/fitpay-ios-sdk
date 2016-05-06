@@ -69,6 +69,12 @@
 		9A8D15401CA29DC500A03E7F /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8D153F1CA29DC500A03E7F /* Utils.swift */; };
 		9AA50BDF1C7E096D000FA546 /* RestClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */; };
 		9AA5BDAB1C7B54B600EDF2F6 /* RestSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */; };
+		9AB26E6F1CDCE0DD006F381E /* OpenSSLHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB26E691CDCE0DD006F381E /* OpenSSLHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9AB26E701CDCE0DD006F381E /* OpenSSLHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB26E6A1CDCE0DD006F381E /* OpenSSLHelper.m */; };
+		9AB26E711CDCE0DD006F381E /* SECP256R1KeyPairContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB26E6B1CDCE0DD006F381E /* SECP256R1KeyPairContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9AB26E721CDCE0DD006F381E /* SECP256R1KeyPairContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB26E6C1CDCE0DD006F381E /* SECP256R1KeyPairContainer.m */; };
+		9AB26E731CDCE0DD006F381E /* SECP256R1KeyPairContainer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB26E6D1CDCE0DD006F381E /* SECP256R1KeyPairContainer+Private.h */; };
+		9AB26E741CDCE0DD006F381E /* SECP256R1KeyPairContainer+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB26E6E1CDCE0DD006F381E /* SECP256R1KeyPairContainer+Private.m */; };
 		9AB68E3E1C84A1EC00A0E172 /* JWEHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E391C84A1EC00A0E172 /* JWEHeader.swift */; };
 		9AB68E3F1C84A1EC00A0E172 /* JWEObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E3A1C84A1EC00A0E172 /* JWEObject.swift */; };
 		9AB68E401C84A1EC00A0E172 /* Base64Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E3C1C84A1EC00A0E172 /* Base64Utils.swift */; };
@@ -212,7 +218,6 @@
 		8425931C1CAA613E0006FFA6 /* SyncStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStorage.swift; sourceTree = "<group>"; };
 		8426D24B1C91D139009AACFE /* RtmConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmConstants.swift; sourceTree = "<group>"; };
 		8426D24D1C91D3BE009AACFE /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
-		8426D24F1C92B5D0009AACFE /* SHA1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SHA1.h; sourceTree = "<group>"; };
 		8426D2501C92BB9D009AACFE /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		8426D2521C92F428009AACFE /* RtmSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmSessionTests.swift; sourceTree = "<group>"; };
 		8426D2581C96F4AA009AACFE /* RTMClientApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTMClientApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -273,16 +278,20 @@
 		9A8D153F1CA29DC500A03E7F /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestClientTests.swift; sourceTree = "<group>"; };
 		9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestSessionTests.swift; sourceTree = "<group>"; };
+		9AB26E691CDCE0DD006F381E /* OpenSSLHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSSLHelper.h; sourceTree = "<group>"; };
+		9AB26E6A1CDCE0DD006F381E /* OpenSSLHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenSSLHelper.m; sourceTree = "<group>"; };
+		9AB26E6B1CDCE0DD006F381E /* SECP256R1KeyPairContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SECP256R1KeyPairContainer.h; sourceTree = "<group>"; };
+		9AB26E6C1CDCE0DD006F381E /* SECP256R1KeyPairContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SECP256R1KeyPairContainer.m; sourceTree = "<group>"; };
+		9AB26E6D1CDCE0DD006F381E /* SECP256R1KeyPairContainer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SECP256R1KeyPairContainer+Private.h"; sourceTree = "<group>"; };
+		9AB26E6E1CDCE0DD006F381E /* SECP256R1KeyPairContainer+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SECP256R1KeyPairContainer+Private.m"; sourceTree = "<group>"; };
 		9AB68E391C84A1EC00A0E172 /* JWEHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JWEHeader.swift; sourceTree = "<group>"; };
 		9AB68E3A1C84A1EC00A0E172 /* JWEObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JWEObject.swift; sourceTree = "<group>"; };
 		9AB68E3C1C84A1EC00A0E172 /* Base64Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Base64Utils.swift; sourceTree = "<group>"; };
 		9AB68E3D1C84A1EC00A0E172 /* RandomString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomString.swift; sourceTree = "<group>"; };
-		9AB68E421C84A21000A0E172 /* AESGCM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AESGCM.h; sourceTree = "<group>"; };
 		9AB68E431C84A25B00A0E172 /* JWETests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JWETests.swift; sourceTree = "<group>"; };
 		9ABF39411C883AF7002EA8E5 /* JWEObjectExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JWEObjectExtensions.swift; sourceTree = "<group>"; };
 		9ACF2FB11C7F024E0051DAF1 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = FitpaySDK/Libraries/OpenSSL/lib/libcrypto.a; sourceTree = "<group>"; };
 		9ACF2FB21C7F024E0051DAF1 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = FitpaySDK/Libraries/OpenSSL/lib/libssl.a; sourceTree = "<group>"; };
-		9ACF305C1C7F4B010051DAF1 /* SECP256R1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SECP256R1.h; sourceTree = "<group>"; };
 		9AD23A411CBE8EB5007CB9CF /* MySwiftClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySwiftClass.swift; sourceTree = "<group>"; };
 		9AD23A431CBE9426007CB9CF /* ObjCCompatibilityExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjCCompatibilityExtensions.swift; sourceTree = "<group>"; };
 		9B4127CE1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CombinedUserCreateAndLoginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -429,7 +438,6 @@
 		0AD9229F1C1F7EFC007693AB /* FitpaySDK */ = {
 			isa = PBXGroup;
 			children = (
-				9ACF305A1C7F4B010051DAF1 /* FPCrypto */,
 				0AD922A01C1F7EFC007693AB /* FitpaySDK.h */,
 				0AD922A21C1F7EFC007693AB /* Info.plist */,
 				0AD9232B1C20BB38007693AB /* FitpaySDK.swift */,
@@ -600,16 +608,6 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		9ACF305A1C7F4B010051DAF1 /* FPCrypto */ = {
-			isa = PBXGroup;
-			children = (
-				9AB68E421C84A21000A0E172 /* AESGCM.h */,
-				9ACF305C1C7F4B010051DAF1 /* SECP256R1.h */,
-				8426D24F1C92B5D0009AACFE /* SHA1.h */,
-			);
-			path = FPCrypto;
-			sourceTree = "<group>";
-		};
 		9B4127CF1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -687,6 +685,12 @@
 		CD038477DF1934938D33A597 /* Crypto */ = {
 			isa = PBXGroup;
 			children = (
+				9AB26E691CDCE0DD006F381E /* OpenSSLHelper.h */,
+				9AB26E6A1CDCE0DD006F381E /* OpenSSLHelper.m */,
+				9AB26E6B1CDCE0DD006F381E /* SECP256R1KeyPairContainer.h */,
+				9AB26E6C1CDCE0DD006F381E /* SECP256R1KeyPairContainer.m */,
+				9AB26E6D1CDCE0DD006F381E /* SECP256R1KeyPairContainer+Private.h */,
+				9AB26E6E1CDCE0DD006F381E /* SECP256R1KeyPairContainer+Private.m */,
 				9AB68E371C84A1EC00A0E172 /* JWE */,
 				CD0385B12671AFA04137F118 /* SECP256R1KeyPair.swift */,
 			);
@@ -764,7 +768,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9AB26E711CDCE0DD006F381E /* SECP256R1KeyPairContainer.h in Headers */,
 				0AD922A11C1F7EFC007693AB /* FitpaySDK.h in Headers */,
+				9AB26E731CDCE0DD006F381E /* SECP256R1KeyPairContainer+Private.h in Headers */,
+				9AB26E6F1CDCE0DD006F381E /* OpenSSLHelper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1316,6 +1323,7 @@
 				CD038A4098738EC358AD2751 /* Address.swift in Sources */,
 				CD03838AE5953B954AC82E50 /* ResultCollection.swift in Sources */,
 				847264A21CA53D0800DE801D /* BLEPackets.swift in Sources */,
+				9AB26E741CDCE0DD006F381E /* SECP256R1KeyPairContainer+Private.m in Sources */,
 				9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */,
 				9A7C78841CC77F210097BAB9 /* FitpayEventTypeProtocol.swift in Sources */,
 				9AB68E411C84A1EC00A0E172 /* RandomString.swift in Sources */,
@@ -1323,6 +1331,7 @@
 				CD038125B3958A9F8CF17E26 /* WebViewSessionData.swift in Sources */,
 				CD038AFCBC933F1763715369 /* RtmSession.swift in Sources */,
 				9A58466D1C96B65B00E4ABDC /* ClientModel.swift in Sources */,
+				9AB26E701CDCE0DD006F381E /* OpenSSLHelper.m in Sources */,
 				CD03811FA3F15932D1C0F66B /* RestSession.swift in Sources */,
 				8400F8AC1CA130C4003F15B2 /* NSData+CRC32.swift in Sources */,
 				CD0386948E879E2106699B3C /* RestClient.swift in Sources */,
@@ -1331,6 +1340,7 @@
 				CD03844FF2823EFCDF1972EE /* NSJSONSerializationExtensions.swift in Sources */,
 				CD038163A93FFC2353B572A0 /* DictionaryExtensions.swift in Sources */,
 				9A62E6B61C8DCA20004ED6C0 /* Asset.swift in Sources */,
+				9AB26E721CDCE0DD006F381E /* SECP256R1KeyPairContainer.m in Sources */,
 				CD038D8BCA3144FBB29E8DE4 /* NSErrorExtensions.swift in Sources */,
 				CD0381C2A8FBB873B221A20F /* RawIntValue.swift in Sources */,
 				9A7C78831CC77F210097BAB9 /* FitpayEventListener.swift in Sources */,
@@ -1651,10 +1661,7 @@
 			baseConfigurationReference = DB3B273A3D2DCC775DA1BEFD /* Pods-FitpaySDKTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = FitpaySDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKTests;
@@ -1668,10 +1675,7 @@
 			baseConfigurationReference = 58DBC1481B059BCF33878AA3 /* Pods-FitpaySDKTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = FitpaySDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKTests;
@@ -1720,10 +1724,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto\"",
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = FitpaySDKDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKDemo;
@@ -1739,10 +1740,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/FitpaySDK/Libraries/OpenSSL/include\"/**",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto\"",
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = FitpaySDKDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fitpay.FitpaySDKDemo;
@@ -1783,10 +1781,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = ObjCDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1806,10 +1801,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/FitpaySDK/FPCrypto",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = ObjCDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
