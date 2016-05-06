@@ -152,6 +152,6 @@ class RtmSessionTests: XCTestCase
         
         self.connect()
         
-        super.waitForExpectationsWithTimeout(1000, handler: nil)
+        super.waitForExpectationsWithTimeout(10, handler: nil)
     }
 }

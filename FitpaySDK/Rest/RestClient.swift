@@ -80,7 +80,7 @@ public class RestClient : NSObject
      - parameter [User]?: Provides created User object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    public typealias CreateUsersHandler = (User?, ErrorType?)->Void
+    public typealias CreateUserHandler = (user:User?, error:NSError?)->Void
     
     /**
      Creates a new user within your organization
@@ -89,12 +89,105 @@ public class RestClient : NSObject
      - parameter lastName:   last name of the user
      - parameter birthDate:  birth date of the user in date format [YYYY-MM-DD]
      - parameter email:      email of the user
-     - parameter completion: CreateUsersHandler closure
+     - parameter completion: CreateUserHandler closure
      */
-    public func createUser(firstName firstName:String, lastName:String, birthDate:String, email:String, completion:CreateUsersHandler)
+    public func createUser(email:String, password:String, firstName:String?, lastName:String?, birthDate:String?,
+                                     termsVersion:String?, termsAcceptedTsEpoch:String?,
+                                     origin:String?, originAccountCreatedTsEpoch:String?,
+                                     completion:CreateUserHandler)
     {
-        //TODO: Implement or remove this
-        assertionFailure("unimplemented functionality")
+        debugPrint("request create user: \(email)")
+
+        self.preparKeyHeader
+            {
+                [unowned self](headers, error) -> Void in
+                if let headers = headers
+                {
+                    debugPrint("got headers: \(headers)")
+                    var parameters:[String : String] = [:]
+                    if (termsVersion != nil) {
+                        parameters + ["termsVersion": termsVersion!]
+                    }
+                    if (termsAcceptedTsEpoch != nil) {
+                        parameters + ["termsAcceptedTsEpoch": termsAcceptedTsEpoch!]
+                    }
+                    
+                    if (origin != nil) {
+                        parameters + ["origin": origin!]
+                    }
+                    
+                    if (termsVersion != nil) {
+                        parameters + ["originAccountCreatedTsEpoch": originAccountCreatedTsEpoch!]
+                    }
+                    
+                    let rawUserInfo = [
+                        "email" : email,
+                        "pin" : password
+                        ] as [String : AnyObject]
+                    if (firstName != nil) {
+                        rawUserInfo + ["firstName" : firstName!]
+                    }
+                    
+                    if (lastName != nil) {
+                        rawUserInfo + ["lastName" : lastName!]
+                    }
+                    
+                    if (birthDate != nil) {
+                        rawUserInfo + ["birthDate" : birthDate!]
+                    }
+                    
+                    if let userInfoJSON = rawUserInfo.JSONString
+                    {
+                        if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: userInfoJSON, keyId:headers[RestClient.fpKeyIdKey]!)
+                        {
+                            if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)
+                            {
+                                parameters["encryptedData"] = encrypted
+                            }
+                        }
+                    }
+                    
+                    debugPrint("user creation url: \(API_BASE_URL)/users")
+                    debugPrint("Headers: \(headers)")
+                    debugPrint("user creation json: \(parameters)")
+                    
+                    let request = self._manager.request(.POST, API_BASE_URL + "/users", parameters: parameters, encoding: .JSON, headers: headers)
+                    
+                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        {
+                            (response:Response<User, NSError>) -> Void in
+                            
+                            dispatch_async(dispatch_get_main_queue(),
+                                {
+                                    () -> Void in
+                                    
+                                    if let resultError = response.result.error
+                                    {
+                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                        completion(user: nil, error: error)
+                                    }
+                                    else if let resultValue = response.result.value
+                                    {
+                                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                        resultValue.client = self
+                                        completion(user:resultValue, error: nil)
+                                    }
+                                    else
+                                    {
+                                        completion(user:nil, error: NSError.unhandledError(RestClient.self))
+                                    }
+                            })
+                    })
+                }
+                else
+                {
+                    dispatch_async(dispatch_get_main_queue(),
+                        {
+                            () -> Void in
+                            completion(user:nil, error: error)
+                    })
+                }
+        }
     }
     
     /**
@@ -649,6 +742,7 @@ public class RestClient : NSObject
     
     // MARK: Request Signature Helpers
     typealias CreateAuthHeaders = (headers:[String:String]?, error:NSError?) -> Void
+
     private func createAuthHeaders(completion:CreateAuthHeaders)
     {
         if self._session.isAuthorized
@@ -660,7 +754,13 @@ public class RestClient : NSObject
             completion(headers: nil, error: NSError.error(code: ErrorCode.Unauthorized, domain: RestClient.self, message: "\(ErrorCode.Unauthorized)"))
         }
     }
-    
+ 
+    private func skipAuthHeaders(completion:CreateAuthHeaders)
+    {
+        // do nothing
+        completion(headers: self.defaultHeaders, error:nil)
+    }
+
 
     typealias PrepareAuthAndKeyHeaders = (headers:[String:String]?, error:NSError?) -> Void
     private func prepareAuthAndKeyHeaders(completion:PrepareAuthAndKeyHeaders)
@@ -692,6 +792,39 @@ public class RestClient : NSObject
             
         }
     }
+    
+    typealias PrepareKeyHeader = (headers:[String:String]?, error:NSError?) -> Void
+
+    private func preparKeyHeader(completion:PrepareAuthAndKeyHeaders)
+    {
+        self.skipAuthHeaders
+            {
+                [unowned self](headers, error) -> Void in
+                
+                if let error = error
+                {
+                    completion(headers:nil, error:error)
+                }
+                else
+                {
+                    self.createKeyIfNeeded(
+                        {
+                            (encryptionKey, keyError) -> Void in
+                            
+                            if let keyError = keyError
+                            {
+                                completion(headers:nil, error: keyError)
+                            }
+                            else
+                            {
+                                completion(headers: headers! + [RestClient.fpKeyIdKey : encryptionKey!.keyId!], error: nil)
+                            }
+                    })
+                }
+                
+        }
+    }
+
     
     // MARK: Hypermedia-driven implementation
     

@@ -81,6 +81,10 @@
 		9AD23A3F1CBE78E5007CB9CF /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		9AD23A421CBE8EB5007CB9CF /* MySwiftClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD23A411CBE8EB5007CB9CF /* MySwiftClass.swift */; };
 		9AD23A451CBE942D007CB9CF /* ObjCCompatibilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD23A431CBE9426007CB9CF /* ObjCCompatibilityExtensions.swift */; };
+		9B4127D11CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4127D01CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.swift */; };
+		9B4127D31CD95A5A00B12187 /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
+		9B65A33B1CDD1534007A7D7D /* MockPaymentDeviceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B65A33A1CDD1534007A7D7D /* MockPaymentDeviceInterface.swift */; };
+		9B65A33D1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */; };
 		B4908F350220523AD13B0928 /* Pods_ObjCDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A84AE83E7EDF11F2655399 /* Pods_ObjCDemo.framework */; };
 		CD03806996B162B739B5C3C4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0387CEBA596BFB51256128 /* User.swift */; };
 		CD0380D8C5E628E5C1A755AC /* RestAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03818A549A1841A5ED64B3 /* RestAPIConstants.swift */; };
@@ -154,6 +158,13 @@
 			remoteInfo = ObjCDemo;
 		};
 		9A49E9F81CBBA03E009811D4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0AD922941C1F7EFC007693AB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0AD9229C1C1F7EFC007693AB;
+			remoteInfo = FitpaySDK;
+		};
+		9B4127D41CD95A5A00B12187 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0AD922941C1F7EFC007693AB /* Project object */;
 			proxyType = 1;
@@ -282,6 +293,11 @@
 		9ACF305C1C7F4B010051DAF1 /* SECP256R1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SECP256R1.h; sourceTree = "<group>"; };
 		9AD23A411CBE8EB5007CB9CF /* MySwiftClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySwiftClass.swift; sourceTree = "<group>"; };
 		9AD23A431CBE9426007CB9CF /* ObjCCompatibilityExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjCCompatibilityExtensions.swift; sourceTree = "<group>"; };
+		9B4127CE1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CombinedUserCreateAndLoginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B4127D01CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombinedUserCreateAndLoginTests.swift; sourceTree = "<group>"; };
+		9B4127D21CD95A5A00B12187 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9B65A33A1CDD1534007A7D7D /* MockPaymentDeviceInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPaymentDeviceInterface.swift; sourceTree = "<group>"; };
+		9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPaymentDeviceTests.swift; sourceTree = "<group>"; };
 		9DE52F7096B647CEA17CA45A /* Pods-ObjCDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjCDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObjCDemo/Pods-ObjCDemo.release.xcconfig"; sourceTree = "<group>"; };
 		A1CDDE762C6631CF031451E0 /* Pods-FitpaySDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FitpaySDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-FitpaySDK/Pods-FitpaySDK.release.xcconfig"; sourceTree = "<group>"; };
 		A8BA53F13D15C94042F5376E /* Pods-RTMClientApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RTMClientApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RTMClientApp/Pods-RTMClientApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -377,6 +393,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9B4127CB1CD95A5A00B12187 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B4127D31CD95A5A00B12187 /* FitpaySDK.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -390,6 +414,7 @@
 				9A2E68D91CA14DE10061D5B3 /* FitpaySDKDemoUITests */,
 				9A2F7B801CB7FB5D00696D45 /* ObjCDemo */,
 				9A2F7B9A1CB7FB5D00696D45 /* ObjCDemoTests */,
+				9B4127CF1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests */,
 				0AD9229E1C1F7EFC007693AB /* Products */,
 				AAC95219C4851808164A9861 /* Pods */,
 				B2C94647591B581A09E4A254 /* Frameworks */,
@@ -406,6 +431,7 @@
 				9A2E68D61CA14DE10061D5B3 /* FitpaySDKDemoUITests.xctest */,
 				9A2F7B7F1CB7FB5D00696D45 /* ObjCDemo.app */,
 				9A2F7B971CB7FB5D00696D45 /* ObjCDemoTests.xctest */,
+				9B4127CE1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -436,6 +462,7 @@
 				8426D2521C92F428009AACFE /* RtmSessionTests.swift */,
 				8426D2921CA00243009AACFE /* PaymentDeviceTests.swift */,
 				0AD922AE1C1F7EFC007693AB /* Info.plist */,
+				9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */,
 			);
 			path = FitpaySDKTests;
 			sourceTree = "<group>";
@@ -464,6 +491,7 @@
 		847264961CA5261400DE801D /* Interfaces */ = {
 			isa = PBXGroup;
 			children = (
+				9B65A3391CDD14CD007A7D7D /* Mock */,
 				8472649B1CA53C9100DE801D /* BLE */,
 				847264971CA5263400DE801D /* PaymentDeviceBaseInterface.swift */,
 			);
@@ -593,6 +621,23 @@
 				8426D24F1C92B5D0009AACFE /* SHA1.h */,
 			);
 			path = FPCrypto;
+			sourceTree = "<group>";
+		};
+		9B4127CF1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests */ = {
+			isa = PBXGroup;
+			children = (
+				9B4127D01CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.swift */,
+				9B4127D21CD95A5A00B12187 /* Info.plist */,
+			);
+			path = CombinedUserCreateAndLoginTests;
+			sourceTree = "<group>";
+		};
+		9B65A3391CDD14CD007A7D7D /* Mock */ = {
+			isa = PBXGroup;
+			children = (
+				9B65A33A1CDD1534007A7D7D /* MockPaymentDeviceInterface.swift */,
+			);
+			name = Mock;
 			sourceTree = "<group>";
 		};
 		AAC95219C4851808164A9861 /* Pods */ = {
@@ -892,6 +937,24 @@
 			productReference = 9A2F7B971CB7FB5D00696D45 /* ObjCDemoTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		9B4127CD1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9B4127D81CD95A5A00B12187 /* Build configuration list for PBXNativeTarget "CombinedUserCreateAndLoginTests" */;
+			buildPhases = (
+				9B4127CA1CD95A5A00B12187 /* Sources */,
+				9B4127CB1CD95A5A00B12187 /* Frameworks */,
+				9B4127CC1CD95A5A00B12187 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9B4127D51CD95A5A00B12187 /* PBXTargetDependency */,
+			);
+			name = CombinedUserCreateAndLoginTests;
+			productName = CombinedUserCreateAndLoginTests;
+			productReference = 9B4127CE1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -933,6 +996,9 @@
 						CreatedOnToolsVersion = 7.3;
 						TestTargetID = 9A2F7B7E1CB7FB5C00696D45;
 					};
+					9B4127CD1CD95A5A00B12187 = {
+						CreatedOnToolsVersion = 7.3;
+					};
 				};
 			};
 			buildConfigurationList = 0AD922971C1F7EFC007693AB /* Build configuration list for PBXProject "FitpaySDK" */;
@@ -955,6 +1021,7 @@
 				9A2E68D51CA14DE10061D5B3 /* FitpaySDKDemoUITests */,
 				9A2F7B7E1CB7FB5C00696D45 /* ObjCDemo */,
 				9A2F7B961CB7FB5D00696D45 /* ObjCDemoTests */,
+				9B4127CD1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1013,6 +1080,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9A2F7B951CB7FB5D00696D45 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B4127CC1CD95A5A00B12187 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1289,6 +1363,7 @@
 				CD0389401826E2E23F248906 /* SECP256R1KeyPair.swift in Sources */,
 				8456437C1CAD7F7200351C8E /* CommitsApplyer.swift in Sources */,
 				CD03864C52B317B02135FF7D /* NSDataExtensions.swift in Sources */,
+				9B65A33B1CDD1534007A7D7D /* MockPaymentDeviceInterface.swift in Sources */,
 				8425931B1CAA605B0006FFA6 /* SyncManager.swift in Sources */,
 				CD03814935D90886A777D9EF /* SecretApplyable.swift in Sources */,
 				8426D24C1C91D139009AACFE /* RtmConstants.swift in Sources */,
@@ -1301,6 +1376,7 @@
 			files = (
 				8426D2931CA00243009AACFE /* PaymentDeviceTests.swift in Sources */,
 				9AA5BDAB1C7B54B600EDF2F6 /* RestSessionTests.swift in Sources */,
+				9B65A33D1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift in Sources */,
 				9AB68E441C84A25B00A0E172 /* JWETests.swift in Sources */,
 				8426D2531C92F428009AACFE /* RtmSessionTests.swift in Sources */,
 				9AA50BDF1C7E096D000FA546 /* RestClientTests.swift in Sources */,
@@ -1360,6 +1436,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9B4127CA1CD95A5A00B12187 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B4127D11CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1397,6 +1481,11 @@
 			isa = PBXTargetDependency;
 			target = 0AD9229C1C1F7EFC007693AB /* FitpaySDK */;
 			targetProxy = 9A49E9F81CBBA03E009811D4 /* PBXContainerItemProxy */;
+		};
+		9B4127D51CD95A5A00B12187 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0AD9229C1C1F7EFC007693AB /* FitpaySDK */;
+			targetProxy = 9B4127D41CD95A5A00B12187 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1795,6 +1884,30 @@
 			};
 			name = Release;
 		};
+		9B4127D61CD95A5A00B12187 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				INFOPLIST_FILE = CombinedUserCreateAndLoginTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tgs.CombinedUserCreateAndLoginTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9B4127D71CD95A5A00B12187 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				INFOPLIST_FILE = CombinedUserCreateAndLoginTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tgs.CombinedUserCreateAndLoginTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1866,6 +1979,15 @@
 			buildConfigurations = (
 				9A2F7BA01CB7FB5D00696D45 /* Debug */,
 				9A2F7BA11CB7FB5D00696D45 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9B4127D81CD95A5A00B12187 /* Build configuration list for PBXNativeTarget "CombinedUserCreateAndLoginTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9B4127D61CD95A5A00B12187 /* Debug */,
+				9B4127D71CD95A5A00B12187 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

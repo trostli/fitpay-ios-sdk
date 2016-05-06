@@ -11,6 +11,18 @@ class RestClientTests: XCTestCase
 
     var session:RestSession!
     var client:RestClient!
+    
+    override func invokeTest()
+    {
+        // stop test on first failure - kind of like jUnit.  Avoid unexpected null references etc
+        self.continueAfterFailure = false;
+        
+        super.invokeTest();
+        
+        // keep running tests in suite
+        self.continueAfterFailure = true;
+
+    }
 
     override func setUp()
     {
@@ -139,6 +151,101 @@ class RestClientTests: XCTestCase
 
         super.waitForExpectationsWithTimeout(100, handler: nil)
     }
+ 
+    func testUserCreate()
+    {
+        let expectation = super.expectationWithDescription("'user' created")
+        
+        let email = randomStringWithLength(8)
+            .stringByAppendingString("@")
+            .stringByAppendingString(randomStringWithLength(5) as String)
+            .stringByAppendingString(".")
+            .stringByAppendingString(randomStringWithLength(5) as String)
+        let pin = "1234"
+        
+        self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
+                               birthDate:nil,
+                               termsVersion:nil, termsAcceptedTsEpoch:nil,
+                               origin:nil, originAccountCreatedTsEpoch:nil,
+                               completion:
+                {
+                    (user, error) -> Void in
+                    
+                    XCTAssertNotNil(user, "user is nil")
+                    XCTAssertNotNil(user?.info)
+                    XCTAssertNotNil(user?.created)
+                    XCTAssertNotNil(user?.links)
+                    XCTAssertNotNil(user?.createdEpoch)
+                    XCTAssertNotNil(user?.encryptedData)
+                    XCTAssertNotNil(user?.info?.email)
+                    XCTAssertNil(error)
+                    
+                    expectation.fulfill()
+            })
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    
+    func testUserCreateAndLogin()
+    {
+        let expectation = super.expectationWithDescription("'user' created")
+        
+        let email = randomStringWithLength(8)
+            .stringByAppendingString("@")
+            .stringByAppendingString(randomStringWithLength(5) as String)
+            .stringByAppendingString(".")
+            .stringByAppendingString(randomStringWithLength(5) as String)
+        let pin = "1234"
+        
+        self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
+                               birthDate:nil,
+                               termsVersion:nil, termsAcceptedTsEpoch:nil,
+                               origin:nil, originAccountCreatedTsEpoch:nil,
+                               completion:
+            {
+                (user, error) -> Void in
+                XCTAssertNotNil(user, "user is nil")
+                debugPrint("created user: \(user?.info?.email)")
+                XCTAssertNotNil(user?.info)
+                XCTAssertNotNil(user?.created)
+                XCTAssertNotNil(user?.links)
+                XCTAssertNotNil(user?.createdEpoch)
+                XCTAssertNotNil(user?.encryptedData)
+                XCTAssertNotNil(user?.info?.email)
+                XCTAssertNil(error)
+                
+                self.session.login(username: email, password: pin, completion:
+                {
+                    [unowned self]
+                    (loginError) -> Void in
+                    XCTAssertNil(loginError)
+                    debugPrint("user isAuthorized: \(self.session.isAuthorized)")
+                    XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
+                    
+                    expectation.fulfill()
+                })
+        })
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+
+    
+    func randomStringWithLength (len : Int) -> NSString {
+        
+        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        
+        let randomString : NSMutableString = NSMutableString(capacity: len)
+        
+        for _ in 0 ... (len-1) {
+            let length = UInt32 (letters.length)
+            let rand = arc4random_uniform(length)
+            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
+        }
+        
+        return randomString
+    }
+
     
     func testUserRetrievesUserById()
     {
@@ -1450,6 +1557,10 @@ class RestClientTests: XCTestCase
                 {
                     (devices, error) -> Void in
                     XCTAssertNil(error)
+                    XCTAssertNotNil(devices!.results)
+                    XCTAssertTrue(devices!.results!.count > 0)
+                    debugPrint("number of devices \(devices!.results!.count)")
+                    if (devices!.results!.count > 0) {
                     devices!.results![0].listCommits(commitsAfter: nil, limit: 10, offset: 0, completion:
                     {
                         (commits, error) -> Void in
@@ -1468,6 +1579,9 @@ class RestClientTests: XCTestCase
                         
                         expectation.fulfill()
                     })
+                    } else {
+                        XCTFail();
+                    }
                 })
             })
         }
@@ -1784,7 +1898,7 @@ class RestClientTests: XCTestCase
             })
         }
         
-        super.waitForExpectationsWithTimeout(1000, handler: nil)
+        super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
 //    func testAPDUPackageConfirm()
