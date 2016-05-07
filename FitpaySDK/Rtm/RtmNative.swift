@@ -22,20 +22,18 @@ internal enum SyncJS: String {
 public class RtmNative : NSObject, WKScriptMessageHandler {
     let url = API_BASE_URL
 //    let url = "http://192.168.128.170:8001"
-
+    
+    let paymentDevice: PaymentDevice?
     let rtmConfig: RtmConfig?
     let restSession: RestSession?
-    let restClient: RestClient?
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
     
-    public init(config:RtmConfig) {
-        // set the config and webview
-        self.rtmConfig = config
-        
-        // initialize a RestSession and RestClient
-        self.restSession = RestSession(clientId: rtmConfig!.clientId, redirectUri: rtmConfig!.redirectUri)
-        self.restClient = RestClient(session: restSession!)
+    public init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice) {
+        self.paymentDevice = paymentDevice
+        paymentDevice.connect()
+        self.rtmConfig = RtmConfig(clientId: clientId, redirectUri: redirectUri, paymentDevice: paymentDevice.deviceInfo!)
+        self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri)
     }
     
     public func setWebView(webview:WKWebView!) {
@@ -56,7 +54,14 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
      This returns the request object clients will require in order to open a WKWebView
      */
     public func wvRequest() -> NSURLRequest {
-        let requestUrl = NSURL(string: url )
+        let JSONString = Mapper().toJSONString(rtmConfig!)
+        let utfString = JSONString!.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        let encodedConfig = utfString?.base64URLencoded()
+        let configuredUrl = "\(url)?config=\(encodedConfig! as String)"
+        
+        print(configuredUrl)
+        
+        let requestUrl = NSURL(string: configuredUrl)
         let request = NSURLRequest(URL: requestUrl!)
         return request
     }
@@ -91,11 +96,11 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     private func handleSync() -> Void {
         self.callWebView(SyncJS.function.rawValue, args: SyncJS.syncBeginSuccess.rawValue)
         
-//        now go sync somehow
 //        let userId = webViewSessionData!.userId!
 //        let deviceId = webViewSessionData?.deviceId!
 //        let commitUrl = "\(url)/users/\(userId)/devices/\(deviceId)/commits"
         
+//        now go sync somehow, but fake it for now
         _ = setTimeout(1.5, block: { () -> Void in
             self.callWebView(SyncJS.function.rawValue, args: SyncJS.applyCommitsSuccess.rawValue)
         })

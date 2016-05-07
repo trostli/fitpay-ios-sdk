@@ -2,6 +2,7 @@
 import UIKit
 import WebKit
 import FitpaySDK
+import ObjectMapper
 
 class WebViewController: UIViewController {
     @IBOutlet var containerView : UIView! = nil
@@ -9,9 +10,10 @@ class WebViewController: UIViewController {
     var rtm: RtmNative?
     
     override func viewDidLoad() {
-        print("loading web view")
-        let rtmConfig = RtmConfig(clientId: "pagare", redirectUri: "http://example.com")
-        rtm = RtmNative(config: rtmConfig)
+        let device = PaymentDevice();
+        device.changeDeviceInterface(MockPaymentDeviceInterface(paymentDevice: device))
+        
+        rtm = RtmNative(clientId: "pagare", redirectUri: "http://example.com", paymentDevice: device)
         let config:WKWebViewConfiguration = rtm!.wvConfig()
         
         self.view.frame = self.view.bounds
