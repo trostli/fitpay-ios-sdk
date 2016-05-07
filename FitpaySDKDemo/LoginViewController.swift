@@ -7,6 +7,7 @@ class LoginViewController : UIViewController
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var webviewButton: UIButton!
     
     weak var restClient:RestClient?
     weak var restSession:RestSession?
@@ -30,7 +31,15 @@ class LoginViewController : UIViewController
         self.userNameTextField.text = "testableuser2@something.com"
         self.passwordTextField.text = "1029"
         self.loginButton.addTarget(self, action: #selector(LoginViewController.login), forControlEvents: .TouchUpInside)
-        
+        self.webviewButton.addTarget(self, action: #selector(LoginViewController.webViewIt), forControlEvents: .TouchUpInside)
+    }
+    
+    func webViewIt()
+    {
+        let webViewController = WebViewController()
+        webViewController.title = "WebView"
+        let navigationController = UINavigationController(rootViewController: webViewController)
+        self.presentViewController(navigationController, animated: true, completion: nil)
     }
     
     func login()

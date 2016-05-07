@@ -234,7 +234,7 @@ public class PaymentDevice : NSObject
     internal typealias APDUResponseHandler = (apduResponse:ApduResultMessage?, error:ErrorType?)->Void
     internal var apduResponseHandler : APDUResponseHandler?
     
-    override init() {
+    override public init() {
         super.init()
         
         self.deviceInterface = PaymentDeviceBLEInterface(paymentDevice: self)

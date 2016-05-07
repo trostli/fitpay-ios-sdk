@@ -6,46 +6,46 @@
 //  Copyright © 2016 Fitpay. All rights reserved.
 //
 
-internal class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface {
+public class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface {
     
     weak var paymentDevice : PaymentDevice!
     var connected = false;
     
-    required init(paymentDevice device:PaymentDevice) {
+    required public init(paymentDevice device:PaymentDevice) {
         self.paymentDevice = device
     }
     
-    func connect() {
+    public func connect() {
         connected = true
     }
     
-    func disconnect() {
+    public func disconnect() {
         connected = false
     }
     
-    func isConnected() -> Bool {
+    public func isConnected() -> Bool {
         return connected;
     }
     
-    func writeSecurityState(state: SecurityNFCState) -> NSError? {
+    public func writeSecurityState(state: SecurityNFCState) -> NSError? {
         return nil
     }
     
-    func sendDeviceControl(state: DeviceControlState) -> NSError? {
-        return nil
-
-    }
-    
-    func sendNotification(notificationData: NSData) -> NSError? {
+    public func sendDeviceControl(state: DeviceControlState) -> NSError? {
         return nil
 
     }
     
-    func sendAPDUData(data: NSData, sequenceNumber: UInt16) {
+    public func sendNotification(notificationData: NSData) -> NSError? {
+        return nil
+
+    }
+    
+    public func sendAPDUData(data: NSData, sequenceNumber: UInt16) {
         
     }
     
-    func deviceInfo() -> DeviceInfo? {
+    public func deviceInfo() -> DeviceInfo? {
         let deviceInfo = DeviceInfo()
         
         deviceInfo.deviceType = "WATCH"
@@ -64,11 +64,11 @@ internal class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface
         return deviceInfo;
     }
 
-    func nfcState() -> SecurityNFCState {
+    public func nfcState() -> SecurityNFCState {
        return SecurityNFCState.Disabled
     }
     
-    func resetToDefaultState() {
+    public func resetToDefaultState() {
         
     }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -11,6 +11,7 @@
                 <outlet property="passwordTextField" destination="7BX-pR-Q47" id="dhH-Fj-9b8"/>
                 <outlet property="userNameTextField" destination="oey-YZ-8DZ" id="lGx-bI-rz4"/>
                 <outlet property="view" destination="iN0-l3-epB" id="5z6-XR-aYx"/>
+                <outlet property="webviewButton" destination="dbp-3y-3VD" id="Op1-AS-ute"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -41,12 +42,40 @@
                     </constraints>
                     <state key="normal" title="Login"/>
                 </button>
+                <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="FMY-hr-HC1">
+                    <rect key="frame" x="127" y="323" width="67" height="30"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ODn-5T-QxT">
+                            <rect key="frame" x="0.0" y="0.0" width="67" height="30"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dbp-3y-3VD">
+                                    <rect key="frame" x="0.0" y="0.0" width="67" height="30"/>
+                                    <state key="normal" title="web-view"/>
+                                </button>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="dbp-3y-3VD" firstAttribute="centerX" secondItem="ODn-5T-QxT" secondAttribute="centerX" id="HiG-Ee-9Uq"/>
+                                <constraint firstItem="dbp-3y-3VD" firstAttribute="top" secondItem="ODn-5T-QxT" secondAttribute="top" constant="200" id="IHh-hS-2qS"/>
+                                <constraint firstItem="dbp-3y-3VD" firstAttribute="top" secondItem="ODn-5T-QxT" secondAttribute="top" constant="200" id="NCa-SR-JSm"/>
+                                <constraint firstItem="dbp-3y-3VD" firstAttribute="top" secondItem="ODn-5T-QxT" secondAttribute="top" constant="50" id="ciY-6a-zvM"/>
+                            </constraints>
+                            <variation key="default">
+                                <mask key="constraints">
+                                    <exclude reference="IHh-hS-2qS"/>
+                                    <exclude reference="NCa-SR-JSm"/>
+                                </mask>
+                            </variation>
+                        </stackView>
+                    </subviews>
+                </stackView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="oey-YZ-8DZ" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="30" id="4pu-b8-dhC"/>
+                <constraint firstItem="Pcc-MP-L5Q" firstAttribute="top" secondItem="7BX-pR-Q47" secondAttribute="bottom" constant="200" id="5OR-ja-tBo"/>
                 <constraint firstItem="Pcc-MP-L5Q" firstAttribute="top" secondItem="7BX-pR-Q47" secondAttribute="bottom" constant="33" id="KGA-Y7-vIK"/>
                 <constraint firstAttribute="trailing" secondItem="oey-YZ-8DZ" secondAttribute="trailing" constant="30" id="P1J-GK-TSf"/>
+                <constraint firstItem="FMY-hr-HC1" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="V0T-1c-d3b"/>
                 <constraint firstItem="oey-YZ-8DZ" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" constant="-76" id="eEi-Mh-dfA"/>
                 <constraint firstItem="Pcc-MP-L5Q" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="110" id="exH-iX-XJQ"/>
                 <constraint firstAttribute="trailing" secondItem="7BX-pR-Q47" secondAttribute="trailing" constant="30" id="fdp-kx-XPq"/>
@@ -55,6 +84,11 @@
                 <constraint firstItem="7BX-pR-Q47" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="30" id="x8f-fj-IdD"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="5OR-ja-tBo"/>
+                </mask>
+            </variation>
         </view>
     </objects>
 </document>
