@@ -25,7 +25,7 @@ Click on a test, and press "Play"
 
 ## Running Tests From the Commandline
 ```
-xcodebuild test -project FitpaySDK.xcodeproj -scheme FitpaySDK -destination 'platform=iOS Simulator,name=iPhone 6s'
+./bin/test
 ```
 
 
