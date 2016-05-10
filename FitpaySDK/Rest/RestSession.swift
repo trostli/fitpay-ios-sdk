@@ -161,7 +161,7 @@ public class RestSession : NSObject
 
         let request = manager.request(.POST, AUTHORIZE_URL, parameters: parameters, encoding:.URL, headers: headers)
     
-        request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {
             (response: Response<AuthorizationDetails, NSError>) -> Void in
 

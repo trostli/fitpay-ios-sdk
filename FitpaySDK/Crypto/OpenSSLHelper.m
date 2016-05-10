@@ -1,18 +1,21 @@
-#ifndef AESGCM_h
-#define AESGCM_h
+//
+//  OpenSSLHelper.m
+//  SwiftLibWithC
+//
+//  Created by Igor Kravchenko on 5/6/16.
+//  Copyright © 2016 Igor Kravchenko. All rights reserved.
+//
+
+#import "OpenSSLHelper.h"
+#import "SECP256R1KeyPairContainer+Private.h"
 
 #include <stdbool.h>
 #include <string.h>
 #include <assert.h>
 #include <openssl/evp.h>
 
-typedef struct AESGCM_EncryptionResult {
-    unsigned char * cipher_text;
-    int cipher_text_size;
-    
-    unsigned char * auth_tag;
-    int auth_tag_size;
-} AESGCM_EncryptionResult;
+#include <string.h>
+#include <openssl/sha.h>
 
 /*
  *  Use this function to encrypt data with AES 256 GCM
@@ -26,10 +29,10 @@ typedef struct AESGCM_EncryptionResult {
  *           YOU SHOULD TO DEALLOCATE AESGCM_EncryptionResult WITH aes_gcm_free_encryption_result()
  */
 static void aes_gcm_encrypt(unsigned char * key,        int key_size,
-                     unsigned char * iv,         int iv_size,
-                     unsigned char * aad,        int aad_size,
-                     unsigned char * plain_text, int plain_text_size,
-                     AESGCM_EncryptionResult * result)
+                            unsigned char * iv,         int iv_size,
+                            unsigned char * aad,        int aad_size,
+                            unsigned char * plain_text, int plain_text_size,
+                            AESGCM_EncryptionResult * result)
 {
     const int tag_size = 16;
     
@@ -85,12 +88,6 @@ static void aes_gcm_free_encryption_result(AESGCM_EncryptionResult * encryption_
     free(encryption_result);
 }
 
-
-typedef struct AESGCM_DecryptionResult {
-    unsigned char * plain_text;
-    int plain_text_size;
-} AESGCM_DecryptionResult;
-
 /*
  *  Use this function to decrypt data with AES 256 GCM
  *
@@ -104,11 +101,11 @@ typedef struct AESGCM_DecryptionResult {
  *           YOU SHOULD TO DEALLOCATE DecryptionResult WITH aes_gcm_free_decryption_result()
  */
 static bool aes_gcm_decrypt(unsigned char * key,         int key_size,
-                     unsigned char * iv,          int iv_size,
-                     unsigned char * aad,         int aad_size,
-                     unsigned char * cipher_text, int cipher_text_size,
-                     unsigned char * auth_tag,    int auth_tag_size,
-                     AESGCM_DecryptionResult * result)
+                            unsigned char * iv,          int iv_size,
+                            unsigned char * aad,         int aad_size,
+                            unsigned char * cipher_text, int cipher_text_size,
+                            unsigned char * auth_tag,    int auth_tag_size,
+                            AESGCM_DecryptionResult * result)
 {
     EVP_CIPHER_CTX * ctx = EVP_CIPHER_CTX_new();
     int outlen, rv;
@@ -190,5 +187,84 @@ static void aes_gcm_free_decryption_result(AESGCM_DecryptionResult * decryption_
     free(decryption_result);
 }
 
+static bool simpleSHA1(const void* input, unsigned long length, char* output)
+{
+    unsigned char md[SHA_DIGEST_LENGTH];
+    
+    SHA_CTX context;
+    if (!SHA1_Init(&context))
+        return false;
+    
+    if (!SHA1_Update(&context, (unsigned char*)input, length))
+        return false;
+    
+    if (!SHA1_Final(md, &context))
+        return false;
+    
+    for (int i = 0; i < SHA_DIGEST_LENGTH; i++)
+        sprintf(&output[i*2], "%02x", (unsigned int)md[i]);
+    
+    return true;
+}
 
-#endif /* AESGCM_h */
+@implementation OpenSSLHelper
+
++ (instancetype)sharedInstance
+{
+    static OpenSSLHelper *sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
+
+- (void)AES_GSM_encrypt:(unsigned char *)key
+                keySize:(int)keySize
+                     iv:(unsigned char *)iv
+                 ivSize:(int)ivSize
+                    aad:(unsigned char *)aad
+                aadSize:(int)aadSize
+              plainText:(unsigned char *)plainText
+          plainTextSize:(int)plainTextSize
+                 result:(AESGCM_EncryptionResult *)result
+{
+    aes_gcm_encrypt(key, keySize, iv, ivSize, aad, aadSize, plainText, plainTextSize, result);
+}
+
+- (void)AES_GSM_freeEncryptionResult:(AESGCM_EncryptionResult *)encryptionResult
+{
+    aes_gcm_free_encryption_result(encryptionResult);
+}
+
+- (BOOL)AES_GSM_decrypt:(unsigned char *)key
+                keySize:(int)keySize
+                     iv:(unsigned char *)iv
+                 ivSize:(int)ivSize
+                    aad:(unsigned char *)aad
+                aadSize:(int)aadSize
+             cipherText:(unsigned char *)cipherText
+         cipherTextSize:(int)cipherTextSize
+                authTag:(unsigned char *)authTag
+            authTagSize:(int)authTagSize
+                 result:(AESGCM_DecryptionResult *)result
+{
+    return aes_gcm_decrypt(key, keySize, iv, ivSize, aad, aadSize, cipherText, cipherTextSize, authTag, authTagSize, result);
+}
+
+- (void)AES_GSM_freeDecryptionResult:(AESGCM_DecryptionResult *)decryptionResult
+{
+    aes_gcm_free_decryption_result(decryptionResult);
+}
+
+- (BOOL)simpleSHA1:(const void *)input length:(unsigned long)length output:(char *)output
+{
+    return simpleSHA1(input, length, output);
+}
+
+- (NSInteger)shaDigestLength
+{
+    return SHA_DIGEST_LENGTH;
+}
+
+@end

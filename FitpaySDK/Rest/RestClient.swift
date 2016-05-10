@@ -92,8 +92,8 @@ public class RestClient : NSObject
      - parameter completion: CreateUserHandler closure
      */
     public func createUser(email:String, password:String, firstName:String?, lastName:String?, birthDate:String?,
-                                     termsVersion:String?, termsAcceptedTsEpoch:String?,
-                                     origin:String?, originAccountCreatedTsEpoch:String?,
+                                     termsVersion:String?, termsAccepted:String?,
+                                     origin:String?, originAccountCreated:String?,
                                      completion:CreateUserHandler)
     {
         debugPrint("request create user: \(email)")
@@ -108,8 +108,8 @@ public class RestClient : NSObject
                     if (termsVersion != nil) {
                         parameters + ["termsVersion": termsVersion!]
                     }
-                    if (termsAcceptedTsEpoch != nil) {
-                        parameters + ["termsAcceptedTsEpoch": termsAcceptedTsEpoch!]
+                    if (termsAccepted != nil) {
+                        parameters + ["termsAcceptedTsEpoch": termsAccepted!]
                     }
                     
                     if (origin != nil) {
@@ -117,7 +117,7 @@ public class RestClient : NSObject
                     }
                     
                     if (termsVersion != nil) {
-                        parameters + ["originAccountCreatedTsEpoch": originAccountCreatedTsEpoch!]
+                        parameters + ["originAccountCreatedTsEpoch": originAccountCreated!]
                     }
                     
                     let rawUserInfo = [
@@ -153,7 +153,7 @@ public class RestClient : NSObject
                     
                     let request = self._manager.request(.POST, API_BASE_URL + "/users", parameters: parameters, encoding: .JSON, headers: headers)
                     
-                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
                             (response:Response<User, NSError>) -> Void in
                             
@@ -212,7 +212,7 @@ public class RestClient : NSObject
             {
                 let request = self._manager.request(.GET, API_BASE_URL + "/users/" + id, parameters: nil, encoding: .JSON, headers: headers)
                 request.validate().responseObject(
-                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response: Response<User, NSError>) -> Void in
                     
@@ -256,7 +256,7 @@ public class RestClient : NSObject
      - parameter User?: Provides updated User object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    public typealias UpdateUserHandler = (User?, ErrorType?)->Void
+    public typealias UpdateUserHandler = (user:User?, error:NSError?)->Void
     
     /**
      Update the details of an existing user
@@ -270,9 +270,92 @@ public class RestClient : NSObject
      - parameter termsVersion:         terms version formatted as [0.0.0]
      - parameter completion:           UpdateUserHandler closure
      */
-    public func updateUser(id id:String, firstName:String?, lastName:String?, birthDate:Int?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:UpdateUserHandler)
+    internal func updateUser(url:String, firstName:String?, lastName:String?, birthDate:String?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:UpdateUserHandler)
     {
-        assertionFailure("unimplemented functionality")
+        self.prepareAuthAndKeyHeaders
+            {
+                (headers, error) -> Void in
+                if let headers = headers
+                {
+                    
+                    var operations = [AnyObject]()
+                    
+                    if let firstName = firstName
+                    {
+                        operations.append(["op": "replace", "path": "/firstName", "value": firstName])
+                    }
+                    
+                    if let lastName = lastName
+                    {
+                        operations.append(["op": "replace", "path": "/lastName", "value": lastName])
+                    }
+                    
+                    if let birthDate = birthDate
+                    {
+                        operations.append(["op": "replace", "path": "/birthDate", "value": birthDate])
+                    }
+                    
+                    if let originAccountCreated = originAccountCreated
+                    {
+                        operations.append(["op": "replace", "path": "/originAccountCreatedTs", "value": originAccountCreated])
+                    }
+                    
+                    if let termsAccepted = termsAccepted
+                    {
+                        operations.append(["op": "replace", "path": "/termsAcceptedTs", "value": termsAccepted])
+                    }
+                    
+                    if let termsVersion = termsVersion
+                    {
+                        operations.append(["op": "replace", "path": "/termsVersion", "value": termsVersion])
+                    }
+                    
+                    var parameters = [String:AnyObject]()
+                    
+                    if let updateJSON = operations.JSONString
+                    {
+                        if let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: updateJSON, keyId:headers[RestClient.fpKeyIdKey]!)
+                        {
+                            if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
+                            {
+                                parameters["encryptedData"] = encrypted
+                            }
+                        }
+                    }
+
+                    let request = self._manager.request(.PATCH, url, parameters: parameters, encoding: .JSON, headers: headers)
+                    request.validate().responseObject(
+                        queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        {
+                            [unowned self] (response: Response<User, NSError>) -> Void in
+                            
+                            dispatch_async(dispatch_get_main_queue(),
+                            {
+                                if let resultError = response.result.error
+                                {
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                    
+                                    completion(user:nil, error: error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.client = self
+                                    resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                    completion(user:resultValue, error:response.result.error)
+                                }
+                                else
+                                {
+                                    completion(user: nil, error: NSError.unhandledError(RestClient.self))
+                                }
+                            })
+                        })
+                }
+                else
+                {
+                    completion(user:nil, error: error)
+                }
+        }
+
     }
     
     /**
@@ -280,7 +363,7 @@ public class RestClient : NSObject
      
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteUserHandler = (ErrorType?)->Void
+    public typealias DeleteUserHandler = (error:NSError?)->Void
 
     /**
      Delete a single user from your organization
@@ -288,9 +371,29 @@ public class RestClient : NSObject
      - parameter id:         user id
      - parameter completion: DeleteUserHandler closure
      */
-     public func deleteUser(id id:String, completion:DeleteUserHandler)
+    internal func deleteUser(url:String, completion:DeleteUserHandler)
     {
-        assertionFailure("unimplemented functionality")
+        self.prepareAuthAndKeyHeaders
+        {
+            (headers, error) -> Void in
+            if let headers = headers
+            {
+                let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .URLEncodedInURL, headers: headers)
+                request.validate().responseString
+                {
+                    (response:Response<String, NSError>) -> Void in
+                    dispatch_async(dispatch_get_main_queue(),
+                        {
+                            () -> Void in
+                            completion(error:response.result.error)
+                    })
+                }
+            }
+            else
+            {
+                completion(error: error)
+            }
+        }
     }
     
     
@@ -310,7 +413,7 @@ public class RestClient : NSObject
      - parameter deviceId:     device id
      - parameter completion:   CreateRelationshipHandler closure
      */
-    @objc public func createRelationship(userId userId:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
+    internal func createRelationship(url:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -320,9 +423,9 @@ public class RestClient : NSObject
                     "creditCardId" : "\(creditCardId)",
                     "deviceId" : "\(deviceId)"
                 ]
-                let request = self._manager.request(.PUT, "\(API_BASE_URL)/users/\(userId)/relationships", parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
+                let request = self._manager.request(.PUT, url + "/relationships", parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
                 request.validate().responseObject(
-                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response: Response<Relationship, NSError>) -> Void in
                     dispatch_async(dispatch_get_main_queue(),
@@ -615,7 +718,7 @@ public class RestClient : NSObject
         ]
 
         let request = _manager.request(.POST, API_BASE_URL + "/config/encryptionKeys", parameters: parameters, encoding:.JSON, headers: headers)
-        request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {
             (response: Response<EncryptionKey, NSError>) -> Void in
 
@@ -658,7 +761,7 @@ public class RestClient : NSObject
     {
         let headers = self.defaultHeaders
         let request = _manager.request(.GET, API_BASE_URL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
-        request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {
             (response: Response<EncryptionKey, NSError>) -> Void in
             
@@ -870,7 +973,7 @@ public class RestClient : NSObject
                 
                 let request = self._manager.request(.POST, url, parameters: parameters, encoding: .JSON, headers: headers)
                 
-                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                     {
                         (response:Response<CreditCard, NSError>) -> Void in
                         
@@ -922,7 +1025,7 @@ public class RestClient : NSObject
                 {
                     let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
                     
-                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
                             (response:Response<ResultCollection<CreditCard>, NSError>) -> Void in
                             
@@ -1075,7 +1178,7 @@ public class RestClient : NSObject
                     
                     let request = self._manager.request(.PATCH, url, parameters: parameters, encoding: .JSON, headers: headers)
                     
-                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
                             [unowned self](response:Response<CreditCard, NSError>) -> Void in
                             
@@ -1120,7 +1223,7 @@ public class RestClient : NSObject
             if let headers = headers
             {
                 let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
-                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                     {
                         [unowned self](response:Response<CreditCard, NSError>) -> Void in
                         
@@ -1167,7 +1270,7 @@ public class RestClient : NSObject
                 if let headers = headers
                 {
                     let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
-                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
                             (response:Response<CreditCard, NSError>) -> Void in
                             
@@ -1214,7 +1317,7 @@ public class RestClient : NSObject
             if let headers = headers
             {
                 let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
-                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                     {
                         [unowned self](response:Response<VerificationMethod, NSError>) -> Void in
                         
@@ -1273,7 +1376,7 @@ public class RestClient : NSObject
                 ]
                 
                 let request = self._manager.request(.POST, url, parameters: params, encoding: .JSON, headers: headers)
-                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                     {
                         [](response:Response<VerificationMethod, NSError>) -> Void in
                         
@@ -1329,7 +1432,7 @@ public class RestClient : NSObject
                 {
                     let parameters = ["causedBy" : causedBy.rawValue, "reason" : reason]
                     let request = self._manager.request(.POST, url, parameters: parameters, encoding: .JSON, headers: headers)
-                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
                             [unowned self](response:Response<CreditCard, NSError>) -> Void in
                             
@@ -1387,7 +1490,7 @@ public class RestClient : NSObject
                 {
                     let parameters = ["causedBy" : causedBy.rawValue, "reason" : reason]
                     let request = self._manager.request(.POST, url, parameters: parameters, encoding: .JSON, headers: headers)
-                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
                             [unowned self](response:Response<CreditCard, NSError>) -> Void in
                             
@@ -1444,7 +1547,7 @@ public class RestClient : NSObject
             if let headers = headers
             {
                 let request = self._manager.request(.GET, url, parameters: nil, encoding: .JSON, headers: headers)
-                request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                     {
                         [unowned self](response:Response<CreditCard, NSError>) -> Void in
                         
@@ -1488,7 +1591,7 @@ public class RestClient : NSObject
                 if let headers = headers
                 {
                     let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
-                    request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
                             [unowned self](response:Response<CreditCard, NSError>) -> Void in
                             
@@ -1558,7 +1661,7 @@ public class RestClient : NSObject
                     
                     let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
                     request.validate().responseObject(
-                        dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
                             [unowned self] (response: Response<ResultCollection<DeviceInfo>, NSError>) -> Void in
                             dispatch_async(dispatch_get_main_queue(),
@@ -1623,7 +1726,7 @@ public class RestClient : NSObject
                 ]
                 let request = self._manager.request(.POST, url, parameters: params as? [String : AnyObject], encoding: .JSON, headers: headers)
                 request.validate().responseObject(
-                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     [unowned self] (response: Response<DeviceInfo, NSError>) -> Void in
                     dispatch_async(dispatch_get_main_queue(),
@@ -1714,7 +1817,7 @@ public class RestClient : NSObject
                     return (mutableRequest, nil)
                 }), headers: headers)
                 request.validate().responseObject(
-                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     [unowned self] (response: Response<DeviceInfo, NSError>) -> Void in
                     dispatch_async(dispatch_get_main_queue(),
@@ -1769,7 +1872,7 @@ public class RestClient : NSObject
                 
                 let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
                 request.validate().responseObject(
-                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     [unowned self] (response: Response<ResultCollection<Commit>, NSError>) -> Void in
                     dispatch_async(dispatch_get_main_queue(),
@@ -1813,7 +1916,7 @@ public class RestClient : NSObject
                     
                     let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
                     request.validate().responseObject(
-                        dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
                             [unowned self] (response: Response<ResultCollection<Commit>, NSError>) -> Void in
                             dispatch_async(dispatch_get_main_queue(),
@@ -1857,7 +1960,7 @@ public class RestClient : NSObject
             {
                 let request = self._manager.request(.GET, url, parameters: nil, encoding: .JSON, headers: headers)
                 request.validate().responseObject(
-                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     [unowned self] (response: Response<User, NSError>) -> Void in
                     
@@ -1901,7 +2004,7 @@ public class RestClient : NSObject
             if let headers = headers {
                 let request = self._manager.request(.GET, url, parameters: nil, encoding: .URLEncodedInURL, headers: headers)
                 request.validate().responseObject(
-                    dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response: Response<Relationship, NSError>) -> Void in
                     dispatch_async(dispatch_get_main_queue(),
@@ -1974,7 +2077,7 @@ public class RestClient : NSObject
                 if let headers = headers {
                     let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
                     request.validate().responseObject(
-                        dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
                             (response: Response<ResultCollection<Transaction>, NSError>) -> Void in
                             dispatch_async(dispatch_get_main_queue(),
@@ -2067,7 +2170,7 @@ public class RestClient : NSObject
             if let headers = headers {
                 let request = self._manager.request(.GET, url, parameters: nil, encoding: .URL, headers: headers)
                 request.validate().responseObject(
-                dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response: Response<ResultCollection<T>, NSError>) -> Void in
                     dispatch_async(dispatch_get_main_queue(),
