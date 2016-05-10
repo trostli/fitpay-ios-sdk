@@ -24,9 +24,15 @@ Right click on FitpaySDK tests, Enable tests
 Click on a test, and press "Play"
 
 ## Running Tests From the Commandline
+By default the tests will run in the iPhone 6s simulator.
 ```
 ./bin/test
 ```
+To test on a different simulator, pass in a valid simulator same.
+```
+./bin/test "iPhone 5s"
+```
+
 
 
 ## Contributing to the SDK
