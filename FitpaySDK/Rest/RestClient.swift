@@ -147,11 +147,11 @@ public class RestClient : NSObject
                         }
                     }
                     
-                    debugPrint("user creation url: \(API_BASE_URL)/users")
+                    debugPrint("user creation url: \(self._session.baseAPIURL)/users")
                     debugPrint("Headers: \(headers)")
                     debugPrint("user creation json: \(parameters)")
                     
-                    let request = self._manager.request(.POST, API_BASE_URL + "/users", parameters: parameters, encoding: .JSON, headers: headers)
+                    let request = self._manager.request(.POST, self._session.baseAPIURL + "/users", parameters: parameters, encoding: .JSON, headers: headers)
                     
                     request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                         {
@@ -210,7 +210,7 @@ public class RestClient : NSObject
             [unowned self](headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.GET, API_BASE_URL + "/users/" + id, parameters: nil, encoding: .JSON, headers: headers)
+                let request = self._manager.request(.GET, self._session.baseAPIURL + "/users/" + id, parameters: nil, encoding: .JSON, headers: headers)
                 request.validate().responseObject(
                 queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
@@ -717,7 +717,7 @@ public class RestClient : NSObject
                 "clientPublicKey" : clientPublicKey
         ]
 
-        let request = _manager.request(.POST, API_BASE_URL + "/config/encryptionKeys", parameters: parameters, encoding:.JSON, headers: headers)
+        let request = _manager.request(.POST, self._session.baseAPIURL + "/config/encryptionKeys", parameters: parameters, encoding:.JSON, headers: headers)
         request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {
             (response: Response<EncryptionKey, NSError>) -> Void in
@@ -760,7 +760,7 @@ public class RestClient : NSObject
     internal func encryptionKey(keyId:String, completion:EncryptionKeyHandler)
     {
         let headers = self.defaultHeaders
-        let request = _manager.request(.GET, API_BASE_URL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
+        let request = _manager.request(.GET, self._session.baseAPIURL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
         request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {
             (response: Response<EncryptionKey, NSError>) -> Void in
@@ -803,7 +803,7 @@ public class RestClient : NSObject
     internal func deleteEncryptionKey(keyId:String, completion:DeleteEncryptionKeyHandler)
     {
         let headers = self.defaultHeaders
-        let request = _manager.request(.DELETE, API_BASE_URL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
+        let request = _manager.request(.DELETE, self._session.baseAPIURL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
         request.validate().responseString
         {
             (response:Response<String, NSError>) -> Void in
