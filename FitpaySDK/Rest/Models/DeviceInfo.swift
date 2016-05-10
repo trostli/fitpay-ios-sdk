@@ -60,6 +60,10 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         }
     }
     
+    override public init() {
+        
+    }
+    
     public required init?(_ map: Map)
     {
         
