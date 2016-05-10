@@ -165,8 +165,8 @@ class RestClientTests: XCTestCase
         
         self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
                                birthDate:nil,
-                               termsVersion:nil, termsAcceptedTsEpoch:nil,
-                               origin:nil, originAccountCreatedTsEpoch:nil,
+                               termsVersion:nil, termsAccepted:nil,
+                               origin:nil, originAccountCreated:nil,
                                completion:
                 {
                     (user, error) -> Void in
@@ -179,9 +179,8 @@ class RestClientTests: XCTestCase
                     XCTAssertNotNil(user?.encryptedData)
                     XCTAssertNotNil(user?.info?.email)
                     XCTAssertNil(error)
-                    
                     expectation.fulfill()
-            })
+                })
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
@@ -200,8 +199,8 @@ class RestClientTests: XCTestCase
         
         self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
                                birthDate:nil,
-                               termsVersion:nil, termsAcceptedTsEpoch:nil,
-                               origin:nil, originAccountCreatedTsEpoch:nil,
+                               termsVersion:nil, termsAccepted:nil,
+                               origin:nil, originAccountCreated:nil,
                                completion:
             {
                 (user, error) -> Void in
@@ -223,9 +222,117 @@ class RestClientTests: XCTestCase
                     debugPrint("user isAuthorized: \(self.session.isAuthorized)")
                     XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
                     
-                    expectation.fulfill()
+                    user?.deleteUser
+                    {
+                        (error) in
+                        XCTAssertNil(error)
+                        expectation.fulfill()
+                    }
                 })
         })
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testUserDeleteUsetDeletesUser()
+    {
+        let expectation = super.expectationWithDescription("'user.deleteUser' deletes user")
+        
+        let email = randomStringWithLength(8)
+            .stringByAppendingString("@")
+            .stringByAppendingString(randomStringWithLength(5) as String)
+            .stringByAppendingString(".")
+            .stringByAppendingString(randomStringWithLength(5) as String)
+        let pin = "1234"
+        
+        self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
+                               birthDate:nil,
+                               termsVersion:nil, termsAccepted:nil,
+                               origin:nil, originAccountCreated:nil,
+                               completion:
+            {
+                [unowned self](user, error) -> Void in
+                XCTAssertNotNil(user, "user is nil")
+                debugPrint("created user: \(user?.info?.email)")
+                XCTAssertNotNil(user?.info)
+                XCTAssertNotNil(user?.created)
+                XCTAssertNotNil(user?.links)
+                XCTAssertNotNil(user?.createdEpoch)
+                XCTAssertNotNil(user?.encryptedData)
+                XCTAssertNotNil(user?.info?.email)
+                XCTAssertNil(error)
+                
+                self.session.login(username: email, password: pin, completion:
+                {
+                    (loginError) -> Void in
+                    XCTAssertNil(loginError)
+                    debugPrint("user isAuthorized: \(self.session.isAuthorized)")
+                    XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
+                    
+                    user?.deleteUser
+                    {
+                        deleteUserError in
+                        
+                        XCTAssertNil(deleteUserError)
+                        expectation.fulfill()
+                    }
+                })
+        })
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testUserUpdateUserGetsError400()
+    {
+        let expectation = super.expectationWithDescription("'user.updateUser' updates user")
+        
+        let email = randomStringWithLength(8)
+            .stringByAppendingString("@")
+            .stringByAppendingString(randomStringWithLength(5) as String)
+            .stringByAppendingString(".")
+            .stringByAppendingString(randomStringWithLength(5) as String)
+        let pin = "1234"
+        
+        self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
+                               birthDate:nil,
+                               termsVersion:nil, termsAccepted:nil,
+                               origin:nil, originAccountCreated:nil,
+                               completion:
+            {
+                [unowned self](user, error) -> Void in
+                XCTAssertNotNil(user, "user is nil")
+                debugPrint("created user: \(user?.info?.email)")
+                XCTAssertNotNil(user?.info)
+                XCTAssertNotNil(user?.created)
+                XCTAssertNotNil(user?.links)
+                XCTAssertNotNil(user?.createdEpoch)
+                XCTAssertNotNil(user?.encryptedData)
+                XCTAssertNotNil(user?.info?.email)
+                XCTAssertNil(error)
+                
+                self.session.login(username: email, password: pin, completion:
+                    {
+                        [unowned self](loginError) -> Void in
+                        XCTAssertNil(loginError)
+                        debugPrint("user isAuthorized: \(self.session.isAuthorized)")
+                        XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
+                        
+                        
+                        user?.updateUser(firstName: self.randomStringWithLength(10) as String, lastName: self.randomStringWithLength(10) as String, birthDate: nil, originAccountCreated: nil, termsAccepted: nil, termsVersion: nil)
+                        {
+                            updateUser, updateError in
+                            XCTAssertNil(updateUser)
+                            XCTAssertEqual(updateError?.code, 400)
+                            user?.deleteUser
+                            {
+                                deleteUserError in
+                                
+                                XCTAssertNil(deleteUserError)
+                                expectation.fulfill()
+                            }
+                        }
+                })
+            })
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
@@ -1593,6 +1700,9 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test 'relationships' creates and deletes relationship")
         
+        
+        
+        
         self.session.login(username: self.username, password: self.password)
         {
             [unowned self](error) -> Void in
@@ -1618,7 +1728,7 @@ class RestClientTests: XCTestCase
                 XCTAssertNotNil(user?.info?.email)
                 XCTAssertNil(error)
                 
-                user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
+                user?.createCreditCard(pan: "9999411111111115", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                 {
                     
                     (card, error) -> Void in
@@ -1638,11 +1748,9 @@ class RestClientTests: XCTestCase
                         
                         XCTAssertNil(error)
                         XCTAssertNotNil(device)
-                        
-                        self.client.createRelationship(userId: self.session.userId!, creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!, completion:
+                        user?.createRelationship(creditCardId: card!.creditCardId!, deviceId: device!.deviceIdentifier!)
                         {
                             (relationship, error) -> Void in
-                            
                             XCTAssertNil(error)
                             XCTAssertNotNil(device)
                             
@@ -1650,26 +1758,26 @@ class RestClientTests: XCTestCase
                             XCTAssertNotNil(relationship?.card)
                             
                             relationship?.deleteRelationship(
-                            {
-                                (error) -> Void in
-                                
-                                XCTAssertNil(error)
-                                
-                                device?.deleteDeviceInfo(
                                 {
                                     (error) -> Void in
                                     
                                     XCTAssertNil(error)
                                     
-                                    card?.deleteCreditCard(
-                                    {
-                                        (error) -> Void in
-                                        XCTAssertNil(error)
-                                        expectation.fulfill()
+                                    device?.deleteDeviceInfo(
+                                        {
+                                            (error) -> Void in
+                                            
+                                            XCTAssertNil(error)
+                                            
+                                            card?.deleteCreditCard(
+                                                {
+                                                    (error) -> Void in
+                                                    XCTAssertNil(error)
+                                                    expectation.fulfill()
+                                            })
                                     })
-                                })
                             })
-                        })
+                        }
                     })
                 })
             })
