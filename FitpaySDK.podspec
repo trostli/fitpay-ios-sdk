@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.dependency 'libPusher', '~> 1.6.1'
   s.dependency 'KeychainAccess', '~> 2.3.4'
   s.dependency 'OpenSSL-Universal', '~> 1.0'
-  s.ios.source_files        = 'Output/FitpaySDK-Debug-iphoneuniversal/FitpaySDK.framework/**/*.{h,swift}'
+  s.ios.source_files        = 'Output/FitpaySDK-Debug-iphoneuniversal/FitpaySDK.framework/**/*.h'
   s.ios.public_header_files = 'Output/FitpaySDK-Debug-iphoneuniversal/FitpaySDK.framework/**/*.h'
   #s.ios.private_header_files = 'Output/FitpaySDK-Debug-iphoneuniversal/FitpaySDK.framework/**/SECP256R1KeyPairContainer+Private.h'
   s.ios.vendored_framework = 'Output/FitpaySDK-Debug-iphoneuniversal/FitpaySDK.framework'
