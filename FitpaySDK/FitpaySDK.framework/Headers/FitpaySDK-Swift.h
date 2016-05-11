@@ -95,6 +95,7 @@ typedef int swift_int4  __attribute__((__ext_vector_type__(4)));
 @import ObjectiveC;
 @import Foundation;
 @import Dispatch;
+@import WebKit;
 @import Pusher;
 #endif
 
@@ -272,6 +273,7 @@ SWIFT_CLASS("_TtC9FitpaySDK10DeviceInfo")
 @property (nonatomic, copy) NSDictionary<NSString *, id> * _Nullable metadata;
 @property (nonatomic, readonly) BOOL userAvailable;
 @property (nonatomic, readonly) BOOL listCommitsAvailable;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 
 /// Delete a single device
 ///
@@ -337,6 +339,41 @@ SWIFT_CLASS("_TtC9FitpaySDK5Image")
 - (void)retrieveAsset:(void (^ _Nonnull)(Asset * _Nullable, NSError * _Nullable))completion;
 @end
 
+@class PaymentDevice;
+enum SecurityNFCState : NSInteger;
+@class NSData;
+
+SWIFT_PROTOCOL("_TtP9FitpaySDK26PaymentDeviceBaseInterface_")
+@protocol PaymentDeviceBaseInterface
+- (nonnull instancetype)initWithPaymentDevice:(PaymentDevice * _Nonnull)device;
+- (void)connect;
+- (void)disconnect;
+- (BOOL)isConnected;
+- (NSError * _Nullable)writeSecurityState:(enum SecurityNFCState)state;
+- (NSError * _Nullable)sendDeviceControl:(enum DeviceControlState)state;
+- (NSError * _Nullable)sendNotification:(NSData * _Nonnull)notificationData;
+- (void)sendAPDUData:(NSData * _Nonnull)data sequenceNumber:(uint16_t)sequenceNumber;
+- (DeviceInfo * _Nullable)deviceInfo;
+- (enum SecurityNFCState)nfcState;
+- (void)resetToDefaultState;
+@end
+
+
+SWIFT_CLASS("_TtC9FitpaySDK26MockPaymentDeviceInterface")
+@interface MockPaymentDeviceInterface : NSObject <PaymentDeviceBaseInterface>
+- (nonnull instancetype)initWithPaymentDevice:(PaymentDevice * _Nonnull)device OBJC_DESIGNATED_INITIALIZER;
+- (void)connect;
+- (void)disconnect;
+- (BOOL)isConnected;
+- (NSError * _Nullable)writeSecurityState:(enum SecurityNFCState)state;
+- (NSError * _Nullable)sendDeviceControl:(enum DeviceControlState)state;
+- (NSError * _Nullable)sendNotification:(NSData * _Nonnull)notificationData;
+- (void)sendAPDUData:(NSData * _Nonnull)data sequenceNumber:(uint16_t)sequenceNumber;
+- (DeviceInfo * _Nullable)deviceInfo;
+- (enum SecurityNFCState)nfcState;
+- (void)resetToDefaultState;
+@end
+
 
 @interface NSData (SWIFT_EXTENSION(FitpaySDK))
 @end
@@ -363,8 +400,6 @@ SWIFT_CLASS("_TtC9FitpaySDK7Payload")
 @end
 
 enum PaymentDeviceEventTypes : NSInteger;
-enum SecurityNFCState : NSInteger;
-@protocol PaymentDeviceBaseInterface;
 
 SWIFT_CLASS("_TtC9FitpaySDK13PaymentDevice")
 @interface PaymentDevice : NSObject
@@ -415,23 +450,9 @@ SWIFT_CLASS("_TtC9FitpaySDK13PaymentDevice")
 
 /// Changes interface with payment device. Default is BLE (PaymentDeviceBLEInterface). If you want to implement your own interface than it should confirm PaymentDeviceBaseInterface protocol. Also implementation should call PaymentDevice.callCompletionForEvent() for events. Can be changed if device disconnected.
 - (NSError * _Nullable)changeDeviceInterface:(id <PaymentDeviceBaseInterface> _Nonnull)interface;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
-
-SWIFT_PROTOCOL("_TtP9FitpaySDK26PaymentDeviceBaseInterface_")
-@protocol PaymentDeviceBaseInterface
-- (nonnull instancetype)initWithPaymentDevice:(PaymentDevice * _Nonnull)device;
-- (void)connect;
-- (void)disconnect;
-- (BOOL)isConnected;
-- (NSError * _Nullable)writeSecurityState:(enum SecurityNFCState)state;
-- (NSError * _Nullable)sendDeviceControl:(enum DeviceControlState)state;
-- (NSError * _Nullable)sendNotification:(NSData * _Nonnull)notificationData;
-- (void)sendAPDUData:(NSData * _Nonnull)data sequenceNumber:(uint16_t)sequenceNumber;
-- (DeviceInfo * _Nullable)deviceInfo;
-- (enum SecurityNFCState)nfcState;
-- (void)resetToDefaultState;
-@end
 
 typedef SWIFT_ENUM(NSInteger, PaymentDeviceEventTypes) {
   PaymentDeviceEventTypesOnDeviceConnected = 0,
@@ -469,7 +490,7 @@ SWIFT_CLASS("_TtC9FitpaySDK10RestClient")
 /// \param email email of the user
 ///
 /// \param completion CreateUserHandler closure
-- (void)createUser:(NSString * _Nonnull)email password:(NSString * _Nonnull)password firstName:(NSString * _Nullable)firstName lastName:(NSString * _Nullable)lastName birthDate:(NSString * _Nullable)birthDate termsVersion:(NSString * _Nullable)termsVersion termsAcceptedTsEpoch:(NSString * _Nullable)termsAcceptedTsEpoch origin:(NSString * _Nullable)origin originAccountCreatedTsEpoch:(NSString * _Nullable)originAccountCreatedTsEpoch completion:(void (^ _Nonnull)(User * _Nullable, NSError * _Nullable))completion;
+- (void)createUser:(NSString * _Nonnull)email password:(NSString * _Nonnull)password firstName:(NSString * _Nullable)firstName lastName:(NSString * _Nullable)lastName birthDate:(NSString * _Nullable)birthDate termsVersion:(NSString * _Nullable)termsVersion termsAccepted:(NSString * _Nullable)termsAccepted origin:(NSString * _Nullable)origin originAccountCreated:(NSString * _Nullable)originAccountCreated completion:(void (^ _Nonnull)(User * _Nullable, NSError * _Nullable))completion;
 
 /// Retrieves the details of an existing user. You need only supply the unique user identifier that was returned upon user creation
 ///
@@ -477,17 +498,6 @@ SWIFT_CLASS("_TtC9FitpaySDK10RestClient")
 ///
 /// \param completion UserHandler closure
 - (void)userWithId:(NSString * _Nonnull)id completion:(void (^ _Nonnull)(User * _Nullable, NSError * _Nullable))completion;
-
-/// Creates a relationship between a device and a creditCard
-///
-/// \param userId user id
-///
-/// \param creditCardId credit card id
-///
-/// \param deviceId device id
-///
-/// \param completion CreateRelationshipHandler closure
-- (void)createRelationshipWithUserId:(NSString * _Nonnull)userId creditCardId:(NSString * _Nonnull)creditCardId deviceId:(NSString * _Nonnull)deviceId completion:(void (^ _Nonnull)(Relationship * _Nullable, NSError * _Nullable))completion;
 
 /// Endpoint to allow for returning responses to APDU execution
 ///
@@ -503,8 +513,38 @@ SWIFT_CLASS("_TtC9FitpaySDK11RestSession")
 @interface RestSession : NSObject
 @property (nonatomic, copy) NSString * _Nullable userId;
 @property (nonatomic, readonly) BOOL isAuthorized;
-- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri authorizeURL:(NSString * _Nonnull)authorizeURL baseAPIURL:(NSString * _Nonnull)baseAPIURL OBJC_DESIGNATED_INITIALIZER;
 - (void)loginWithUsername:(NSString * _Nonnull)username password:(NSString * _Nonnull)password completion:(void (^ _Nonnull)(NSError * _Nullable))completion;
+@end
+
+
+SWIFT_CLASS("_TtC9FitpaySDK9RtmConfig")
+@interface RtmConfig : NSObject
+@property (nonatomic, copy) NSString * _Nullable clientId;
+@property (nonatomic, copy) NSString * _Nullable redirectUri;
+@property (nonatomic, strong) DeviceInfo * _Nullable paymentDevice;
+- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(DeviceInfo * _Nonnull)paymentDevice OBJC_DESIGNATED_INITIALIZER;
+@end
+
+@class WKWebView;
+@class WKWebViewConfiguration;
+@class NSURLRequest;
+@class WKUserContentController;
+@class WKScriptMessage;
+
+SWIFT_CLASS("_TtC9FitpaySDK9RtmNative")
+@interface RtmNative : NSObject <WKScriptMessageHandler>
+- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice OBJC_DESIGNATED_INITIALIZER;
+- (void)setWebView:(WKWebView * _Null_unspecified)webview;
+
+/// This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app
+- (WKWebViewConfiguration * _Nonnull)wvConfig;
+
+/// This returns the request object clients will require in order to open a WKWebView
+- (NSURLRequest * _Nonnull)wvRequest;
+
+/// This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from the web app
+- (void)userContentController:(WKUserContentController * _Nonnull)userContentController didReceiveScriptMessage:(WKScriptMessage * _Nonnull)message;
 @end
 
 @class NSURL;
@@ -687,6 +727,9 @@ SWIFT_CLASS("_TtC9FitpaySDK4User")
 ///
 /// \param completion CreateNewDeviceHandler closure
 - (void)createNewDevice:(NSString * _Nonnull)deviceType manufacturerName:(NSString * _Nonnull)manufacturerName deviceName:(NSString * _Nonnull)deviceName serialNumber:(NSString * _Nonnull)serialNumber modelNumber:(NSString * _Nonnull)modelNumber hardwareRevision:(NSString * _Nonnull)hardwareRevision firmwareRevision:(NSString * _Nonnull)firmwareRevision softwareRevision:(NSString * _Nonnull)softwareRevision systemId:(NSString * _Nonnull)systemId osName:(NSString * _Nonnull)osName licenseKey:(NSString * _Nonnull)licenseKey bdAddress:(NSString * _Nonnull)bdAddress secureElementId:(NSString * _Nonnull)secureElementId pairing:(NSString * _Nonnull)pairing completion:(void (^ _Nonnull)(DeviceInfo * _Nullable, NSError * _Nullable))completion;
+- (void)createRelationshipWithCreditCardId:(NSString * _Nonnull)creditCardId deviceId:(NSString * _Nonnull)deviceId completion:(void (^ _Nonnull)(Relationship * _Nullable, NSError * _Nullable))completion;
+- (void)deleteUser:(void (^ _Nonnull)(NSError * _Nullable))completion;
+- (void)updateUserWithFirstName:(NSString * _Nullable)firstName lastName:(NSString * _Nullable)lastName birthDate:(NSString * _Nullable)birthDate originAccountCreated:(NSString * _Nullable)originAccountCreated termsAccepted:(NSString * _Nullable)termsAccepted termsVersion:(NSString * _Nullable)termsVersion completion:(void (^ _Nonnull)(User * _Nullable, NSError * _Nullable))completion;
 @end
 
 
