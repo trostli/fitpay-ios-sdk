@@ -84,15 +84,20 @@
 		9AB68E411C84A1EC00A0E172 /* RandomString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E3D1C84A1EC00A0E172 /* RandomString.swift */; };
 		9AB68E441C84A25B00A0E172 /* JWETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB68E431C84A25B00A0E172 /* JWETests.swift */; };
 		9ABF39421C883AF7002EA8E5 /* JWEObjectExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABF39411C883AF7002EA8E5 /* JWEObjectExtensions.swift */; };
+		9AD200771CE235530009CDA6 /* RestAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD200751CE235450009CDA6 /* RestAPIConstants.swift */; };
+		9AD200781CE235540009CDA6 /* RestAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD200751CE235450009CDA6 /* RestAPIConstants.swift */; };
+		9AD200791CE235560009CDA6 /* RestAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD200751CE235450009CDA6 /* RestAPIConstants.swift */; };
+		9AD2007A1CE235580009CDA6 /* RestAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD200751CE235450009CDA6 /* RestAPIConstants.swift */; };
+		9AD2007D1CE244180009CDA6 /* ObjCCompatibilityExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD2007B1CE2440C0009CDA6 /* ObjCCompatibilityExtensions.swift */; };
 		9AD23A3F1CBE78E5007CB9CF /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		9AD23A421CBE8EB5007CB9CF /* MySwiftClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD23A411CBE8EB5007CB9CF /* MySwiftClass.swift */; };
+		9AD24A131CE2459600215AFF /* RestAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD200751CE235450009CDA6 /* RestAPIConstants.swift */; };
 		9B4127D11CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4127D01CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.swift */; };
 		9B4127D31CD95A5A00B12187 /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		9B65A33B1CDD1534007A7D7D /* MockPaymentDeviceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B65A33A1CDD1534007A7D7D /* MockPaymentDeviceInterface.swift */; };
 		9B65A33D1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */; };
 		B4908F350220523AD13B0928 /* Pods_ObjCDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A84AE83E7EDF11F2655399 /* Pods_ObjCDemo.framework */; };
 		CD03806996B162B739B5C3C4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD0387CEBA596BFB51256128 /* User.swift */; };
-		CD0380D8C5E628E5C1A755AC /* RestAPIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03818A549A1841A5ED64B3 /* RestAPIConstants.swift */; };
 		CD03811FA3F15932D1C0F66B /* RestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03892F10B569368C16273E /* RestSession.swift */; };
 		CD038125B3958A9F8CF17E26 /* WebViewSessionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD03843A84ED76B33DA758D4 /* WebViewSessionData.swift */; };
 		CD03814935D90886A777D9EF /* SecretApplyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD038189D3974D4BCE4A2509 /* SecretApplyable.swift */; };
@@ -299,6 +304,8 @@
 		9ABF39411C883AF7002EA8E5 /* JWEObjectExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JWEObjectExtensions.swift; sourceTree = "<group>"; };
 		9ACF2FB11C7F024E0051DAF1 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = FitpaySDK/Libraries/OpenSSL/lib/libcrypto.a; sourceTree = "<group>"; };
 		9ACF2FB21C7F024E0051DAF1 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = FitpaySDK/Libraries/OpenSSL/lib/libssl.a; sourceTree = "<group>"; };
+		9AD200751CE235450009CDA6 /* RestAPIConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestAPIConstants.swift; sourceTree = "<group>"; };
+		9AD2007B1CE2440C0009CDA6 /* ObjCCompatibilityExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjCCompatibilityExtensions.swift; sourceTree = "<group>"; };
 		9AD23A411CBE8EB5007CB9CF /* MySwiftClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySwiftClass.swift; sourceTree = "<group>"; };
 		9B4127CE1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CombinedUserCreateAndLoginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B4127D01CD95A5A00B12187 /* CombinedUserCreateAndLoginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombinedUserCreateAndLoginTests.swift; sourceTree = "<group>"; };
@@ -311,7 +318,6 @@
 		AE7CA63167C1F9C39FA4FA6C /* Pods_FitpaySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FitpaySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD03815EA04C30427064A86B /* Transaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		CD038189D3974D4BCE4A2509 /* SecretApplyable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretApplyable.swift; sourceTree = "<group>"; };
-		CD03818A549A1841A5ED64B3 /* RestAPIConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestAPIConstants.swift; sourceTree = "<group>"; };
 		CD038236D1AEE3AC7A8155E3 /* Relationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Relationship.swift; sourceTree = "<group>"; };
 		CD0382E7C3731302B80C1CBE /* NSErrorExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSErrorExtensions.swift; sourceTree = "<group>"; };
 		CD038321306A4D9DE1077241 /* Commit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Commit.swift; sourceTree = "<group>"; };
@@ -414,6 +420,7 @@
 		0AD922931C1F7EFC007693AB = {
 			isa = PBXGroup;
 			children = (
+				9AD200731CE235450009CDA6 /* Common */,
 				0AD9229F1C1F7EFC007693AB /* FitpaySDK */,
 				0AD922AB1C1F7EFC007693AB /* FitpaySDKTests */,
 				8426D2591C96F4AA009AACFE /* RTMClientApp */,
@@ -619,6 +626,22 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		9AD200731CE235450009CDA6 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				9AD200741CE235450009CDA6 /* Constants */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		9AD200741CE235450009CDA6 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				9AD200751CE235450009CDA6 /* RestAPIConstants.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
 		9B4127CF1CD95A5A00B12187 /* CombinedUserCreateAndLoginTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -734,7 +757,6 @@
 			isa = PBXGroup;
 			children = (
 				CD038466328E4608CC137268 /* Models */,
-				CD03872D493D4CAEC8CA854A /* Constants */,
 				CD03892F10B569368C16273E /* RestSession.swift */,
 				CD038E6F65A6788F30C11986 /* RestClient.swift */,
 			);
@@ -750,17 +772,10 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		CD03872D493D4CAEC8CA854A /* Constants */ = {
-			isa = PBXGroup;
-			children = (
-				CD03818A549A1841A5ED64B3 /* RestAPIConstants.swift */,
-			);
-			path = Constants;
-			sourceTree = "<group>";
-		};
 		CD0389AD6419ED1E01710351 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				9AD2007B1CE2440C0009CDA6 /* ObjCCompatibilityExtensions.swift */,
 				CD0386DA358049C9AC2135F6 /* NSJSONSerializationExtensions.swift */,
 				CD03877A3C526340ECB9C853 /* DictionaryExtensions.swift */,
 				CD0382E7C3731302B80C1CBE /* NSErrorExtensions.swift */,
@@ -1350,7 +1365,6 @@
 				9A1227801C89CF5C006968D7 /* ArrayExtensions.swift in Sources */,
 				9A7C78841CC77F210097BAB9 /* FitpayEventTypeProtocol.swift in Sources */,
 				9AB68E411C84A1EC00A0E172 /* RandomString.swift in Sources */,
-				CD0380D8C5E628E5C1A755AC /* RestAPIConstants.swift in Sources */,
 				CD038125B3958A9F8CF17E26 /* WebViewSessionData.swift in Sources */,
 				CD038AFCBC933F1763715369 /* RtmSession.swift in Sources */,
 				9A58466D1C96B65B00E4ABDC /* ClientModel.swift in Sources */,
@@ -1374,6 +1388,7 @@
 				8425931B1CAA605B0006FFA6 /* SyncManager.swift in Sources */,
 				CD03814935D90886A777D9EF /* SecretApplyable.swift in Sources */,
 				8426D24C1C91D139009AACFE /* RtmConstants.swift in Sources */,
+				9AD24A131CE2459600215AFF /* RestAPIConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1383,6 +1398,7 @@
 			files = (
 				8426D2931CA00243009AACFE /* PaymentDeviceTests.swift in Sources */,
 				9AA5BDAB1C7B54B600EDF2F6 /* RestSessionTests.swift in Sources */,
+				9AD200771CE235530009CDA6 /* RestAPIConstants.swift in Sources */,
 				9B65A33D1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift in Sources */,
 				9AB68E441C84A25B00A0E172 /* JWETests.swift in Sources */,
 				8426D2531C92F428009AACFE /* RtmSessionTests.swift in Sources */,
@@ -1396,6 +1412,7 @@
 			files = (
 				8426D25D1C96F4AA009AACFE /* ViewController.swift in Sources */,
 				8426D25B1C96F4AA009AACFE /* AppDelegate.swift in Sources */,
+				9AD200781CE235540009CDA6 /* RestAPIConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1409,6 +1426,7 @@
 				9A8D153D1CA29D4100A03E7F /* UserViewController.swift in Sources */,
 				9A668B8B1CAAC5BB00E70668 /* BaseTableViewController.swift in Sources */,
 				9A668B8D1CAACEF600E70668 /* CreditCardsViewController.swift in Sources */,
+				9AD200791CE235560009CDA6 /* RestAPIConstants.swift in Sources */,
 				9A18CAB81CABE79800658223 /* SingleCreditCardViewController.swift in Sources */,
 				9A2E68C61CA14DE10061D5B3 /* AppDelegate.swift in Sources */,
 				9A8D15401CA29DC500A03E7F /* Utils.swift in Sources */,
@@ -1429,7 +1447,9 @@
 			files = (
 				9A2F7B891CB7FB5D00696D45 /* ViewController.m in Sources */,
 				9A2F7B861CB7FB5D00696D45 /* AppDelegate.m in Sources */,
+				9AD2007D1CE244180009CDA6 /* ObjCCompatibilityExtensions.swift in Sources */,
 				9AD23A421CBE8EB5007CB9CF /* MySwiftClass.swift in Sources */,
+				9AD2007A1CE235580009CDA6 /* RestAPIConstants.swift in Sources */,
 				9A2F7B831CB7FB5D00696D45 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

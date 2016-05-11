@@ -33,7 +33,7 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
         self.paymentDevice = paymentDevice
         paymentDevice.connect()
         self.rtmConfig = RtmConfig(clientId: clientId, redirectUri: redirectUri, paymentDevice: paymentDevice.deviceInfo!)
-        self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri)
+        self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: url)
     }
     
     public func setWebView(webview:WKWebView!) {

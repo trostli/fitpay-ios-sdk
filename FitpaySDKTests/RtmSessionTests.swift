@@ -19,7 +19,7 @@ class RtmSessionTests: XCTestCase
         super.setUp()
         
         self.session = RtmSession(authorizationURL: NSURL(string: RTM_AUTHORIZATION_URL)!)
-        self.restSession = RestSession(clientId:self.clientId, redirectUri:self.redirectUri)
+        self.restSession = RestSession(clientId:self.clientId, redirectUri:self.redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
         self.restClient = RestClient(session: self.restSession!)
     }
     

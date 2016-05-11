@@ -14,7 +14,7 @@ class RestSessionTests: XCTestCase
     override func setUp()
     {
         super.setUp()
-        self.session = RestSession(clientId: self.clientId, redirectUri: self.redirectUri)
+        self.session = RestSession(clientId: self.clientId, redirectUri: self.redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
     }
     
     override func tearDown()
