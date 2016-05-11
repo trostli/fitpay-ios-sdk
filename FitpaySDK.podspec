@@ -23,5 +23,5 @@ Pod::Spec.new do |s|
   s.ios.public_header_files = 'Output/FitpaySDK-Debug-iphoneuniversal/FitpaySDK.framework/**/*.h'
   #s.ios.private_header_files = 'Output/FitpaySDK-Debug-iphoneuniversal/FitpaySDK.framework/**/SECP256R1KeyPairContainer+Private.h'
   s.ios.vendored_framework = 'Output/FitpaySDK-Debug-iphoneuniversal/FitpaySDK.framework'
-  s.ios.header_dir = 'Output/FitpaySDK-Debug-iphoneuniversal/FitpaySDK'
+  s.ios.header_dir = 'FitpaySDK'
 end
