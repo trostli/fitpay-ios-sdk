@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   s.ios.source_files        = 'FitpaySDK/FitpaySDK.framework/**/*.h'
   s.ios.public_header_files = 'FitpaySDK/FitpaySDK.framework/**/*.h'
 
-  s.ios.private_header_files = 'FitpaySDK/FitpaySDK.framework/**/SECP256R1KeyPairContainer+Private.h'
+  #s.ios.private_header_files = 'FitpaySDK/FitpaySDK.framework/**/SECP256R1KeyPairContainer+Private.h'
   s.ios.vendored_framework = 'FitpaySDK/FitpaySDK.framework'
   s.ios.header_dir = 'FitpaySDK'
 
