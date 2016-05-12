@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.version = '0.1.0'
   s.license = 'MIT'
   s.summary = 'Swift based library for the Fitpay Platform'
-  s.homepage = 'https://bitbucket.org/oanton/fitly'
+  s.homepage = 'https://github.com/fitpay/fitpay-ios-sdk'
   s.authors = { 'Ben Walford' => 'ben@fit-pay.com' }
   s.source = { :git => 'https://github.com/fitpay/fitpay-ios-sdk.git', :branch => 'develop' }
 
