@@ -158,9 +158,9 @@ class RestClientTests: XCTestCase
         
         let email = randomStringWithLength(8)
             .stringByAppendingString("@")
-            .stringByAppendingString(randomStringWithLength(5) as String)
+            .stringByAppendingString(randomStringWithLength(5))
             .stringByAppendingString(".")
-            .stringByAppendingString(randomStringWithLength(5) as String)
+            .stringByAppendingString(randomStringWithLength(5))
         let pin = "1234"
         
         self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
@@ -190,188 +190,62 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'user' created")
         
-        let email = randomStringWithLength(8)
-            .stringByAppendingString("@")
-            .stringByAppendingString(randomStringWithLength(5) as String)
-            .stringByAppendingString(".")
-            .stringByAppendingString(randomStringWithLength(5) as String)
-        let pin = "1234"
-        
-        self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
-                               birthDate:nil,
-                               termsVersion:nil, termsAccepted:nil,
-                               origin:nil, originAccountCreated:nil,
-                               completion:
-            {
-                (user, error) -> Void in
-                XCTAssertNotNil(user, "user is nil")
-                debugPrint("created user: \(user?.info?.email)")
-                XCTAssertNotNil(user?.info)
-                XCTAssertNotNil(user?.created)
-                XCTAssertNotNil(user?.links)
-                XCTAssertNotNil(user?.createdEpoch)
-                XCTAssertNotNil(user?.encryptedData)
-                XCTAssertNotNil(user?.info?.email)
-                XCTAssertNil(error)
-                
-                self.session.login(username: email, password: pin, completion:
-                {
-                    [unowned self]
-                    (loginError) -> Void in
-                    XCTAssertNil(loginError)
-                    debugPrint("user isAuthorized: \(self.session.isAuthorized)")
-                    XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
-                    
-                    user?.deleteUser
-                    {
-                        (error) in
-                        XCTAssertNil(error)
-                        expectation.fulfill()
-                    }
-                })
-        })
+        self.createAndLoginUser(expectation)
+        {
+           [unowned self] user in
+            self.deleteUser(user, expectation: expectation)
+        }
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
-    func testUserDeleteUsetDeletesUser()
+    func testUserDeleteUserDeletesUser()
     {
         let expectation = super.expectationWithDescription("'user.deleteUser' deletes user")
         
-        let email = randomStringWithLength(8)
-            .stringByAppendingString("@")
-            .stringByAppendingString(randomStringWithLength(5) as String)
-            .stringByAppendingString(".")
-            .stringByAppendingString(randomStringWithLength(5) as String)
-        let pin = "1234"
-        
-        self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
-                               birthDate:nil,
-                               termsVersion:nil, termsAccepted:nil,
-                               origin:nil, originAccountCreated:nil,
-                               completion:
-            {
-                [unowned self](user, error) -> Void in
-                XCTAssertNotNil(user, "user is nil")
-                debugPrint("created user: \(user?.info?.email)")
-                XCTAssertNotNil(user?.info)
-                XCTAssertNotNil(user?.created)
-                XCTAssertNotNil(user?.links)
-                XCTAssertNotNil(user?.createdEpoch)
-                XCTAssertNotNil(user?.encryptedData)
-                XCTAssertNotNil(user?.info?.email)
-                XCTAssertNil(error)
-                
-                self.session.login(username: email, password: pin, completion:
-                {
-                    (loginError) -> Void in
-                    XCTAssertNil(loginError)
-                    debugPrint("user isAuthorized: \(self.session.isAuthorized)")
-                    XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
-                    
-                    user?.deleteUser
-                    {
-                        deleteUserError in
-                        
-                        XCTAssertNil(deleteUserError)
-                        expectation.fulfill()
-                    }
-                })
-        })
+        self.createAndLoginUser(expectation)
+        {
+            [unowned self] user in
+            self.deleteUser(user, expectation: expectation)
+        }
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
     func testUserUpdateUserGetsError400()
     {
-        let expectation = super.expectationWithDescription("'user.updateUser' updates user")
+        let expectation = super.expectationWithDescription("'user.updateUser' gets error 400")
         
-        let email = randomStringWithLength(8)
-            .stringByAppendingString("@")
-            .stringByAppendingString(randomStringWithLength(5) as String)
-            .stringByAppendingString(".")
-            .stringByAppendingString(randomStringWithLength(5) as String)
-        let pin = "1234"
-        
-        self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
-                               birthDate:nil,
-                               termsVersion:nil, termsAccepted:nil,
-                               origin:nil, originAccountCreated:nil,
-                               completion:
+        self.createAndLoginUser(expectation)
+        {
+            [unowned self] (user) in
+            
+            let firstName = self.randomStringWithLength(10)
+            let lastNname = self.randomStringWithLength(10)
+            
+            user?.updateUser(firstName: firstName, lastName: lastNname, birthDate: nil, originAccountCreated: nil, termsAccepted: nil, termsVersion: nil)
             {
-                [unowned self](user, error) -> Void in
-                XCTAssertNotNil(user, "user is nil")
-                debugPrint("created user: \(user?.info?.email)")
-                XCTAssertNotNil(user?.info)
-                XCTAssertNotNil(user?.created)
-                XCTAssertNotNil(user?.links)
-                XCTAssertNotNil(user?.createdEpoch)
-                XCTAssertNotNil(user?.encryptedData)
-                XCTAssertNotNil(user?.info?.email)
-                XCTAssertNil(error)
+                updateUser, updateError in
+                XCTAssertNil(updateUser)
+                //XCTAssertEqual(updateUser?.firstName, firstName)
+                //XCTAssertEqual(updateUser?.lastName, lastNname)
                 
-                self.session.login(username: email, password: pin, completion:
-                    {
-                        [unowned self](loginError) -> Void in
-                        XCTAssertNil(loginError)
-                        debugPrint("user isAuthorized: \(self.session.isAuthorized)")
-                        XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
-                        
-                        
-                        user?.updateUser(firstName: self.randomStringWithLength(10) as String, lastName: self.randomStringWithLength(10) as String, birthDate: nil, originAccountCreated: nil, termsAccepted: nil, termsVersion: nil)
-                        {
-                            updateUser, updateError in
-                            XCTAssertNil(updateUser)
-                            XCTAssertEqual(updateError?.code, 400)
-                            user?.deleteUser
-                            {
-                                deleteUserError in
-                                
-                                XCTAssertNil(deleteUserError)
-                                expectation.fulfill()
-                            }
-                        }
-                })
-            })
+                XCTAssertEqual(updateError?.code, 400)
+                self.deleteUser(user, expectation: expectation)
+            }
+        }
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
 
-    
-    func randomStringWithLength (len : Int) -> NSString {
-        
-        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        
-        let randomString : NSMutableString = NSMutableString(capacity: len)
-        
-        for _ in 0 ... (len-1) {
-            let length = UInt32 (letters.length)
-            let rand = arc4random_uniform(length)
-            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
-        }
-        
-        return randomString
-    }
-
-    
     func testUserRetrievesUserById()
     {
         let expectation = super.expectationWithDescription("'user' retrieves user by her id")
         
-        self.session.login(username: self.username, password: self.password)
+        self.createAndLoginUser(expectation)
         {
-            [unowned self](error) -> Void in
-            
-            XCTAssertNil(error)
-            XCTAssertTrue(self.session.isAuthorized)
-            
-            if !self.session.isAuthorized
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            self.client.user(id: self.session.userId!, completion:
+            [unowned self](user) in
+            self.client.user(id: (user?.id)!, completion:
             {
                 (user, error) -> Void in
                 
@@ -384,7 +258,7 @@ class RestClientTests: XCTestCase
                 XCTAssertNotNil(user?.info?.email)
                 XCTAssertNil(error)
                 
-                expectation.fulfill()
+                self.deleteUser(user, expectation: expectation)
             })
         }
         
@@ -395,61 +269,47 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'creditCards' retrieves credit cards for user")
         
-        self.session.login(username: self.username, password: self.password)
+        self.createAndLoginUser(expectation)
+        {
+            [unowned self](user) in
+            self.client.user(id: (user?.id)!, completion:
             {
-                [unowned self](error) -> Void in
+                (user, error) -> Void in
                 
-                XCTAssertNil(error)
-                XCTAssertTrue(self.session.isAuthorized)
                 
-                if !self.session.isAuthorized
-                {
-                    expectation.fulfill()
-                    return
-                }
                 
-                self.client.user(id: self.session.userId!, completion:
+                
+                user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
                     {
-                        (user, error) -> Void in
+                        (card, error) -> Void in
                         
-                        XCTAssertNotNil(user)
-                        XCTAssertNotNil(user?.info)
-                        XCTAssertNotNil(user?.created)
-                        XCTAssertNotNil(user?.links)
-                        XCTAssertNotNil(user?.createdEpoch)
-                        XCTAssertNotNil(user?.encryptedData)
-                        XCTAssertNotNil(user?.info?.email)
                         XCTAssertNil(error)
+                        XCTAssertNotNil(card?.links)
+                        XCTAssertNotNil(card?.creditCardId)
+                        XCTAssertNotNil(card?.userId)
+                        XCTAssertNotNil(card?.isDefault)
+                        XCTAssertNotNil(card?.created)
+                        XCTAssertNotNil(card?.createdEpoch)
+                        XCTAssertNotNil(card?.state)
+                        XCTAssertNotNil(card?.cardType)
+                        XCTAssertNotNil(card?.cardMetaData)
+                        XCTAssertNotNil(card?.deviceRelationships)
+                        XCTAssertNotEqual(card?.deviceRelationships?.count, 0)
+                        XCTAssertNotNil(card?.encryptedData)
+                        XCTAssertNotNil(card?.info)
+                        XCTAssertNotNil(card?.info?.address)
+                        XCTAssertNotNil(card?.info?.cvv)
+                        XCTAssertNotNil(card?.info?.expMonth)
+                        XCTAssertNotNil(card?.info?.expYear)
+                        XCTAssertNotNil(card?.info?.pan)
                         
-                        user?.createCreditCard(pan: "9999411111111114", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA", completion:
-                            {
-                                (card, error) -> Void in
-                                
-                                XCTAssertNil(error)
-                                XCTAssertNotNil(card?.links)
-                                XCTAssertNotNil(card?.creditCardId)
-                                XCTAssertNotNil(card?.userId)
-                                XCTAssertNotNil(card?.isDefault)
-                                XCTAssertNotNil(card?.created)
-                                XCTAssertNotNil(card?.createdEpoch)
-                                XCTAssertNotNil(card?.state)
-                                XCTAssertNotNil(card?.cardType)
-                                XCTAssertNotNil(card?.cardMetaData)
-                                XCTAssertNotNil(card?.deviceRelationships)
-                                XCTAssertNotEqual(card?.deviceRelationships?.count, 0)
-                                XCTAssertNotNil(card?.encryptedData)
-                                XCTAssertNotNil(card?.info)
-                                XCTAssertNotNil(card?.info?.address)
-                                XCTAssertNotNil(card?.info?.cvv)
-                                XCTAssertNotNil(card?.info?.expMonth)
-                                XCTAssertNotNil(card?.info?.expYear)
-                                XCTAssertNotNil(card?.info?.pan)
-                                
-                                expectation.fulfill()
-                        })
-
+                        self.deleteUser(user, expectation: expectation)
                 })
+                
+            })
         }
+
+        
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
@@ -1786,40 +1646,6 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(15, handler: nil)
     }
     
-    func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
-    {
-        let deviceType = "WATCH"
-        let manufacturerName = "Fitpay"
-        let deviceName = "PSPS"
-        let serialNumber = "074DCC022E14"
-        let modelNumber = "FB404"
-        let hardwareRevision = "1.0.0.0"
-        let firmwareRevision = "1030.6408.1309.0001"
-        let softwareRevision = "2.0.242009.6"
-        let systemId = "0x123456FFFE9ABCDE"
-        let osName = "ANDROID"
-        let licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
-        let bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
-        let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
-        let pairing = "2016-02-29T21:42:21.469Z"
-        
-        self.client.user(id:userId, completion:
-        {
-            (user, error) -> Void in
-            
-            if (error != nil) {
-                completion(device: nil, error: error)
-                return
-            }
-            
-            user?.createNewDevice(deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
-            {
-                (device, error) -> Void in
-                completion(device: device, error: error)
-            })
-        })
-    }
-    
     func testAssetsRetrievesAsset()
     {
         let expectation = super.expectationWithDescription("'assets' retrieving commits from device")
@@ -2050,4 +1876,146 @@ class RestClientTests: XCTestCase
 //        
 //        super.waitForExpectationsWithTimeout(10, handler: nil)
 //    }
+    
+    func createAndLoginUser(expectation:XCTestExpectation, completion:(User?)->Void)
+    {
+        let email = randomStringWithLength(8)
+            .stringByAppendingString("@")
+            .stringByAppendingString(randomStringWithLength(5))
+            .stringByAppendingString(".")
+            .stringByAppendingString(randomStringWithLength(5))
+        let pin = "1234"
+        
+        self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
+                               birthDate:nil,
+                               termsVersion:nil, termsAccepted:nil,
+                               origin:nil, originAccountCreated:nil,
+                               completion:
+            {
+                (user, error) -> Void in
+                XCTAssertNotNil(user, "user is nil")
+                debugPrint("created user: \(user?.info?.email)")
+                XCTAssertNotNil(user?.info)
+                XCTAssertNotNil(user?.created)
+                XCTAssertNotNil(user?.links)
+                XCTAssertNotNil(user?.createdEpoch)
+                XCTAssertNotNil(user?.encryptedData)
+                XCTAssertNotNil(user?.info?.email)
+                XCTAssertNil(error)
+                
+                if error != nil
+                {
+                    expectation.fulfill()
+                    return
+                }
+                
+                self.session.login(username: email, password: pin, completion:
+                {
+                    [unowned self]
+                    (loginError) -> Void in
+                    XCTAssertNil(loginError)
+                    debugPrint("user isAuthorized: \(self.session.isAuthorized)")
+                    XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
+                    
+                    if loginError != nil
+                    {
+                        expectation.fulfill()
+                        return
+                    }
+                    
+                    completion(user)
+                })
+        })
+    }
+    
+    func deleteUser(user:User?, expectation:XCTestExpectation)
+    {
+        user?.deleteUser
+        {
+            (error) in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+    }
+    
+    func createDevice(expectation:XCTestExpectation, user:User?, completion:(user:User?, device:DeviceInfo?) -> Void)
+    {
+        let deviceType = "WATCH"
+        let manufacturerName = "Fitpay"
+        let deviceName = "PSPS"
+        let serialNumber = "074DCC022E14"
+        let modelNumber = "FB404"
+        let hardwareRevision = "1.0.0.0"
+        let firmwareRevision = "1030.6408.1309.0001"
+        let softwareRevision = "2.0.242009.6"
+        let systemId = "0x123456FFFE9ABCDE"
+        let osName = "ANDROID"
+        let licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
+        let bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
+        let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
+        let pairing = "2016-02-29T21:42:21.469Z"
+        
+        user?.createNewDevice(deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
+            {
+                (device, error) -> Void in
+                XCTAssertNotNil(user)
+                XCTAssertNil(error)
+                if error != nil
+                {
+                    expectation.fulfill()
+                    return
+                }
+                completion(user:user, device: device)
+        })
+    }
+    
+    func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
+    {
+        let deviceType = "WATCH"
+        let manufacturerName = "Fitpay"
+        let deviceName = "PSPS"
+        let serialNumber = "074DCC022E14"
+        let modelNumber = "FB404"
+        let hardwareRevision = "1.0.0.0"
+        let firmwareRevision = "1030.6408.1309.0001"
+        let softwareRevision = "2.0.242009.6"
+        let systemId = "0x123456FFFE9ABCDE"
+        let osName = "ANDROID"
+        let licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
+        let bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
+        let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
+        let pairing = "2016-02-29T21:42:21.469Z"
+        
+        self.client.user(id:userId, completion:
+        {
+            (user, error) -> Void in
+            
+            if (error != nil) {
+                completion(device: nil, error: error)
+                return
+            }
+            
+            user?.createNewDevice(deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
+                {
+                    (device, error) -> Void in
+                    completion(device: device, error: error)
+            })
+        })
+    }
+
+    
+    func randomStringWithLength (len : Int) -> String {
+        
+        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        
+        let randomString : NSMutableString = NSMutableString(capacity: len)
+        
+        for _ in 0 ... (len-1) {
+            let length = UInt32 (letters.length)
+            let rand = arc4random_uniform(length)
+            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
+        }
+        
+        return randomString as String
+    }
 }
