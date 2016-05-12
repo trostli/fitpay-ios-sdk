@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.summary = 'Swift based library for the Fitpay Platform'
   s.homepage = 'https://bitbucket.org/oanton/fitly'
   s.authors = { 'Ben Walford' => 'ben@fit-pay.com' }
-  s.source = { :git => 'https://github.com/fitpay/fitpay-ios-sdk.git', :branch => 'no_open_ssl' }
+  s.source = { :git => 'https://github.com/fitpay/fitpay-ios-sdk.git', :branch => 'develop' }
 
   s.dependency 'Alamofire', '~> 3.0'
   s.dependency 'ObjectMapper', '~> 1.2.0'
