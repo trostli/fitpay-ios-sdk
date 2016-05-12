@@ -178,7 +178,7 @@ internal class CommitsApplyer {
         }
         
         var apdu = apduPackage.apduCommands![apduCommandIndex]
-        SyncManager.sharedInstance.paymentDevice.executeAPDUCommand(&apdu, completion:
+        SyncManager.sharedInstance.paymentDevice!.executeAPDUCommand(&apdu, completion:
         {
             [unowned self] (apduPack, error) -> Void in
 

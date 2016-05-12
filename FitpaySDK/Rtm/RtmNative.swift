@@ -17,15 +17,18 @@ internal enum SyncJS: String {
     case getCommitsFailed    = "{status: 3}"
     case applyCommitsSuccess = "{status: 4}"
     case applyCommitsFailed  = "{status: 5}"
+    case noValidSessionData  = "{status: 6}"
 }
 
 public class RtmNative : NSObject, WKScriptMessageHandler {
     let url = API_BASE_URL
 //    let url = "http://192.168.128.170:8001"
-    
+
     let paymentDevice: PaymentDevice?
+    var user: User?
     let rtmConfig: RtmConfig?
     let restSession: RestSession?
+    let restClient: RestClient?
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
     
@@ -34,6 +37,9 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
         paymentDevice.connect()
         self.rtmConfig = RtmConfig(clientId: clientId, redirectUri: redirectUri, paymentDevice: paymentDevice.deviceInfo!)
         self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri)
+        self.restClient = RestClient(session: self.restSession!)
+        self.paymentDevice!.deviceInfo?.client = self.restClient
+        SyncManager.sharedInstance.paymentDevice = paymentDevice
     }
     
     public func setWebView(webview:WKWebView!) {
@@ -95,35 +101,54 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     
     private func handleSync() -> Void {
         self.callWebView(SyncJS.function.rawValue, args: SyncJS.syncBeginSuccess.rawValue)
-        
-//        let userId = webViewSessionData!.userId!
-//        let deviceId = webViewSessionData?.deviceId!
-//        let commitUrl = "\(url)/users/\(userId)/devices/\(deviceId)/commits"
-        
-//        now go sync somehow, but fake it for now
-        _ = setTimeout(1.5, block: { () -> Void in
-            self.callWebView(SyncJS.function.rawValue, args: SyncJS.applyCommitsSuccess.rawValue)
-        })
 
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_COMPLETED, completion: {
+            (event) in
+            print("rtm got sync completed event with id \(event.eventId) and data \(event.eventData)")
+            self.callWebView(SyncJS.function.rawValue, args: SyncJS.applyCommitsSuccess.rawValue)
+            SyncManager.sharedInstance.removeAllSyncBindings()
+        })
+        
+        if (self.webViewSessionData != nil && self.user != nil ) {
+            print("going to get commits")
+            goSync()
+        } else {
+            print("no session data for sync")
+            self.callWebView(SyncJS.function.rawValue, args: SyncJS.noValidSessionData.rawValue)
+        }
     }
     
     private func handleSessionData(webViewSessionData:WebViewSessionData) -> Void {
         self.webViewSessionData = webViewSessionData
-        self.restSession!.setAuthorization(webViewSessionData)
-        self.callWebView(SessionJS.function.rawValue, args: SessionJS.sessionDataSuccess.rawValue)
+        self.restSession!.setWebViewAuthorization(webViewSessionData)
+
+        restClient?.user(id: (self.webViewSessionData?.userId)!, completion: {
+            (user, error) in
+            
+            guard (error == nil || user == nil) else {
+                self.callWebView(SessionJS.function.rawValue, args: SessionJS.sessionDataFailed.rawValue)
+                return
+            }
+            
+            print("got user! \(user!.email)")
+            self.user = user
+            self.callWebView(SessionJS.function.rawValue, args: SessionJS.sessionDataSuccess.rawValue)
+        })
     }
     
     private func callWebView(function:String, args:String) {
-        print("calling: \(function)(\(args))")
         self.webview!.evaluateJavaScript("\(function)(\(args));", completionHandler: {
             (result, error) in
             if error != nil {
                 print(error)
-            } else {
-                print("js call success")
-                print(result)
             }
         })
+    }
+    
+    func goSync() {
+        if SyncManager.sharedInstance.sync(self.user!) != nil {
+            self.callWebView(SyncJS.function.rawValue, args: SyncJS.getCommitsFailed.rawValue)
+        }
     }
     
     func setTimeout(delay:NSTimeInterval, block:()->Void) -> NSTimer {

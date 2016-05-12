@@ -37,15 +37,14 @@ import ObjectMapper
         case .APDU_COMMANDS_PROGRESS:
             return "APDU progress"
         case .COMMIT_PROCESSED:
-            return "Precessed commit"
+            return "Processed commit"
         }
     }
 }
 
 public class SyncManager : NSObject {
     public static let sharedInstance = SyncManager()
-    
-    public let paymentDevice : PaymentDevice = PaymentDevice()
+    public var paymentDevice : PaymentDevice?
     
     
     internal let syncStorage : SyncStorage = SyncStorage()
@@ -112,20 +111,20 @@ public class SyncManager : NSObject {
         self.isSyncing = true
         self.user = user
         
-        if self.paymentDevice.isConnected {
+        if self.paymentDevice!.isConnected {
             startSync()
             return nil
         }
         
         if let binding = self.deviceConnectedBinding {
-            self.paymentDevice.removeBinding(binding: binding)
+            self.paymentDevice!.removeBinding(binding: binding)
         }
         
         if let binding = self.deviceDisconnectedBinding {
-            self.paymentDevice.removeBinding(binding: binding)
+            self.paymentDevice!.removeBinding(binding: binding)
         }
         
-        self.deviceConnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
+        self.deviceConnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
             [unowned self] (event) in
             
@@ -146,29 +145,29 @@ public class SyncManager : NSObject {
             self.startSync()
             
             if let binding = self.deviceConnectedBinding {
-                self.paymentDevice.removeBinding(binding: binding)
+                self.paymentDevice!.removeBinding(binding: binding)
             }
             
             self.deviceConnectedBinding = nil
         })
         
-        self.deviceDisconnectedBinding = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceDisconnected, completion: {
+        self.deviceDisconnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceDisconnected, completion: {
             [unowned self] (event) in
             self.callCompletionForSyncEvent(SyncEventType.SYNC_FAILED, params: ["error": NSError.error(code: SyncManager.ErrorCode.ConnectionWithDeviceWasLost, domain: SyncManager.self)])
             
             if let binding = self.deviceConnectedBinding {
-                self.paymentDevice.removeBinding(binding: binding)
+                self.paymentDevice!.removeBinding(binding: binding)
             }
             
             if let binding = self.deviceDisconnectedBinding {
-                self.paymentDevice.removeBinding(binding: binding)
+                self.paymentDevice!.removeBinding(binding: binding)
             }
             
             self.deviceConnectedBinding = nil
             self.deviceDisconnectedBinding = nil
         })
         
-        self.paymentDevice.connect(self.paymentDeviceConnectionTimeoutInSecs)
+        self.paymentDevice!.connect(self.paymentDeviceConnectionTimeoutInSecs)
         
         self.callCompletionForSyncEvent(SyncEventType.CONNECTING_TO_DEVICE)
         
@@ -231,8 +230,14 @@ public class SyncManager : NSObject {
             }
             
             //TODO: delete this once approved
-            let commits = self.___debug_appendAPDUCommits(commits!)
-            let applayerStarted = self.commitsApplyer.apply(commits, completion:
+            let cmts:[Commit]
+            if commits?.count > 0 {
+                cmts = self.___debug_appendAPDUCommits(commits!)
+            } else {
+                cmts = commits!
+            }
+            
+            let applayerStarted = self.commitsApplyer.apply(cmts, completion:
             {
                 [unowned self] (error) -> Void in
                 
@@ -342,11 +347,11 @@ public class SyncManager : NSObject {
         }
         
         if let binding = self.deviceConnectedBinding {
-            self.paymentDevice.removeBinding(binding: binding)
+            self.paymentDevice!.removeBinding(binding: binding)
         }
         
         if let binding = self.deviceDisconnectedBinding {
-            self.paymentDevice.removeBinding(binding: binding)
+            self.paymentDevice!.removeBinding(binding: binding)
         }
         
         self.deviceConnectedBinding = nil
