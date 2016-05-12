@@ -20,11 +20,9 @@ Pod::Spec.new do |s|
 
   s.ios.platform          = :ios, '8.0'
   s.ios.deployment_target = '8.0'
-  s.ios.source_files        = 'FitpaySDK/FitpaySDK.framework/**/*.h'
-  s.ios.public_header_files = 'FitpaySDK/FitpaySDK.framework/**/*.h'
-
-  #s.ios.private_header_files = 'FitpaySDK/FitpaySDK.framework/**/SECP256R1KeyPairContainer+Private.h'
-  s.ios.vendored_framework = 'FitpaySDK/FitpaySDK.framework'
+  s.ios.source_files        = 'Output/FitpaySDK-Release-iphoneuniversal/FitpaySDK.framework/**/*.h'
+  s.ios.public_header_files = 'Output/FitpaySDK-Release-iphoneuniversal/FitpaySDK.framework/**/*.h'
+  s.ios.vendored_framework = 'Output/FitpaySDK-Release-iphoneuniversal/FitpaySDK.framework'
   s.ios.header_dir = 'FitpaySDK'
 
 end
