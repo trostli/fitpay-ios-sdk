@@ -3,23 +3,17 @@ import Foundation
 import WebKit
 import ObjectMapper
 
-internal enum SessionJS: String {
-    case function           = "window.fpIos.sessionDataAck"
-    case sessionDataSuccess = "{status: 0}"
-    case sessionDataFailed  = "{status: 1}"
-}
 
-internal enum SyncJS: String {
-    case function            = "window.fpIos.syncAck"
-    case syncBeginSuccess    = "{status: 0}"
-    case syncBeginFailed     = "{status: 1}"
-    case getCommitsSuccess   = "{status: 2}"
-    case getCommitsFailed    = "{status: 3}"
-    case applyCommitsSuccess = "{status: 4}"
-    case applyCommitsFailed  = "{status: 5}"
-    case noValidSessionData  = "{status: 6}"
+/**
+ These responses must conform to what is expected by the web-view. Changing their structure also requires
+ changing them in the rtmIosImpl.js
+ */
+internal enum WVResponse: String {
+    case success              = "{status: 0}"
+    case failed               = "{status: 1, reason: '%@'}"
+    case successStillWorking  = "{status: 2, count:  '%@'}"
+    case noSessionData        = "{status: 3}"
 }
-
 
 
 public class RtmNative : NSObject, WKScriptMessageHandler {
@@ -54,7 +48,8 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     }
     
     /**
-     This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app
+     This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app. Note that
+     the value "rtmBridge" is an agreeded upon value between this and the web-view.
      */
     public func wvConfig() -> WKWebViewConfiguration {
         let config:WKWebViewConfiguration = WKWebViewConfiguration()
@@ -80,9 +75,9 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     }
     
     /**
-     This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from the web app. The 
-     callBackId corresponds to a JS callback that will resolve a promise stored in window.RtmBridge that will be called with the 
-     result of the action once completed. It expects a message with the following format:
+     This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from 
+     the web app. The callBackId corresponds to a JS callback that will resolve a promise stored in window.RtmBridge 
+     that will be called with the result of the action once completed. It expects a message with the following format:
 
         {
             "callBackId": 1,
@@ -98,8 +93,7 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
      */
     public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         let sentData = message.body as! NSDictionary
-        
-        // check the action and route accordingly
+
         if sentData["data"]!["action"] as! String == "sync" {
             print("received sync message from web-view")
             handleSync(sentData["callBackId"] as! Int)
@@ -118,24 +112,21 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
             } catch let error as NSError {
                 print(error)
             }
-        } else {
-            print("received unknown message from web-view")
         }
     }
     
     private func handleSync(callBackId:Int) -> Void {
         if (self.webViewSessionData != nil && self.user != nil ) {
-            print("going to get commits")
-
             syncCallBacks.append(callBackId)
 
             if !SyncManager.sharedInstance.isSyncing {
                 goSync()
             }
         } else {
-            print("no session data for sync")
-            self.callBack(syncCallBacks.first!, success: false, response: "{status: 3}")
-
+            self.callBack(
+                self.syncCallBacks.first!,
+                success: false,
+                response: self.getWVResponse(WVResponse.noSessionData, message: nil))
         }
     }
     
@@ -147,19 +138,29 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
             (user, error) in
             
             guard (error == nil || user == nil) else {
-                self.callBack(self.sessionDataCallBackId!, success: false, response: "{status: 1, reason: \(error.debugDescription)}")
+                self.callBack(
+                    self.sessionDataCallBackId!,
+                    success: false,
+                    response: self.getWVResponse(WVResponse.failed, message: error.debugDescription))
+
                 return
             }
-            
-            print("got user! \(user!.email)")
+
             self.user = user
-            self.callBack(self.sessionDataCallBackId!, success: true, response: "{status: 0}")
+
+            self.callBack(
+                self.sessionDataCallBackId!,
+                success: true,
+                response: self.getWVResponse(WVResponse.success, message: nil))
         })
     }
 
-    private func rejectAndResetSyncCallbacks(error:String) {
-        for cb in self.syncCallBacks {
-            callBack(cb, success: false, response: error)
+    private func rejectAndResetSyncCallbacks(reason:String) {
+        for cbId in self.syncCallBacks {
+            callBack(
+                cbId,
+                success: false,
+                response: getWVResponse(WVResponse.failed, message: reason))
         }
 
         self.syncCallBacks = [Int]()
@@ -168,15 +169,22 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     private func resolveSync() {
         if let id = self.syncCallBacks.first {
             if self.syncCallBacks.count > 1 {
-                self.callBack(id, success: true, response: "{status: 2, count: \(self.syncCallBacks.count)}")
+                self.callBack(
+                    id,
+                    success: true,
+                    response: getWVResponse(WVResponse.successStillWorking, message: "\(self.syncCallBacks.count)"))
+
                 goSync()
             } else {
-                self.callBack(id, success: true, response: "{status: 0}")
+                self.callBack(
+                    id,
+                    success: true,
+                    response: getWVResponse(WVResponse.success, message: nil))
             }
 
             self.syncCallBacks.removeFirst()
         } else {
-            print("stuff got fucked")
+            print("no callbacks available for sync resolution")
         }
     }
 
@@ -190,19 +198,43 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
         })
     }
 
-    func goSync() {
+    private func goSync() {
         if SyncManager.sharedInstance.sync(self.user!) != nil {
-            rejectAndResetSyncCallbacks("{status: 1, reason: \"syncManager failed to regulate sequentail syncs\"")
+            rejectAndResetSyncCallbacks("SyncManager failed to regulate sequential syncs, all pending syncs have been rejected")
         }
     }
 
-    func bindEvents() {
+    private func bindEvents() {
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_COMPLETED, completion: {
             (event) in
 
-            print("rtm got sync completed event with id \(event.eventId) and data \(event.eventData)")
             self.resolveSync()
         })
+
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_FAILED, completion: {
+            (event) in
+
+            self.rejectAndResetSyncCallbacks("SyncManager failed to complete the sync, all pending syncs have been rejected")
+        })
+    }
+
+    private func getWVResponse(response:WVResponse, message:String?) -> String {
+        switch response {
+        case .success:
+            return response.rawValue
+        case .failed:
+            if let reason = message {
+                return String(format: response.rawValue, reason)
+            }
+            return String(format: response.rawValue, "unknown")
+        case .successStillWorking:
+            if let count = message {
+                return String(format: response.rawValue, count)
+            }
+            return String(format: response.rawValue, "unknown")
+        case .noSessionData:
+            return response.rawValue
+        }
     }
 
 }
