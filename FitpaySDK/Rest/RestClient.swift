@@ -1070,7 +1070,7 @@ public class RestClient : NSObject
             [unowned self](headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .JSON, headers: headers)
+                let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .URL, headers: headers)
                 request.validate().responseData(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
                 {
                     (response:Response<NSData, NSError>) -> Void in
