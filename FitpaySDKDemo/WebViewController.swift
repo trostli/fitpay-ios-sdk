@@ -22,5 +22,39 @@ class WebViewController: UIViewController {
         self.view = self.webView
         self.webView.loadRequest((rtm!.wvRequest()))
         rtm?.setWebView(webView)
+
+        bindToEvents()
+    }
+
+    private func bindToEvents() {
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CARD_ADDED, completion: {
+            (event) in
+            print("got card added event")
+        })
+
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CARD_DELETED, completion: {
+            (event) in
+            print("got card deleted event")
+        })
+
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CARD_REACTIVATED, completion: {
+            (event) in
+            print("got card reactivated event")
+        })
+
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CARD_DEACTIVATED, completion: {
+            (event) in
+            print("got card deactivated event")
+        })
+
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SET_DEFAULT_CARD, completion: {
+            (event) in
+            print("got card set default event")
+        })
+
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.RESET_DEFAULT_CARD, completion: {
+            (event) in
+            print("got card reset default event")
+        })
     }
 }
