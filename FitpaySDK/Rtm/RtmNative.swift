@@ -40,7 +40,7 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
         paymentDevice.connect()
         self.rtmConfig = RtmConfig(clientId: clientId, redirectUri: redirectUri, paymentDevice: paymentDevice.deviceInfo!)
 
-        self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri)
+        self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
         self.restClient = RestClient(session: self.restSession!)
         self.paymentDevice!.deviceInfo?.client = self.restClient
         SyncManager.sharedInstance.paymentDevice = paymentDevice

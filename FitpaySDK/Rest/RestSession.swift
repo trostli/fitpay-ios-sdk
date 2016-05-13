@@ -67,11 +67,16 @@ public class RestSession : NSObject
         configuration.requestCachePolicy = .ReloadIgnoringLocalCacheData
         return Manager(configuration: configuration)
     }()
+    
+    private (set) internal var baseAPIURL:String
+    private (set) internal var authorizeURL:String
 
-    public init(clientId:String, redirectUri:String)
+    public init(clientId:String, redirectUri:String, authorizeURL:String, baseAPIURL:String)
     {
         self.clientId = clientId
         self.redirectUri = redirectUri
+        self.authorizeURL = authorizeURL
+        self.baseAPIURL = baseAPIURL
     }
 
     public typealias LoginHandler = (error:NSError?)->Void
@@ -159,7 +164,7 @@ public class RestSession : NSObject
                 "credentials" : ["username" : username, "password" : password].JSONString!
         ]
 
-        let request = manager.request(.POST, AUTHORIZE_URL, parameters: parameters, encoding:.URL, headers: headers)
+        let request = manager.request(.POST, self.authorizeURL, parameters: parameters, encoding:.URL, headers: headers)
     
         request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {
