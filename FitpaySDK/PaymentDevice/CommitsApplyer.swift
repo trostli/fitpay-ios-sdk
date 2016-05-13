@@ -97,7 +97,7 @@ internal class CommitsApplyer {
         
         let commitCompletion = { (error: ErrorType?) -> Void in
             if error == nil {
-                SyncManager.sharedInstance.syncStorage.lastCommitId = commit.commit
+                SyncManager.sharedInstance.commitCompleted(commit.commit!)
             }
             
             completion(error: error)

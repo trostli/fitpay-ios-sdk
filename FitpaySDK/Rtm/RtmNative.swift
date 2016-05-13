@@ -20,10 +20,10 @@ internal enum SyncJS: String {
     case noValidSessionData  = "{status: 6}"
 }
 
-public class RtmNative : NSObject, WKScriptMessageHandler {
-    let url = API_BASE_URL
-//    let url = "http://192.168.128.170:8001"
 
+
+public class RtmNative : NSObject, WKScriptMessageHandler {
+    let url = BASE_URL
     let paymentDevice: PaymentDevice?
     var user: User?
     let rtmConfig: RtmConfig?
@@ -31,15 +31,22 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     let restClient: RestClient?
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
+
+    var sessionDataCallBackId: Int?
+    var syncCallBacks = [Int]()
     
     public init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice) {
         self.paymentDevice = paymentDevice
         paymentDevice.connect()
         self.rtmConfig = RtmConfig(clientId: clientId, redirectUri: redirectUri, paymentDevice: paymentDevice.deviceInfo!)
+
         self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri)
         self.restClient = RestClient(session: self.restSession!)
         self.paymentDevice!.deviceInfo?.client = self.restClient
         SyncManager.sharedInstance.paymentDevice = paymentDevice
+
+        super.init()
+        self.bindEvents()
     }
     
     public func setWebView(webview:WKWebView!) {
@@ -73,23 +80,40 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     }
     
     /**
-     This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from the web app
+     This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from the web app. The 
+     callBackId corresponds to a JS callback that will resolve a promise stored in window.RtmBridge that will be called with the 
+     result of the action once completed. It expects a message with the following format:
+
+        {
+            "callBackId": 1,
+            "data": {
+                "action": "action",
+                "data": {
+                    "userId": "userId",
+                    "deviceId": "userId",
+                    "token": "token"
+                }
+            }
+        }
      */
     public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         let sentData = message.body as! NSDictionary
         
         // check the action and route accordingly
-        if sentData["action"] as! String == "sync" {
+        if sentData["data"]!["action"] as! String == "sync" {
             print("received sync message from web-view")
-            handleSync()
-        } else if sentData["action"] as! String == "userData" {
+            handleSync(sentData["callBackId"] as! Int)
+        } else if sentData["data"]!["action"] as! String == "userData" {
             print("received user session data from web-view")
-            
+
+            sessionDataCallBackId = sentData["callBackId"] as? Int
+
             do {
-                print("extracting data")
-                let jsonData = try NSJSONSerialization.dataWithJSONObject(sentData["data"]!, options: NSJSONWritingOptions.PrettyPrinted)
+                let data = sentData["data"]!["data"]!
+                let jsonData = try NSJSONSerialization.dataWithJSONObject(data!, options: NSJSONWritingOptions.PrettyPrinted)
                 let jsonString = NSString(data: jsonData, encoding: NSUTF8StringEncoding)! as String
                 let webViewSessionData = Mapper<WebViewSessionData>().map(jsonString)
+
                 handleSessionData(webViewSessionData!)
             } catch let error as NSError {
                 print(error)
@@ -99,22 +123,19 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
         }
     }
     
-    private func handleSync() -> Void {
-        self.callWebView(SyncJS.function.rawValue, args: SyncJS.syncBeginSuccess.rawValue)
-
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_COMPLETED, completion: {
-            (event) in
-            print("rtm got sync completed event with id \(event.eventId) and data \(event.eventData)")
-            self.callWebView(SyncJS.function.rawValue, args: SyncJS.applyCommitsSuccess.rawValue)
-            SyncManager.sharedInstance.removeAllSyncBindings()
-        })
-        
+    private func handleSync(callBackId:Int) -> Void {
         if (self.webViewSessionData != nil && self.user != nil ) {
             print("going to get commits")
-            goSync()
+
+            syncCallBacks.append(callBackId)
+
+            if !SyncManager.sharedInstance.isSyncing {
+                goSync()
+            }
         } else {
             print("no session data for sync")
-            self.callWebView(SyncJS.function.rawValue, args: SyncJS.noValidSessionData.rawValue)
+            self.callBack(syncCallBacks.first!, success: false, response: "{status: 3}")
+
         }
     }
     
@@ -126,33 +147,63 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
             (user, error) in
             
             guard (error == nil || user == nil) else {
-                self.callWebView(SessionJS.function.rawValue, args: SessionJS.sessionDataFailed.rawValue)
+                self.callBack(self.sessionDataCallBackId!, success: false, response: "{status: 1, reason: \(error.debugDescription)}")
                 return
             }
             
             print("got user! \(user!.email)")
             self.user = user
-            self.callWebView(SessionJS.function.rawValue, args: SessionJS.sessionDataSuccess.rawValue)
+            self.callBack(self.sessionDataCallBackId!, success: true, response: "{status: 0}")
         })
     }
-    
-    private func callWebView(function:String, args:String) {
-        self.webview!.evaluateJavaScript("\(function)(\(args));", completionHandler: {
+
+    private func rejectAndResetSyncCallbacks(error:String) {
+        for cb in self.syncCallBacks {
+            callBack(cb, success: false, response: error)
+        }
+
+        self.syncCallBacks = [Int]()
+    }
+
+    private func resolveSync() {
+        if let id = self.syncCallBacks.first {
+            if self.syncCallBacks.count > 1 {
+                self.callBack(id, success: true, response: "{status: 2, count: \(self.syncCallBacks.count)}")
+                goSync()
+            } else {
+                self.callBack(id, success: true, response: "{status: 0}")
+            }
+
+            self.syncCallBacks.removeFirst()
+        } else {
+            print("stuff got fucked")
+        }
+    }
+
+    private func callBack(callBackId:Int, success:Bool, response:String) {
+        self.webview!.evaluateJavaScript("window.RtmBridge.resolve(\(callBackId), \(success), \(response))", completionHandler: {
             (result, error) in
+
             if error != nil {
-                print(error)
+                print("error")
             }
         })
     }
-    
+
     func goSync() {
         if SyncManager.sharedInstance.sync(self.user!) != nil {
-            self.callWebView(SyncJS.function.rawValue, args: SyncJS.getCommitsFailed.rawValue)
+            rejectAndResetSyncCallbacks("{status: 1, reason: \"syncManager failed to regulate sequentail syncs\"")
         }
     }
-    
-    func setTimeout(delay:NSTimeInterval, block:()->Void) -> NSTimer {
-        return NSTimer.scheduledTimerWithTimeInterval(delay, target: NSBlockOperation(block: block), selector: #selector(NSOperation.main), userInfo: nil, repeats: false)
+
+    func bindEvents() {
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_COMPLETED, completion: {
+            (event) in
+
+            print("rtm got sync completed event with id \(event.eventId) and data \(event.eventData)")
+            self.resolveSync()
+        })
     }
+
 }
 

@@ -54,6 +54,7 @@ public class SyncManager : NSObject {
     private var user : User?
     
     private var commitsApplyer = CommitsApplyer()
+    private var currentDeviceId : String?
     
     private weak var deviceConnectedBinding : FitpayEventBinding?
     private weak var deviceDisconnectedBinding : FitpayEventBinding?
@@ -220,7 +221,7 @@ public class SyncManager : NSObject {
         
         self.callCompletionForSyncEvent(SyncEventType.SYNC_STARTED)
         
-        getCommits(self.syncStorage.lastCommitId)
+        getCommits()
         {
             [unowned self] (commits, error) -> Void in
             
@@ -271,7 +272,7 @@ public class SyncManager : NSObject {
             for deviceInfo in result!.results! {
                 // TODO: uncomment this once approved
                 // if deviceInfo.serialNumber == physicalDeviceInfo?.serialNumber {
-                if deviceInfo.deviceName == "PSPS" {
+                if deviceInfo.secureElementId != nil {
                     completion(deviceInfo: deviceInfo, error: nil)
                     return
                 }
@@ -286,12 +287,16 @@ public class SyncManager : NSObject {
         })
     }
     
-    private func getCommits(lastCommitId: String?, completion: (commits: [Commit]?, error: ErrorType?)->Void) {
+    private func getCommits(completion: (commits: [Commit]?, error: ErrorType?)->Void) {
         findDeviceInfo(20, searchOffset: 0)
         {
             (deviceInfo, error) -> Void in
             
             if let deviceInfo = deviceInfo {
+                self.currentDeviceId = deviceInfo.deviceIdentifier!
+
+                let lastCommitId = self.syncStorage.getLastCommitId(self.currentDeviceId!)
+
                 deviceInfo.listCommits(commitsAfter: lastCommitId, limit: 20, offset: 0, completion:
                 {
                     (result, error) -> Void in
@@ -339,6 +344,7 @@ public class SyncManager : NSObject {
 
     private func syncFinished(error error: ErrorType?) {
         self.isSyncing = false
+        self.currentDeviceId = nil
         
         if let error = error as? NSError {
             callCompletionForSyncEvent(SyncEventType.SYNC_FAILED, params: ["error": error])
@@ -356,6 +362,10 @@ public class SyncManager : NSObject {
         
         self.deviceConnectedBinding = nil
         self.deviceDisconnectedBinding = nil
+    }
+
+    internal func commitCompleted(commitId:String) {
+        self.syncStorage.setLastCommitId(self.currentDeviceId!, commitId: commitId)
     }
     
     //TODO: delete this once approved
