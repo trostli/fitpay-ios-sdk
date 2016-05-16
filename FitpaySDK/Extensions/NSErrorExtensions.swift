@@ -33,10 +33,15 @@ extension NSError
         }
         else if let message = data?.UTF8String
         {
+            if message == ""
+            {
+               return NSError(domain: "\(domain)", code:code, userInfo: [NSLocalizedDescriptionKey : "UnexpectedError"])
+            }
+            
             return NSError(domain: "\(domain)", code:code, userInfo: [NSLocalizedDescriptionKey : message])
         }
                 
-        let userInfo:[NSObject : AnyObject] = alternativeError?.userInfo != nil ? alternativeError!.userInfo : [NSLocalizedDescriptionKey: ""]
+        let userInfo:[NSObject : AnyObject] = alternativeError?.userInfo != nil ? alternativeError!.userInfo : [NSLocalizedDescriptionKey: "Failed to parse error message"]
         return NSError(domain: "\(domain)", code:code, userInfo: userInfo )
     }
     

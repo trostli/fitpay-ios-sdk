@@ -121,7 +121,7 @@ class RtmSessionTests: XCTestCase
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
-    func testUserLogin()
+    func disabledTestUserLogin()
     {
         let expectation = super.expectationWithDescription("connection check")
         self.session.onConnect =
@@ -152,6 +152,6 @@ class RtmSessionTests: XCTestCase
         
         self.connect()
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectationsWithTimeout(100, handler: nil)
     }
 }
