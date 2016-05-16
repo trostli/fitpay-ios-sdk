@@ -3,37 +3,44 @@ import Foundation
 import WebKit
 import ObjectMapper
 
-internal enum SessionJS: String {
-    case function           = "window.fpIos.sessionDataAck"
-    case sessionDataSuccess = "{status: 0}"
-    case sessionDataFailed  = "{status: 1}"
+
+/**
+ These responses must conform to what is expected by the web-view. Changing their structure also requires
+ changing them in the rtmIosImpl.js
+ */
+internal enum WVResponse: String {
+    case success              = "{status: 0}"
+    case failed               = "{status: 1, reason: '%@'}"
+    case successStillWorking  = "{status: 2, count:  '%@'}"
+    case noSessionData        = "{status: 3}"
 }
 
-internal enum SyncJS: String {
-    case function            = "window.fpIos.syncAck"
-    case syncBeginSuccess    = "{status: 0}"
-    case syncBeginFailed     = "{status: 1}"
-    case getCommitsSuccess   = "{status: 2}"
-    case getCommitsFailed    = "{status: 3}"
-    case applyCommitsSuccess = "{status: 4}"
-    case applyCommitsFailed  = "{status: 5}"
-}
 
 public class RtmNative : NSObject, WKScriptMessageHandler {
-    let url = API_BASE_URL
-//    let url = "http://192.168.128.170:8001"
-    
+    let url = BASE_URL
     let paymentDevice: PaymentDevice?
+    var user: User?
     let rtmConfig: RtmConfig?
     let restSession: RestSession?
+    let restClient: RestClient?
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
+
+    var sessionDataCallBackId: Int?
+    var syncCallBacks = [Int]()
     
     public init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice) {
         self.paymentDevice = paymentDevice
         paymentDevice.connect()
         self.rtmConfig = RtmConfig(clientId: clientId, redirectUri: redirectUri, paymentDevice: paymentDevice.deviceInfo!)
-        self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: url)
+
+        self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
+        self.restClient = RestClient(session: self.restSession!)
+        self.paymentDevice!.deviceInfo?.client = self.restClient
+        SyncManager.sharedInstance.paymentDevice = paymentDevice
+
+        super.init()
+        self.bindEvents()
     }
     
     public func setWebView(webview:WKWebView!) {
@@ -41,7 +48,8 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     }
     
     /**
-     This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app
+     This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app. Note that
+     the value "rtmBridge" is an agreeded upon value between this and the web-view.
      */
     public func wvConfig() -> WKWebViewConfiguration {
         let config:WKWebViewConfiguration = WKWebViewConfiguration()
@@ -67,67 +75,167 @@ public class RtmNative : NSObject, WKScriptMessageHandler {
     }
     
     /**
-     This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from the web app
+     This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from 
+     the web app. The callBackId corresponds to a JS callback that will resolve a promise stored in window.RtmBridge 
+     that will be called with the result of the action once completed. It expects a message with the following format:
+
+        {
+            "callBackId": 1,
+            "data": {
+                "action": "action",
+                "data": {
+                    "userId": "userId",
+                    "deviceId": "userId",
+                    "token": "token"
+                }
+            }
+        }
      */
     public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         let sentData = message.body as! NSDictionary
-        
-        // check the action and route accordingly
-        if sentData["action"] as! String == "sync" {
+
+        if sentData["data"]!["action"] as! String == "sync" {
             print("received sync message from web-view")
-            handleSync()
-        } else if sentData["action"] as! String == "userData" {
+            handleSync(sentData["callBackId"] as! Int)
+        } else if sentData["data"]!["action"] as! String == "userData" {
             print("received user session data from web-view")
-            
+
+            sessionDataCallBackId = sentData["callBackId"] as? Int
+
             do {
-                print("extracting data")
-                let jsonData = try NSJSONSerialization.dataWithJSONObject(sentData["data"]!, options: NSJSONWritingOptions.PrettyPrinted)
+                let data = sentData["data"]!["data"]!
+                let jsonData = try NSJSONSerialization.dataWithJSONObject(data!, options: NSJSONWritingOptions.PrettyPrinted)
                 let jsonString = NSString(data: jsonData, encoding: NSUTF8StringEncoding)! as String
                 let webViewSessionData = Mapper<WebViewSessionData>().map(jsonString)
+
                 handleSessionData(webViewSessionData!)
             } catch let error as NSError {
                 print(error)
             }
-        } else {
-            print("received unknown message from web-view")
         }
     }
     
-    private func handleSync() -> Void {
-        self.callWebView(SyncJS.function.rawValue, args: SyncJS.syncBeginSuccess.rawValue)
-        
-//        let userId = webViewSessionData!.userId!
-//        let deviceId = webViewSessionData?.deviceId!
-//        let commitUrl = "\(url)/users/\(userId)/devices/\(deviceId)/commits"
-        
-//        now go sync somehow, but fake it for now
-        _ = setTimeout(1.5, block: { () -> Void in
-            self.callWebView(SyncJS.function.rawValue, args: SyncJS.applyCommitsSuccess.rawValue)
-        })
+    private func handleSync(callBackId:Int) -> Void {
+        if (self.webViewSessionData != nil && self.user != nil ) {
+            syncCallBacks.append(callBackId)
 
+            if !SyncManager.sharedInstance.isSyncing {
+                goSync()
+            }
+        } else {
+            self.callBack(
+                self.syncCallBacks.first!,
+                success: false,
+                response: self.getWVResponse(WVResponse.noSessionData, message: nil))
+        }
     }
     
     private func handleSessionData(webViewSessionData:WebViewSessionData) -> Void {
         self.webViewSessionData = webViewSessionData
-        self.restSession!.setAuthorization(webViewSessionData)
-        self.callWebView(SessionJS.function.rawValue, args: SessionJS.sessionDataSuccess.rawValue)
+        self.restSession!.setWebViewAuthorization(webViewSessionData)
+
+        restClient?.user(id: (self.webViewSessionData?.userId)!, completion: {
+            (user, error) in
+            
+            guard (error == nil || user == nil) else {
+                self.callBack(
+                    self.sessionDataCallBackId!,
+                    success: false,
+                    response: self.getWVResponse(WVResponse.failed, message: error.debugDescription))
+
+                return
+            }
+
+            self.user = user
+
+            self.callBack(
+                self.sessionDataCallBackId!,
+                success: true,
+                response: self.getWVResponse(WVResponse.success, message: nil))
+        })
     }
-    
-    private func callWebView(function:String, args:String) {
-        print("calling: \(function)(\(args))")
-        self.webview!.evaluateJavaScript("\(function)(\(args));", completionHandler: {
-            (result, error) in
-            if error != nil {
-                print(error)
+
+    private func rejectAndResetSyncCallbacks(reason:String) {
+        for cbId in self.syncCallBacks {
+            callBack(
+                cbId,
+                success: false,
+                response: getWVResponse(WVResponse.failed, message: reason))
+        }
+
+        self.syncCallBacks = [Int]()
+    }
+
+    private func resolveSync() {
+        if let id = self.syncCallBacks.first {
+            if self.syncCallBacks.count > 1 {
+                self.callBack(
+                    id,
+                    success: true,
+                    response: getWVResponse(WVResponse.successStillWorking, message: "\(self.syncCallBacks.count)"))
+
+                goSync()
             } else {
-                print("js call success")
-                print(result)
+                self.callBack(
+                    id,
+                    success: true,
+                    response: getWVResponse(WVResponse.success, message: nil))
+            }
+
+            self.syncCallBacks.removeFirst()
+        } else {
+            print("no callbacks available for sync resolution")
+        }
+    }
+
+    private func callBack(callBackId:Int, success:Bool, response:String) {
+        self.webview!.evaluateJavaScript("window.RtmBridge.resolve(\(callBackId), \(success), \(response))", completionHandler: {
+            (result, error) in
+
+            if error != nil {
+                print("error")
             }
         })
     }
-    
-    func setTimeout(delay:NSTimeInterval, block:()->Void) -> NSTimer {
-        return NSTimer.scheduledTimerWithTimeInterval(delay, target: NSBlockOperation(block: block), selector: #selector(NSOperation.main), userInfo: nil, repeats: false)
+
+    private func goSync() {
+        if SyncManager.sharedInstance.sync(self.user!) != nil {
+            rejectAndResetSyncCallbacks("SyncManager failed to regulate sequential syncs, all pending syncs have been rejected")
+        }
     }
+
+    private func bindEvents() {
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_COMPLETED, completion: {
+            (event) in
+
+            self.resolveSync()
+        })
+
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_FAILED, completion: {
+            (event) in
+
+            self.rejectAndResetSyncCallbacks("SyncManager failed to complete the sync, all pending syncs have been rejected")
+        })
+    }
+
+    private func getWVResponse(response:WVResponse, message:String?) -> String {
+        switch response {
+        case .success:
+            return response.rawValue
+        case .failed:
+            if let reason = message {
+                return String(format: response.rawValue, reason)
+            }
+            return String(format: response.rawValue, "unknown")
+        case .successStillWorking:
+            if let count = message {
+                return String(format: response.rawValue, count)
+            }
+            return String(format: response.rawValue, "unknown")
+        case .noSessionData:
+            return response.rawValue
+        }
+    }
+
 }
 

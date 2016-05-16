@@ -97,7 +97,7 @@ internal class CommitsApplyer {
         
         let commitCompletion = { (error: ErrorType?) -> Void in
             if error == nil {
-                SyncManager.sharedInstance.syncStorage.lastCommitId = commit.commit
+                SyncManager.sharedInstance.commitCompleted(commit.commit!)
             }
             
             completion(error: error)
@@ -178,7 +178,7 @@ internal class CommitsApplyer {
         }
         
         var apdu = apduPackage.apduCommands![apduCommandIndex]
-        SyncManager.sharedInstance.paymentDevice.executeAPDUCommand(&apdu, completion:
+        SyncManager.sharedInstance.paymentDevice!.executeAPDUCommand(&apdu, completion:
         {
             [unowned self] (apduPack, error) -> Void in
 
