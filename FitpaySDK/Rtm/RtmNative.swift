@@ -3,6 +3,7 @@ import Foundation
 import WebKit
 import ObjectMapper
 
+
 internal enum SessionJS: String {
     case function           = "window.fpIos.sessionDataAck"
     case sessionDataSuccess = "{status: 0}"
