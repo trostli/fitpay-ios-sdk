@@ -405,6 +405,7 @@ SWIFT_CLASS("_TtC9FitpaySDK26MockPaymentDeviceInterface")
 - (DeviceInfo * _Nullable)deviceInfo;
 - (enum SecurityNFCState)nfcState;
 - (void)resetToDefaultState;
+- (uint64_t)getDelayTime;
 @end
 
 
