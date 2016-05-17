@@ -16,7 +16,7 @@ internal enum WVResponse: String {
 }
 
 
-public class RtmNative : NSObject, WKScriptMessageHandler {
+public class FPWebView : NSObject, WKScriptMessageHandler {
     let url = BASE_URL
     let paymentDevice: PaymentDevice?
     var user: User?

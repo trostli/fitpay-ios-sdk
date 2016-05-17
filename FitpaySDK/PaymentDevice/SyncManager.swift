@@ -13,6 +13,14 @@ import ObjectMapper
     case APDU_COMMANDS_PROGRESS
     
     case COMMIT_PROCESSED
+
+    case CARD_ADDED
+    case CARD_DELETED
+    case CARD_ACTIVATED
+    case CARD_DEACTIVATED
+    case CARD_REACTIVATED
+    case SET_DEFAULT_CARD
+    case RESET_DEFAULT_CARD
     
     public func eventId() -> Int {
         return rawValue
@@ -38,6 +46,20 @@ import ObjectMapper
             return "APDU progress"
         case .COMMIT_PROCESSED:
             return "Processed commit"
+        case .CARD_ADDED:
+            return "New card was added"
+        case .CARD_DELETED:
+            return "Card was deleted"
+        case .CARD_ACTIVATED:
+            return "Card was activated"
+        case .CARD_DEACTIVATED:
+            return "Card was deactivated"
+        case .CARD_REACTIVATED:
+            return "Card was reactivated"
+        case .SET_DEFAULT_CARD:
+            return "New default card was manually set"
+        case .RESET_DEFAULT_CARD:
+            return "New default card was automatically set"
         }
     }
 }
@@ -230,15 +252,15 @@ public class SyncManager : NSObject {
                 return
             }
             
-            //TODO: delete this once approved
-            let cmts:[Commit]
-            if commits?.count > 0 {
-                cmts = self.___debug_appendAPDUCommits(commits!)
-            } else {
-                cmts = commits!
-            }
-            
-            let applayerStarted = self.commitsApplyer.apply(cmts, completion:
+//            TODO: this is for testing purposes only. It should be removed once actual APDU packages are being received
+//            let cmts:[Commit]
+//            if commits?.count > 0 {
+//                cmts = self.___debug_appendAPDUCommits(commits!)
+//            } else {
+//                cmts = commits!
+//            }
+
+            let applayerStarted = self.commitsApplyer.apply(commits!, completion:
             {
                 [unowned self] (error) -> Void in
                 
