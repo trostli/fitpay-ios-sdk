@@ -1,7 +1,14 @@
 # Fitpay iOS SDK - README.md
 
 
-## Building the app locally
+## Using the SDK
+Fitpay distributes the SDK via cocoapods. Documentation on using cocoapods can be found [here](https://guides.cocoapods.org/using/getting-started.html). Once you have set up your project to use cocoapods, add the following to your Podfile:
+```ruby
+pod 'FitpaySDK'
+```
+
+
+## Building the SDK locally
 Ensure you have cocoapods installed, and the repo checked out:
 ```shell
 sudo gem install cocoapods  

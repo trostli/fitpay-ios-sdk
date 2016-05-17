@@ -9,25 +9,44 @@
 public class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface {
     
     weak var paymentDevice : PaymentDevice!
+    var responseData : ApduResultMessage!
     var connected = false;
+    var _nfcState = SecurityNFCState.Disabled
+    var sendingAPDU : Bool = false
+    let maxPacketSize : Int = 20
+    let apduSecsTimeout : Double = 5
+    var sequenceId: UInt16 = 0
+    
+    var timeoutTimer : NSTimer?
     
     required public init(paymentDevice device:PaymentDevice) {
         self.paymentDevice = device
     }
     
     public func connect() {
-        connected = true
+        dispatch_after(getDelayTime(), dispatch_get_main_queue(), {
+            self.connected = true
+            self._nfcState = SecurityNFCState.Enabled
+            self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceConnected)
+            
+        })
     }
     
     public func disconnect() {
-        connected = false
+        dispatch_after(getDelayTime(), dispatch_get_main_queue(), {
+            self.connected = false
+            self.paymentDevice?.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceDisconnected)
+        })
     }
     
     public func isConnected() -> Bool {
+        debugPrint("checking is connected")
         return connected;
     }
     
-    public func writeSecurityState(state: SecurityNFCState) -> NSError? {
+    public func writeSecurityState(state: SecurityNFCState) -> NSError?{
+        _nfcState = state
+        self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnSecurityStateChanged, params: ["securityState":state.rawValue])
         return nil
     }
     
@@ -42,8 +61,8 @@ public class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface {
     }
     
     public func sendAPDUData(data: NSData, sequenceNumber: UInt16) {
-        var score: Double = 0x90000000000000
-        let data = NSData(bytes: &score, length: sizeof(Double))
+        var score: UInt = 0x90000000000000
+        let data = NSData(bytes: &score, length: sizeof(UInt))
         let packet = ApduResultMessage(msg: data)
         
         if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
@@ -51,6 +70,7 @@ public class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface {
             apduResponseHandler(apduResponse: packet, error: nil)
         }
     }
+    
     
     public func deviceInfo() -> DeviceInfo? {
         let deviceInfo = DeviceInfo()
@@ -64,7 +84,7 @@ public class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface {
         deviceInfo.firmwareRevision = "1030.6408.1309.0001"
         deviceInfo.softwareRevision = "2.0.242009.6"
         deviceInfo.systemId = "0x123456FFFE9ABCDE"
-        deviceInfo.osName = "ANDROID"
+        deviceInfo.osName = "IOS"
         deviceInfo.licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
         deviceInfo.bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
         deviceInfo.secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
@@ -77,6 +97,13 @@ public class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface {
     
     public func resetToDefaultState() {
         
+    }
+    
+    public func getDelayTime() -> UInt64{
+        let seconds = 4.0
+        let delay = seconds * Double(NSEC_PER_SEC)  // nanoseconds per seconds
+        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+        return dispatchTime
     }
 
     
