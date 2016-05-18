@@ -198,6 +198,9 @@ SWIFT_CLASS("_TtC9FitpaySDK10CreditCard")
 @property (nonatomic, copy) NSString * _Nullable targetDeviceType;
 @property (nonatomic, copy) NSArray<VerificationMethod *> * _Nullable verificationMethods;
 @property (nonatomic, copy) NSString * _Nullable externalTokenReference;
+@property (nonatomic, copy) NSString * _Nullable pan;
+@property (nonatomic, copy) NSString * _Nullable cvv;
+@property (nonatomic, copy) NSString * _Nullable name;
 @property (nonatomic, readonly) BOOL acceptTermsAvailable;
 @property (nonatomic, readonly) BOOL declineTermsAvailable;
 @property (nonatomic, readonly) BOOL deactivateAvailable;

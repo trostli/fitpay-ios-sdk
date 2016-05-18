@@ -89,7 +89,7 @@ public class Payload : NSObject, Mappable
     {
         let info = map.JSONDictionary
         
-        if let _ = info["cardMetaData"]
+        if let _ = info["creditCardId"]
         {
             self.creditCard = Mapper<CreditCard>().map(info)
         }

@@ -29,11 +29,16 @@ class WebViewController: UIViewController {
     private func bindToEvents() {
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CARD_ADDED, completion: {
             (event) in
+            var commit = event.eventData["commit"]! as? Commit
+            var cardId = commit?.payload?.creditCard?.creditCardId
+
             print("got card added event")
         })
 
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CARD_DELETED, completion: {
             (event) in
+            var commit = event.eventData["commit"]! as? Commit
+            var cardId = commit?.payload?.creditCard?.creditCardId
             print("got card deleted event")
         })
 
