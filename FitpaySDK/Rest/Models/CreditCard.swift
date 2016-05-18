@@ -38,7 +38,7 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
     public var targetDeviceType:String?
     public var verificationMethods:[VerificationMethod]?
     public var externalTokenReference:String?
-    internal var info:CardInfo?
+    public var info:CardInfo?
     private static let selfResource = "self"
     private static let acceptTermsResource = "acceptTerms"
     private static let declineTermsResource = "declineTerms"
@@ -645,22 +645,22 @@ internal class DeviceRelationshipsTransformType : TransformType
 }
 
 
-internal class CardInfo : Mappable
+public class CardInfo : Mappable
 {
-    var pan:String?
-    var expMonth:Int?
-    var expYear:Int?
-    var cvv:String?
-    var creditCardId:String?
-    var name:String?
-    var address:Address?
+    public var pan:String?
+    public var expMonth:Int?
+    public var expYear:Int?
+    public var cvv:String?
+    public var creditCardId:String?
+    public var name:String?
+    public var address:Address?
     
-    internal required init?(_ map: Map)
+    public required init?(_ map: Map)
     {
         
     }
     
-    internal func mapping(map: Map)
+    public func mapping(map: Map)
     {
         self.pan <- map["pan"]
         self.creditCardId <- map["creditCardId"]

@@ -5,7 +5,7 @@ public class Commit : NSObject, ClientModel, Mappable, SecretApplyable
 {
     var links:[ResourceLink]?
     public var commitType:CommitType?
-    internal var payload:Payload?
+    public var payload:Payload?
     public var created:CLong?
     public var previousCommit:String?
     public var commit:String?
@@ -76,7 +76,7 @@ public enum CommitType : String
 
 public class Payload : NSObject, Mappable
 {
-    internal var creditCard:CreditCard?
+    public var creditCard:CreditCard?
     internal var payloadDictionary:[String : AnyObject]?
     internal var apduPackage:ApduPackage?
     

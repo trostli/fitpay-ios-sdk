@@ -170,9 +170,11 @@ SWIFT_CLASS("_TtC9FitpaySDK16CardRelationship")
 - (void)relationship:(void (^ _Nonnull)(Relationship * _Nullable relationship, NSError * _Nullable error))completion;
 @end
 
+@class Payload;
 
 SWIFT_CLASS("_TtC9FitpaySDK6Commit")
 @interface Commit : NSObject
+@property (nonatomic, strong) Payload * _Nullable payload;
 @property (nonatomic, copy) NSString * _Nullable previousCommit;
 @property (nonatomic, copy) NSString * _Nullable commit;
 @end
@@ -431,6 +433,7 @@ SWIFT_CLASS("_TtC9FitpaySDK26MockPaymentDeviceInterface")
 
 SWIFT_CLASS("_TtC9FitpaySDK7Payload")
 @interface Payload : NSObject
+@property (nonatomic, strong) CreditCard * _Nullable creditCard;
 @end
 
 enum PaymentDeviceEventTypes : NSInteger;
