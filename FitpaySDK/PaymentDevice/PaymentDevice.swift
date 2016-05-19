@@ -221,7 +221,7 @@ public class PaymentDevice : NSObject
      */
     @objc public func changeDeviceInterface(interface: PaymentDeviceBaseInterface) -> NSError? {
         if isConnected {
-            return NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeDisconnected, domain: PaymentDeviceBLEInterface.self)
+            return NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeDisconnected, domain: PaymentDeviceBaseInterface.self)
         }
         
         self.deviceInterface = interface
@@ -242,7 +242,7 @@ public class PaymentDevice : NSObject
     
     internal func sendAPDUData(data: NSData, sequenceNumber: UInt16, completion: APDUResponseHandler) {
         guard isConnected else {
-            completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeConnected, domain: PaymentDeviceBLEInterface.self))
+            completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeConnected, domain: PaymentDeviceBaseInterface.self))
             return
         }
         
@@ -253,7 +253,7 @@ public class PaymentDevice : NSObject
     internal typealias APDUExecutionHandler = (apduCommand:APDUCommand?, error:ErrorType?)->Void
     internal func executeAPDUCommand(inout apduCommand: APDUCommand, completion: APDUExecutionHandler) {
         guard let commandData = apduCommand.command?.hexToData() else {
-            completion(apduCommand: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUDataNotFull, domain: PaymentDeviceBLEInterface.self))
+            completion(apduCommand: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUDataNotFull, domain: PaymentDeviceBaseInterface.self))
             return
         }
         
@@ -270,7 +270,7 @@ public class PaymentDevice : NSObject
             apduCommand.responseCode = apduResponse?.responseCode.hex
             
             if apduCommand.responseType == APDUResponseType.Error {
-                completion(apduCommand: apduCommand, error: NSError.error(code: PaymentDevice.ErrorCode.APDUErrorResponse, domain: PaymentDeviceBLEInterface.self))
+                completion(apduCommand: apduCommand, error: NSError.error(code: PaymentDevice.ErrorCode.APDUErrorResponse, domain: PaymentDeviceBaseInterface.self))
                 return
             }
             
