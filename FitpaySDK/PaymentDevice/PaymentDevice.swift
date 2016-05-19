@@ -278,7 +278,7 @@ public class PaymentDevice : NSObject
         }
     }
     
-    internal func callCompletionForEvent(eventType: FitpayEventTypeProtocol, params: [String:AnyObject] = [:]) {
+    public func callCompletionForEvent(eventType: FitpayEventTypeProtocol, params: [String:AnyObject] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: params))
     }
 }

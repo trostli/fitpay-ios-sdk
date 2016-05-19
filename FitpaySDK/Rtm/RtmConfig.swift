@@ -3,12 +3,12 @@ import ObjectMapper
 public class RtmConfig: NSObject, Mappable {
     public var clientId: String?
     public var redirectUri: String?
-    public var paymentDevice: DeviceInfo?
+    public var deviceInfo: DeviceInfo?
     
-    public init(clientId:String, redirectUri:String, paymentDevice:DeviceInfo) {
+    public init(clientId:String, redirectUri:String, deviceInfo:DeviceInfo?) {
         self.clientId = clientId
         self.redirectUri = redirectUri
-        self.paymentDevice = paymentDevice
+        self.deviceInfo = deviceInfo
     }
     
     public required init?(_ map: Map) {
@@ -18,7 +18,7 @@ public class RtmConfig: NSObject, Mappable {
     public func mapping(map: Map) {
         clientId <- map["clientId"]
         redirectUri <- map["redirectUri"]
-        paymentDevice <- map["paymentDevice"]
+        deviceInfo <- map["paymentDevice"]
     }
 
 }

@@ -24,11 +24,13 @@ public class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface {
     }
     
     public func connect() {
+        print("connecting")
         dispatch_after(getDelayTime(), dispatch_get_main_queue(), {
             self.connected = true
             self._nfcState = SecurityNFCState.Enabled
-            self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceConnected)
-            
+            let deviceInfo = self.deviceInfo()
+            print("triggering device data")
+            self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceConnected, params: ["deviceInfo": deviceInfo!])
         })
     }
     
