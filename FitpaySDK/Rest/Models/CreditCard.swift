@@ -20,6 +20,8 @@ public enum TokenizationState : String
 public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links:[ResourceLink]?
+    internal var encryptedData:String?
+
     public var creditCardId:String?
     public var userId:String?
     public var isDefault:Bool?
@@ -27,18 +29,24 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
     public var createdEpoch:CLong?
     public var state:TokenizationState?
     public var cardType:String?
-    public var cardMetaData:CardMetadata?    
+    public var cardMetaData:CardMetadata?
     public var termsAssetId:String?
     public var termsAssetReferences:[TermsAssetReferences]?
     public var eligibilityExpiration:String?
     public var eligibilityExpirationEpoch:CLong?
     public var deviceRelationships:[DeviceRelationships]?
-    internal var encryptedData:String?
     public var targetDeviceId:String?
     public var targetDeviceType:String?
     public var verificationMethods:[VerificationMethod]?
     public var externalTokenReference:String?
-    internal var info:CardInfo?
+    public var info:CardInfo?
+    public var pan:String?
+    public var expMonth:Int?
+    public var expYear:Int?
+    public var cvv:String?
+    public var name:String?
+    public var address:Address?
+
     private static let selfResource = "self"
     private static let acceptTermsResource = "acceptTerms"
     private static let declineTermsResource = "declineTerms"
@@ -144,6 +152,14 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         self.targetDeviceType <- map["targetDeviceType"]
         self.verificationMethods <- (map["verificationMethods"], VerificationMethodTransformType())
         self.externalTokenReference <- map["externalTokenReference"]
+        self.pan <- map["pan"]
+        self.creditCardId <- map["creditCardId"]
+        self.expMonth <- map["expMonth"]
+        self.expYear <- map["expYear"]
+        self.cvv <- map["cvv"]
+        self.name <- map["name"]
+        self.address = Mapper<Address>().map(map["address"].currentValue)
+        self.name <- map["name"]
     }
     
     func applySecret(secret:Foundation.NSData, expectedKeyId:String?)
@@ -645,22 +661,22 @@ internal class DeviceRelationshipsTransformType : TransformType
 }
 
 
-internal class CardInfo : Mappable
+public class CardInfo : Mappable
 {
-    var pan:String?
-    var expMonth:Int?
-    var expYear:Int?
-    var cvv:String?
-    var creditCardId:String?
-    var name:String?
-    var address:Address?
+    public var pan:String?
+    public var expMonth:Int?
+    public var expYear:Int?
+    public var cvv:String?
+    public var creditCardId:String?
+    public var name:String?
+    public var address:Address?
     
-    internal required init?(_ map: Map)
+    public required init?(_ map: Map)
     {
         
     }
     
-    internal func mapping(map: Map)
+    public func mapping(map: Map)
     {
         self.pan <- map["pan"]
         self.creditCardId <- map["creditCardId"]

@@ -170,9 +170,11 @@ SWIFT_CLASS("_TtC9FitpaySDK16CardRelationship")
 - (void)relationship:(void (^ _Nonnull)(Relationship * _Nullable relationship, NSError * _Nullable error))completion;
 @end
 
+@class Payload;
 
 SWIFT_CLASS("_TtC9FitpaySDK6Commit")
 @interface Commit : NSObject
+@property (nonatomic, strong) Payload * _Nullable payload;
 @property (nonatomic, copy) NSString * _Nullable previousCommit;
 @property (nonatomic, copy) NSString * _Nullable commit;
 @end
@@ -196,6 +198,9 @@ SWIFT_CLASS("_TtC9FitpaySDK10CreditCard")
 @property (nonatomic, copy) NSString * _Nullable targetDeviceType;
 @property (nonatomic, copy) NSArray<VerificationMethod *> * _Nullable verificationMethods;
 @property (nonatomic, copy) NSString * _Nullable externalTokenReference;
+@property (nonatomic, copy) NSString * _Nullable pan;
+@property (nonatomic, copy) NSString * _Nullable cvv;
+@property (nonatomic, copy) NSString * _Nullable name;
 @property (nonatomic, readonly) BOOL acceptTermsAvailable;
 @property (nonatomic, readonly) BOOL declineTermsAvailable;
 @property (nonatomic, readonly) BOOL deactivateAvailable;
@@ -431,6 +436,7 @@ SWIFT_CLASS("_TtC9FitpaySDK26MockPaymentDeviceInterface")
 
 SWIFT_CLASS("_TtC9FitpaySDK7Payload")
 @interface Payload : NSObject
+@property (nonatomic, strong) CreditCard * _Nullable creditCard;
 @end
 
 enum PaymentDeviceEventTypes : NSInteger;
