@@ -332,6 +332,9 @@ SWIFT_CLASS("_TtC9FitpaySDK13EncryptionKey")
 SWIFT_CLASS("_TtC9FitpaySDK9FPWebView")
 @interface FPWebView : NSObject <WKScriptMessageHandler>
 - (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice OBJC_DESIGNATED_INITIALIZER;
+
+/// In order to open a web-view connect the SDK must have a connection to the payment device in order to gather data about that device. This will attempt to connect, and call the completion with either an error or nil if the connection attempt is successful.
+- (void)openDeviceConnection:(void (^ _Nonnull)(NSError * _Nullable error))completion;
 - (void)setWebView:(WKWebView * _Null_unspecified)webview;
 
 /// This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app. Note that the value "rtmBridge" is an agreeded upon value between this and the web-view.
@@ -562,8 +565,8 @@ SWIFT_CLASS("_TtC9FitpaySDK9RtmConfig")
 @interface RtmConfig : NSObject
 @property (nonatomic, copy) NSString * _Nullable clientId;
 @property (nonatomic, copy) NSString * _Nullable redirectUri;
-@property (nonatomic, strong) DeviceInfo * _Nullable paymentDevice;
-- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(DeviceInfo * _Nonnull)paymentDevice OBJC_DESIGNATED_INITIALIZER;
+@property (nonatomic, strong) DeviceInfo * _Nullable deviceInfo;
+- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri deviceInfo:(DeviceInfo * _Nullable)deviceInfo OBJC_DESIGNATED_INITIALIZER;
 @end
 
 @class NSURL;

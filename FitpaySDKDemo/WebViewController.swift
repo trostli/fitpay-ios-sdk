@@ -8,37 +8,39 @@ class WebViewController: UIViewController {
     @IBOutlet var containerView : UIView! = nil
     var webView = WKWebView()
     var fp: FPWebView?
-    
+
     override func viewDidLoad() {
         let device = PaymentDevice();
         device.changeDeviceInterface(MockPaymentDeviceInterface(paymentDevice: device))
 
         fp = FPWebView(clientId: "pagare", redirectUri: "http://example.com", paymentDevice: device)
-        let config:WKWebViewConfiguration = fp!.wvConfig()
-        
-        self.view.frame = self.view.bounds
-        self.webView = WKWebView(frame: self.view.frame, configuration: config)
-        
-        self.view = self.webView
-        self.webView.loadRequest((fp!.wvRequest()))
-        fp?.setWebView(webView)
+        fp!.openDeviceConnection { (error) in
+            if let _ = error {
+                print("failed to connect to device")
+                return
+            }
+            print("opening web view")
+            let config:WKWebViewConfiguration = self.fp!.wvConfig()
 
-        bindToEvents()
+            self.view.frame = self.view.bounds
+            self.webView = WKWebView(frame: self.view.frame, configuration: config)
+
+            self.view = self.webView
+            self.webView.loadRequest((self.fp!.wvRequest()))
+            self.fp?.setWebView(self.webView)
+            
+            self.bindToEvents()
+        }
     }
 
     private func bindToEvents() {
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CARD_ADDED, completion: {
             (event) in
-            var commit = event.eventData["commit"]! as? Commit
-            var cardId = commit?.payload?.creditCard?.creditCardId
-
             print("got card added event")
         })
 
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CARD_DELETED, completion: {
             (event) in
-            var commit = event.eventData["commit"]! as? Commit
-            var cardId = commit?.payload?.creditCard?.creditCardId
             print("got card deleted event")
         })
 

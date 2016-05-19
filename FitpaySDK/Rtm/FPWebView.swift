@@ -20,27 +20,55 @@ public class FPWebView : NSObject, WKScriptMessageHandler {
     let url = BASE_URL
     let paymentDevice: PaymentDevice?
     var user: User?
-    let rtmConfig: RtmConfig?
+    var rtmConfig: RtmConfig?
     let restSession: RestSession?
     let restClient: RestClient?
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
+    var connectionBinding: FitpayEventBinding?
 
     var sessionDataCallBackId: Int?
     var syncCallBacks = [Int]()
     
     public init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice) {
         self.paymentDevice = paymentDevice
-        paymentDevice.connect()
-        self.rtmConfig = RtmConfig(clientId: clientId, redirectUri: redirectUri, paymentDevice: paymentDevice.deviceInfo!)
-
+        self.rtmConfig = RtmConfig(clientId: clientId, redirectUri: redirectUri, deviceInfo: nil)
         self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
         self.restClient = RestClient(session: self.restSession!)
         self.paymentDevice!.deviceInfo?.client = self.restClient
+
         SyncManager.sharedInstance.paymentDevice = paymentDevice
 
         super.init()
         self.bindEvents()
+    }
+
+    /**
+      In order to open a web-view the SDK must have a connection to the payment device in order to gather data about 
+      that device. This will attempt to connect, and call the completion with either an error or nil if the connection 
+      attempt is successful.
+     */
+    public func openDeviceConnection(completion: (error:NSError?) -> Void) {
+        self.paymentDevice!.connect()
+
+        self.connectionBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion: {
+            (event) in
+            
+            self.paymentDevice!.removeBinding(binding: self.connectionBinding!)
+
+            if let error = event.eventData["error"]! as? NSError {
+                completion(error: error)
+                return
+            }
+
+            if let deviceInfo = event.eventData["deviceInfo"]! as? DeviceInfo {
+                self.rtmConfig?.deviceInfo = deviceInfo
+                completion(error: nil)
+                return
+            }
+
+            completion(error: NSError.error(code: 1, domain: FPWebView.self, message: "Could not open connection. OnDeviceConnected event did not supply valid device data"))
+        })
     }
     
     public func setWebView(webview:WKWebView!) {
