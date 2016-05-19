@@ -44,9 +44,9 @@ public class FPWebView : NSObject, WKScriptMessageHandler {
     }
 
     /**
-      In order to open a web-view connect the SDK must have a connection to the payment device in order to gather
-      data about that device. This will attempt to connect, and call the completion with either an error or nil
-      if the connection attempt is successful.
+      In order to open a web-view the SDK must have a connection to the payment device in order to gather data about 
+      that device. This will attempt to connect, and call the completion with either an error or nil if the connection 
+      attempt is successful.
      */
     public func openDeviceConnection(completion: (error:NSError?) -> Void) {
         self.paymentDevice!.connect()
