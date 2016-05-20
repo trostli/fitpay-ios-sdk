@@ -15,13 +15,15 @@ public class ApduResultMessage : NSObject {
     var sequenceId : UInt16
     var responseCode: NSData
     
-    init(hexResult: String, sequenceId : String) {
-        // This extension and it's counterpart in NSData don't seem to preserve the correct hex value
-        self.msg = hexResult.hexToData()!;
+    public init(hexResult: String, sequenceId : String) {
+        debugPrint("hexString \(hexResult), sequenceId \(sequenceId)")
+        self.msg = hexResult.hexToData()!
+        print("message \(msg)")
         self.sequenceId = UInt16(sequenceId)!
         resultCode = UInt8(00)
         var buffer = [UInt8](count: (msg.length), repeatedValue: 0x00)
         msg.getBytes(&buffer, length: buffer.count)
+        print("message length \(msg.length)")
         let range : NSRange = NSMakeRange(msg.length - 2, 2)
         buffer = [UInt8](count: 2, repeatedValue: 0x00)
         msg.getBytes(&buffer, range: range)
@@ -30,7 +32,7 @@ public class ApduResultMessage : NSObject {
         print("responseCode \(responseCode)")
     }
     
-    init(msg: NSData) {
+    public init(msg: NSData) {
         self.msg = msg
         var buffer = [UInt8](count: (msg.length), repeatedValue: 0x00)
         msg.getBytes(&buffer, length: buffer.count)
