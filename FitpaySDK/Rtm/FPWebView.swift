@@ -30,7 +30,7 @@ public class FPWebView : NSObject, WKScriptMessageHandler {
     var sessionDataCallBackId: Int?
     var syncCallBacks = [Int]()
     
-    public init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice) {
+    public init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice, userEmail:String?) {
         self.paymentDevice = paymentDevice
         self.rtmConfig = RtmConfig(clientId: clientId, redirectUri: redirectUri, deviceInfo: nil)
         self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)

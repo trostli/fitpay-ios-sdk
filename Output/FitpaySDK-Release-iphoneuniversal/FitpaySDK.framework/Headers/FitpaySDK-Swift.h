@@ -331,9 +331,9 @@ SWIFT_CLASS("_TtC9FitpaySDK13EncryptionKey")
 
 SWIFT_CLASS("_TtC9FitpaySDK9FPWebView")
 @interface FPWebView : NSObject <WKScriptMessageHandler>
-- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice userEmail:(NSString * _Nullable)userEmail OBJC_DESIGNATED_INITIALIZER;
 
-/// In order to open a web-view connect the SDK must have a connection to the payment device in order to gather data about that device. This will attempt to connect, and call the completion with either an error or nil if the connection attempt is successful.
+/// In order to open a web-view the SDK must have a connection to the payment device in order to gather data about that device. This will attempt to connect, and call the completion with either an error or nil if the connection attempt is successful.
 - (void)openDeviceConnection:(void (^ _Nonnull)(NSError * _Nullable error))completion;
 - (void)setWebView:(WKWebView * _Null_unspecified)webview;
 
