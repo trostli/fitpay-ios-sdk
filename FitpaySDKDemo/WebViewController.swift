@@ -13,7 +13,7 @@ class WebViewController: UIViewController {
         let device = PaymentDevice();
         device.changeDeviceInterface(MockPaymentDeviceInterface(paymentDevice: device))
 
-        fp = FPWebView(clientId: "pagare", redirectUri: "http://example.com", paymentDevice: device)
+        fp = FPWebView(clientId: "pagare", redirectUri: "http://example.com", paymentDevice: device, userEmail: "user@example.com")
         fp!.openDeviceConnection { (error) in
             if let _ = error {
                 print("failed to connect to device")
