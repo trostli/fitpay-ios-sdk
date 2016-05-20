@@ -63,9 +63,10 @@ public class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface {
     }
     
     public func sendAPDUData(data: NSData, sequenceNumber: UInt16) {
-        var score: Double = 0x90000000000000
-        let data = NSData(bytes: &score, length: sizeof(Double))
-        let packet = ApduResultMessage(msg: data)
+//        var score: Double = 0x90000000000000
+//        let data = NSData(bytes: &score, length: sizeof(Double))
+        let data = "9000"
+        let packet = ApduResultMessage(hexResult: data, sequenceId: String(sequenceNumber))
         
         if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
             self.paymentDevice.apduResponseHandler = nil

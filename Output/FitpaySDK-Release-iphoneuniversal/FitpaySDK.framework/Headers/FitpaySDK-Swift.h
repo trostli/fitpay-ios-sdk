@@ -131,6 +131,11 @@ SWIFT_CLASS("_TtC9FitpaySDK11ApduPackage")
 @end
 
 
+SWIFT_CLASS("_TtC9FitpaySDK17ApduResultMessage")
+@interface ApduResultMessage : NSObject
+@end
+
+
 SWIFT_CLASS("_TtC9FitpaySDK5Asset")
 @interface Asset : NSObject
 @end

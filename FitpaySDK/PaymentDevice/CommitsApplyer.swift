@@ -102,7 +102,7 @@ internal class CommitsApplyer {
             
             completion(error: error)
         }
-        
+        print("in commitApplyer with commitType \(commitType)")
         switch (commitType) {
         case CommitType.APDU_PACKAGE:
             processAPDUCommit(commit, completion: commitCompletion)
@@ -112,6 +112,7 @@ internal class CommitsApplyer {
     }
     
     private func processAPDUCommit(commit: Commit, completion: CommitCompletion) {
+        print("in getCommits")
         guard let apduPackage = commit.payload?.apduPackage else {
             completion(error: NSError.unhandledError(SyncManager.self))
             return
@@ -120,6 +121,7 @@ internal class CommitsApplyer {
         let applyingStartDate = NSDate().timeIntervalSince1970
         
         if apduPackage.isExpired {
+            print("packageExpired")
             apduPackage.state = APDUPackageResponseState.EXPIRED
             
             // is this error?
@@ -148,13 +150,12 @@ internal class CommitsApplyer {
             } else {
                 apduPackage.state = APDUPackageResponseState.PROCESSED
             }
-            
-            //TODO: uncomment this when apdu will be implemented on backend
-//            commit.confirmAPDU(
-//            {
-//                (confirmError) -> Void in
-//                completion(error: error ?? confirmError)
-//            })
+            debugPrint("about to call confirm")
+            commit.confirmAPDU(
+            {
+                (confirmError) -> Void in
+                completion(error: error ?? confirmError)
+            })
             completion(error: error)
         }
     }

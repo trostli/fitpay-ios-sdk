@@ -19,6 +19,10 @@ class WebViewController: UIViewController {
                 print("failed to connect to device")
                 return
             }
+            let sequence: String = "1"
+            let response: NSData = "9000".dataUsingEncoding(NSUTF8StringEncoding)!
+            
+            let packet = ApduResultMessage(msg: response, sequenceId: sequence)
             print("opening web view")
             let config:WKWebViewConfiguration = self.fp!.wvConfig()
 

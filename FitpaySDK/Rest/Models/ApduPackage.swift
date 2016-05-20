@@ -49,7 +49,10 @@ public class ApduPackage : NSObject, Mappable
     }
     
     public var isExpired : Bool {
-        return validUntilEpoch <= CLong(NSDate().timeIntervalSince1970)
+//        return validUntilEpoch <= CLong(NSDate().timeIntervalSince1970)
+        // validUntilEpoch not currently in the commit event
+
+        return false
     }
     
     public var responseDictionary : [String:AnyObject] {
