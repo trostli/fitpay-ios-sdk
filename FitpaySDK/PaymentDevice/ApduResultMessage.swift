@@ -14,6 +14,7 @@ public class ApduResultMessage : NSObject {
     var resultCode : UInt8
     var sequenceId : UInt16
     var responseCode: NSData
+    var responseData: NSData
     
     public init(hexResult: String, sequenceId : String) {
         self.msg = hexResult.hexToData()!
@@ -25,6 +26,7 @@ public class ApduResultMessage : NSObject {
         msg.getBytes(&buffer, range: range)
         
         responseCode = NSData(bytes: buffer, length: 2)
+        self.responseData = self.msg
         print("responseCode \(responseCode)")
     }
     
@@ -40,10 +42,16 @@ public class ApduResultMessage : NSObject {
         recvSeqId = recvSeqId! | UInt16(buffer[1])
         sequenceId = recvSeqId!
         
-        let range : NSRange = NSMakeRange(msg.length - 2, 2)
+        var range : NSRange = NSMakeRange(msg.length - 2, 2)
         buffer = [UInt8](count: 2, repeatedValue: 0x00)
         msg.getBytes(&buffer, range: range)
         responseCode = NSData(bytes: buffer, length: 2)
+        
+        range = NSMakeRange(1, msg.length - 2)
+        buffer = [UInt8](count: msg.length - 2, repeatedValue: 0x00)
+        msg.getBytes(&buffer, range: range)
+        responseData = NSData(bytes: buffer, length:  msg.length - 2)
+
     }
     
 }
