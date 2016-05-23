@@ -231,8 +231,8 @@ public class PaymentDevice : NSObject
     internal var deviceInterface : PaymentDeviceBaseInterface!
     private let eventsDispatcher = FitpayEventDispatcher()
     
-    internal typealias APDUResponseHandler = (apduResponse:ApduResultMessage?, error:ErrorType?)->Void
-    internal var apduResponseHandler : APDUResponseHandler?
+    public typealias APDUResponseHandler = (apduResponse:ApduResultMessage?, error:ErrorType?)->Void
+    public var apduResponseHandler : APDUResponseHandler?
     
     override public init() {
         super.init()
@@ -265,6 +265,7 @@ public class PaymentDevice : NSObject
                 completion(apduCommand: apduCommand, error: error)
                 return
             }
+            print("apduResponse \(apduResponse)")
             
             apduCommand.responseData = apduResponse?.msg.hex
             apduCommand.responseCode = apduResponse?.responseCode.hex

@@ -19,6 +19,7 @@ class WebViewController: UIViewController {
                 print("failed to connect to device")
                 return
             }
+            
             print("opening web view")
             let config:WKWebViewConfiguration = self.fp!.wvConfig()
 

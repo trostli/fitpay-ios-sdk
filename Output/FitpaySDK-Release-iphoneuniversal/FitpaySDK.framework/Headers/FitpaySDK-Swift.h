@@ -130,6 +130,14 @@ SWIFT_CLASS("_TtC9FitpaySDK11ApduPackage")
 @property (nonatomic, readonly, copy) NSDictionary<NSString *, id> * _Nonnull responseDictionary;
 @end
 
+@class NSData;
+
+SWIFT_CLASS("_TtC9FitpaySDK17ApduResultMessage")
+@interface ApduResultMessage : NSObject
+- (nonnull instancetype)initWithHexResult:(NSString * _Nonnull)hexResult sequenceId:(NSString * _Nonnull)sequenceId OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithMsg:(NSData * _Nonnull)msg OBJC_DESIGNATED_INITIALIZER;
+@end
+
 
 SWIFT_CLASS("_TtC9FitpaySDK5Asset")
 @interface Asset : NSObject
@@ -382,7 +390,6 @@ SWIFT_CLASS("_TtC9FitpaySDK5Image")
 @end
 
 enum SecurityNFCState : NSInteger;
-@class NSData;
 
 SWIFT_PROTOCOL("_TtP9FitpaySDK26PaymentDeviceBaseInterface_")
 @protocol PaymentDeviceBaseInterface
