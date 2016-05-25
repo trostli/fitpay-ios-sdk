@@ -90,6 +90,8 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         pairing <- map["pairing"]
         if let secureElement = map["secureElement"].currentValue as? [String:String] {
             secureElementId = secureElement["secureElementId"]
+        }  else {
+            secureElementId <- map["secureElementId"]
         }
         
         if let cardRelationships = map["cardRelationships"].currentValue as? [AnyObject] {
