@@ -6,11 +6,11 @@ class RestClientTests: XCTestCase
 {
     let clientId = "pagare"
     let redirectUri = "http://demo.pagare.me"
-    let username = "testableuser2@something.com"
     let password = "1029"
 
     var session:RestSession!
     var client:RestClient!
+    var testHelper:TestHelpers!
     
     override func invokeTest()
     {
@@ -29,6 +29,7 @@ class RestClientTests: XCTestCase
         super.setUp()
         self.session = RestSession(clientId:self.clientId, redirectUri:self.redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
         self.client = RestClient(session: self.session!)
+        self.testHelper = TestHelpers(clientId: clientId, redirectUri: redirectUri, session: self.session, client: self.client)
     }
     
     override func tearDown()
@@ -178,11 +179,7 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'user' created")
         
-        let email = randomStringWithLength(8)
-            .stringByAppendingString("@")
-            .stringByAppendingString(randomStringWithLength(5))
-            .stringByAppendingString(".")
-            .stringByAppendingString(randomStringWithLength(5))
+        let email = self.testHelper.randomEmail()
         let pin = "1234"
         
         self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
@@ -212,10 +209,10 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'user' created")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
            [unowned self] user in
-            self.deleteUser(user, expectation: expectation)
+            self.testHelper.deleteUser(user, expectation: expectation)
         }
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
@@ -225,10 +222,10 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'user.deleteUser' deletes user")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self] user in
-            self.deleteUser(user, expectation: expectation)
+            self.testHelper.deleteUser(user, expectation: expectation)
         }
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
@@ -238,12 +235,12 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'user.updateUser' gets error 400")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self] (user) in
             
-            let firstName = self.randomStringWithLength(10)
-            let lastNname = self.randomStringWithLength(10)
+            let firstName = self.testHelper.randomStringWithLength(10)
+            let lastNname = self.testHelper.randomStringWithLength(10)
             
             user?.updateUser(firstName: firstName, lastName: lastNname, birthDate: nil, originAccountCreated: nil, termsAccepted: nil, termsVersion: nil)
             {
@@ -253,7 +250,7 @@ class RestClientTests: XCTestCase
                 //XCTAssertEqual(updateUser?.lastName, lastNname)
                 
                 XCTAssertEqual(updateError?.code, 400)
-                self.deleteUser(user, expectation: expectation)
+                self.testHelper.deleteUser(user, expectation: expectation)
             }
         }
         
@@ -264,13 +261,13 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'user' retrieves user by her id")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
-            [unowned self](user) in
+            (user) in
             self.client.user(id: (user?.id)!, completion:
             {
                 (user, error) -> Void in
-                self.deleteUser(user, expectation: expectation)
+                self.testHelper.deleteUser(user, expectation: expectation)
             })
         }
         
@@ -281,17 +278,17 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'creditCards' retrieves credit cards for user")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
-                    self.deleteUser(user, expectation: expectation)
+                    self.testHelper.deleteUser(user, expectation: expectation)
                 }
             }
         }
@@ -303,23 +300,23 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'listCreditCards' lists credit cards for user")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
-                    self.listCreditCards(expectation, user: user)
+                    self.testHelper.listCreditCards(expectation, user: user)
                     {
                         (user, result) in
                         
                         XCTAssertEqual(creditCard?.creditCardId, result?.results?.first?.creditCardId)
                         
-                        self.deleteUser(user, expectation: expectation)
+                        self.testHelper.deleteUser(user, expectation: expectation)
                     }
                 }
             }
@@ -332,14 +329,14 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'delete' deletes credit card after creating it")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
@@ -354,7 +351,7 @@ class RestClientTests: XCTestCase
                             return
                         }
                         
-                        self.deleteUser(user, expectation: expectation)
+                        self.testHelper.deleteUser(user, expectation: expectation)
                     }
                 }
             }
@@ -368,14 +365,14 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'update' updates credit card")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
@@ -397,7 +394,7 @@ class RestClientTests: XCTestCase
                         XCTAssertNil(error)
                         XCTAssertNotNil(updatedCard)
                         
-                        self.listCreditCards(expectation, user: user)
+                        self.testHelper.listCreditCards(expectation, user: user)
                         {
                             (user, result) in
                             let currentCard = result?.results?.first
@@ -425,7 +422,7 @@ class RestClientTests: XCTestCase
                                 //XCTAssertEqual(updatedCard?.info?.address?.countryCode, countryCode)
                                 //XCTAssertEqual(updatedCard?.info?.address?.countryCode, currentCard.info?.address?.countryCode)
                                 
-                                self.deleteUser(user, expectation: expectation)
+                                self.testHelper.deleteUser(user, expectation: expectation)
                             }
 
                         }
@@ -441,37 +438,37 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'makeDefault' makes credit card default")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
-                    self.acceptTermsForCreditCard(expectation, card: creditCard)
+                    self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard)
                     {
                         (card) in
-                        self.selectVerificationType(expectation, card: card)
+                        self.testHelper.selectVerificationType(expectation, card: card)
                         {
                             (verificationMethod) in
                             
-                            self.verifyCreditCard(expectation, verificationMethod: verificationMethod)
+                            self.testHelper.verifyCreditCard(expectation, verificationMethod: verificationMethod)
                             {
                                 card in
                                 XCTAssertTrue(card!.isDefault!)
 
-                                self.createAcceptVerifyAmExCreditCard(expectation, pan: "9999611111111114", user: user)
+                                self.testHelper.createAcceptVerifyAmExCreditCard(expectation, pan: "9999611111111114", user: user)
                                 {
                                     (creditCard) in
                                     
-                                    self.makeCreditCardDefault(expectation, card: creditCard)
+                                    self.testHelper.makeCreditCardDefault(expectation, card: creditCard)
                                     {
                                         (defaultCreditCard) in
-                                        self.deleteUser(user, expectation: expectation)
+                                        self.testHelper.deleteUser(user, expectation: expectation)
                                     }
                                 }
                             }
@@ -488,33 +485,33 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'deactivate' makes credit card deactivated")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
-                    self.acceptTermsForCreditCard(expectation, card: creditCard)
+                    self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard)
                     {
                         (card) in
-                        self.selectVerificationType(expectation, card: card)
+                        self.testHelper.selectVerificationType(expectation, card: card)
                         {
                             (verificationMethod) in
                             
-                            self.verifyCreditCard(expectation, verificationMethod: verificationMethod)
+                            self.testHelper.verifyCreditCard(expectation, verificationMethod: verificationMethod)
                             {
                                 (verifiedCreditCard) in
                                 
-                                self.deactivateCreditCard(expectation, creditCard: verifiedCreditCard)
+                                self.testHelper.deactivateCreditCard(expectation, creditCard: verifiedCreditCard)
                                 {
                                     (deactivatedCard) in
                                  
-                                    self.deleteUser(user, expectation: expectation)
+                                    self.testHelper.deleteUser(user, expectation: expectation)
                                 }
                             }
                         }
@@ -641,29 +638,29 @@ class RestClientTests: XCTestCase
         let expectation = super.expectationWithDescription("'reactivate' makes credit card activated")
         
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
-                    self.acceptTermsForCreditCard(expectation, card: creditCard)
+                    self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard)
                     {
                         (card) in
-                        self.selectVerificationType(expectation, card: card)
+                        self.testHelper.selectVerificationType(expectation, card: card)
                         {
                             (verificationMethod) in
                             
-                            self.verifyCreditCard(expectation, verificationMethod: verificationMethod)
+                            self.testHelper.verifyCreditCard(expectation, verificationMethod: verificationMethod)
                             {
                                 (verifiedCreditCard) in
                                 
-                                self.deactivateCreditCard(expectation, creditCard: verifiedCreditCard)
+                                self.testHelper.deactivateCreditCard(expectation, creditCard: verifiedCreditCard)
                                 {
                                     (deactivatedCard) in
                                     
@@ -679,7 +676,7 @@ class RestClientTests: XCTestCase
                                         
                                         XCTAssertEqual(creditCard?.state, .ACTIVE)
                                         
-                                        self.deleteUser(user, expectation: expectation)
+                                        self.testHelper.deleteUser(user, expectation: expectation)
                                     }
                                     
                                     
@@ -699,21 +696,21 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'creditCard' accept terms")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
-                    self.acceptTermsForCreditCard(expectation, card: creditCard)
+                    self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard)
                     {
                         (card) in
-                        self.deleteUser(user, expectation: expectation)
+                        self.testHelper.deleteUser(user, expectation: expectation)
                     }
                 }
             }
@@ -727,14 +724,14 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'creditCard' decline terms")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
@@ -750,7 +747,7 @@ class RestClientTests: XCTestCase
                         
                         XCTAssertEqual(card?.state, .DECLINED_TERMS_AND_CONDITIONS)
                         
-                        self.deleteUser(user, expectation: expectation)
+                        self.testHelper.deleteUser(user, expectation: expectation)
                     }
                 }
             }
@@ -763,24 +760,24 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'selectVerificationType' selects verification method")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
-                    self.acceptTermsForCreditCard(expectation, card: creditCard)
+                    self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard)
                     {
                         (card) in
-                        self.selectVerificationType(expectation, card: card)
+                        self.testHelper.selectVerificationType(expectation, card: card)
                         {
                             (verificationMethod) in
-                            self.deleteUser(user, expectation: expectation)
+                            self.testHelper.deleteUser(user, expectation: expectation)
                         }
                     }
                 }
@@ -794,28 +791,28 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'creditCard' verify card with id")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
-                    self.acceptTermsForCreditCard(expectation, card: creditCard)
+                    self.testHelper.acceptTermsForCreditCard(expectation, card: creditCard)
                     {
                         (card) in
-                        self.selectVerificationType(expectation, card: card)
+                        self.testHelper.selectVerificationType(expectation, card: card)
                         {
                             (verificationMethod) in
                             
-                            self.verifyCreditCard(expectation, verificationMethod: verificationMethod)
+                            self.testHelper.verifyCreditCard(expectation, verificationMethod: verificationMethod)
                             {
                                 (verificationMethod) in
-                                self.deleteUser(user, expectation: expectation)
+                                self.testHelper.deleteUser(user, expectation: expectation)
                             }
                         }
                     }
@@ -830,11 +827,11 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test 'device' retrieves devices by user id")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
                 user?.listDevices(limit: 10, offset: 0)
@@ -857,7 +854,7 @@ class RestClientTests: XCTestCase
                         XCTAssertNotNil(deviceInfo.metadata)
                     }
                     
-                    self.deleteUser(user, expectation: expectation)
+                    self.testHelper.deleteUser(user, expectation: expectation)
                 }
             }
         }
@@ -869,14 +866,14 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test 'user.createDevice' creates device")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.deleteUser(user, expectation: expectation)
+                self.testHelper.deleteUser(user, expectation: expectation)
             }
         }
 
@@ -887,11 +884,11 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test 'device.deleteDevice' deletes device")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
                 user?.listDevices(limit: 10, offset: 0)
@@ -936,7 +933,7 @@ class RestClientTests: XCTestCase
                             }
                             
                             XCTAssertEqual(result?.totalResults, 0)
-                            self.deleteUser(user, expectation: expectation)
+                            self.testHelper.deleteUser(user, expectation: expectation)
                         }
                     }
                 }
@@ -951,11 +948,11 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test 'device.user' retrieves user ")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
                 
@@ -972,7 +969,7 @@ class RestClientTests: XCTestCase
                         return
                     }
                     
-                    self.deleteUser(retrievedUser, expectation: expectation)
+                    self.testHelper.deleteUser(retrievedUser, expectation: expectation)
                 }
             }
         }
@@ -984,11 +981,11 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test 'device' update device")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
                 
@@ -1009,7 +1006,7 @@ class RestClientTests: XCTestCase
                     XCTAssertEqual(updatedDevice!.softwareRevision!, softwareRev)
                     XCTAssertEqual(updatedDevice!.firmwareRevision!, firmwareRev)
                         
-                    self.deleteUser(user, expectation: expectation)
+                    self.testHelper.deleteUser(user, expectation: expectation)
                 })
             }
         }
@@ -1021,11 +1018,11 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test 'device' retrieving commits from device")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
                 
@@ -1066,7 +1063,7 @@ class RestClientTests: XCTestCase
                             XCTAssertNotNil(commit.commit)
                         }
                         
-                        self.deleteUser(user, expectation: expectation)
+                        self.testHelper.deleteUser(user, expectation: expectation)
                     }
                 }
             }
@@ -1079,14 +1076,14 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test 'relationships' creates and deletes relationship")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
@@ -1129,7 +1126,7 @@ class RestClientTests: XCTestCase
                                     return
                                 }
                                 
-                                self.deleteUser(user, expectation: expectation)
+                                self.testHelper.deleteUser(user, expectation: expectation)
                             }
                         }
                     }
@@ -1144,14 +1141,14 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'assets' retrievs asset")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
@@ -1167,7 +1164,7 @@ class RestClientTests: XCTestCase
                             return
                         }
                         
-                        self.deleteUser(user, expectation: expectation)
+                        self.testHelper.deleteUser(user, expectation: expectation)
                     }
                 }
             }
@@ -1180,14 +1177,14 @@ class RestClientTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("'transaction' retrieves transactions by user id")
         
-        self.createAndLoginUser(expectation)
+        self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            self.createDevice(expectation, user: user)
+            self.testHelper.createDevice(expectation, user: user)
             {
                 (user, device) in
-                self.createCreditCard(expectation, user: user)
+                self.testHelper.createCreditCard(expectation, user: user)
                 {
                     (user, creditCard) in
                     
@@ -1221,7 +1218,7 @@ class RestClientTests: XCTestCase
                                 }
                             }
                             
-                            self.deleteUser(user, expectation: expectation)
+                            self.testHelper.deleteUser(user, expectation: expectation)
                         }
                     }
                 }
@@ -1275,396 +1272,5 @@ class RestClientTests: XCTestCase
     
     // Helpers
     
-    func createAndLoginUser(expectation:XCTestExpectation, completion:(User?)->Void)
-    {
-        let email = randomStringWithLength(8)
-            .stringByAppendingString("@")
-            .stringByAppendingString(randomStringWithLength(5))
-            .stringByAppendingString(".")
-            .stringByAppendingString(randomStringWithLength(5))
-        let pin = "1234"
-        
-        self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
-                               birthDate:nil,
-                               termsVersion:nil, termsAccepted:nil,
-                               origin:nil, originAccountCreated:nil,
-                               completion:
-            {
-                [unowned self](user, error) -> Void in
-                
-                XCTAssertNil(error)
-                
-                if error != nil
-                {
-                    expectation.fulfill()
-                    return
-                }
-                
-                XCTAssertNotNil(user, "user is nil")
-                debugPrint("created user: \(user?.info?.email)")
-                XCTAssertNotNil(user?.info)
-                XCTAssertNotNil(user?.created)
-                XCTAssertNotNil(user?.links)
-                XCTAssertNotNil(user?.createdEpoch)
-                XCTAssertNotNil(user?.encryptedData)
-                XCTAssertNotNil(user?.info?.email)
-                
-                self.session.login(username: email, password: pin, completion:
-                {
-                    (loginError) -> Void in
-                    XCTAssertNil(loginError)
-                    debugPrint("user isAuthorized: \(self.session.isAuthorized)")
-                    XCTAssertTrue(self.session.isAuthorized, "user should be authorized")
-                    
-                    if loginError != nil
-                    {
-                        expectation.fulfill()
-                        return
-                    }
-                    
-                    self.client.user(id: self.session.userId!)
-                    {
-                        (user, userError) in
-                        
-                        XCTAssertNotNil(user)
-                        XCTAssertNotNil(user?.info)
-                        XCTAssertNotNil(user?.created)
-                        XCTAssertNotNil(user?.links)
-                        XCTAssertNotNil(user?.createdEpoch)
-                        XCTAssertNotNil(user?.encryptedData)
-                        XCTAssertNotNil(user?.info?.email)
-                        XCTAssertNil(userError)
-                        
-                        if userError != nil
-                        {
-                            expectation.fulfill()
-                            return
-                        }
-                        
-                        completion(user)
-                    }
-                    
-                })
-        })
-    }
-    
-    func deleteUser(user:User?, expectation:XCTestExpectation)
-    {
-        user?.deleteUser
-        {
-            (error) in
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
-    }
-    
-    func createDevice(expectation:XCTestExpectation, user:User?, completion:(user:User?, device:DeviceInfo?) -> Void)
-    {
-        let deviceType = "WATCH"
-        let manufacturerName = "Fitpay"
-        let deviceName = "PSPS"
-        let serialNumber = "074DCC022E14"
-        let modelNumber = "FB404"
-        let hardwareRevision = "1.0.0.0"
-        let firmwareRevision = "1030.6408.1309.0001"
-        let softwareRevision = "2.0.242009.6"
-        let systemId = "0x123456FFFE9ABCDE"
-        let osName = "ANDROID"
-        let licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
-        let bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
-        let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
-        let pairing = "2016-02-29T21:42:21.469Z"
-        
-        user?.createNewDevice(deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
-            {
-                (device, error) -> Void in
-                XCTAssertNotNil(user)
-                XCTAssertNil(error)
-                if error != nil
-                {
-                    expectation.fulfill()
-                    return
-                }
-                completion(user:user, device: device)
-        })
-    }
-    
-    func assetCreditCard(card:CreditCard?)
-    {
-        XCTAssertNotNil(card?.links)
-        XCTAssertNotNil(card?.creditCardId)
-        XCTAssertNotNil(card?.userId)
-        XCTAssertNotNil(card?.isDefault)
-        XCTAssertNotNil(card?.created)
-        XCTAssertNotNil(card?.createdEpoch)
-        XCTAssertNotNil(card?.state)
-        XCTAssertNotNil(card?.cardType)
-        XCTAssertNotNil(card?.cardMetaData)
-        XCTAssertNotNil(card?.deviceRelationships)
-        XCTAssertNotEqual(card?.deviceRelationships?.count, 0)
-        XCTAssertNotNil(card?.encryptedData)
-        XCTAssertNotNil(card?.info)
-        XCTAssertNotNil(card?.info?.address)
-        XCTAssertNotNil(card?.info?.cvv)
-        XCTAssertNotNil(card?.info?.expMonth)
-        XCTAssertNotNil(card?.info?.expYear)
-        XCTAssertNotNil(card?.info?.pan)
-    }
-    
-    func createCreditCard(expectation:XCTestExpectation, user:User?, completion:(user:User?, creditCard:CreditCard?) -> Void)
-    {
-        user?.createCreditCard(pan: "9999411111111116", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA")
-        {
-            [unowned self](card, error) -> Void in
-            
-            self.assetCreditCard(card)
-            XCTAssertNil(error)
-            
-            if error != nil
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            completion(user: user, creditCard: card)
-        }
-    }
-    
-    func listCreditCards(expectation:XCTestExpectation, user:User?, completion:(user:User?, result:ResultCollection<CreditCard>?) -> Void)
-    {
-        user?.listCreditCards(excludeState:[], limit: 10, offset: 0)
-        {
-            [unowned self](result, error) -> Void in
-            
-            XCTAssertNil(error)
-            
-            if error != nil
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            XCTAssertNotNil(result)
-            XCTAssertNotNil(result?.limit)
-            XCTAssertNotNil(result?.offset)
-            XCTAssertNotNil(result?.totalResults)
-            XCTAssertNotNil(result?.results)
-            XCTAssertNotEqual(result?.results?.count, 0)
-            XCTAssertNotNil(result?.links)
-            
-            if let results = result?.results
-            {
-                for card in results
-                {
-                    self.assetCreditCard(card)
-                }
-            }
-            
-            completion(user: user, result: result)
-        }
-    }
-    
-    func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler)
-    {
-        let deviceType = "WATCH"
-        let manufacturerName = "Fitpay"
-        let deviceName = "PSPS"
-        let serialNumber = "074DCC022E14"
-        let modelNumber = "FB404"
-        let hardwareRevision = "1.0.0.0"
-        let firmwareRevision = "1030.6408.1309.0001"
-        let softwareRevision = "2.0.242009.6"
-        let systemId = "0x123456FFFE9ABCDE"
-        let osName = "ANDROID"
-        let licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
-        let bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
-        let secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
-        let pairing = "2016-02-29T21:42:21.469Z"
-        
-        self.client.user(id:userId, completion:
-        {
-            (user, error) -> Void in
-            
-            if (error != nil) {
-                completion(device: nil, error: error)
-                return
-            }
-            
-            user?.createNewDevice(deviceType, manufacturerName: manufacturerName, deviceName: deviceName, serialNumber: serialNumber, modelNumber: modelNumber, hardwareRevision: hardwareRevision, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, systemId: systemId, osName: osName, licenseKey: licenseKey, bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
-                {
-                    (device, error) -> Void in
-                    completion(device: device, error: error)
-            })
-        })
-    }
-    
-    func acceptTermsForCreditCard(expectation:XCTestExpectation, card:CreditCard?, completion:(card:CreditCard?) -> Void)
-    {
-        card?.acceptTerms
-        {
-            (pending, acceptedCard, error) in
-            XCTAssertNil(error)
-            
-            if error != nil
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            XCTAssertNotNil(acceptedCard)
-            XCTAssertEqual(acceptedCard?.state, .PENDING_VERIFICATION)
-            completion(card: acceptedCard)
-        }
-    }
-    
-    func selectVerificationType(expectation:XCTestExpectation, card:CreditCard?, completion:(verificationMethod:VerificationMethod?) -> Void)
-    {
-        let verificationMethod = card?.verificationMethods?.first
-        verificationMethod?.selectVerificationType
-        {
-            (pending, verificationMethod, error) in
-            XCTAssertNotNil(verificationMethod)
-            XCTAssertEqual(verificationMethod?.state, .AWAITING_VERIFICATION)
-            XCTAssertNil(error)
-            
-            if error != nil
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            completion(verificationMethod: verificationMethod)
-        }
-    }
-    
-    func verifyCreditCard(expectation:XCTestExpectation, verificationMethod:VerificationMethod?, completion:(card:CreditCard?) -> Void)
-    {
-        verificationMethod?.verify("12345")
-        {
-            (pending, verificationMethod, error) -> Void in
-            
-            XCTAssertNil(error)
-            
-            if error != nil
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            XCTAssertNotNil(verificationMethod)
-            XCTAssertEqual(verificationMethod?.state, .VERIFIED)
-            
-            verificationMethod?.retrieveCreditCard
-            {
-                (creditCard, error) in
-                completion(card: creditCard)
 
-            }
-            
-        }
-    }
-    
-    func makeCreditCardDefault(expectation:XCTestExpectation, card:CreditCard?, completion:(defaultCreditCard:CreditCard?) -> Void)
-    {
-        card?.makeDefault
-        {
-            (pending, defaultCreditCard, error) -> Void in
-            XCTAssertNil(error)
-            
-            if error != nil
-            {
-                expectation.fulfill()
-                return
-            }
-            XCTAssertNotNil(defaultCreditCard)
-            XCTAssertTrue(defaultCreditCard!.isDefault!)
-            completion(defaultCreditCard: defaultCreditCard)
-        }
-    }
-    
-    func createAcceptVerifyAmExCreditCard(expectation:XCTestExpectation, pan:String, user:User?, completion:(creditCard:CreditCard?) -> Void)
-    {
-        user?.createCreditCard(pan: pan, expMonth: 5, expYear: 2020, cvv: "434", name: "John Smith", street1: "Street 1", street2: "Street 2", street3: "Street 3", city: "New York", state: "NY", postalCode: "80302", country: "USA")
-        {
-            [unowned self](creditCard, error) in
-            
-            XCTAssertNil(error)
-            
-            if error != nil
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            self.assetCreditCard(creditCard)
-            
-            self.acceptTermsForCreditCard(expectation, card: creditCard)
-            {
-                (card) in
-                self.selectVerificationType(expectation, card: card)
-                {
-                    (verificationMethod) in
-                    self.verifyCreditCard(expectation, verificationMethod: verificationMethod)
-                    {
-                        (card) in
-                        completion(creditCard: card)
-                    }
-                }
-            }
-        }
-    }
-    
-    func deactivateCreditCard(expectation:XCTestExpectation, creditCard:CreditCard?, completion:(deactivatedCard:CreditCard?) -> Void)
-    {
-        creditCard?.deactivate(causedBy: .CARDHOLDER, reason: "lost card")
-        {
-            (pending, creditCard, error) in
-            
-            XCTAssertNil(error)
-            
-            if error != nil
-            {
-                expectation.fulfill()
-                return
-            }
-            
-            XCTAssertEqual(creditCard?.state, TokenizationState.DEACTIVATED)
-            completion(deactivatedCard: creditCard)
-        }
-    }
-    
-    func randomStringWithLength (len : Int) -> String {
-        
-        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        
-        let randomString : NSMutableString = NSMutableString(capacity: len)
-        
-        for _ in 0 ... (len-1) {
-            let length = UInt32 (letters.length)
-            let rand = arc4random_uniform(length)
-            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
-        }
-        
-        return randomString as String
-    }
-    
-    func randomNumbers (len:Int = 16) -> String {
-        
-        let letters : NSString = "0123456789"
-        
-        let randomString : NSMutableString = NSMutableString(capacity: len)
-        
-        for _ in 0 ... (len-1) {
-            let length = UInt32 (letters.length)
-            let rand = arc4random_uniform(length)
-            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
-        }
-        
-        return randomString as String
-    }
-    
-    func randomPan() -> String
-    {
-        return "999941111111" + randomNumbers(4)
-    }
 }
