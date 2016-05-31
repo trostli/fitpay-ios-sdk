@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		0A1B6A3D1CDBEBF700EBD014 /* RtmConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1B6A3C1CDBEBF700EBD014 /* RtmConfig.swift */; };
 		0A2A32241CDAB29C0044BABE /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2A32231CDAB29C0044BABE /* WebViewController.swift */; };
+		0A7EE11B1CFE0A2B00503BC8 /* testHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7EE11A1CFE0A2B00503BC8 /* testHelpers.swift */; };
 		0AD922A11C1F7EFC007693AB /* FitpaySDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AD922A01C1F7EFC007693AB /* FitpaySDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0AD922A81C1F7EFC007693AB /* FitpaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */; };
 		0AD9232C1C20BB38007693AB /* FitpaySDK.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD9232B1C20BB38007693AB /* FitpaySDK.swift */; };
@@ -38,7 +39,6 @@
 		8425931D1CAA613E0006FFA6 /* SyncStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8425931C1CAA613E0006FFA6 /* SyncStorage.swift */; };
 		8426D24C1C91D139009AACFE /* RtmConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D24B1C91D139009AACFE /* RtmConstants.swift */; };
 		8426D2511C92BB9D009AACFE /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D2501C92BB9D009AACFE /* StringExtensions.swift */; };
-		8426D2531C92F428009AACFE /* RtmSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D2521C92F428009AACFE /* RtmSessionTests.swift */; };
 		8426D25B1C96F4AA009AACFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D25A1C96F4AA009AACFE /* AppDelegate.swift */; };
 		8426D25D1C96F4AA009AACFE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8426D25C1C96F4AA009AACFE /* ViewController.swift */; };
 		8426D2601C96F4AA009AACFE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8426D25E1C96F4AA009AACFE /* Main.storyboard */; };
@@ -227,6 +227,7 @@
 /* Begin PBXFileReference section */
 		0A1B6A3C1CDBEBF700EBD014 /* RtmConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RtmConfig.swift; path = ../RtmConfig.swift; sourceTree = "<group>"; };
 		0A2A32231CDAB29C0044BABE /* WebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		0A7EE11A1CFE0A2B00503BC8 /* testHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = testHelpers.swift; sourceTree = "<group>"; };
 		0AD9229D1C1F7EFC007693AB /* FitpaySDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FitpaySDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AD922A01C1F7EFC007693AB /* FitpaySDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FitpaySDK.h; sourceTree = "<group>"; };
 		0AD922A21C1F7EFC007693AB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -246,7 +247,6 @@
 		8426D24B1C91D139009AACFE /* RtmConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmConstants.swift; sourceTree = "<group>"; };
 		8426D24D1C91D3BE009AACFE /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
 		8426D2501C92BB9D009AACFE /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
-		8426D2521C92F428009AACFE /* RtmSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmSessionTests.swift; sourceTree = "<group>"; };
 		8426D2581C96F4AA009AACFE /* RTMClientApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTMClientApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8426D25A1C96F4AA009AACFE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8426D25C1C96F4AA009AACFE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -488,10 +488,10 @@
 				9AB68E431C84A25B00A0E172 /* JWETests.swift */,
 				9AA50BDE1C7E096D000FA546 /* RestClientTests.swift */,
 				9AA5BDAA1C7B54B600EDF2F6 /* RestSessionTests.swift */,
-				8426D2521C92F428009AACFE /* RtmSessionTests.swift */,
 				8426D2921CA00243009AACFE /* PaymentDeviceTests.swift */,
 				0AD922AE1C1F7EFC007693AB /* Info.plist */,
 				9B65A33C1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift */,
+				0A7EE11A1CFE0A2B00503BC8 /* testHelpers.swift */,
 			);
 			path = FitpaySDKTests;
 			sourceTree = "<group>";
@@ -1444,8 +1444,8 @@
 				9AD200771CE235530009CDA6 /* RestAPIConstants.swift in Sources */,
 				9B65A33D1CDD2D78007A7D7D /* MockPaymentDeviceTests.swift in Sources */,
 				9AB68E441C84A25B00A0E172 /* JWETests.swift in Sources */,
-				8426D2531C92F428009AACFE /* RtmSessionTests.swift in Sources */,
 				9AA50BDF1C7E096D000FA546 /* RestClientTests.swift in Sources */,
+				0A7EE11B1CFE0A2B00503BC8 /* testHelpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
