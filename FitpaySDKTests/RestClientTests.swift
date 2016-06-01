@@ -217,7 +217,23 @@ class RestClientTests: XCTestCase
         
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
-    
+    /*
+    func testUserCreateOptionalFields() {
+        let expectation = super.expectationWithDescription("create a user with optional fields")
+        let currentTime = NSDate() //double or NSTimeInterval
+
+        self.client.createUser(email, password: "5147", firstName:"Bartholomew", lastName:"Cubbins Oobleck",
+                               birthDate:"1/1/1949",
+                               termsVersion:"2.3", termsAccepted:"2014-1-31T15:15:13.123Z",
+                               origin:"2013-1-31T10:11:12.133Z", originAccountCreated:nil,
+                               completion:
+            {
+                (user, error) -> Void in
+                self.testHelper.userValid(user)
+
+        
+    }
+    */
     func testUserDeleteUserDeletesUser()
     {
         let expectation = super.expectationWithDescription("'user.deleteUser' deletes user")

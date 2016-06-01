@@ -22,10 +22,22 @@ class TestHelpers {
         self.client = client
     }
 
+    func userValid(user:User) {
+        XCTAssertNotNil(user.info)
+        XCTAssertNotNil(user.created)
+        XCTAssertNotNil(user.links)
+        XCTAssertNotNil(user.createdEpoch)
+        XCTAssertNotNil(user.encryptedData)
+        XCTAssertNotNil(user.info?.email)
+        
+    }
+    
     func createAndLoginUser(expectation:XCTestExpectation, completion:(User?)->Void) {
         let email = self.randomEmail()
-        let pin = "1234"
+        let pin = "1234" //needs to be a parameter eventually.
 
+        let currentTime = NSDate().timeIntervalSince1970 //double or NSTimeInterval
+        
         self.client.createUser(
             email, password: pin, firstName:nil, lastName:nil, birthDate:nil, termsVersion:nil,
             termsAccepted:nil, origin:nil, originAccountCreated:nil, completion:
@@ -41,13 +53,20 @@ class TestHelpers {
 
             XCTAssertNotNil(user, "user is nil")
             debugPrint("created user: \(user?.info?.email)")
-            XCTAssertNotNil(user?.info)
-            XCTAssertNotNil(user?.created)
-            XCTAssertNotNil(user?.links)
-            XCTAssertNotNil(user?.createdEpoch)
-            XCTAssertNotNil(user?.encryptedData)
-            XCTAssertNotNil(user?.info?.email)
+            if (user != nil) { self.userValid(user!) }
 
+            //additional sanity checks that we created a meaningful user
+            //PLAT-1388 has a bug on the number of links returned when creating a user. When that gets fixed, reenable this.
+            //XCTAssertEqual(user!.links!.count, 4, "Expect the number of links to be at least user, cards, devices") //could change. I'm violating HATEAOS
+        
+            //because there is such a thing as system clock variance (and I demonstrated it to Jakub), we check +/- 5 minutes.
+            let comparisonTime = currentTime - (150) //2.5 minutes.
+            let actualTime = user!.createdEpoch! / 1000.0 //PGR-551 bug. Drop the /1000.0 when the bug is fixed.
+            debugPrint("actualTime created: \(actualTime), expected Time: \(currentTime)")
+            XCTAssertGreaterThan(actualTime, comparisonTime, "Want it to be created after the last 2.5 minutes")
+            XCTAssertLessThan(actualTime, comparisonTime+300, "Want it to be created no more than the last 2.5 min")
+            XCTAssertEqual(user?.email, email, "Want the emails to match up")
+            
             self.session.login(username: email, password: pin, completion: {
                 (loginError) -> Void in
                 XCTAssertNil(loginError)
@@ -63,14 +82,10 @@ class TestHelpers {
                     (user, userError) in
 
                     XCTAssertNotNil(user)
-                    XCTAssertNotNil(user?.info)
-                    XCTAssertNotNil(user?.created)
-                    XCTAssertNotNil(user?.links)
-                    XCTAssertNotNil(user?.createdEpoch)
-                    XCTAssertNotNil(user?.encryptedData)
-                    XCTAssertNotNil(user?.info?.email)
+                    if (user !=  nil) { self.userValid(user!) }
+                    XCTAssertEqual(user?.email, email, "Want emails to match up after logging in")
+                    
                     XCTAssertNil(userError)
-
                     if userError != nil {
                         expectation.fulfill()
                         return
