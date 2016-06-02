@@ -26,14 +26,14 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
     public var userId:String?
     public var isDefault:Bool?
     public var created:String?
-    public var createdEpoch:CLong?
+    public var createdEpoch:NSTimeInterval?
     public var state:TokenizationState?
     public var cardType:String?
     public var cardMetaData:CardMetadata?
     public var termsAssetId:String?
     public var termsAssetReferences:[TermsAssetReferences]?
     public var eligibilityExpiration:String?
-    public var eligibilityExpirationEpoch:CLong?
+    public var eligibilityExpirationEpoch:NSTimeInterval?
     public var deviceRelationships:[DeviceRelationships]?
     public var targetDeviceId:String?
     public var targetDeviceType:String?
@@ -138,14 +138,14 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         self.userId  <- map["userId"]
         self.isDefault <- map["default"]
         self.created  <- map["createdTs"]
-        self.createdEpoch <- map["createdTsEpoch"]
+        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         self.state <- map["state"]
         self.cardType <- map["cardType"]
         self.cardMetaData = Mapper<CardMetadata>().map(map["cardMetaData"].currentValue)
         self.termsAssetId <- map["termsAssetId"]
         self.termsAssetReferences <- (map["termsAssetReferences"], TermsAssetReferencesTransformType())
         self.eligibilityExpiration <- map["eligibilityExpiration"]
-        self.eligibilityExpirationEpoch <- map["eligibilityExpirationEpoch"]
+        self.eligibilityExpirationEpoch <- (map["eligibilityExpirationEpoch"], NSTimeIntervalTransform())
         self.deviceRelationships <- (map["deviceRelationships"], DeviceRelationshipsTransformType())
         self.encryptedData <- map["encryptedData"]
         self.targetDeviceId <- map["targetDeviceId"]
@@ -585,7 +585,7 @@ public class DeviceRelationships : NSObject, ClientModel, Mappable
     public var firmwareRevision:String?
     public var softwareRevision:String?
     public var created:String?
-    public var createdEpoch:CLong?
+    public var createdEpoch:NSTimeInterval?
     public var osName:String?
     public var systemId:String?
     
@@ -610,7 +610,7 @@ public class DeviceRelationships : NSObject, ClientModel, Mappable
         self.firmwareRevision <- map["firmwareRevision"]
         self.softwareRevision <- map["softwareRevision"]
         self.created <- map["createdTs"]
-        self.createdEpoch <- map["createdTsEpoch"]
+        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         self.osName <- map["osName"]
         self.systemId <- map["systemId"]
     }

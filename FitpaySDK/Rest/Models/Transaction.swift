@@ -10,7 +10,7 @@ public class Transaction : NSObject, ClientModel, Mappable
     public var currencyCode:String?
     public var authorizationStatus:String?
     public var transactionTime:String?
-    public var transactionTimeEpoch:CLong?
+    public var transactionTimeEpoch:NSTimeInterval?
     public var merchantName:String?
     public var merchantCode:String?
     public var merchantType:String?

@@ -141,7 +141,7 @@ internal class CommitsApplyer {
             let currentTimestamp = NSDate().timeIntervalSince1970
 
             apduPackage.executedDuration = Int(currentTimestamp - applyingStartDate)
-            apduPackage.executedEpoch = CLong(currentTimestamp)
+            apduPackage.executedEpoch = NSTimeInterval(currentTimestamp)
             
             if (error != nil && error as? NSError != nil && (error as! NSError).code == PaymentDevice.ErrorCode.APDUErrorResponse.rawValue) {
                 apduPackage.state = APDUPackageResponseState.FAILED
