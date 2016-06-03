@@ -1262,9 +1262,9 @@ class RestClientTests: XCTestCase
         let timeTransform = NSTimeIntervalTransform()
         let timeAsInt = timeTransform.transformToJSON(currentTime)
         
-        let doubleCheck = floor(Double(timeAsInt!))
-        
-        XCTAssertTrue(Double(timeAsInt!) == doubleCheck)
+        let intMirror = Mirror(reflecting: timeAsInt)
+        debugPrint(String(intMirror.subjectType))
+        XCTAssertTrue(String(intMirror.subjectType) == "Optional<Int64>")
         
         expectation.fulfill()
         
