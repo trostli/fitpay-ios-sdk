@@ -1254,6 +1254,23 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
+    func testNSTimeIntervalToInt()
+    {
+        let expectation = super.expectationWithDescription("NSTimeInterval converted to int correctly")
+        
+        let currentTime = NSDate().timeIntervalSince1970
+        let timeTransform = NSTimeIntervalTransform()
+        let timeAsInt = timeTransform.transformToJSON(currentTime)
+        
+        let doubleCheck = floor(Double(timeAsInt!))
+        
+        XCTAssertTrue(Double(timeAsInt!) == doubleCheck)
+        
+        expectation.fulfill()
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
 //    func testAPDUPackageConfirm()
 //    {
 //        let expectation = super.expectationWithDescription("'APDUPackage' confirms package")
