@@ -21,7 +21,7 @@ class TestHelpers {
         self.session = session
         self.client = client
     }
-
+    
     func createAndLoginUser(expectation:XCTestExpectation, completion:(User?)->Void) {
         let email = self.randomEmail()
         let pin = "1234"
@@ -47,7 +47,7 @@ class TestHelpers {
             XCTAssertNotNil(user?.createdEpoch)
             XCTAssertNotNil(user?.encryptedData)
             XCTAssertNotNil(user?.info?.email)
-
+            
             self.session.login(username: email, password: pin, completion: {
                 (loginError) -> Void in
                 XCTAssertNil(loginError)
