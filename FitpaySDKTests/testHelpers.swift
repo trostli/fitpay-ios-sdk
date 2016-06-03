@@ -160,6 +160,25 @@ class TestHelpers {
         XCTAssertNotNil(card?.info?.pan)
     }
 
+    func createEricCard(expectation:XCTestExpectation, pan: String, expMonth: Int, expYear: Int, user: User?, completion:(user:User?, creditCard:CreditCard?) -> Void) {
+        user?.createCreditCard(
+            pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", street1: "4883 Dakota Blvd.",
+            street2: "", street3: "", city: "Boulder", state: "CO", postalCode: "80304-1111", country: "USA"
+        ) {
+            [unowned self](card, error) -> Void in
+            debugPrint("creating credit card with \(pan)")
+            self.assetCreditCard(card)
+            XCTAssertNil(error)
+            
+            if error != nil {
+                expectation.fulfill()
+                return
+            }
+            
+            debugPrint("card created")
+            completion(user: user, creditCard: card)
+        }
+    }
     func createCreditCard(expectation:XCTestExpectation, user:User?, completion:(user:User?, creditCard:CreditCard?) -> Void) {
         user?.createCreditCard(
             pan: "9999411111111116", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1",
@@ -245,6 +264,7 @@ class TestHelpers {
     }
 
     func acceptTermsForCreditCard(expectation:XCTestExpectation, card:CreditCard?, completion:(card:CreditCard?) -> Void) {
+        debugPrint("acceptingTerms for card: \(card)")
         card?.acceptTerms {
             (pending, acceptedCard, error) in
             XCTAssertNil(error)
@@ -255,8 +275,12 @@ class TestHelpers {
             }
 
             XCTAssertNotNil(acceptedCard)
-            XCTAssertEqual(acceptedCard?.state, .PENDING_VERIFICATION)
+            if ((acceptedCard?.state != .PENDING_VERIFICATION) && (acceptedCard?.state != .ACTIVE)) {
+                XCTFail("Need to have a pending verification or active after accepting terms")
+            }
+            debugPrint("acceptingTerms done")
             completion(card: acceptedCard)
+
         }
     }
 
@@ -346,6 +370,7 @@ class TestHelpers {
     }
 
     func deactivateCreditCard(expectation:XCTestExpectation, creditCard:CreditCard?, completion:(deactivatedCard:CreditCard?) -> Void) {
+        debugPrint("deactivateCreditCard")
         creditCard?.deactivate(causedBy: .CARDHOLDER, reason: "lost card") {
             (pending, creditCard, error) in
 
