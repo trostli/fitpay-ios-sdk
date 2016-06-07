@@ -93,10 +93,10 @@ typedef int swift_int4  __attribute__((__ext_vector_type__(4)));
 #endif
 #if defined(__has_feature) && __has_feature(modules)
 @import ObjectiveC;
-@import WebKit;
 @import Foundation;
 @import Dispatch;
 @import Pusher;
+@import WebKit;
 #endif
 
 #pragma clang diagnostic ignored "-Wproperty-attribute-mismatch"
@@ -330,43 +330,6 @@ SWIFT_CLASS("_TtC9FitpaySDK13EncryptionKey")
 @property (nonatomic, copy) NSString * _Nullable clientPublicKey;
 @end
 
-@class PaymentDevice;
-@class WKWebView;
-@class WKWebViewConfiguration;
-@class NSURLRequest;
-@class WKUserContentController;
-@class WKScriptMessage;
-
-SWIFT_CLASS("_TtC9FitpaySDK9FPWebView")
-@interface FPWebView : NSObject <WKScriptMessageHandler>
-- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice userEmail:(NSString * _Nullable)userEmail OBJC_DESIGNATED_INITIALIZER;
-
-/// In order to open a web-view the SDK must have a connection to the payment device in order to gather data about that device. This will attempt to connect, and call the completion with either an error or nil if the connection attempt is successful.
-- (void)openDeviceConnection:(void (^ _Nonnull)(NSError * _Nullable error))completion;
-- (void)setWebView:(WKWebView * _Null_unspecified)webview;
-
-/// This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app. Note that the value "rtmBridge" is an agreeded upon value between this and the web-view.
-- (WKWebViewConfiguration * _Nonnull)wvConfig;
-
-/// This returns the request object clients will require in order to open a WKWebView
-- (NSURLRequest * _Nonnull)wvRequest;
-
-/// This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from the web app. The callBackId corresponds to a JS callback that will resolve a promise stored in window.RtmBridge that will be called with the result of the action once completed. It expects a message with the following format:
-///
-/// {
-/// "callBackId": 1,
-/// "data": {
-/// "action": "action",
-/// "data": {
-/// "userId": "userId",
-/// "deviceId": "userId",
-/// "token": "token"
-/// }
-/// }
-/// }
-- (void)userContentController:(WKUserContentController * _Nonnull)userContentController didReceiveScriptMessage:(WKScriptMessage * _Nonnull)message;
-@end
-
 
 SWIFT_CLASS("_TtC9FitpaySDK11FitpayEvent")
 @interface FitpayEvent : NSObject
@@ -382,17 +345,11 @@ SWIFT_CLASS("_TtC9FitpaySDK18FitpayEventBinding")
 @interface FitpayEventBinding (SWIFT_EXTENSION(FitpaySDK))
 @end
 
-
-SWIFT_CLASS("_TtC9FitpaySDK5Image")
-@interface Image : NSObject
-@property (nonatomic, copy) NSString * _Nullable mimeType;
-- (void)retrieveAsset:(void (^ _Nonnull)(Asset * _Nullable asset, NSError * _Nullable error))completion;
-@end
-
+@class PaymentDevice;
 enum SecurityNFCState : NSInteger;
 
-SWIFT_PROTOCOL("_TtP9FitpaySDK26PaymentDeviceBaseInterface_")
-@protocol PaymentDeviceBaseInterface
+SWIFT_PROTOCOL("_TtP9FitpaySDK23IPaymentDeviceConnector_")
+@protocol IPaymentDeviceConnector
 - (nonnull instancetype)initWithPaymentDevice:(PaymentDevice * _Nonnull)device;
 - (void)connect;
 - (void)disconnect;
@@ -407,8 +364,15 @@ SWIFT_PROTOCOL("_TtP9FitpaySDK26PaymentDeviceBaseInterface_")
 @end
 
 
-SWIFT_CLASS("_TtC9FitpaySDK26MockPaymentDeviceInterface")
-@interface MockPaymentDeviceInterface : NSObject <PaymentDeviceBaseInterface>
+SWIFT_CLASS("_TtC9FitpaySDK5Image")
+@interface Image : NSObject
+@property (nonatomic, copy) NSString * _Nullable mimeType;
+- (void)retrieveAsset:(void (^ _Nonnull)(Asset * _Nullable asset, NSError * _Nullable error))completion;
+@end
+
+
+SWIFT_CLASS("_TtC9FitpaySDK26MockPaymentDeviceConnector")
+@interface MockPaymentDeviceConnector : NSObject <IPaymentDeviceConnector>
 - (nonnull instancetype)initWithPaymentDevice:(PaymentDevice * _Nonnull)device OBJC_DESIGNATED_INITIALIZER;
 - (void)connect;
 - (void)disconnect;
@@ -498,11 +462,10 @@ SWIFT_CLASS("_TtC9FitpaySDK13PaymentDevice")
 /// \param notificationData //TODO:????
 - (NSError * _Nullable)sendNotification:(NSData * _Nonnull)notificationData;
 
-/// Changes interface with payment device. Default is BLE (PaymentDeviceBLEInterface). If you want to implement your own interface than it should confirm PaymentDeviceBaseInterface protocol. Also implementation should call PaymentDevice.callCompletionForEvent() for events. Can be changed if device disconnected.
-- (NSError * _Nullable)changeDeviceInterface:(id <PaymentDeviceBaseInterface> _Nonnull)interface;
+/// Changes interface with payment device. Default is BLE (BluetoothPaymentDeviceConnector). If you want to implement your own interface than it should confirm IPaymentDeviceConnector protocol. Also implementation should call PaymentDevice.callCompletionForEvent() for events. Can be changed if device disconnected.
+- (NSError * _Nullable)changeDeviceInterface:(id <IPaymentDeviceConnector> _Nonnull)interface;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
-
 
 typedef SWIFT_ENUM(NSInteger, PaymentDeviceEventTypes) {
   PaymentDeviceEventTypesOnDeviceConnected = 0,
@@ -795,6 +758,42 @@ SWIFT_CLASS("_TtC9FitpaySDK18VerificationMethod")
 ///
 /// \param completion CreditCardHandler closure
 - (void)retrieveCreditCard:(void (^ _Nonnull)(CreditCard * _Nullable creditCard, NSError * _Nullable error))completion;
+@end
+
+@class WKWebView;
+@class WKWebViewConfiguration;
+@class NSURLRequest;
+@class WKUserContentController;
+@class WKScriptMessage;
+
+SWIFT_CLASS("_TtC9FitpaySDK8WvConfig")
+@interface WvConfig : NSObject <WKScriptMessageHandler>
+- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice userEmail:(NSString * _Nullable)userEmail OBJC_DESIGNATED_INITIALIZER;
+
+/// In order to open a web-view the SDK must have a connection to the payment device in order to gather data about that device. This will attempt to connect, and call the completion with either an error or nil if the connection attempt is successful.
+- (void)openDeviceConnection:(void (^ _Nonnull)(NSError * _Nullable error))completion;
+- (void)setWebView:(WKWebView * _Null_unspecified)webview;
+
+/// This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app. Note that the value "rtmBridge" is an agreeded upon value between this and the web-view.
+- (WKWebViewConfiguration * _Nonnull)wvConfig;
+
+/// This returns the request object clients will require in order to open a WKWebView
+- (NSURLRequest * _Nonnull)wvRequest;
+
+/// This is the implementation of WKScriptMessageHandler, and handles any messages posted to the RTM bridge from the web app. The callBackId corresponds to a JS callback that will resolve a promise stored in window.RtmBridge that will be called with the result of the action once completed. It expects a message with the following format:
+///
+/// {
+/// "callBackId": 1,
+/// "data": {
+/// "action": "action",
+/// "data": {
+/// "userId": "userId",
+/// "deviceId": "userId",
+/// "token": "token"
+/// }
+/// }
+/// }
+- (void)userContentController:(WKUserContentController * _Nonnull)userContentController didReceiveScriptMessage:(WKScriptMessage * _Nonnull)message;
 @end
 
 #pragma clang diagnostic pop

@@ -7,13 +7,13 @@ import ObjectMapper
 class WebViewController: UIViewController {
     @IBOutlet var containerView : UIView! = nil
     var webView = WKWebView()
-    var fp: FPWebView?
+    var fp: WvConfig?
 
     override func viewDidLoad() {
         let device = PaymentDevice();
-        device.changeDeviceInterface(MockPaymentDeviceInterface(paymentDevice: device))
+        device.changeDeviceInterface(MockPaymentDeviceConnector(paymentDevice: device))
 
-        fp = FPWebView(clientId: "pagare", redirectUri: "http://example.com", paymentDevice: device, userEmail: "user@example.com")
+        fp = WvConfig(clientId: "pagare", redirectUri: "http://example.com", paymentDevice: device, userEmail: "user@example.com")
         fp!.openDeviceConnection { (error) in
             if let _ = error {
                 print("failed to connect to device")
