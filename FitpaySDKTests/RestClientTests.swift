@@ -1228,6 +1228,49 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
+    /**
+     tests all cases for NSTimeIntervalTransform
+    */
+    func testCompareCreatedEpochToCreatedTS()
+    {
+        let expectation = super.expectationWithDescription("'createdEpoch' converted correctly to seconds from ms")
+        
+        self.testHelper.createAndLoginUser(expectation)
+        {
+            [unowned self](user) in
+            
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            let nsdate = dateFormatter.dateFromString((user?.created)!)
+            
+            let epochDiff = abs((nsdate?.timeIntervalSince1970)! - (user?.createdEpoch)!)
+            
+            XCTAssertLessThan(epochDiff, 1, "validate epoch converted correctly")
+            
+            self.testHelper.deleteUser(user, expectation: expectation)
+        }
+
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
+    func testNSTimeIntervalToInt()
+    {
+        let expectation = super.expectationWithDescription("NSTimeInterval converted to int correctly")
+        
+        let currentTime = NSDate().timeIntervalSince1970
+        let timeTransform = NSTimeIntervalTransform()
+        let timeAsInt = timeTransform.transformToJSON(currentTime)
+        
+        let intMirror = Mirror(reflecting: timeAsInt)
+        debugPrint(String(intMirror.subjectType))
+        XCTAssertTrue(String(intMirror.subjectType) == "Optional<Int64>")
+        
+        expectation.fulfill()
+        
+        super.waitForExpectationsWithTimeout(10, handler: nil)
+    }
+    
 //    func testAPDUPackageConfirm()
 //    {
 //        let expectation = super.expectationWithDescription("'APDUPackage' confirms package")

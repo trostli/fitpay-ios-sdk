@@ -739,7 +739,6 @@ SWIFT_CLASS("_TtC9FitpaySDK18VerificationMethod")
 @property (nonatomic, copy) NSString * _Nullable created;
 @property (nonatomic, copy) NSString * _Nullable lastModified;
 @property (nonatomic, copy) NSString * _Nullable verified;
-@property (nonatomic, copy) NSString * _Nullable verifiedEpoch;
 @property (nonatomic, readonly) BOOL selectAvailable;
 @property (nonatomic, readonly) BOOL verifyAvailable;
 @property (nonatomic, readonly) BOOL cardAvailable;
