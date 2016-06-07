@@ -226,7 +226,7 @@ class PaymentDeviceTests: XCTestCase
         })
         
         let clientId = "pagare"
-        let redirectUri = "http://demo.pagare.me"
+        let redirectUri = "https://demo.pagare.me"
         let username = "testableuser2@something.com"
         let password = "1029"
         

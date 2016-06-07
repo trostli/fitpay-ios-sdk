@@ -5,7 +5,7 @@ import XCTest
 class RestClientTests: XCTestCase
 {
     let clientId = "pagare"
-    let redirectUri = "http://demo.pagare.me"
+    let redirectUri = "https://demo.pagare.me"
     let password = "1029"
 
     var session:RestSession!
