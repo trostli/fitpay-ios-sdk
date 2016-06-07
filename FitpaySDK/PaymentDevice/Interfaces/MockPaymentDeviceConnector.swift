@@ -1,12 +1,12 @@
 //
-//  MockPaymentDeviceInterface.swift
+//  MockPaymentDeviceConnector.swift
 //  FitpaySDK
 //
 //  Created by Tim Shanahan on 5/6/16.
 //  Copyright © 2016 Fitpay. All rights reserved.
 //
 
-public class MockPaymentDeviceInterface : NSObject, PaymentDeviceBaseInterface {
+public class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     
     weak var paymentDevice : PaymentDevice!
     var responseData : ApduResultMessage!

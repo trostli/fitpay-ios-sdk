@@ -1,6 +1,6 @@
 import CoreBluetooth
 
-internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface {
+internal class BluetoothPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     weak var paymentDevice : PaymentDevice!
     
     var centralManager : CBCentralManager?
@@ -80,7 +80,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         guard let wearablePeripheral = self.wearablePeripheral, apduControlCharacteristic = self.apduControlCharacteristic else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: BluetoothPaymentDeviceConnector.self))
             }
             return
         }
@@ -88,7 +88,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         guard !self.sendingAPDU else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.WaitingForAPDUResponse, domain: PaymentDeviceBLEInterface.self))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.WaitingForAPDUResponse, domain: BluetoothPaymentDeviceConnector.self))
             }
             return
         }
@@ -132,14 +132,14 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
             
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUSendingTimeout, domain: PaymentDeviceBLEInterface.self))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUSendingTimeout, domain: BluetoothPaymentDeviceConnector.self))
             }
         }
     }
     
     func sendDeviceControl(state: DeviceControlState) -> NSError? {
         guard let deviceControlCharacteristic = self.deviceControlCharacteristic else {
-            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
+            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: BluetoothPaymentDeviceConnector.self)
         }
         
         let msg = DeviceControlMessage.init(operation: state).msg
@@ -150,7 +150,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     
     func sendNotification(notificationData: NSData) -> NSError? {
         guard let notificationCharacteristic = self.notificationCharacteristic else {
-            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
+            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: BluetoothPaymentDeviceConnector.self)
         }
         
         wearablePeripheral?.writeValue(notificationData, forCharacteristic: notificationCharacteristic, type: CBCharacteristicWriteType.WithResponse)
@@ -160,7 +160,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     
     func writeSecurityState(state: SecurityNFCState) -> NSError? {
         guard let wearablePeripheral = self.wearablePeripheral, securityWriteCharacteristic = self.securityWriteCharacteristic else {
-            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self)
+            return NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: BluetoothPaymentDeviceConnector.self)
         }
         
         wearablePeripheral.writeValue(NSData(bytes: [UInt8(state.rawValue)] as [UInt8], length: 1), forCharacteristic: securityWriteCharacteristic, type: CBCharacteristicWriteType.WithResponse)
@@ -172,7 +172,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         guard let continuationCharacteristicPacket = self.continuationCharacteristicPacket else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: BluetoothPaymentDeviceConnector.self))
             }
             return
         }
@@ -210,7 +210,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         guard let continuationCharacteristicControl = self.continuationCharacteristicControl else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: BluetoothPaymentDeviceConnector.self))
             }
             return
         }
@@ -227,7 +227,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         guard let continuationCharacteristicControl = self.continuationCharacteristicControl else {
             if let completion = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: PaymentDeviceBLEInterface.self))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceDataNotCollected, domain: BluetoothPaymentDeviceConnector.self))
             }
             return
         }
@@ -248,7 +248,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
         if self.sequenceId != packet.sequenceId {
             if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
                 self.paymentDevice.apduResponseHandler = nil
-                apduResponseHandler(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUWrongSequenceId, domain: PaymentDeviceBLEInterface.self))
+                apduResponseHandler(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUWrongSequenceId, domain: BluetoothPaymentDeviceConnector.self))
             }
             return
         }
@@ -262,7 +262,7 @@ internal class PaymentDeviceBLEInterface : NSObject, PaymentDeviceBaseInterface 
     }
 }
 
-extension PaymentDeviceBLEInterface : CBCentralManagerDelegate {
+extension BluetoothPaymentDeviceConnector : CBCentralManagerDelegate {
     func centralManagerDidUpdateState(central: CBCentralManager) {
         if central.state == CBCentralManagerState.PoweredOn {
             central.scanForPeripheralsWithServices(nil, options: nil)
@@ -274,7 +274,7 @@ extension PaymentDeviceBLEInterface : CBCentralManagerDelegate {
                 resetToDefaultState()
                 self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceDisconnected)
             } else {
-                self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceConnected, params: ["error":NSError.error(code: PaymentDevice.ErrorCode.BadBLEState, domain: PaymentDeviceBLEInterface.self, message: String(format: PaymentDevice.ErrorCode.BadBLEState.description,  central.state.rawValue))])
+                self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceConnected, params: ["error":NSError.error(code: PaymentDevice.ErrorCode.BadBLEState, domain: BluetoothPaymentDeviceConnector.self, message: String(format: PaymentDevice.ErrorCode.BadBLEState.description,  central.state.rawValue))])
             }
         }
         
@@ -311,7 +311,7 @@ extension PaymentDeviceBLEInterface : CBCentralManagerDelegate {
     }
 }
 
-extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
+extension BluetoothPaymentDeviceConnector : CBPeripheralDelegate {
     
     func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
         for service in peripheral.services! {
@@ -385,7 +385,7 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                 guard let completeResponse = continuation.data else {
                     if let completion = self.paymentDevice.apduResponseHandler {
                         self.paymentDevice.apduResponseHandler = nil
-                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUPacketCorrupted, domain: PaymentDeviceBLEInterface.self))
+                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUPacketCorrupted, domain: BluetoothPaymentDeviceConnector.self))
                     }
                     return
                 }
@@ -396,7 +396,7 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                 if (crc32 != continuationControlMessage.crc32) {
                     if let completion = self.paymentDevice.apduResponseHandler {
                         self.paymentDevice.apduResponseHandler = nil
-                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUPacketCorrupted, domain: PaymentDeviceBLEInterface.self))
+                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUPacketCorrupted, domain: BluetoothPaymentDeviceConnector.self))
                     }
                     continuation.uuid = CBUUID()
                     continuation.dataParts.removeAll()
@@ -409,7 +409,7 @@ extension PaymentDeviceBLEInterface : CBPeripheralDelegate {
                 } else {
                     if let completion = self.paymentDevice.apduResponseHandler {
                         self.paymentDevice.apduResponseHandler = nil
-                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.UnknownError, domain: PaymentDeviceBLEInterface.self))
+                        completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.UnknownError, domain: BluetoothPaymentDeviceConnector.self))
                     }
                 }
                 
