@@ -9,7 +9,7 @@ class RestSessionTests: XCTestCase {
     var client:RestClient!
     var testHelper:TestHelpers!
     let clientId = "pagare"
-    let redirectUri = "http://demo.pagare.me"
+    let redirectUri = "https://demo.pagare.me"
     let password = "1029"
     
     override func setUp() {
