@@ -8,7 +8,7 @@ public class User : NSObject, ClientModel, Mappable, SecretApplyable
     public var created:String?
     public var createdEpoch:NSTimeInterval? //iOS represents epoch as a double, but really represents it as an NSTimeInterval. Java is a long.
     public var lastModified:String?
-    public var lastModifiedEpoch:CLong?
+    public var lastModifiedEpoch:NSTimeInterval?
     internal var encryptedData:String?
     internal var info:UserInfo?
     private static let creditCardsResource = "creditCards"
@@ -58,9 +58,9 @@ public class User : NSObject, ClientModel, Mappable, SecretApplyable
         links <- (map["_links"], ResourceLinkTransformType())
         id <- map["id"]
         created <- map["createdTs"]
-        createdEpoch <- map["createdTsEpoch"]
+        createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         lastModified <- map["lastModifiedTs"]
-        lastModifiedEpoch <- map["lastModifiedTsEpoch"]
+        lastModifiedEpoch <- (map["lastModifiedTsEpoch"], NSTimeIntervalTransform())
         encryptedData <- map["encryptedData"]
     }
     

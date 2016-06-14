@@ -6,7 +6,7 @@ public class EncryptionKey : NSObject, Mappable
     internal var links:[ResourceLink]?
     public var keyId:String?
     public var created:String?
-    public var createdEpoch:CLong?
+    public var createdEpoch:NSTimeInterval?
     public var serverPublicKey:String?
     public var clientPublicKey:String?
     public var active:Bool?
@@ -21,7 +21,7 @@ public class EncryptionKey : NSObject, Mappable
         links <- (map["_links"], ResourceLinkTransformType())
         keyId <- map["keyId"]
         created <- map["createdTs"]
-        createdEpoch <- map["createdTsEpoch"]
+        createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         serverPublicKey <- map["serverPublicKey"]
         clientPublicKey <- map["clientPublicKey"]
         active <- map["active"]

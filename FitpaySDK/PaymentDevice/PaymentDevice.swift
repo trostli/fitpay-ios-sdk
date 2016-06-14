@@ -214,21 +214,21 @@ public class PaymentDevice : NSObject
     }
     
     /**
-     Changes interface with payment device. Default is BLE (PaymentDeviceBLEInterface).
-     If you want to implement your own interface than it should confirm PaymentDeviceBaseInterface protocol.
+     Changes interface with payment device. Default is BLE (BluetoothPaymentDeviceConnector).
+     If you want to implement your own interface than it should confirm IPaymentDeviceConnector protocol.
      Also implementation should call PaymentDevice.callCompletionForEvent() for events.
      Can be changed if device disconnected.
      */
-    @objc public func changeDeviceInterface(interface: PaymentDeviceBaseInterface) -> NSError? {
+    @objc public func changeDeviceInterface(interface: IPaymentDeviceConnector) -> NSError? {
         if isConnected {
-            return NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeDisconnected, domain: PaymentDeviceBaseInterface.self)
+            return NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeDisconnected, domain: IPaymentDeviceConnector.self)
         }
         
         self.deviceInterface = interface
         return nil
     }
     
-    internal var deviceInterface : PaymentDeviceBaseInterface!
+    internal var deviceInterface : IPaymentDeviceConnector!
     private let eventsDispatcher = FitpayEventDispatcher()
     
     public typealias APDUResponseHandler = (apduResponse:ApduResultMessage?, error:ErrorType?)->Void
@@ -237,12 +237,12 @@ public class PaymentDevice : NSObject
     override public init() {
         super.init()
         
-        self.deviceInterface = PaymentDeviceBLEInterface(paymentDevice: self)
+        self.deviceInterface = BluetoothPaymentDeviceConnector(paymentDevice: self)
     }
     
     internal func sendAPDUData(data: NSData, sequenceNumber: UInt16, completion: APDUResponseHandler) {
         guard isConnected else {
-            completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeConnected, domain: PaymentDeviceBaseInterface.self))
+            completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeConnected, domain: IPaymentDeviceConnector.self))
             return
         }
         
@@ -253,7 +253,7 @@ public class PaymentDevice : NSObject
     internal typealias APDUExecutionHandler = (apduCommand:APDUCommand?, error:ErrorType?)->Void
     internal func executeAPDUCommand(inout apduCommand: APDUCommand, completion: APDUExecutionHandler) {
         guard let commandData = apduCommand.command?.hexToData() else {
-            completion(apduCommand: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUDataNotFull, domain: PaymentDeviceBaseInterface.self))
+            completion(apduCommand: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUDataNotFull, domain: IPaymentDeviceConnector.self))
             return
         }
         
@@ -271,7 +271,7 @@ public class PaymentDevice : NSObject
             apduCommand.responseCode = apduResponse?.responseCode.hex
             
             if apduCommand.responseType == APDUResponseType.Error {
-                completion(apduCommand: apduCommand, error: NSError.error(code: PaymentDevice.ErrorCode.APDUErrorResponse, domain: PaymentDeviceBaseInterface.self))
+                completion(apduCommand: apduCommand, error: NSError.error(code: PaymentDevice.ErrorCode.APDUErrorResponse, domain: IPaymentDeviceConnector.self))
                 return
             }
             

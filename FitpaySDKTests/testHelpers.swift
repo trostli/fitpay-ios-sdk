@@ -21,6 +21,7 @@ class TestHelpers {
         self.session = session
         self.client = client
     }
+<<<<<<< HEAD
 
     func userValid(user:User) {
         XCTAssertNotNil(user.info)
@@ -31,6 +32,8 @@ class TestHelpers {
         XCTAssertNotNil(user.info?.email)
         
     }
+=======
+>>>>>>> bdaded3a6649c1e56cc6c45c7176cdbe371a98b0
     
     func createAndLoginUser(expectation:XCTestExpectation, completion:(User?)->Void) {
         let email = self.randomEmail()
@@ -61,7 +64,7 @@ class TestHelpers {
         
             //because there is such a thing as system clock variance (and I demonstrated it to Jakub), we check +/- 5 minutes.
             let comparisonTime = currentTime - (150) //2.5 minutes.
-            let actualTime = user!.createdEpoch! / 1000.0 //PGR-551 bug. Drop the /1000.0 when the bug is fixed.
+            let actualTime = user!.createdEpoch! //PGR-551 bug. Drop the /1000.0 when the bug is fixed.
             debugPrint("actualTime created: \(actualTime), expected Time: \(currentTime)")
             XCTAssertGreaterThan(actualTime, comparisonTime, "Want it to be created after the last 2.5 minutes")
             XCTAssertLessThan(actualTime, comparisonTime+300, "Want it to be created no more than the last 2.5 min")

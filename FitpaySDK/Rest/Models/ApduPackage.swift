@@ -19,11 +19,11 @@ public class ApduPackage : NSObject, Mappable
     public var apduCommands:[APDUCommand]?
     
     public var state:APDUPackageResponseState?
-    public var executedEpoch:CLong?
+    public var executedEpoch:NSTimeInterval?
     public var executedDuration:Int?
     
     public var validUntil:String?
-    public var validUntilEpoch:CLong?
+    public var validUntilEpoch:NSTimeInterval?
     public var apduPackageUrl:String?
     
     override init() {
@@ -44,7 +44,7 @@ public class ApduPackage : NSObject, Mappable
         seId <- map["seId"]
         apduCommands <- map["commandApdus"]
         validUntil <- map["validUntil"]
-        validUntilEpoch <- map["validUntilEpoch"]
+        validUntilEpoch <- (map["validUntilEpoch"], NSTimeIntervalTransform())
         apduPackageUrl <- map["apduPackageUrl"]
     }
     

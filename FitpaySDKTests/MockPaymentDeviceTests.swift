@@ -18,7 +18,7 @@ class MockPaymentDeviceTests: XCTestCase
         super.setUp()
         let myPaymentDevice = PaymentDevice()
         self.paymentDevice = myPaymentDevice
-        self.paymentDevice.changeDeviceInterface(MockPaymentDeviceInterface(paymentDevice: myPaymentDevice))
+        self.paymentDevice.changeDeviceInterface(MockPaymentDeviceConnector(paymentDevice: myPaymentDevice))
     }
     
     override func tearDown()

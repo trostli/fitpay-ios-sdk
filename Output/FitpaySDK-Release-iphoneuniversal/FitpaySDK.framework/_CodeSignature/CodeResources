@@ -6,51 +6,51 @@
 	<dict>
 		<key>Frameworks/libswiftContacts.dylib</key>
 		<data>
-		12ZiPkRtOtylNmN0nAxnw8Hd9yI=
+		CIR7UIK3QJNZyuxQO4vRfkHlNTM=
 		</data>
 		<key>Frameworks/libswiftCore.dylib</key>
 		<data>
-		36q5jeHy7pitGeovWrZPo6xl3z4=
+		x6vErLbdAaEJrr+8EGL26LqTELI=
 		</data>
 		<key>Frameworks/libswiftCoreBluetooth.dylib</key>
 		<data>
-		30F+AUSq//EcsvpKDMhwuS1dRrM=
+		UqqOMkSgx5w/OdpWZLyt81Ez3HU=
 		</data>
 		<key>Frameworks/libswiftCoreGraphics.dylib</key>
 		<data>
-		goCfarvIYPBqxObUNVfGPjFxXIw=
+		IGWanhdm/ZyQ/BnoqeT8E0udo/I=
 		</data>
 		<key>Frameworks/libswiftCoreImage.dylib</key>
 		<data>
-		jAYqNBTx1sgX+jjL+SwA930zJdU=
+		qACwpMlAjNvlA/VkxHeGcLPj5oc=
 		</data>
 		<key>Frameworks/libswiftDarwin.dylib</key>
 		<data>
-		JRxszHIn2qeAk8B+hjrbV9Oh4KE=
+		+4hV+KfLT1mvMGhgGp0qm1lkXLQ=
 		</data>
 		<key>Frameworks/libswiftDispatch.dylib</key>
 		<data>
-		FvOFM2TmJxij1Wt58Isfdlko99Q=
+		2tZkldDGTxvQhutKhx2xJR237cI=
 		</data>
 		<key>Frameworks/libswiftFoundation.dylib</key>
 		<data>
-		kPqYXt2iaV+e1y+m5SkuU/XEpMQ=
+		XY83Hh1bdVqZAzIPu8k3EvwtIec=
 		</data>
 		<key>Frameworks/libswiftObjectiveC.dylib</key>
 		<data>
-		aFEtSnf3kfu3Wav7VnFw+WKC9EY=
+		mtlsP7VSd1qZoQnCmMmzGQOoGeY=
 		</data>
 		<key>Frameworks/libswiftUIKit.dylib</key>
 		<data>
-		+5yKwj59ccqKPPoWNkqgW6XlVY0=
+		FXQKX3h94Mvj5sqk0Fq1ED3dd+o=
 		</data>
 		<key>Frameworks/libswiftWebKit.dylib</key>
 		<data>
-		y3wDP2vIBwATzQ2xRVYII4rstrw=
+		DlTmxaVkTnTN5jyWNqg7yiTWLzA=
 		</data>
 		<key>Headers/FitpaySDK-Swift.h</key>
 		<data>
-		HoqnAAA5buRxEp5bGcd5F9T3TQ4=
+		yOIDGDGgtN0x2L4Ge0SQN4XmE8U=
 		</data>
 		<key>Headers/FitpaySDK.h</key>
 		<data>
@@ -66,23 +66,23 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		BEgqNK58JIezZOxDrEEjK3ImRSE=
+		N3Ti54JdicVNe7/J/nKbMP+xbKs=
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm.swiftdoc</key>
 		<data>
-		v0pAzOEUc+Khp9VTBmSMkRa7Gh8=
+		hONYlIRKK0L6HnrjEw7ShbDT+6Y=
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm.swiftmodule</key>
 		<data>
-		YeU+KrsErkkgBmKxK3sqen8aaTo=
+		ZrNkKd20PPoZDSboCGC6BG25mXs=
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftdoc</key>
 		<data>
-		etsYdqeASwoilVgvRLfbp/0dDfY=
+		OUOp9aSpSHpzm10MpLwCbPqHZGY=
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		DlvyhlG+nM1TLpiCsORl25+Owuk=
+		tYgxw/38ut9xlskGAzVedWGV1ow=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -95,132 +95,132 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			12ZiPkRtOtylNmN0nAxnw8Hd9yI=
+			CIR7UIK3QJNZyuxQO4vRfkHlNTM=
 			</data>
 			<key>hash2</key>
 			<data>
-			r5suAProtNBRR5diZZuaHdO1N1EaMwQbtVs/WLgGKMo=
+			X0zMgP+dIOUF4Sz52aF94JeXNQ7oFJ7375HnxefX1lw=
 			</data>
 		</dict>
 		<key>Frameworks/libswiftCore.dylib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			36q5jeHy7pitGeovWrZPo6xl3z4=
+			x6vErLbdAaEJrr+8EGL26LqTELI=
 			</data>
 			<key>hash2</key>
 			<data>
-			GLuBNnfuuhmfuQl7LasNypvJsQZ03D+I8UuwJnqf3W0=
+			gE966hpH1VbWA1XDriUT4FTjooGEm2h2auPtAsMjVbE=
 			</data>
 		</dict>
 		<key>Frameworks/libswiftCoreBluetooth.dylib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			30F+AUSq//EcsvpKDMhwuS1dRrM=
+			UqqOMkSgx5w/OdpWZLyt81Ez3HU=
 			</data>
 			<key>hash2</key>
 			<data>
-			yspYrnmMZgW4iFAd1+BHD8A3+KY3LENSQC2HHco7Dyc=
+			ixBw0jr2BZZMGwOPFotOM22MmX9Ecz7h2+Tw8eROWF4=
 			</data>
 		</dict>
 		<key>Frameworks/libswiftCoreGraphics.dylib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			goCfarvIYPBqxObUNVfGPjFxXIw=
+			IGWanhdm/ZyQ/BnoqeT8E0udo/I=
 			</data>
 			<key>hash2</key>
 			<data>
-			psMYYMXCIAnmFWWtLJbrXbjSy50VyA2QpZoiQUsq6MI=
+			W8d683SHtuq87U3Pyf4mIBtjV52q2DnxfAlaAAvu0o4=
 			</data>
 		</dict>
 		<key>Frameworks/libswiftCoreImage.dylib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			jAYqNBTx1sgX+jjL+SwA930zJdU=
+			qACwpMlAjNvlA/VkxHeGcLPj5oc=
 			</data>
 			<key>hash2</key>
 			<data>
-			zfZxKV0sfldCqjjXWaHcOW+8HOc/e2PQxo1AEg5Ahcg=
+			wUEvLpve8/UBGiekiZgx/6OgqwdXCWwkbRd+IPGiTws=
 			</data>
 		</dict>
 		<key>Frameworks/libswiftDarwin.dylib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			JRxszHIn2qeAk8B+hjrbV9Oh4KE=
+			+4hV+KfLT1mvMGhgGp0qm1lkXLQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			/EFaaYSwDjXmgsj+9Xn9NSPAmSltsK7yOUXCUeoxtjA=
+			l3gyVglVQg22EQBmsrtwL1aOXKQcFXRD66gZudC8QA4=
 			</data>
 		</dict>
 		<key>Frameworks/libswiftDispatch.dylib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			FvOFM2TmJxij1Wt58Isfdlko99Q=
+			2tZkldDGTxvQhutKhx2xJR237cI=
 			</data>
 			<key>hash2</key>
 			<data>
-			7MGXB4xs+lm6YzOIYzHAoSsMmx4ZLWSTQXxkuYODPk0=
+			u3PUvC/9/Ss/rrQTpJ93NMbwDKeWf8/aemsBBTOy+dw=
 			</data>
 		</dict>
 		<key>Frameworks/libswiftFoundation.dylib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			kPqYXt2iaV+e1y+m5SkuU/XEpMQ=
+			XY83Hh1bdVqZAzIPu8k3EvwtIec=
 			</data>
 			<key>hash2</key>
 			<data>
-			BZiGg5xQ+skuoB5etU5PW5MHb+7Yq6FhxrcmBDdeMMk=
+			G1+uEyGKc7u40/COJNdv7X43G47Eigcrk7DaNHAdFNs=
 			</data>
 		</dict>
 		<key>Frameworks/libswiftObjectiveC.dylib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			aFEtSnf3kfu3Wav7VnFw+WKC9EY=
+			mtlsP7VSd1qZoQnCmMmzGQOoGeY=
 			</data>
 			<key>hash2</key>
 			<data>
-			Kv0j6s4y4sMDR7K6JTFitVATCU5I94eOnO1c46tKKu4=
+			e7a9e3dvQAlFSAza6YG67tQxinr+wgPiSAUVVrdX+XA=
 			</data>
 		</dict>
 		<key>Frameworks/libswiftUIKit.dylib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			+5yKwj59ccqKPPoWNkqgW6XlVY0=
+			FXQKX3h94Mvj5sqk0Fq1ED3dd+o=
 			</data>
 			<key>hash2</key>
 			<data>
-			0uA0Ya92FKbwjAsKbO6R5pj5BtPZw17PsAO4TuT66Qo=
+			oCdsKtPAFKH98h83+VmYisVbK1nnGDe1ze/Zyer2Zmk=
 			</data>
 		</dict>
 		<key>Frameworks/libswiftWebKit.dylib</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			y3wDP2vIBwATzQ2xRVYII4rstrw=
+			DlTmxaVkTnTN5jyWNqg7yiTWLzA=
 			</data>
 			<key>hash2</key>
 			<data>
-			Mca5rO2eThHNTmJqiJnYpoZEMKvrIxv+fv9j+VtYjz4=
+			cPxPm7q0f73k2Uz4vnC5CO/GRNVF18vx+2topuTluZM=
 			</data>
 		</dict>
 		<key>Headers/FitpaySDK-Swift.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			HoqnAAA5buRxEp5bGcd5F9T3TQ4=
+			yOIDGDGgtN0x2L4Ge0SQN4XmE8U=
 			</data>
 			<key>hash2</key>
 			<data>
-			qInlz4B4dUbUExLTbbTYkSrL1aBzfdN/IZc3OPvW4m4=
+			4pS2rTeje7J2oXWnkLJ0Io5Bp1B81O86wFnK131/Afg=
 			</data>
 		</dict>
 		<key>Headers/FitpaySDK.h</key>
@@ -260,44 +260,44 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			v0pAzOEUc+Khp9VTBmSMkRa7Gh8=
+			hONYlIRKK0L6HnrjEw7ShbDT+6Y=
 			</data>
 			<key>hash2</key>
 			<data>
-			Hpn0CzsMuwHz4wX0eCSgcW3mrNE4as2/r3QSjQDNq/k=
+			y9mnsk/OQNJ+L1b9Eu0F8K87Vp8RHGBkRzVm6C52f5o=
 			</data>
 		</dict>
 		<key>Modules/FitpaySDK.swiftmodule/arm.swiftmodule</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			YeU+KrsErkkgBmKxK3sqen8aaTo=
+			ZrNkKd20PPoZDSboCGC6BG25mXs=
 			</data>
 			<key>hash2</key>
 			<data>
-			2eix7x06KEJsdWaZMGIsg7RfSvSMbw1M7VOJxeYXrHY=
+			ksf40/vNe9r/qTq+2zw9hj8wVo4kAf1gab6aeBioQH0=
 			</data>
 		</dict>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftdoc</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			etsYdqeASwoilVgvRLfbp/0dDfY=
+			OUOp9aSpSHpzm10MpLwCbPqHZGY=
 			</data>
 			<key>hash2</key>
 			<data>
-			gBBqVXuFc7vR0mJFS84ZRLFB718zXXBzH865C/8jRZk=
+			i2tD6gqtKcB3ikgoxmONGwS7fsbfJFr1e7jOjNNCmDs=
 			</data>
 		</dict>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftmodule</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			DlvyhlG+nM1TLpiCsORl25+Owuk=
+			tYgxw/38ut9xlskGAzVedWGV1ow=
 			</data>
 			<key>hash2</key>
 			<data>
-			A5y7sSZ++rFDJN/pK3ledowwox+Hkljl6UlX4ubQkl8=
+			QFe6dC7ZULgthfZl087GFwBrKSLgTZvT6v/pQS5uwCE=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

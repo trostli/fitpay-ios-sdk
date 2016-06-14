@@ -16,7 +16,7 @@ internal enum WVResponse: String {
 }
 
 
-public class FPWebView : NSObject, WKScriptMessageHandler {
+public class WvConfig : NSObject, WKScriptMessageHandler {
     let url = BASE_URL
     let paymentDevice: PaymentDevice?
     var user: User?
@@ -67,7 +67,7 @@ public class FPWebView : NSObject, WKScriptMessageHandler {
                 return
             }
 
-            completion(error: NSError.error(code: 1, domain: FPWebView.self, message: "Could not open connection. OnDeviceConnected event did not supply valid device data"))
+            completion(error: NSError.error(code: 1, domain: WvConfig.self, message: "Could not open connection. OnDeviceConnected event did not supply valid device data"))
         })
     }
     
