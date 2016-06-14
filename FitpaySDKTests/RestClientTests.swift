@@ -322,7 +322,58 @@ class RestClientTests: XCTestCase
 
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
-    
+    /* disabled due to PLAT-1404, PLAT-1406
+     
+    //we need to decrypt the payloads that respond with PII info. Check that the full data suite was sent/comes back.
+    func testCardCreateCheckReturn() {
+        let expectation = super.expectationWithDescription("create a card and decrypt the data coming back")
+        
+        self.testHelper.createAndLoginUser(expectation) {
+            user in
+            self.testHelper.createDevice(expectation, user: user) {
+                (user, device) in
+                self.testHelper.createEricCard(expectation, pan: "9999555566664321", expMonth: 3, expYear: 2019, user: user) {
+                    (user, card) in
+                    
+                    //            pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", street1: "4883 Dakota Blvd.",
+                    // street2: "", street3: "", city: "Boulder", state: "CO", postalCode: "80304-1111", country: "USA"
+                    XCTAssertEqual(card?.info?.pan, "############4321", "Look for unmasked last 4")
+                    XCTAssertEqual(card?.info?.cvv, "####", "Look for masked cvv")
+                    XCTAssertEqual(card?.info?.expYear, 2019)
+                    XCTAssertEqual(card?.info?.expMonth, 3)
+                    XCTAssertEqual(card?.info?.name, "Eric Peers")
+                    XCTAssertEqual(card?.info?.address?.street1, "4883 Dakota Blvd.")
+                    XCTAssertEqual(card?.info?.address?.street2, "Ste. #209-A")
+                    XCTAssertEqual(card?.info?.address?.street3, "underneath a bird's nest")
+                    XCTAssertEqual(card?.info?.address?.city, "Boulder")
+                    XCTAssertEqual(card?.info?.address?.state, "CO")
+                    XCTAssertEqual(card?.info?.address?.postalCode, "80304-1111")
+                    XCTAssertEqual(card?.info?.address?.countryCode, "USA")
+                    self.testHelper.acceptTermsForCreditCard(expectation, card:card) {
+                        card in
+                        XCTAssertEqual(card?.info?.pan, "############4321", "Look for unmasked last 4")
+                        XCTAssertEqual(card?.info?.cvv, "####", "Look for masked cvv")
+                        XCTAssertEqual(card?.info?.name, "Eric Peers")
+                        XCTAssertEqual(card?.info?.address?.street1, "4883 Dakota Blvd.")
+                        XCTAssertEqual(card?.info?.address?.street2, "Ste. #209-A")
+                        XCTAssertEqual(card?.info?.address?.street3, "underneath a bird's nest")
+                        XCTAssertEqual(card?.info?.address?.city, "Boulder")
+                        XCTAssertEqual(card?.info?.address?.state, "CO")
+                        XCTAssertEqual(card?.info?.address?.postalCode, "80304-1111")
+//                        XCTAssertEqual(card?.info?.address?.countryCode, "USA")
+                        XCTAssertEqual(card?.info?.expYear, 2019)
+                        XCTAssertEqual(card?.info?.expMonth, 3)
+                       
+                        self.testHelper.deleteUser(user, expectation: expectation)
+                    }
+                    
+                }
+            }
+        }
+        super.waitForExpectationsWithTimeout(20, handler: nil)
+
+    }
+    */
     func testUserListCreditCardsListsCreditCardsForUser()
     {
         let expectation = super.expectationWithDescription("'listCreditCards' lists credit cards for user")
@@ -505,7 +556,7 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectationsWithTimeout(20, handler: nil)
     }
     
     func testDeactivateCreditCard()
@@ -1046,6 +1097,7 @@ class RestClientTests: XCTestCase
         var masterCard : CreditCard?
         var masterUser : User?
         var masterDevice : DeviceInfo?
+        var masterCommitList : [Commit]?
             
         self.testHelper.createAndLoginUser(expectation) {
             //[unowned self](user) in
@@ -1068,25 +1120,38 @@ class RestClientTests: XCTestCase
         }
         super.waitForExpectationsWithTimeout(20, handler:nil)
         var i:Int
+        var accepted = 0
+        let cardExpectation = super.expectationWithDescription("creating cards 1-9")
         for (i=1;i<10;i++) {
-            let cardExpectation = super.expectationWithDescription("creating card \(i)")
+
             self.testHelper.createEricCard(expectation, pan:"9999411122220\(i)33", expMonth:i, expYear:2019, user: masterUser!) {
                 (user, card) in
+
+                var now = NSDate()
+                debugPrint("card creation done \(card)")
+
                 self.testHelper.acceptTermsForCreditCard(expectation, card:card) {
                     card in
-                    cardExpectation.fulfill()
+                    accepted+=1 //can't use i because closure has it at 10 when I hit this callback
+                    if (accepted==9) { cardExpectation.fulfill() }
                 }
             }
         }
-        super.waitForExpectationsWithTimeout(20, handler:nil)
+        super.waitForExpectationsWithTimeout(40, handler:nil)
+        var now = NSDate()
+        debugPrint("All card creation/acceptance done \(now)")
         
         for (i=0;i<5;i++) {
             let synchronizer = super.expectationWithDescription("deactivate reactivate")
             self.testHelper.deactivateCreditCard(synchronizer, creditCard:masterCard) {
                 card in
+                now = NSDate()
+                debugPrint("deactivate card done \(now)")
+                
                 card?.reactivate(causedBy: .CARDHOLDER, reason: "I like pizza", completion: {
                     (pending, card, error) in
-                    debugPrint("Reactivate done \(i)")
+                    now = NSDate()
+                    debugPrint("Reactivate done \(i): \(now)")
                     masterCard = card!
                     XCTAssertNil(error)
                     synchronizer.fulfill()
@@ -1100,9 +1165,15 @@ class RestClientTests: XCTestCase
             (commits, error) in
             XCTAssertNil(error)
             if error != nil { commit_checker.fulfill(); return }
-//            XCTAssertEqual(commits?.totalResults, 10+1+10, "Should have 10 create, 1 setdefault, 10 activate-deactivate")
+            XCTAssertEqual(commits?.totalResults, 1+1+9+10+1+5+5, "Should have 10 create (1+1 set default + 9 activates), '10' activates, 1 more reset default for the deactivate, 10 activate-deactivate")
+            XCTAssertEqual(commits?.results?.count, 32, "32 results just like total results")
             for result in (commits?.results!)! {
                 debugPrint("Result: \(result.commitType!)")
+                if (masterCommitList == nil) {
+                    masterCommitList = [result]
+                } else {
+                    masterCommitList!.append(result)
+                }
             }
             commit_checker.fulfill()
         }
@@ -1113,30 +1184,47 @@ class RestClientTests: XCTestCase
         let commit_checker4 = super.expectationWithDescription("check the commits")
         let commit_checker5 = super.expectationWithDescription("check the commits")
 
+        //page 0, limited to 10.
         masterDevice!.listCommits(commitsAfter: nil, limit: 10, offset: 0) {
             (commits, error) in
             XCTAssertNil(error)
             if error != nil { commit_checker.fulfill(); return }
-//            XCTAssertEqual(commits!.results![0].commitType!, CommitType.CREDITCARD_CREATED)
-//            XCTAssertEqual(commits!.results![9].commitType!, CommitType.CREDITCARD_CREATED)
-//            XCTAssertEqual(commits?.totalResults, 10, "Should have 10 when I limit results")
+            var idx : Int
+            for (idx=0;idx<10;idx++) {
+                XCTAssertEqual(masterCommitList![idx].commit, commits?.results?[idx].commit, "Compare commit idx \(idx)")
+            }
+            XCTAssertEqual(commits?.results?.count, 10, "Should have 10 when I limit results")
+            XCTAssertEqual(commits?.totalResults, 32, "Should have 32 total though")
             commit_checker2.fulfill()
         }
+        
+        //page 2, limited to 8
         masterDevice!.listCommits(commitsAfter: nil, limit: 8, offset: 10) {
             (commits, error) in
             XCTAssertNil(error)
             if error != nil { commit_checker.fulfill(); return }
-//            XCTAssertEqual(commits!.results![0].commitType!, CommitType.RESET_DEFAULT_CREDITCARD)
-//            XCTAssertEqual(commits!.results![1].commitType!, CommitType.CREDITCARD_DEACTIVATED)
-//            XCTAssertEqual(commits?.totalResults, 8, "Should have 8 when I limit results")
+            XCTAssertEqual(commits?.results?.count, 8, "Should have 8 when I limit results")
+            XCTAssertEqual(commits?.totalResults, 32, "Should have 32 total though")
+            var idx : Int
+            for (idx=10;idx<18;idx++) {
+                XCTAssertEqual(masterCommitList![idx].commit, commits?.results?[idx-10].commit, "Compare commit idx \(idx)")
+            }
             commit_checker3.fulfill()
         }
-        masterDevice!.listCommits(commitsAfter: nil, limit: 20, offset: 20) {
+        
+        //page "3", limited to 20. Gets 1 item.
+        masterDevice!.listCommits(commitsAfter: nil, limit: 20, offset: 31) {
             (commits, error) in
             XCTAssertNil(error)
             if error != nil { commit_checker.fulfill(); return }
-//            XCTAssertEqual(commits!.results![0].commitType!, CommitType.CREDITCARD_ACTIVATED)
-//            XCTAssertEqual(commits?.totalResults, 1, "Should have 1 when I hit last page")
+            XCTAssertEqual(commits?.results?.count, 1, "Should have 1 when I limit results")
+            XCTAssertEqual(commits?.totalResults, 32, "Should have 32 total though")
+
+            var idx : Int
+            for (idx=31;idx<32;idx++) {
+                XCTAssertEqual(masterCommitList![idx].commit, commits?.results?[idx-31].commit, "Compare commit idx \(idx)")
+            }
+
             commit_checker4.fulfill()
         }
         masterDevice!.listCommits(commitsAfter: nil, limit: 200, offset: 200) {
@@ -1148,7 +1236,7 @@ class RestClientTests: XCTestCase
             commit_checker5.fulfill()
         }
 
-        super.waitForExpectationsWithTimeout(10, handler:nil)
+        super.waitForExpectationsWithTimeout(20, handler:nil)
         
         
     }

@@ -163,7 +163,7 @@ class TestHelpers {
     func createEricCard(expectation:XCTestExpectation, pan: String, expMonth: Int, expYear: Int, user: User?, completion:(user:User?, creditCard:CreditCard?) -> Void) {
         user?.createCreditCard(
             pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", street1: "4883 Dakota Blvd.",
-            street2: "", street3: "", city: "Boulder", state: "CO", postalCode: "80304-1111", country: "USA"
+            street2: "Ste. #209-A", street3: "underneath a bird's nest", city: "Boulder", state: "CO", postalCode: "80304-1111", country: "USA"
         ) {
             [unowned self](card, error) -> Void in
             debugPrint("creating credit card with \(pan)")
