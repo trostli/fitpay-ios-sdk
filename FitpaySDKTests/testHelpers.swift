@@ -21,7 +21,6 @@ class TestHelpers {
         self.session = session
         self.client = client
     }
-<<<<<<< HEAD
 
     func userValid(user:User) {
         XCTAssertNotNil(user.info)
@@ -32,8 +31,6 @@ class TestHelpers {
         XCTAssertNotNil(user.info?.email)
         
     }
-=======
->>>>>>> bdaded3a6649c1e56cc6c45c7176cdbe371a98b0
     
     func createAndLoginUser(expectation:XCTestExpectation, completion:(User?)->Void) {
         let email = self.randomEmail()
