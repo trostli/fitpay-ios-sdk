@@ -21,11 +21,23 @@ class TestHelpers {
         self.session = session
         self.client = client
     }
+
+    func userValid(user:User) {
+        XCTAssertNotNil(user.info)
+        XCTAssertNotNil(user.created)
+        XCTAssertNotNil(user.links)
+        XCTAssertNotNil(user.createdEpoch)
+        XCTAssertNotNil(user.encryptedData)
+        XCTAssertNotNil(user.info?.email)
+        
+    }
     
     func createAndLoginUser(expectation:XCTestExpectation, completion:(User?)->Void) {
         let email = self.randomEmail()
-        let pin = "1234"
+        let pin = "1234" //needs to be a parameter eventually.
 
+        let currentTime = NSDate().timeIntervalSince1970 //double or NSTimeInterval
+        
         self.client.createUser(
             email, password: pin, firstName:nil, lastName:nil, birthDate:nil, termsVersion:nil,
             termsAccepted:nil, origin:nil, originAccountCreated:nil, completion:
@@ -41,12 +53,19 @@ class TestHelpers {
 
             XCTAssertNotNil(user, "user is nil")
             debugPrint("created user: \(user?.info?.email)")
-            XCTAssertNotNil(user?.info)
-            XCTAssertNotNil(user?.created)
-            XCTAssertNotNil(user?.links)
-            XCTAssertNotNil(user?.createdEpoch)
-            XCTAssertNotNil(user?.encryptedData)
-            XCTAssertNotNil(user?.info?.email)
+            if (user != nil) { self.userValid(user!) }
+
+            //additional sanity checks that we created a meaningful user
+            //PLAT-1388 has a bug on the number of links returned when creating a user. When that gets fixed, reenable this.
+            //XCTAssertEqual(user!.links!.count, 4, "Expect the number of links to be at least user, cards, devices") //could change. I'm violating HATEAOS
+        
+            //because there is such a thing as system clock variance (and I demonstrated it to Jakub), we check +/- 5 minutes.
+            let comparisonTime = currentTime - (150) //2.5 minutes.
+            let actualTime = user!.createdEpoch! //PGR-551 bug. Drop the /1000.0 when the bug is fixed.
+            debugPrint("actualTime created: \(actualTime), expected Time: \(currentTime)")
+            XCTAssertGreaterThan(actualTime, comparisonTime, "Want it to be created after the last 2.5 minutes")
+            XCTAssertLessThan(actualTime, comparisonTime+300, "Want it to be created no more than the last 2.5 min")
+            XCTAssertEqual(user?.email, email, "Want the emails to match up")
             
             self.session.login(username: email, password: pin, completion: {
                 (loginError) -> Void in
@@ -63,14 +82,10 @@ class TestHelpers {
                     (user, userError) in
 
                     XCTAssertNotNil(user)
-                    XCTAssertNotNil(user?.info)
-                    XCTAssertNotNil(user?.created)
-                    XCTAssertNotNil(user?.links)
-                    XCTAssertNotNil(user?.createdEpoch)
-                    XCTAssertNotNil(user?.encryptedData)
-                    XCTAssertNotNil(user?.info?.email)
+                    if (user !=  nil) { self.userValid(user!) }
+                    XCTAssertEqual(user?.email, email, "Want emails to match up after logging in")
+                    
                     XCTAssertNil(userError)
-
                     if userError != nil {
                         expectation.fulfill()
                         return
@@ -145,6 +160,25 @@ class TestHelpers {
         XCTAssertNotNil(card?.info?.pan)
     }
 
+    func createEricCard(expectation:XCTestExpectation, pan: String, expMonth: Int, expYear: Int, user: User?, completion:(user:User?, creditCard:CreditCard?) -> Void) {
+        user?.createCreditCard(
+            pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", street1: "4883 Dakota Blvd.",
+            street2: "Ste. #209-A", street3: "underneath a bird's nest", city: "Boulder", state: "CO", postalCode: "80304-1111", country: "USA"
+        ) {
+            [unowned self](card, error) -> Void in
+            debugPrint("creating credit card with \(pan)")
+            self.assetCreditCard(card)
+            XCTAssertNil(error)
+            
+            if error != nil {
+                expectation.fulfill()
+                return
+            }
+            
+            debugPrint("card created")
+            completion(user: user, creditCard: card)
+        }
+    }
     func createCreditCard(expectation:XCTestExpectation, user:User?, completion:(user:User?, creditCard:CreditCard?) -> Void) {
         user?.createCreditCard(
             pan: "9999411111111116", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1",
@@ -230,6 +264,7 @@ class TestHelpers {
     }
 
     func acceptTermsForCreditCard(expectation:XCTestExpectation, card:CreditCard?, completion:(card:CreditCard?) -> Void) {
+        debugPrint("acceptingTerms for card: \(card)")
         card?.acceptTerms {
             (pending, acceptedCard, error) in
             XCTAssertNil(error)
@@ -240,8 +275,12 @@ class TestHelpers {
             }
 
             XCTAssertNotNil(acceptedCard)
-            XCTAssertEqual(acceptedCard?.state, .PENDING_VERIFICATION)
+            if ((acceptedCard?.state != .PENDING_VERIFICATION) && (acceptedCard?.state != .ACTIVE)) {
+                XCTFail("Need to have a pending verification or active after accepting terms")
+            }
+            debugPrint("acceptingTerms done")
             completion(card: acceptedCard)
+
         }
     }
 
@@ -331,6 +370,7 @@ class TestHelpers {
     }
 
     func deactivateCreditCard(expectation:XCTestExpectation, creditCard:CreditCard?, completion:(deactivatedCard:CreditCard?) -> Void) {
+        debugPrint("deactivateCreditCard")
         creditCard?.deactivate(causedBy: .CARDHOLDER, reason: "lost card") {
             (pending, creditCard, error) in
 

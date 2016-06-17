@@ -6,7 +6,7 @@ public class User : NSObject, ClientModel, Mappable, SecretApplyable
     internal var links:[ResourceLink]?
     public var id:String?
     public var created:String?
-    public var createdEpoch:NSTimeInterval?
+    public var createdEpoch:NSTimeInterval? //iOS represents epoch as a double, but really represents it as an NSTimeInterval. Java is a long.
     public var lastModified:String?
     public var lastModifiedEpoch:NSTimeInterval?
     internal var encryptedData:String?
