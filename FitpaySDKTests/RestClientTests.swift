@@ -512,7 +512,8 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
-    func testMakeDefaultMakesCreditCardDefault()
+    // Test should be reactivated as part of PLAT-1648
+    func skipped_testMakeDefaultMakesCreditCardDefault()
     {
         let expectation = super.expectationWithDescription("'makeDefault' makes credit card default")
         
@@ -602,7 +603,8 @@ class RestClientTests: XCTestCase
         super.waitForExpectationsWithTimeout(20, handler: nil)
     }
     
-    func testReactivateCreditCardActivatesCard()
+    // Test should be reactivated as part of PLAT-1648
+    func skipped_testReactivateCreditCardActivatesCard()
     {
         let expectation = super.expectationWithDescription("'reactivate' makes credit card activated")
         
