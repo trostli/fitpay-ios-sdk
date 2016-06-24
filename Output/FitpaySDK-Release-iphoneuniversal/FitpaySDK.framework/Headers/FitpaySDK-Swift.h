@@ -345,12 +345,10 @@ SWIFT_CLASS("_TtC9FitpaySDK18FitpayEventBinding")
 @interface FitpayEventBinding (SWIFT_EXTENSION(FitpaySDK))
 @end
 
-@class PaymentDevice;
 enum SecurityNFCState : NSInteger;
 
 SWIFT_PROTOCOL("_TtP9FitpaySDK23IPaymentDeviceConnector_")
 @protocol IPaymentDeviceConnector
-- (nonnull instancetype)initWithPaymentDevice:(PaymentDevice * _Nonnull)device;
 - (void)connect;
 - (void)disconnect;
 - (BOOL)isConnected;
@@ -370,6 +368,7 @@ SWIFT_CLASS("_TtC9FitpaySDK5Image")
 - (void)retrieveAsset:(void (^ _Nonnull)(Asset * _Nullable asset, NSError * _Nullable error))completion;
 @end
 
+@class PaymentDevice;
 
 SWIFT_CLASS("_TtC9FitpaySDK26MockPaymentDeviceConnector")
 @interface MockPaymentDeviceConnector : NSObject <IPaymentDeviceConnector>

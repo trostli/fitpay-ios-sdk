@@ -1,7 +1,5 @@
 @objc public protocol IPaymentDeviceConnector
 {
-    init(paymentDevice device:PaymentDevice)
-    
     func connect()
 
     func disconnect()
