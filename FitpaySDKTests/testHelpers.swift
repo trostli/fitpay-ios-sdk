@@ -275,7 +275,7 @@ class TestHelpers {
             }
 
             XCTAssertNotNil(acceptedCard)
-            if ((acceptedCard?.state != .PENDING_VERIFICATION) && (acceptedCard?.state != .ACTIVE)) {
+            if ((acceptedCard?.state != .PENDING_VERIFICATION) && (acceptedCard?.state != .PENDING_ACTIVE)) {
                 XCTFail("Need to have a pending verification or active after accepting terms")
             }
             debugPrint("acceptingTerms done")
