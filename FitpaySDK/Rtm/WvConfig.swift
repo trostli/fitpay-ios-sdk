@@ -17,16 +17,18 @@ internal enum WVResponse: String {
 
 
 public class WvConfig : NSObject, WKScriptMessageHandler {
+
     let url = BASE_URL
     let paymentDevice: PaymentDevice?
-    var user: User?
-    var rtmConfig: RtmConfig?
     let restSession: RestSession?
     let restClient: RestClient?
+    let notificationCenter = NSNotificationCenter.defaultCenter()
+
+    var user: User?
+    var rtmConfig: RtmConfig?
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
     var connectionBinding: FitpayEventBinding?
-
     var sessionDataCallBackId: Int?
     var syncCallBacks = [Int]()
     
@@ -40,6 +42,8 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         SyncManager.sharedInstance.paymentDevice = paymentDevice
 
         super.init()
+
+        self.notificationCenter.addObserver(self, selector: #selector(logout), name: UIApplicationWillEnterForegroundNotification, object: nil)
         self.bindEvents()
     }
 
@@ -262,6 +266,14 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
             return String(format: response.rawValue, "unknown")
         case .noSessionData:
             return response.rawValue
+        }
+    }
+
+    @objc private func logout() {
+        self.webview!.evaluateJavaScript("window.RtmBridge.forceLogout()") { (result, error) in
+            if error != nil {
+                print("failed to log out user through window.RtmBridge.logout")
+            }
         }
     }
 
