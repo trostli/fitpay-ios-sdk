@@ -95,7 +95,6 @@ typedef int swift_int4  __attribute__((__ext_vector_type__(4)));
 @import ObjectiveC;
 @import Foundation;
 @import Dispatch;
-@import Pusher;
 @import WebKit;
 #endif
 
@@ -536,37 +535,6 @@ SWIFT_CLASS("_TtC9FitpaySDK9RtmConfig")
 @property (nonatomic, copy) NSString * _Nullable redirectUri;
 @property (nonatomic, strong) DeviceInfo * _Nullable deviceInfo;
 - (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri deviceInfo:(DeviceInfo * _Nullable)deviceInfo OBJC_DESIGNATED_INITIALIZER;
-@end
-
-@class NSURL;
-
-SWIFT_CLASS("_TtC9FitpaySDK10RtmSession")
-@interface RtmSession : NSObject
-- (nonnull instancetype)initWithAuthorizationURL:(NSURL * _Nonnull)authorizationURL OBJC_DESIGNATED_INITIALIZER;
-
-/// Establishes websocket connection, provides URL for webview member; When webview loads URL and establishes websocket connection RTM session is ready to be used by RTM client for exchanging messages; In order to be notified when particular event occurs, callback must be set (onConnect, onParticipantsReady, onUserLogin)
-///
-/// \param deviceInfo payment device object
-- (void)connectAndWaitForParticipants:(DeviceInfo * _Nonnull)deviceInfo;
-
-/// Handles notification when device synchronization is required
-@property (nonatomic, copy) void (^ _Nullable onSychronizationRequest)(void);
-@end
-
-@class PTPusher;
-@class PTPusherConnection;
-
-@interface RtmSession (SWIFT_EXTENSION(FitpaySDK)) <PTPusherDelegate>
-- (void)pusher:(PTPusher * _Null_unspecified)pusher connectionDidConnect:(PTPusherConnection * _Null_unspecified)connection;
-@end
-
-@class PTPusherPresenceChannel;
-@class PTPusherChannelMember;
-
-@interface RtmSession (SWIFT_EXTENSION(FitpaySDK)) <PTPusherPresenceChannelDelegate>
-- (void)presenceChannelDidSubscribe:(PTPusherPresenceChannel * _Null_unspecified)channel;
-- (void)presenceChannel:(PTPusherPresenceChannel * _Null_unspecified)channel memberAdded:(PTPusherChannelMember * _Null_unspecified)member;
-- (void)presenceChannel:(PTPusherPresenceChannel * _Null_unspecified)channel memberRemoved:(PTPusherChannelMember * _Null_unspecified)member;
 @end
 
 typedef SWIFT_ENUM(NSInteger, SecurityNFCState) {
