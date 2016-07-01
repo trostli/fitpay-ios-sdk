@@ -176,10 +176,16 @@ class TestHelpers {
                 return
             }
             
-            debugPrint("card created")
-            completion(user: user, creditCard: card)
+            if card?.state == .PENDING_ACTIVE {
+                self.waitForActive(card!, completion: { (activeCard) in
+                    completion(user: user, creditCard: activeCard)
+                })
+            } else {
+                completion(user: user, creditCard: card)
+            }
         }
     }
+
     func createCreditCard(expectation:XCTestExpectation, user:User?, completion:(user:User?, creditCard:CreditCard?) -> Void) {
         user?.createCreditCard(
             pan: "9999411111111116", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1",
@@ -195,7 +201,13 @@ class TestHelpers {
                 return
             }
 
-            completion(user: user, creditCard: card)
+            if card?.state == .PENDING_ACTIVE {
+                self.waitForActive(card!, completion: { (activeCard) in
+                    completion(user: user, creditCard: activeCard)
+                })
+            } else {
+                completion(user: user, creditCard: card)
+            }
         }
     }
 
