@@ -523,8 +523,8 @@ public class RestClient : NSObject
      Completion handler
 
      - parameter pending:     Provides pending flag, indicating that transition was accepted, but current status can be reviewed later. Note that CreditCard object is nil in this case
-     - parameter creditCard: Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
-     - parameter error:  Provides error object, or nil if no error occurs
+     - parameter creditCard:  Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
+     - parameter error:       Provides error object, or nil if no error occurs
      */
     public typealias MakeDefaultHandler = (pending:Bool, creditCard:CreditCard?, error:NSError?)->Void
 
@@ -1009,7 +1009,7 @@ public class RestClient : NSObject
             }
         }
     }
-    
+
     internal func creditCards(url:String, excludeState:[String], limit:Int, offset:Int, completion:CreditCardsHandler)
     {
         let parameters:[String : AnyObject] = ["excludeState" : excludeState.joinWithSeparator(","), "limit" : limit, "offest" : offset]

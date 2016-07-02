@@ -166,7 +166,23 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
     {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
-    
+
+    /**
+     Get the the credit card. This is useful for updated the card with the most recent data and some properties change asynchronously
+
+     - parameter completion:   CreditCardHandler closure
+     */
+    @objc public func getCreditCard(completion:RestClient.CreditCardHandler) {
+        let resource = CreditCard.selfResource
+        let url = self.links?.url(resource)
+
+        if  let url = url, client = self.client {
+            client.retrieveCreditCard(url, completion: completion)
+        } else {
+            completion(creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+
     /**
      Delete a single credit card from a user's profile. If you delete a card that is currently the default source, then the most recently added source will become the new default.
      

@@ -168,6 +168,7 @@ class TestHelpers {
             [unowned self](card, error) -> Void in
             debugPrint("creating credit card with \(pan)")
             self.assetCreditCard(card)
+
             XCTAssertNil(error)
             
             if error != nil {
@@ -175,10 +176,16 @@ class TestHelpers {
                 return
             }
             
-            debugPrint("card created")
-            completion(user: user, creditCard: card)
+            if card?.state == .PENDING_ACTIVE {
+                self.waitForActive(card!, completion: { (activeCard) in
+                    completion(user: user, creditCard: activeCard)
+                })
+            } else {
+                completion(user: user, creditCard: card)
+            }
         }
     }
+
     func createCreditCard(expectation:XCTestExpectation, user:User?, completion:(user:User?, creditCard:CreditCard?) -> Void) {
         user?.createCreditCard(
             pan: "9999411111111116", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1",
@@ -194,7 +201,13 @@ class TestHelpers {
                 return
             }
 
-            completion(user: user, creditCard: card)
+            if card?.state == .PENDING_ACTIVE {
+                self.waitForActive(card!, completion: { (activeCard) in
+                    completion(user: user, creditCard: activeCard)
+                })
+            } else {
+                completion(user: user, creditCard: card)
+            }
         }
     }
 
@@ -267,6 +280,7 @@ class TestHelpers {
         debugPrint("acceptingTerms for card: \(card)")
         card?.acceptTerms {
             (pending, acceptedCard, error) in
+
             XCTAssertNil(error)
 
             if error != nil {
@@ -275,12 +289,21 @@ class TestHelpers {
             }
 
             XCTAssertNotNil(acceptedCard)
-            if ((acceptedCard?.state != .PENDING_VERIFICATION) && (acceptedCard?.state != .PENDING_ACTIVE)) {
-                XCTFail("Need to have a pending verification or active after accepting terms")
+            if acceptedCard?.state != .PENDING_VERIFICATION {
+                if acceptedCard?.state != .PENDING_ACTIVE {
+                    XCTFail("Need to have a pending verification or active after accepting terms")
+                }
             }
-            debugPrint("acceptingTerms done")
-            completion(card: acceptedCard)
 
+            debugPrint("acceptingTerms done")
+
+            if acceptedCard?.state == .PENDING_ACTIVE {
+                self.waitForActive(acceptedCard!, completion: { (activeCard) in
+                    completion(card: activeCard)
+                })
+            } else {
+                completion(card: acceptedCard)
+            }
         }
     }
 
@@ -316,9 +339,10 @@ class TestHelpers {
             XCTAssertNotNil(verificationMethod)
             XCTAssertEqual(verificationMethod?.state, .VERIFIED)
 
-            verificationMethod?.retrieveCreditCard {
-                    (creditCard, error) in
-                    completion(card: creditCard)
+            verificationMethod?.retrieveCreditCard { (creditCard, error) in
+                self.waitForActive(creditCard!, completion: { (activeCard) in
+                    completion(card: activeCard)
+                })
             }
         }
     }
@@ -336,6 +360,39 @@ class TestHelpers {
             XCTAssertNotNil(defaultCreditCard)
             XCTAssertTrue(defaultCreditCard!.isDefault!)
             completion(defaultCreditCard: defaultCreditCard)
+        }
+    }
+
+    func waitForActive(pendingCard:CreditCard, retries:Int=0, completion:(activeCard:CreditCard) -> Void) {
+        debugPrint("pending card state is \(pendingCard.state)")
+
+        if pendingCard.state == TokenizationState.ACTIVE {
+            completion(activeCard: pendingCard)
+            return
+        }
+
+        if pendingCard.state != TokenizationState.PENDING_ACTIVE {
+            XCTFail("Cards that aren't in pending active state will not transition to active")
+            return
+        }
+
+        if retries > 20 {
+            XCTFail("Exceeded retries waiting for pending active card to transition to active")
+            return
+        }
+
+        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(Double(1000) * Double(NSEC_PER_MSEC)))
+
+        dispatch_after(time, dispatch_get_main_queue()) {
+
+            pendingCard.getCreditCard({ (creditCard, error) in
+                guard error == nil else {
+                    XCTFail("failed to retrieve credit card will polling for active state")
+                    return
+                }
+
+                self.waitForActive(creditCard!, retries: retries + 1, completion: completion)
+            })
         }
     }
 
