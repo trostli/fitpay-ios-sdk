@@ -215,6 +215,11 @@ SWIFT_CLASS("_TtC9FitpaySDK10CreditCard")
 @property (nonatomic, readonly) BOOL makeDefaultAvailable;
 @property (nonatomic, readonly) BOOL listTransactionsAvailable;
 
+/// Get the the credit card. This is useful for updated the card with the most recent data and some properties change asynchronously
+///
+/// \param completion CreditCardHandler closure
+- (void)getCreditCard:(void (^ _Nonnull)(CreditCard * _Nullable creditCard, NSError * _Nullable error))completion;
+
 /// Delete a single credit card from a user's profile. If you delete a card that is currently the default source, then the most recently added source will become the new default.
 ///
 /// \param completion DeleteCreditCardHandler closure

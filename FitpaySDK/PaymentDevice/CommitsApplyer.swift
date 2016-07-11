@@ -151,12 +151,10 @@ internal class CommitsApplyer {
                 apduPackage.state = APDUPackageResponseState.PROCESSED
             }
             debugPrint("about to call confirm")
-            commit.confirmAPDU(
-            {
+            commit.confirmAPDU({
                 (confirmError) -> Void in
                 completion(error: error ?? confirmError)
             })
-            completion(error: error)
         }
     }
     

@@ -89,6 +89,7 @@ public class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         deviceInfo.licenseKey = "6b413f37-90a9-47ed-962d-80e6a3528036"
         deviceInfo.bdAddress = "977214bf-d038-4077-bdf8-226b17d5958d"
         deviceInfo.secureElementId = "8615b2c7-74c5-43e5-b224-38882060161b"
+
         return deviceInfo;
     }
 
