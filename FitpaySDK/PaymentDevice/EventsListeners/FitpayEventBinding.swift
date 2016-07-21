@@ -10,10 +10,10 @@ public class FitpayEventBinding : NSObject {
     static private var bindingIdCounter : Int = 0
     private let bindingId : Int
     
-    var eventId : FitpayEventTypeProtocol
-    var listener : FitpayEventListener
+    public var eventId : FitpayEventTypeProtocol
+    public var listener : FitpayEventListener
     
-    init(eventId: FitpayEventTypeProtocol, listener: FitpayEventListener) {
+    public init(eventId: FitpayEventTypeProtocol, listener: FitpayEventListener) {
 
         self.eventId = eventId
         self.listener = listener
@@ -26,11 +26,11 @@ public class FitpayEventBinding : NSObject {
 }
 
 extension FitpayEventBinding : FitpayEventListener {
-    func dispatchEvent(event: FitpayEvent) {
+    public func dispatchEvent(event: FitpayEvent) {
         listener.dispatchEvent(event)
     }
     
-    func invalidate() {
+    public func invalidate() {
         listener.invalidate()
     }
 }
