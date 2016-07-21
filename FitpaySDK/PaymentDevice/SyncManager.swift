@@ -68,6 +68,9 @@ public class SyncManager : NSObject {
     public static let sharedInstance = SyncManager()
     public var paymentDevice : PaymentDevice?
     
+    public var userId : String? {
+        return user?.id
+    }
     
     internal let syncStorage : SyncStorage = SyncStorage()
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60

@@ -574,6 +574,7 @@ SWIFT_CLASS("_TtC9FitpaySDK11SyncManager")
 @interface SyncManager : NSObject
 + (SyncManager * _Nonnull)sharedInstance;
 @property (nonatomic, strong) PaymentDevice * _Nullable paymentDevice;
+@property (nonatomic, readonly, copy) NSString * _Nullable userId;
 @property (nonatomic, readonly) BOOL isSyncing;
 
 /// Starts sync process with payment device. If device disconnected, than system tries to connect.

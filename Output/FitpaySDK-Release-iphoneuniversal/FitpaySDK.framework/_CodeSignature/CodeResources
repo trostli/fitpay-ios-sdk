@@ -6,51 +6,51 @@
 	<dict>
 		<key>Frameworks/libswiftContacts.dylib</key>
 		<data>
-		gj9RUnsq97CO/0U32f//73csMNM=
+		gD0RgZXPcfvasM5VK5j+PKVvDvE=
 		</data>
 		<key>Frameworks/libswiftCore.dylib</key>
 		<data>
-		OeIlk840sq/QmaAyiQ+gxJiXQKM=
+		DwwYjopZNgbYqVdckFZFKEbCuME=
 		</data>
 		<key>Frameworks/libswiftCoreBluetooth.dylib</key>
 		<data>
-		yh/cz6wsxgns5Zsm8PQb9l84IKk=
+		PQJUHwj7zYAo/r4f0covSXq3Un4=
 		</data>
 		<key>Frameworks/libswiftCoreGraphics.dylib</key>
 		<data>
-		tgm4ej9BQndWAxf2yc0G459eztI=
+		T2pjpc9jymJ+BKoBqYGDz1S325c=
 		</data>
 		<key>Frameworks/libswiftCoreImage.dylib</key>
 		<data>
-		Zt7CM95bvVIkdFn12G4bmRYd1qw=
+		+chvaGupqjuwidKopGLUgI6WwCw=
 		</data>
 		<key>Frameworks/libswiftDarwin.dylib</key>
 		<data>
-		PBTeCPp/iN4TyZllU/XEXJCTHd0=
+		KSLc7O5NGJcHvUX1x3Rs13gL1/g=
 		</data>
 		<key>Frameworks/libswiftDispatch.dylib</key>
 		<data>
-		EmJyqmDLDpFYcwsb9CNMIZ9V20Q=
+		hppsMT8/h4r0yJeI+YsxaqK5ILQ=
 		</data>
 		<key>Frameworks/libswiftFoundation.dylib</key>
 		<data>
-		Xx/9i5dfrHijTIa/96VAQHtrI7k=
+		df0LZ6q/o3DsxI4ZKHTJu5GTqJg=
 		</data>
 		<key>Frameworks/libswiftObjectiveC.dylib</key>
 		<data>
-		C4C5aZOrfhPkUQwLebmn5qf9HwM=
+		/Q3bE1Ato79gYycu0iuXQHQOuPY=
 		</data>
 		<key>Frameworks/libswiftUIKit.dylib</key>
 		<data>
-		GPQAmQUpLHBk1j+mPiYchoRbdmo=
+		tN9fhmZxo4OZ8dnLPA2d0ogsuzE=
 		</data>
 		<key>Frameworks/libswiftWebKit.dylib</key>
 		<data>
-		6jFqrkofi2ZOdgmbBiEmJoY6Nho=
+		tJrENN+rz/CWEc8hVtPaUoPoj8I=
 		</data>
 		<key>Headers/FitpaySDK-Swift.h</key>
 		<data>
-		f7c0fMawjf5cDHJGncK4oWvkOZ4=
+		kRBNVQSYe4yxyLwXpq7qx2s7Fgk=
 		</data>
 		<key>Headers/FitpaySDK.h</key>
 		<data>
@@ -74,7 +74,7 @@
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm.swiftmodule</key>
 		<data>
-		abz5Epe0NQv5Wwilh3Y3w8DC5rM=
+		CN0jfXVu6Kv9NTQUkqIP3Eao2Ps=
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -82,7 +82,7 @@
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		UAaMuGpuP1NT+C+Rj4XCLAZthIo=
+		YQiRmk/paoyb7bRQ3SLW3GDgohk=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -93,51 +93,51 @@
 	<dict>
 		<key>Frameworks/libswiftContacts.dylib</key>
 		<data>
-		gj9RUnsq97CO/0U32f//73csMNM=
+		gD0RgZXPcfvasM5VK5j+PKVvDvE=
 		</data>
 		<key>Frameworks/libswiftCore.dylib</key>
 		<data>
-		OeIlk840sq/QmaAyiQ+gxJiXQKM=
+		DwwYjopZNgbYqVdckFZFKEbCuME=
 		</data>
 		<key>Frameworks/libswiftCoreBluetooth.dylib</key>
 		<data>
-		yh/cz6wsxgns5Zsm8PQb9l84IKk=
+		PQJUHwj7zYAo/r4f0covSXq3Un4=
 		</data>
 		<key>Frameworks/libswiftCoreGraphics.dylib</key>
 		<data>
-		tgm4ej9BQndWAxf2yc0G459eztI=
+		T2pjpc9jymJ+BKoBqYGDz1S325c=
 		</data>
 		<key>Frameworks/libswiftCoreImage.dylib</key>
 		<data>
-		Zt7CM95bvVIkdFn12G4bmRYd1qw=
+		+chvaGupqjuwidKopGLUgI6WwCw=
 		</data>
 		<key>Frameworks/libswiftDarwin.dylib</key>
 		<data>
-		PBTeCPp/iN4TyZllU/XEXJCTHd0=
+		KSLc7O5NGJcHvUX1x3Rs13gL1/g=
 		</data>
 		<key>Frameworks/libswiftDispatch.dylib</key>
 		<data>
-		EmJyqmDLDpFYcwsb9CNMIZ9V20Q=
+		hppsMT8/h4r0yJeI+YsxaqK5ILQ=
 		</data>
 		<key>Frameworks/libswiftFoundation.dylib</key>
 		<data>
-		Xx/9i5dfrHijTIa/96VAQHtrI7k=
+		df0LZ6q/o3DsxI4ZKHTJu5GTqJg=
 		</data>
 		<key>Frameworks/libswiftObjectiveC.dylib</key>
 		<data>
-		C4C5aZOrfhPkUQwLebmn5qf9HwM=
+		/Q3bE1Ato79gYycu0iuXQHQOuPY=
 		</data>
 		<key>Frameworks/libswiftUIKit.dylib</key>
 		<data>
-		GPQAmQUpLHBk1j+mPiYchoRbdmo=
+		tN9fhmZxo4OZ8dnLPA2d0ogsuzE=
 		</data>
 		<key>Frameworks/libswiftWebKit.dylib</key>
 		<data>
-		6jFqrkofi2ZOdgmbBiEmJoY6Nho=
+		tJrENN+rz/CWEc8hVtPaUoPoj8I=
 		</data>
 		<key>Headers/FitpaySDK-Swift.h</key>
 		<data>
-		f7c0fMawjf5cDHJGncK4oWvkOZ4=
+		kRBNVQSYe4yxyLwXpq7qx2s7Fgk=
 		</data>
 		<key>Headers/FitpaySDK.h</key>
 		<data>
@@ -157,7 +157,7 @@
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm.swiftmodule</key>
 		<data>
-		abz5Epe0NQv5Wwilh3Y3w8DC5rM=
+		CN0jfXVu6Kv9NTQUkqIP3Eao2Ps=
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -165,7 +165,7 @@
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		UAaMuGpuP1NT+C+Rj4XCLAZthIo=
+		YQiRmk/paoyb7bRQ3SLW3GDgohk=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
