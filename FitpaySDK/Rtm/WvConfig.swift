@@ -24,7 +24,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
     let restClient: RestClient?
     let notificationCenter = NSNotificationCenter.defaultCenter()
 
-    var user: User?
+    public var user: User?
     var rtmConfig: RtmConfig?
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
