@@ -43,6 +43,7 @@ internal class BluetoothPaymentDeviceConnector : NSObject, IPaymentDeviceConnect
         resetToDefaultState()
         
         self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceDisconnected)
+        self.paymentDevice.connectionState = ConnectionState.Disconnected
     }
     
     func resetToDefaultState() {
@@ -265,6 +266,7 @@ internal class BluetoothPaymentDeviceConnector : NSObject, IPaymentDeviceConnect
 extension BluetoothPaymentDeviceConnector : CBCentralManagerDelegate {
     func centralManagerDidUpdateState(central: CBCentralManager) {
         if central.state == CBCentralManagerState.PoweredOn {
+            self.paymentDevice.connectionState = ConnectionState.Initialized
             central.scanForPeripheralsWithServices(nil, options: nil)
         } else {
             central.delegate = nil
@@ -273,8 +275,10 @@ extension BluetoothPaymentDeviceConnector : CBCentralManagerDelegate {
             if lastState == CBCentralManagerState.PoweredOn {
                 resetToDefaultState()
                 self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceDisconnected)
+                self.paymentDevice.connectionState = ConnectionState.Disconnected
             } else {
                 self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceConnected, params: ["error":NSError.error(code: PaymentDevice.ErrorCode.BadBLEState, domain: BluetoothPaymentDeviceConnector.self, message: String(format: PaymentDevice.ErrorCode.BadBLEState.description,  central.state.rawValue))])
+                self.paymentDevice.connectionState = ConnectionState.Connected
             }
         }
         

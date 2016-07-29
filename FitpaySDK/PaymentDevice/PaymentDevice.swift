@@ -13,12 +13,22 @@
     case ESEPowerReset  = 0x01
 }
 
+public enum ConnectionState : Int {
+    case New = 0
+    case Disconnected
+    case Connecting
+    case Connected
+    case Disconnecting
+    case Initialized
+}
+
 @objc public enum PaymentDeviceEventTypes : Int, FitpayEventTypeProtocol {
     case OnDeviceConnected = 0
     case OnDeviceDisconnected
     case OnNotificationReceived
     case OnSecurityStateChanged
     case OnApplicationControlReceived
+    case OnConnectionStateChanged
     
     public func eventId() -> Int {
         return rawValue
@@ -36,6 +46,8 @@
             return "On security state changed, return ['securityState':Int]."
         case .OnApplicationControlReceived:
             return "On application control received"
+        case .OnConnectionStateChanged:
+            return "On connection state changed, returns ['state':Int]"
         }
     }
 }
@@ -140,6 +152,8 @@ public class PaymentDevice : NSObject
             self.deviceInterface.resetToDefaultState()
         }
         
+        self.connectionState = ConnectionState.Connecting
+
         if let secsTimeout = secsTimeout {
             let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(UInt64(secsTimeout) * NSEC_PER_SEC))
             dispatch_after(delayTime, dispatch_get_main_queue()) {
@@ -158,7 +172,17 @@ public class PaymentDevice : NSObject
      Close connection with payment device.
      */
     public func disconnect() {
+        self.connectionState = ConnectionState.Disconnecting
         self.deviceInterface.disconnect()
+    }
+    
+    /**
+     Returns state of connection.
+     */
+    public internal(set) var connectionState : ConnectionState = ConnectionState.New {
+        didSet {
+            callCompletionForEvent(PaymentDeviceEventTypes.OnConnectionStateChanged, params: ["state" : NSNumber(integer: connectionState.rawValue)])
+        }
     }
     
     /**
