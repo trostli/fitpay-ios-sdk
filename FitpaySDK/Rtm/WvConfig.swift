@@ -32,20 +32,25 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
     var sessionDataCallBackId: Int?
     var syncCallBacks = [Int]()
     
-    public init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice, userEmail:String?) {
+    public convenience init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice, userEmail:String?) {
+        self.init(paymentDevice: paymentDevice, userEmail: userEmail, SDKConfiguration: FitpaySDKConfiguration(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL))
+    }
+    
+    public init(paymentDevice:PaymentDevice, userEmail:String?, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
         self.paymentDevice = paymentDevice
-        self.rtmConfig = RtmConfig(clientId: clientId, redirectUri: redirectUri, deviceInfo: nil)
-        self.restSession = RestSession(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
+        self.rtmConfig = RtmConfig(clientId: SDKConfiguration.clientId, redirectUri: SDKConfiguration.redirectUri, deviceInfo: nil)
+        self.restSession = RestSession(configuration: SDKConfiguration)
         self.restClient = RestClient(session: self.restSession!)
         self.paymentDevice!.deviceInfo?.client = self.restClient
-
+        
         SyncManager.sharedInstance.paymentDevice = paymentDevice
-
+        
         super.init()
-
+        
         self.notificationCenter.addObserver(self, selector: #selector(logout), name: UIApplicationWillEnterForegroundNotification, object: nil)
         self.bindEvents()
     }
+    
 
     /**
       In order to open a web-view the SDK must have a connection to the payment device in order to gather data about 

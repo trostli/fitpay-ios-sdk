@@ -71,12 +71,12 @@ public class RestSession : NSObject
     private (set) internal var baseAPIURL:String
     private (set) internal var authorizeURL:String
 
-    public init(clientId:String, redirectUri:String, authorizeURL:String, baseAPIURL:String)
+    public init(configuration : FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration)
     {
-        self.clientId = clientId
-        self.redirectUri = redirectUri
-        self.authorizeURL = authorizeURL
-        self.baseAPIURL = baseAPIURL
+        self.clientId = configuration.clientId
+        self.redirectUri = configuration.redirectUri
+        self.authorizeURL = configuration.authorizeURL
+        self.baseAPIURL = configuration.baseAPIURL
     }
 
     public typealias LoginHandler = (error:NSError?)->Void
