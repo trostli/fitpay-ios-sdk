@@ -18,7 +18,7 @@ internal enum WVResponse: String {
 
 public class WvConfig : NSObject, WKScriptMessageHandler {
 
-    let url = BASE_URL
+    var url = BASE_URL
     let paymentDevice: PaymentDevice?
     let restSession: RestSession?
     let restClient: RestClient?
@@ -43,6 +43,8 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         self.restClient = RestClient(session: self.restSession!)
         self.paymentDevice!.deviceInfo?.client = self.restClient
         
+        self.url = SDKConfiguration.webViewURL
+        
         SyncManager.sharedInstance.paymentDevice = paymentDevice
         
         super.init()
@@ -50,7 +52,6 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         self.notificationCenter.addObserver(self, selector: #selector(logout), name: UIApplicationWillEnterForegroundNotification, object: nil)
         self.bindEvents()
     }
-    
 
     /**
       In order to open a web-view the SDK must have a connection to the payment device in order to gather data about 
