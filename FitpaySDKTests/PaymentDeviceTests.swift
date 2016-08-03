@@ -230,7 +230,7 @@ class PaymentDeviceTests: XCTestCase
         let username = "testableuser2@something.com"
         let password = "1029"
         
-        let restSession:RestSession = RestSession(clientId:clientId, redirectUri:redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
+        let restSession:RestSession = RestSession(configuration: FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL))
         let restClient:RestClient = RestClient(session: restSession)
 
         restSession.login(username: username, password: password)

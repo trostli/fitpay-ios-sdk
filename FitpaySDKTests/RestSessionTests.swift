@@ -14,7 +14,7 @@ class RestSessionTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        self.session = RestSession(clientId: self.clientId, redirectUri: self.redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
+        self.session = RestSession(configuration: FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL))
         self.client = RestClient(session: self.session!)
         self.testHelper = TestHelpers(clientId: clientId, redirectUri: redirectUri, session: self.session, client: self.client)
     }

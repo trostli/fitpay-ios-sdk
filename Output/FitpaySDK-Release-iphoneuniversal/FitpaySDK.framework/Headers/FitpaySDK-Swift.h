@@ -478,6 +478,7 @@ typedef SWIFT_ENUM(NSInteger, PaymentDeviceEventTypes) {
   PaymentDeviceEventTypesOnNotificationReceived = 2,
   PaymentDeviceEventTypesOnSecurityStateChanged = 3,
   PaymentDeviceEventTypesOnApplicationControlReceived = 4,
+  PaymentDeviceEventTypesOnConnectionStateChanged = 5,
 };
 
 
@@ -531,7 +532,6 @@ SWIFT_CLASS("_TtC9FitpaySDK11RestSession")
 @interface RestSession : NSObject
 @property (nonatomic, copy) NSString * _Nullable userId;
 @property (nonatomic, readonly) BOOL isAuthorized;
-- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri authorizeURL:(NSString * _Nonnull)authorizeURL baseAPIURL:(NSString * _Nonnull)baseAPIURL OBJC_DESIGNATED_INITIALIZER;
 - (void)loginWithUsername:(NSString * _Nonnull)username password:(NSString * _Nonnull)password completion:(void (^ _Nonnull)(NSError * _Nullable))completion;
 @end
 
@@ -743,7 +743,7 @@ SWIFT_CLASS("_TtC9FitpaySDK18VerificationMethod")
 SWIFT_CLASS("_TtC9FitpaySDK8WvConfig")
 @interface WvConfig : NSObject <WKScriptMessageHandler>
 @property (nonatomic, strong) User * _Nullable user;
-- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice userEmail:(NSString * _Nullable)userEmail OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice userEmail:(NSString * _Nullable)userEmail;
 
 /// In order to open a web-view the SDK must have a connection to the payment device in order to gather data about that device. This will attempt to connect, and call the completion with either an error or nil if the connection attempt is successful.
 - (void)openDeviceConnection:(void (^ _Nonnull)(NSError * _Nullable))completion;
