@@ -6,13 +6,14 @@ public class User : NSObject, ClientModel, Mappable, SecretApplyable
     internal var links:[ResourceLink]?
     public var id:String?
     public var created:String?
-    public var createdEpoch:CLong?
+    public var createdEpoch:NSTimeInterval? //iOS represents epoch as a double, but really represents it as an NSTimeInterval. Java is a long.
     public var lastModified:String?
-    public var lastModifiedEpoch:CLong?
+    public var lastModifiedEpoch:NSTimeInterval?
     internal var encryptedData:String?
     internal var info:UserInfo?
     private static let creditCardsResource = "creditCards"
     private static let devicesResource = "devices"
+    private static let selfResource = "self"
     
     public var firstName:String?
     {
@@ -57,9 +58,9 @@ public class User : NSObject, ClientModel, Mappable, SecretApplyable
         links <- (map["_links"], ResourceLinkTransformType())
         id <- map["id"]
         created <- map["createdTs"]
-        createdEpoch <- map["createdTsEpoch"]
+        createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         lastModified <- map["lastModifiedTs"]
-        lastModifiedEpoch <- map["lastModifiedTsEpoch"]
+        lastModifiedEpoch <- (map["lastModifiedTsEpoch"], NSTimeIntervalTransform())
         encryptedData <- map["encryptedData"]
     }
     
@@ -178,6 +179,48 @@ public class User : NSObject, ClientModel, Mappable, SecretApplyable
         else
         {
             completion(device:nil, error: NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    @objc public func createRelationship(creditCardId creditCardId:String, deviceId:String, completion:RestClient.CreateRelationshipHandler)
+    {
+        let resource = User.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.createRelationship(url, creditCardId: creditCardId, deviceId: deviceId, completion: completion)
+        }
+        else
+        {
+            completion(relationship: nil, error: NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    @objc public func deleteUser(completion:RestClient.DeleteUserHandler)
+    {
+        let resource = User.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.deleteUser(url, completion: completion)
+        }
+        else
+        {
+            completion(error: NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    @objc public func updateUser(firstName firstName:String?, lastName:String?, birthDate:String?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:RestClient.UpdateUserHandler)
+    {
+        let resource = User.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.updateUser(url, firstName: firstName, lastName: lastName, birthDate: birthDate, originAccountCreated: originAccountCreated, termsAccepted: termsAccepted, termsVersion: termsVersion, completion: completion)
+        }
+        else
+        {
+            completion(user:nil, error: NSError.clientUrlError(domain:User.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }

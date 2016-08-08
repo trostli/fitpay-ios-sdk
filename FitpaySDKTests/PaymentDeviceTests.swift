@@ -160,7 +160,7 @@ class PaymentDeviceTests: XCTestCase
     {
         let expectation = super.expectationWithDescription("test sync with commit")
         
-        SyncManager.sharedInstance.syncStorage.lastCommitId = nil
+        SyncManager.sharedInstance.paymentDevice = self.paymentDevice
         
         SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.CONNECTING_TO_DEVICE)
         {
@@ -219,18 +219,18 @@ class PaymentDeviceTests: XCTestCase
             expectation.fulfill()
         }
         
-        SyncManager.sharedInstance.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnNotificationReceived, completion:
+        SyncManager.sharedInstance.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.OnNotificationReceived, completion:
         {
             (notificationData)->Void in
             print("notification:", notificationData)
         })
         
         let clientId = "pagare"
-        let redirectUri = "http://demo.pagare.me"
+        let redirectUri = "https://demo.pagare.me"
         let username = "testableuser2@something.com"
         let password = "1029"
         
-        let restSession:RestSession = RestSession(clientId:clientId, redirectUri:redirectUri)
+        let restSession:RestSession = RestSession(configuration: FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL))
         let restClient:RestClient = RestClient(session: restSession)
 
         restSession.login(username: username, password: password)

@@ -20,25 +20,33 @@ public enum TokenizationState : String
 public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links:[ResourceLink]?
+    internal var encryptedData:String?
+
     public var creditCardId:String?
     public var userId:String?
     public var isDefault:Bool?
     public var created:String?
-    public var createdEpoch:CLong?
+    public var createdEpoch:NSTimeInterval?
     public var state:TokenizationState?
     public var cardType:String?
-    public var cardMetaData:CardMetadata?    
+    public var cardMetaData:CardMetadata?
     public var termsAssetId:String?
     public var termsAssetReferences:[TermsAssetReferences]?
     public var eligibilityExpiration:String?
-    public var eligibilityExpirationEpoch:CLong?
+    public var eligibilityExpirationEpoch:NSTimeInterval?
     public var deviceRelationships:[DeviceRelationships]?
-    internal var encryptedData:String?
     public var targetDeviceId:String?
     public var targetDeviceType:String?
     public var verificationMethods:[VerificationMethod]?
     public var externalTokenReference:String?
-    internal var info:CardInfo?
+    public var info:CardInfo?
+    public var pan:String?
+    public var expMonth:Int?
+    public var expYear:Int?
+    public var cvv:String?
+    public var name:String?
+    public var address:Address?
+
     private static let selfResource = "self"
     private static let acceptTermsResource = "acceptTerms"
     private static let declineTermsResource = "declineTerms"
@@ -130,27 +138,51 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         self.userId  <- map["userId"]
         self.isDefault <- map["default"]
         self.created  <- map["createdTs"]
-        self.createdEpoch <- map["createdTsEpoch"]
+        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         self.state <- map["state"]
         self.cardType <- map["cardType"]
         self.cardMetaData = Mapper<CardMetadata>().map(map["cardMetaData"].currentValue)
         self.termsAssetId <- map["termsAssetId"]
         self.termsAssetReferences <- (map["termsAssetReferences"], TermsAssetReferencesTransformType())
         self.eligibilityExpiration <- map["eligibilityExpiration"]
-        self.eligibilityExpirationEpoch <- map["eligibilityExpirationEpoch"]
+        self.eligibilityExpirationEpoch <- (map["eligibilityExpirationEpoch"], NSTimeIntervalTransform())
         self.deviceRelationships <- (map["deviceRelationships"], DeviceRelationshipsTransformType())
         self.encryptedData <- map["encryptedData"]
         self.targetDeviceId <- map["targetDeviceId"]
         self.targetDeviceType <- map["targetDeviceType"]
         self.verificationMethods <- (map["verificationMethods"], VerificationMethodTransformType())
         self.externalTokenReference <- map["externalTokenReference"]
+        self.pan <- map["pan"]
+        self.creditCardId <- map["creditCardId"]
+        self.expMonth <- map["expMonth"]
+        self.expYear <- map["expYear"]
+        self.cvv <- map["cvv"]
+        self.name <- map["name"]
+        self.address = Mapper<Address>().map(map["address"].currentValue)
+        self.name <- map["name"]
     }
     
     func applySecret(secret:Foundation.NSData, expectedKeyId:String?)
     {
         self.info = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
-    
+
+    /**
+     Get the the credit card. This is useful for updated the card with the most recent data and some properties change asynchronously
+
+     - parameter completion:   CreditCardHandler closure
+     */
+    @objc public func getCreditCard(completion:RestClient.CreditCardHandler) {
+        let resource = CreditCard.selfResource
+        let url = self.links?.url(resource)
+
+        if  let url = url, client = self.client {
+            client.retrieveCreditCard(url, completion: completion)
+        } else {
+            completion(creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+
     /**
      Delete a single credit card from a user's profile. If you delete a card that is currently the default source, then the most recently added source will become the new default.
      
@@ -569,7 +601,7 @@ public class DeviceRelationships : NSObject, ClientModel, Mappable
     public var firmwareRevision:String?
     public var softwareRevision:String?
     public var created:String?
-    public var createdEpoch:CLong?
+    public var createdEpoch:NSTimeInterval?
     public var osName:String?
     public var systemId:String?
     
@@ -594,7 +626,7 @@ public class DeviceRelationships : NSObject, ClientModel, Mappable
         self.firmwareRevision <- map["firmwareRevision"]
         self.softwareRevision <- map["softwareRevision"]
         self.created <- map["createdTs"]
-        self.createdEpoch <- map["createdTsEpoch"]
+        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         self.osName <- map["osName"]
         self.systemId <- map["systemId"]
     }
@@ -645,22 +677,22 @@ internal class DeviceRelationshipsTransformType : TransformType
 }
 
 
-internal class CardInfo : Mappable
+public class CardInfo : Mappable
 {
-    var pan:String?
-    var expMonth:Int?
-    var expYear:Int?
-    var cvv:String?
-    var creditCardId:String?
-    var name:String?
-    var address:Address?
+    public var pan:String?
+    public var expMonth:Int?
+    public var expYear:Int?
+    public var cvv:String?
+    public var creditCardId:String?
+    public var name:String?
+    public var address:Address?
     
-    internal required init?(_ map: Map)
+    public required init?(_ map: Map)
     {
         
     }
     
-    internal func mapping(map: Map)
+    public func mapping(map: Map)
     {
         self.pan <- map["pan"]
         self.creditCardId <- map["creditCardId"]

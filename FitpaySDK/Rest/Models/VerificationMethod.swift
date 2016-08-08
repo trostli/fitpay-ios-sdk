@@ -40,11 +40,11 @@ public class VerificationMethod : NSObject, ClientModel, Mappable
     public var value:String?
     public var verificationResult:VerificationResult? 
     public var created:String?
-    public var createdEpoch:CLong?
+    public var createdEpoch:NSTimeInterval?
     public var lastModified:String?
-    public var lastModifiedEpoch:CLong?
+    public var lastModifiedEpoch:NSTimeInterval?
     public var verified:String?
-    public var verifiedEpoch:String?
+    public var verifiedEpoch:NSTimeInterval?
     private static let selectResource = "select"
     private static let verifyResource = "verify"
     private static let cardResource = "card"
@@ -80,11 +80,11 @@ public class VerificationMethod : NSObject, ClientModel, Mappable
         self.value <- map["value"]
         self.verificationResult <- map["verificationResult"]
         self.created <- map["createdTs"]
-        self.createdEpoch <- map["createdTsEpoch"]
+        self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         self.lastModified <- map["lastModifiedTs"]
-        self.lastModifiedEpoch <- map["lastModifiedTsEpoch"]
+        self.lastModifiedEpoch <- (map["lastModifiedTsEpoch"], NSTimeIntervalTransform())
         self.verified <- map["verifiedTs"]
-        self.verifiedEpoch <- map["verifiedTsEpoch"]
+        self.verifiedEpoch <- (map["verifiedTsEpoch"], NSTimeIntervalTransform())
     }
     
     /**

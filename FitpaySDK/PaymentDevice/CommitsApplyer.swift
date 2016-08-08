@@ -97,12 +97,12 @@ internal class CommitsApplyer {
         
         let commitCompletion = { (error: ErrorType?) -> Void in
             if error == nil {
-                SyncManager.sharedInstance.syncStorage.lastCommitId = commit.commit
+                SyncManager.sharedInstance.commitCompleted(commit.commit!)
             }
             
             completion(error: error)
         }
-        
+        print("in commitApplyer with commitType \(commitType)")
         switch (commitType) {
         case CommitType.APDU_PACKAGE:
             processAPDUCommit(commit, completion: commitCompletion)
@@ -112,6 +112,7 @@ internal class CommitsApplyer {
     }
     
     private func processAPDUCommit(commit: Commit, completion: CommitCompletion) {
+        print("in getCommits")
         guard let apduPackage = commit.payload?.apduPackage else {
             completion(error: NSError.unhandledError(SyncManager.self))
             return
@@ -120,6 +121,7 @@ internal class CommitsApplyer {
         let applyingStartDate = NSDate().timeIntervalSince1970
         
         if apduPackage.isExpired {
+            print("packageExpired")
             apduPackage.state = APDUPackageResponseState.EXPIRED
             
             // is this error?
@@ -139,7 +141,7 @@ internal class CommitsApplyer {
             let currentTimestamp = NSDate().timeIntervalSince1970
 
             apduPackage.executedDuration = Int(currentTimestamp - applyingStartDate)
-            apduPackage.executedEpoch = CLong(currentTimestamp)
+            apduPackage.executedEpoch = NSTimeInterval(currentTimestamp)
             
             if (error != nil && error as? NSError != nil && (error as! NSError).code == PaymentDevice.ErrorCode.APDUErrorResponse.rawValue) {
                 apduPackage.state = APDUPackageResponseState.FAILED
@@ -148,14 +150,11 @@ internal class CommitsApplyer {
             } else {
                 apduPackage.state = APDUPackageResponseState.PROCESSED
             }
-            
-            //TODO: uncomment this when apdu will be implemented on backend
-//            commit.confirmAPDU(
-//            {
-//                (confirmError) -> Void in
-//                completion(error: error ?? confirmError)
-//            })
-            completion(error: error)
+            debugPrint("about to call confirm")
+            commit.confirmAPDU({
+                (confirmError) -> Void in
+                completion(error: error ?? confirmError)
+            })
         }
     }
     
@@ -165,6 +164,32 @@ internal class CommitsApplyer {
         }
         
         SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.COMMIT_PROCESSED, params: ["commit":commit])
+
+        switch commit.commitType! {
+        case .CREDITCARD_CREATED:
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.CARD_ADDED, params: ["commit":commit])
+            break;
+        case .CREDITCARD_DELETED:
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.CARD_DELETED, params: ["commit":commit])
+            break;
+        case .CREDITCARD_ACTIVATED:
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.CARD_ACTIVATED, params: ["commit":commit])
+            break;
+        case .CREDITCARD_DEACTIVATED:
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.CARD_DEACTIVATED, params: ["commit":commit])
+            break;
+        case .CREDITCARD_REACTIVATED:
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.CARD_REACTIVATED, params: ["commit":commit])
+            break;
+        case .SET_DEFAULT_CREDITCARD:
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.SET_DEFAULT_CARD, params: ["commit":commit])
+            break;
+        case .RESET_DEFAULT_CREDITCARD:
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.RESET_DEFAULT_CARD, params: ["commit":commit])
+            break;
+        default:
+            break;
+        }
         
         completion(error: nil)
     }
@@ -178,7 +203,7 @@ internal class CommitsApplyer {
         }
         
         var apdu = apduPackage.apduCommands![apduCommandIndex]
-        SyncManager.sharedInstance.paymentDevice.executeAPDUCommand(&apdu, completion:
+        SyncManager.sharedInstance.paymentDevice!.executeAPDUCommand(&apdu, completion:
         {
             [unowned self] (apduPack, error) -> Void in
 

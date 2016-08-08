@@ -107,30 +107,6 @@ struct ContinuationControlMessage {
     }
 }
 
-struct ApduResultMessage {
-    let msg : NSData
-    let resultCode : UInt8
-    let sequenceId : UInt16
-    let responseCode: NSData
-    init(msg: NSData) {
-        self.msg = msg
-        var buffer = [UInt8](count: (msg.length), repeatedValue: 0x00)
-        msg.getBytes(&buffer, length: buffer.count)
-        
-        resultCode = UInt8(buffer[0])
-        
-        var recvSeqId:UInt16?
-        recvSeqId = UInt16(buffer[2]) << 8
-        recvSeqId = recvSeqId! | UInt16(buffer[1])
-        sequenceId = recvSeqId!
-        
-        let range : NSRange = NSMakeRange(msg.length - 2, 2)
-        buffer = [UInt8](count: 2, repeatedValue: 0x00)
-        msg.getBytes(&buffer, range: range)
-        responseCode = NSData(bytes: buffer, length: 2)
-    }
-    
-}
 
 public struct ApplicationControlMessage {
     let msg : NSData

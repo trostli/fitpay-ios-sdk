@@ -5,7 +5,7 @@ public class Commit : NSObject, ClientModel, Mappable, SecretApplyable
 {
     var links:[ResourceLink]?
     public var commitType:CommitType?
-    internal var payload:Payload?
+    public var payload:Payload?
     public var created:CLong?
     public var previousCommit:String?
     public var commit:String?
@@ -37,6 +37,7 @@ public class Commit : NSObject, ClientModel, Mappable, SecretApplyable
     }
     
     internal func confirmAPDU(completion:RestClient.ConfirmAPDUPackageHandler) {
+        print("in the confirmAPDU method")
         guard self.commitType == CommitType.APDU_PACKAGE else {
             completion(error: NSError.unhandledError(Commit.self))
             return
@@ -57,7 +58,7 @@ public class Commit : NSObject, ClientModel, Mappable, SecretApplyable
             completion(error: NSError.unhandledError(Commit.self))
             return
         }
-        
+        debugPrint("apdu package \(apduPackage)")
         client.confirmAPDUPackage(url, package: apduPackage, completion: completion)
     }
 }
@@ -76,7 +77,7 @@ public enum CommitType : String
 
 public class Payload : NSObject, Mappable
 {
-    internal var creditCard:CreditCard?
+    public var creditCard:CreditCard?
     internal var payloadDictionary:[String : AnyObject]?
     internal var apduPackage:ApduPackage?
     
@@ -89,7 +90,7 @@ public class Payload : NSObject, Mappable
     {
         let info = map.JSONDictionary
         
-        if let _ = info["cardMetaData"]
+        if let _ = info["creditCardId"]
         {
             self.creditCard = Mapper<CreditCard>().map(info)
         }

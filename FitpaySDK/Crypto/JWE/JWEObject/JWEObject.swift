@@ -1,6 +1,4 @@
 
-import FPCrypto
-
 enum JWEAlgorithm : String {
     case A256GCMKW = "A256GCMKW"
 }
@@ -177,19 +175,16 @@ class JWEObject {
         }
         
         let decryptResult = UnsafeMutablePointer<AESGCM_DecryptionResult>.alloc(sizeof(AESGCM_DecryptionResult))
-        guard aes_gcm_decrypt(cipherKeyUInt8, Int32(cipherKey.length),
-                        ivUInt8, Int32(iv.length),
-                        aadUInt8, Int32(aadLenght),
-                        dataUInt8, Int32(data.length),
-                        tagUInt8, Int32(tag.length),
-                        decryptResult) else {
+        
+        let openssl = OpenSSLHelper.sharedInstance()
+        
+        guard openssl.AES_GSM_decrypt(cipherKeyUInt8, keySize: Int32(cipherKey.length), iv: ivUInt8, ivSize: Int32(iv.length), aad: aadUInt8, aadSize: Int32(aadLenght), cipherText: dataUInt8, cipherTextSize: Int32(data.length), authTag: tagUInt8, authTagSize: Int32(tag.length), result: decryptResult) else {
             return nil
         }
         
         let nsdata = NSData(bytes:  decryptResult.memory.plain_text,
                             length: Int(decryptResult.memory.plain_text_size))
-        
-        aes_gcm_free_decryption_result(decryptResult)
+        openssl.AES_GSM_freeDecryptionResult(decryptResult)
         
         return nsdata
     }
@@ -210,18 +205,17 @@ class JWEObject {
             aadLenght = 0
         }
         let encryptResult = UnsafeMutablePointer<AESGCM_EncryptionResult>.alloc(sizeof(AESGCM_EncryptionResult))
-        aes_gcm_encrypt(cipherKeyUInt8, Int32(key.length),
-                        ivUInt8, Int32(iv.length),
-                        aadUInt8, Int32(aadLenght),
-                        dataUInt8, Int32(data.length),
-                        encryptResult)
+        
+        let openssl = OpenSSLHelper.sharedInstance()
+
+        openssl.AES_GSM_encrypt(cipherKeyUInt8, keySize: Int32(key.length), iv: ivUInt8, ivSize: Int32(iv.length), aad: aadUInt8, aadSize: Int32(aadLenght), plainText: dataUInt8, plainTextSize: Int32(data.length), result: encryptResult)
         
         let cipherText = NSData(bytes:  encryptResult.memory.cipher_text,
                                 length: Int(encryptResult.memory.cipher_text_size))
         let tag = NSData(bytes:  encryptResult.memory.auth_tag,
                          length: Int(encryptResult.memory.auth_tag_size))
 
-        aes_gcm_free_encryption_result(encryptResult)
+        openssl.AES_GSM_freeEncryptionResult(encryptResult)
         
         return (cipherText, tag)
     }

@@ -7,10 +7,13 @@
 //
 
 
-class FitpayEventDispatcher {
+public class FitpayEventDispatcher {
     internal var bindingsDictionary : [Int:[FitpayEventBinding]] = [:]
     
-    func addListenerToEvent(listener: FitpayEventListener, eventId: FitpayEventTypeProtocol) -> FitpayEventBinding? {
+    public init() {
+    }
+    
+    public func addListenerToEvent(listener: FitpayEventListener, eventId: FitpayEventTypeProtocol) -> FitpayEventBinding? {
         var bindingsArray = self.bindingsDictionary[eventId.eventId()]
         if bindingsArray == nil {
             bindingsArray = []
@@ -24,7 +27,7 @@ class FitpayEventDispatcher {
         return binding
     }
     
-    func removeBinding(binding: FitpayEventBinding) {
+    public func removeBinding(binding: FitpayEventBinding) {
         if var bindingsArray = self.bindingsDictionary[binding.eventId.eventId()] {
             if bindingsArray.contains(binding) {
                 binding.invalidate()
@@ -34,7 +37,7 @@ class FitpayEventDispatcher {
         }
     }
     
-    func removeAllBindings() {
+    public func removeAllBindings() {
         for (_, bindingsArray) in self.bindingsDictionary {
             for binding in bindingsArray {
                 binding.invalidate()
@@ -44,7 +47,7 @@ class FitpayEventDispatcher {
         self.bindingsDictionary.removeAll()
     }
     
-    func dispatchEvent(event: FitpayEvent) {
+    public func dispatchEvent(event: FitpayEvent) {
         if let bindingsArray = self.bindingsDictionary[event.eventId.eventId()] {
             for binding in bindingsArray {
                 binding.dispatchEvent(event)

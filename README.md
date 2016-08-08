@@ -1,7 +1,14 @@
 # Fitpay iOS SDK - README.md
 
 
-## Building the app locally
+## Using the SDK
+Fitpay distributes the SDK via cocoapods. Documentation on using cocoapods can be found [here](https://guides.cocoapods.org/using/getting-started.html). Once you have set up your project to use cocoapods, add the following to your Podfile:
+```ruby
+pod 'FitpaySDK'
+```
+
+
+## Building the SDK locally
 Ensure you have cocoapods installed, and the repo checked out:
 ```shell
 sudo gem install cocoapods  
@@ -24,9 +31,15 @@ Right click on FitpaySDK tests, Enable tests
 Click on a test, and press "Play"
 
 ## Running Tests From the Commandline
+By default the tests will run in the iPhone 6s simulator.
 ```
-xcodebuild test -project FitpaySDK.xcodeproj -scheme FitpaySDK -destination 'platform=iOS Simulator,name=iPhone 6s'
+./bin/test
 ```
+To test on a different simulator, pass in a valid simulator same.
+```
+./bin/test "iPhone 5s"
+```
+
 
 
 ## Contributing to the SDK

@@ -55,7 +55,7 @@ public class RestSession : NSObject
         return self.accessToken != nil
     }
     
-    public func setAuthorization(webViewSessionData:WebViewSessionData) {
+    public func setWebViewAuthorization(webViewSessionData:WebViewSessionData) {
         self.accessToken = webViewSessionData.token
         self.userId = webViewSessionData.userId
     }
@@ -67,11 +67,16 @@ public class RestSession : NSObject
         configuration.requestCachePolicy = .ReloadIgnoringLocalCacheData
         return Manager(configuration: configuration)
     }()
+    
+    private (set) internal var baseAPIURL:String
+    private (set) internal var authorizeURL:String
 
-    public init(clientId:String, redirectUri:String)
+    public init(configuration : FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration)
     {
-        self.clientId = clientId
-        self.redirectUri = redirectUri
+        self.clientId = configuration.clientId
+        self.redirectUri = configuration.redirectUri
+        self.authorizeURL = configuration.authorizeURL
+        self.baseAPIURL = configuration.baseAPIURL
     }
 
     public typealias LoginHandler = (error:NSError?)->Void
@@ -159,9 +164,9 @@ public class RestSession : NSObject
                 "credentials" : ["username" : username, "password" : password].JSONString!
         ]
 
-        let request = manager.request(.POST, AUTHORIZE_URL, parameters: parameters, encoding:.URL, headers: headers)
+        let request = manager.request(.POST, self.authorizeURL, parameters: parameters, encoding:.URL, headers: headers)
     
-        request.validate().responseObject(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
         {
             (response: Response<AuthorizationDetails, NSError>) -> Void in
 

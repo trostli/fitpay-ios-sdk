@@ -1,6 +1,5 @@
 
 import Foundation
-import FPCrypto
 
 extension NSData
 {
@@ -62,8 +61,9 @@ extension NSData
     
     var SHA1:String?
     {
+        let SHA_DIGEST_LENGTH = OpenSSLHelper.sharedInstance().shaDigestLength()
         let result = NSMutableData(length: Int(SHA_DIGEST_LENGTH*2))!
-        guard simpleSHA1(bytes, UInt(length), UnsafeMutablePointer<Int8>(result.mutableBytes)) else {
+        guard OpenSSLHelper.sharedInstance().simpleSHA1(bytes, length: UInt(length), output: UnsafeMutablePointer<Int8>(result.mutableBytes)) else {
             return nil
         }
         return String(data: result, encoding: NSUTF8StringEncoding)

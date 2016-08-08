@@ -13,12 +13,22 @@
     case ESEPowerReset  = 0x01
 }
 
+public enum ConnectionState : Int {
+    case New = 0
+    case Disconnected
+    case Connecting
+    case Connected
+    case Disconnecting
+    case Initialized
+}
+
 @objc public enum PaymentDeviceEventTypes : Int, FitpayEventTypeProtocol {
     case OnDeviceConnected = 0
     case OnDeviceDisconnected
     case OnNotificationReceived
     case OnSecurityStateChanged
     case OnApplicationControlReceived
+    case OnConnectionStateChanged
     
     public func eventId() -> Int {
         return rawValue
@@ -36,6 +46,8 @@
             return "On security state changed, return ['securityState':Int]."
         case .OnApplicationControlReceived:
             return "On application control received"
+        case .OnConnectionStateChanged:
+            return "On connection state changed, returns ['state':Int]"
         }
     }
 }
@@ -140,6 +152,8 @@ public class PaymentDevice : NSObject
             self.deviceInterface.resetToDefaultState()
         }
         
+        self.connectionState = ConnectionState.Connecting
+
         if let secsTimeout = secsTimeout {
             let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(UInt64(secsTimeout) * NSEC_PER_SEC))
             dispatch_after(delayTime, dispatch_get_main_queue()) {
@@ -158,7 +172,17 @@ public class PaymentDevice : NSObject
      Close connection with payment device.
      */
     public func disconnect() {
+        self.connectionState = ConnectionState.Disconnecting
         self.deviceInterface.disconnect()
+    }
+    
+    /**
+     Returns state of connection.
+     */
+    public internal(set) var connectionState : ConnectionState = ConnectionState.New {
+        didSet {
+            callCompletionForEvent(PaymentDeviceEventTypes.OnConnectionStateChanged, params: ["state" : NSNumber(integer: connectionState.rawValue)])
+        }
     }
     
     /**
@@ -214,35 +238,35 @@ public class PaymentDevice : NSObject
     }
     
     /**
-     Changes interface with payment device. Default is BLE (PaymentDeviceBLEInterface).
-     If you want to implement your own interface than it should confirm PaymentDeviceBaseInterface protocol.
+     Changes interface with payment device. Default is BLE (BluetoothPaymentDeviceConnector).
+     If you want to implement your own interface than it should confirm IPaymentDeviceConnector protocol.
      Also implementation should call PaymentDevice.callCompletionForEvent() for events.
      Can be changed if device disconnected.
      */
-    @objc public func changeDeviceInterface(interface: PaymentDeviceBaseInterface) -> NSError? {
+    @objc public func changeDeviceInterface(interface: IPaymentDeviceConnector) -> NSError? {
         if isConnected {
-            return NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeDisconnected, domain: PaymentDeviceBLEInterface.self)
+            return NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeDisconnected, domain: IPaymentDeviceConnector.self)
         }
         
         self.deviceInterface = interface
         return nil
     }
     
-    internal var deviceInterface : PaymentDeviceBaseInterface!
+    internal var deviceInterface : IPaymentDeviceConnector!
     private let eventsDispatcher = FitpayEventDispatcher()
     
-    internal typealias APDUResponseHandler = (apduResponse:ApduResultMessage?, error:ErrorType?)->Void
-    internal var apduResponseHandler : APDUResponseHandler?
+    public typealias APDUResponseHandler = (apduResponse:ApduResultMessage?, error:ErrorType?)->Void
+    public var apduResponseHandler : APDUResponseHandler?
     
     override public init() {
         super.init()
         
-        self.deviceInterface = PaymentDeviceBLEInterface(paymentDevice: self)
+        self.deviceInterface = BluetoothPaymentDeviceConnector(paymentDevice: self)
     }
     
     internal func sendAPDUData(data: NSData, sequenceNumber: UInt16, completion: APDUResponseHandler) {
         guard isConnected else {
-            completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeConnected, domain: PaymentDeviceBLEInterface.self))
+            completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeConnected, domain: IPaymentDeviceConnector.self))
             return
         }
         
@@ -253,7 +277,7 @@ public class PaymentDevice : NSObject
     internal typealias APDUExecutionHandler = (apduCommand:APDUCommand?, error:ErrorType?)->Void
     internal func executeAPDUCommand(inout apduCommand: APDUCommand, completion: APDUExecutionHandler) {
         guard let commandData = apduCommand.command?.hexToData() else {
-            completion(apduCommand: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUDataNotFull, domain: PaymentDeviceBLEInterface.self))
+            completion(apduCommand: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUDataNotFull, domain: IPaymentDeviceConnector.self))
             return
         }
         
@@ -265,12 +289,13 @@ public class PaymentDevice : NSObject
                 completion(apduCommand: apduCommand, error: error)
                 return
             }
+            print("apduResponse \(apduResponse)")
             
             apduCommand.responseData = apduResponse?.msg.hex
             apduCommand.responseCode = apduResponse?.responseCode.hex
             
             if apduCommand.responseType == APDUResponseType.Error {
-                completion(apduCommand: apduCommand, error: NSError.error(code: PaymentDevice.ErrorCode.APDUErrorResponse, domain: PaymentDeviceBLEInterface.self))
+                completion(apduCommand: apduCommand, error: NSError.error(code: PaymentDevice.ErrorCode.APDUErrorResponse, domain: IPaymentDeviceConnector.self))
                 return
             }
             
@@ -278,7 +303,7 @@ public class PaymentDevice : NSObject
         }
     }
     
-    internal func callCompletionForEvent(eventType: FitpayEventTypeProtocol, params: [String:AnyObject] = [:]) {
+    public func callCompletionForEvent(eventType: FitpayEventTypeProtocol, params: [String:AnyObject] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: params))
     }
 }

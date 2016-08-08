@@ -13,7 +13,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
     public var hardwareRevision:String?
     public var firmwareRevision:String?
     public var softwareRevision:String?
-    public var createdEpoch:CLong?
+    public var createdEpoch:NSTimeInterval?
     public var created:String?
     public var osName:String?
     public var systemId:String?
@@ -73,7 +73,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
     {
         links <- (map["_links"], ResourceLinkTransformType())
         created <- map["createdTs"]
-        createdEpoch <- map["createdTsEpoch"]
+        createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         deviceIdentifier <- map["deviceIdentifier"]
         deviceName <- map["deviceName"]
         deviceType <- map["deviceType"]
@@ -90,6 +90,8 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         pairing <- map["pairing"]
         if let secureElement = map["secureElement"].currentValue as? [String:String] {
             secureElementId = secureElement["secureElementId"]
+        }  else {
+            secureElementId <- map["secureElementId"]
         }
         
         if let cardRelationships = map["cardRelationships"].currentValue as? [AnyObject] {

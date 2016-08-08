@@ -11,7 +11,7 @@ public class FitpayEvent: NSObject {
     public private(set) var eventId : FitpayEventTypeProtocol
     public private(set) var eventData : AnyObject
     
-    init(eventId: FitpayEventTypeProtocol, eventData: AnyObject) {
+    public init(eventId: FitpayEventTypeProtocol, eventData: AnyObject) {
         
         self.eventData = eventData
         self.eventId = eventId
