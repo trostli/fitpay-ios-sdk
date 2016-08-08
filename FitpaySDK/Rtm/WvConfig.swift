@@ -59,8 +59,6 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
       attempt is successful.
      */
     public func openDeviceConnection(completion: (error:NSError?) -> Void) {
-        self.paymentDevice!.connect()
-
         self.connectionBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion: {
             (event) in
             
@@ -79,6 +77,8 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
 
             completion(error: NSError.error(code: 1, domain: WvConfig.self, message: "Could not open connection. OnDeviceConnected event did not supply valid device data"))
         })
+        
+        self.paymentDevice!.connect()
     }
     
     public func setWebView(webview:WKWebView!) {
