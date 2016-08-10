@@ -91,11 +91,11 @@ public class RestClient : NSObject
      - parameter email:      email of the user
      - parameter completion: CreateUserHandler closure
      */
-    public func createUser(email:String, password:String, firstName:String?, lastName:String?, birthDate:String?,
-                                     termsVersion:String?, termsAccepted:String?,
-                                     origin:String?, originAccountCreated:String?,
-                                     completion:CreateUserHandler)
-    {
+    public func createUser(
+        email:String, password:String, firstName:String?, lastName:String?, birthDate:String?,
+        termsVersion:String?, termsAccepted:String?, origin:String?, originAccountCreated:String?,
+        clientId:String, completion:CreateUserHandler
+    ) {
         debugPrint("request create user: \(email)")
 
         self.preparKeyHeader
@@ -119,7 +119,9 @@ public class RestClient : NSObject
                     if (termsVersion != nil) {
                         parameters + ["originAccountCreatedTsEpoch": originAccountCreated!]
                     }
-                    
+
+                    parameters["client_id"] = clientId
+
                     let rawUserInfo = [
                         "email" : email,
                         "pin" : password
