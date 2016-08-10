@@ -182,25 +182,24 @@ class RestClientTests: XCTestCase
         let email = self.testHelper.randomEmail()
         let pin = "1234"
         
-        self.client.createUser(email, password: pin, firstName:nil, lastName:nil,
-                               birthDate:nil,
-                               termsVersion:nil, termsAccepted:nil,
-                               origin:nil, originAccountCreated:nil,
-                               completion:
-                {
-                    (user, error) -> Void in
-                    
-                    XCTAssertNotNil(user, "user is nil")
-                    XCTAssertNotNil(user?.info)
-                    XCTAssertNotNil(user?.created)
-                    XCTAssertNotNil(user?.links)
-                    XCTAssertNotNil(user?.createdEpoch)
-                    XCTAssertNotNil(user?.encryptedData)
-                    XCTAssertNotNil(user?.info?.email)
-                    XCTAssertNil(error)
-                    expectation.fulfill()
-                })
-        
+        self.client.createUser(
+            email, password: pin, firstName:nil, lastName:nil, birthDate:nil,
+            termsVersion:nil, termsAccepted:nil, origin:nil, originAccountCreated:nil,
+            clientId:clientId ,completion:
+        {
+            (user, error) -> Void in
+            
+            XCTAssertNotNil(user, "user is nil")
+            XCTAssertNotNil(user?.info)
+            XCTAssertNotNil(user?.created)
+            XCTAssertNotNil(user?.links)
+            XCTAssertNotNil(user?.createdEpoch)
+            XCTAssertNotNil(user?.encryptedData)
+            XCTAssertNotNil(user?.info?.email)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        })
+
         super.waitForExpectationsWithTimeout(10, handler: nil)
     }
     
