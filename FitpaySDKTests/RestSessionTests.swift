@@ -31,7 +31,7 @@ class RestSessionTests: XCTestCase {
 
         self.client.createUser(
             email, password: self.password, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
-            termsAccepted: nil, origin: nil, originAccountCreated: nil, completion:
+            termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId, completion:
         {
             (user, error) in
 
@@ -59,7 +59,7 @@ class RestSessionTests: XCTestCase {
 
         self.client.createUser(
             email, password: self.password, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
-            termsAccepted: nil, origin: nil, originAccountCreated: nil, completion:
+            termsAccepted: nil, origin: nil, originAccountCreated: nil, clientId: clientId, completion:
         {
             (user, error) in
 

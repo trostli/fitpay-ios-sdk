@@ -40,7 +40,7 @@ class TestHelpers {
         
         self.client.createUser(
             email, password: pin, firstName:nil, lastName:nil, birthDate:nil, termsVersion:nil,
-            termsAccepted:nil, origin:nil, originAccountCreated:nil, completion:
+            termsAccepted:nil, origin:nil, originAccountCreated:nil, clientId: clientId!, completion:
         {
             [unowned self](user, error) -> Void in
 
