@@ -46,6 +46,7 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
     public var cvv:String?
     public var name:String?
     public var address:Address?
+    public var topOfWalletAPDUCommands:[APDUCommand]?
 
     private static let selfResource = "self"
     private static let acceptTermsResource = "acceptTerms"
@@ -160,6 +161,7 @@ public class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         self.name <- map["name"]
         self.address = Mapper<Address>().map(map["address"].currentValue)
         self.name <- map["name"]
+        self.topOfWalletAPDUCommands <- map["offlineSeActions.topOfWallet.apduCommands"]
     }
     
     func applySecret(secret:Foundation.NSData, expectedKeyId:String?)

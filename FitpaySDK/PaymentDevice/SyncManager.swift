@@ -10,6 +10,7 @@ import ObjectMapper
     case SYNC_FAILED
     case SYNC_COMPLETED
     case SYNC_PROGRESS
+    case RECEIVED_CARDS_WITH_TOW_APDU_COMMANDS
     case APDU_COMMANDS_PROGRESS
     
     case COMMIT_PROCESSED
@@ -42,6 +43,8 @@ import ObjectMapper
             return "Sync completed"
         case .SYNC_PROGRESS:
             return "Sync progress"
+        case .RECEIVED_CARDS_WITH_TOW_APDU_COMMANDS:
+            return "Received cards with Top of Wallet APDU commands"
         case .APDU_COMMANDS_PROGRESS:
             return "APDU progress"
         case .COMMIT_PROCESSED:
@@ -242,6 +245,30 @@ public class SyncManager : NSObject {
         eventsDispatcher.removeAllBindings()
     }
     
+    internal typealias ToWAPDUCommandsHandler = (cards:[CreditCard]?, error:ErrorType?)->Void
+    
+    internal func getAllCardsWithToWAPDUCommands(completion:ToWAPDUCommandsHandler) {
+        if self.user == nil {
+            completion(cards: nil, error: NSError.error(code: SyncManager.ErrorCode.UnknownError, domain: SyncManager.self))
+            return
+        }
+        
+        self.user?.listCreditCards(excludeState: [""], limit: 20, offset: 0, completion: { (result, error) in
+            if let error = error {
+                completion(cards: nil, error: error)
+                return
+            }
+            
+            if result!.nextAvailable {
+                result?.collectAllAvailable({ (results, error) in
+                    completion(cards: results, error: error)
+                })
+            } else {
+                completion(cards: result?.results, error: error)
+            }
+        })
+    }
+    
     private func startSync() {
         
         self.callCompletionForSyncEvent(SyncEventType.SYNC_STARTED)
@@ -273,6 +300,17 @@ public class SyncManager : NSObject {
                 }
                 
                 self.syncFinished(error: nil)
+                
+                self.getAllCardsWithToWAPDUCommands({ [unowned self] (cards, error) in
+                    if let error = error {
+                        print("Can't get offline APDU commands. Error: \(error)")
+                        return
+                    }
+                    
+                    if let cards = cards {
+                        self.callCompletionForSyncEvent(SyncEventType.RECEIVED_CARDS_WITH_TOW_APDU_COMMANDS, params: ["cards":cards])
+                    }
+                })
             })
             
             if !applayerStarted {

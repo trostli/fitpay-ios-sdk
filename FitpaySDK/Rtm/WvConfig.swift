@@ -20,8 +20,8 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
 
     var url = BASE_URL
     let paymentDevice: PaymentDevice?
-    let restSession: RestSession?
-    let restClient: RestClient?
+    public let restSession: RestSession?
+    public let restClient: RestClient?
     let notificationCenter = NSNotificationCenter.defaultCenter()
 
     public var user: User?
