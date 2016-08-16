@@ -3,6 +3,9 @@ import Foundation
 import WebKit
 import ObjectMapper
 
+public protocol WvConfigDelegate : NSObjectProtocol {
+    func didAuthorizeWithEmail(email:String?)
+}
 
 /**
  These responses must conform to what is expected by the web-view. Changing their structure also requires
@@ -18,6 +21,8 @@ internal enum WVResponse: String {
 
 public class WvConfig : NSObject, WKScriptMessageHandler {
 
+    weak public var delegate : WvConfigDelegate?
+    
     var url = BASE_URL
     let paymentDevice: PaymentDevice?
     public let restSession: RestSession?
@@ -186,6 +191,10 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
 
             self.user = user
 
+            if let delegate = self.delegate {
+                delegate.didAuthorizeWithEmail(user?.email)
+            }
+            
             self.callBack(
                 self.sessionDataCallBackId!,
                 success: true,
