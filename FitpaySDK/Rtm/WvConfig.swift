@@ -37,13 +37,13 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
     var sessionDataCallBackId: Int?
     var syncCallBacks = [Int]()
     
-    public convenience init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice, userEmail:String?) {
-        self.init(paymentDevice: paymentDevice, userEmail: userEmail, SDKConfiguration: FitpaySDKConfiguration(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL))
+    public convenience init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice, userEmail:String?, isNewAccount:Bool) {
+        self.init(paymentDevice: paymentDevice, userEmail: userEmail, isNewAccount: isNewAccount, SDKConfiguration: FitpaySDKConfiguration(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL))
     }
     
-    public init(paymentDevice:PaymentDevice, userEmail:String?, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
+    public init(paymentDevice:PaymentDevice, userEmail:String?, isNewAccount:Bool, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
         self.paymentDevice = paymentDevice
-        self.rtmConfig = RtmConfig(clientId: SDKConfiguration.clientId, redirectUri: SDKConfiguration.redirectUri, userEmail: userEmail, deviceInfo: nil)
+        self.rtmConfig = RtmConfig(clientId: SDKConfiguration.clientId, redirectUri: SDKConfiguration.redirectUri, userEmail: userEmail, deviceInfo: nil, hasAccount: !isNewAccount)
         self.restSession = RestSession(configuration: SDKConfiguration)
         self.restClient = RestClient(session: self.restSession!)
         self.paymentDevice!.deviceInfo?.client = self.restClient

@@ -544,7 +544,7 @@ SWIFT_CLASS("_TtC9FitpaySDK9RtmConfig")
 @property (nonatomic, copy) NSString * _Nullable redirectUri;
 @property (nonatomic, copy) NSString * _Nullable userEmail;
 @property (nonatomic, strong) DeviceInfo * _Nullable deviceInfo;
-- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri userEmail:(NSString * _Nullable)userEmail deviceInfo:(DeviceInfo * _Nullable)deviceInfo OBJC_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri userEmail:(NSString * _Nullable)userEmail deviceInfo:(DeviceInfo * _Nullable)deviceInfo hasAccount:(BOOL)hasAccount OBJC_DESIGNATED_INITIALIZER;
 @end
 
 typedef SWIFT_ENUM(NSInteger, SecurityNFCState) {
@@ -749,7 +749,7 @@ SWIFT_CLASS("_TtC9FitpaySDK8WvConfig")
 @property (nonatomic, readonly, strong) RestSession * _Nullable restSession;
 @property (nonatomic, readonly, strong) RestClient * _Nullable restClient;
 @property (nonatomic, strong) User * _Nullable user;
-- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice userEmail:(NSString * _Nullable)userEmail;
+- (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice userEmail:(NSString * _Nullable)userEmail isNewAccount:(BOOL)isNewAccount;
 
 /// In order to open a web-view the SDK must have a connection to the payment device in order to gather data about that device. This will attempt to connect, and call the completion with either an error or nil if the connection attempt is successful.
 - (void)openDeviceConnection:(void (^ _Nonnull)(NSError * _Nullable))completion;
