@@ -208,6 +208,7 @@ SWIFT_CLASS("_TtC9FitpaySDK10CreditCard")
 @property (nonatomic, copy) NSString * _Nullable pan;
 @property (nonatomic, copy) NSString * _Nullable cvv;
 @property (nonatomic, copy) NSString * _Nullable name;
+@property (nonatomic, copy) NSArray<APDUCommand *> * _Nullable topOfWalletAPDUCommands;
 @property (nonatomic, readonly) BOOL acceptTermsAvailable;
 @property (nonatomic, readonly) BOOL declineTermsAvailable;
 @property (nonatomic, readonly) BOOL deactivateAvailable;
@@ -560,15 +561,16 @@ typedef SWIFT_ENUM(NSInteger, SyncEventType) {
   SyncEventTypeSYNC_FAILED = 5,
   SyncEventTypeSYNC_COMPLETED = 6,
   SyncEventTypeSYNC_PROGRESS = 7,
-  SyncEventTypeAPDU_COMMANDS_PROGRESS = 8,
-  SyncEventTypeCOMMIT_PROCESSED = 9,
-  SyncEventTypeCARD_ADDED = 10,
-  SyncEventTypeCARD_DELETED = 11,
-  SyncEventTypeCARD_ACTIVATED = 12,
-  SyncEventTypeCARD_DEACTIVATED = 13,
-  SyncEventTypeCARD_REACTIVATED = 14,
-  SyncEventTypeSET_DEFAULT_CARD = 15,
-  SyncEventTypeRESET_DEFAULT_CARD = 16,
+  SyncEventTypeRECEIVED_CARDS_WITH_TOW_APDU_COMMANDS = 8,
+  SyncEventTypeAPDU_COMMANDS_PROGRESS = 9,
+  SyncEventTypeCOMMIT_PROCESSED = 10,
+  SyncEventTypeCARD_ADDED = 11,
+  SyncEventTypeCARD_DELETED = 12,
+  SyncEventTypeCARD_ACTIVATED = 13,
+  SyncEventTypeCARD_DEACTIVATED = 14,
+  SyncEventTypeCARD_REACTIVATED = 15,
+  SyncEventTypeSET_DEFAULT_CARD = 16,
+  SyncEventTypeRESET_DEFAULT_CARD = 17,
 };
 
 
@@ -744,6 +746,8 @@ SWIFT_CLASS("_TtC9FitpaySDK18VerificationMethod")
 
 SWIFT_CLASS("_TtC9FitpaySDK8WvConfig")
 @interface WvConfig : NSObject <WKScriptMessageHandler>
+@property (nonatomic, readonly, strong) RestSession * _Nullable restSession;
+@property (nonatomic, readonly, strong) RestClient * _Nullable restClient;
 @property (nonatomic, strong) User * _Nullable user;
 - (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice userEmail:(NSString * _Nullable)userEmail;
 

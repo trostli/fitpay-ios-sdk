@@ -21,11 +21,11 @@ internal class NSTimeIntervalTransform: TransformType
     {
         if let timeInt = value as? NSNumber
         {
-            return NSTimeInterval(timeInt.integerValue)/1000
+            return NSTimeInterval(timeInt.longLongValue/1000)
         }
         if let timeStr = value as? String
         {
-            return NSTimeInterval(atof(timeStr))/1000
+            return NSTimeInterval(atof(timeStr)/1000)
         }
         return nil
     }
