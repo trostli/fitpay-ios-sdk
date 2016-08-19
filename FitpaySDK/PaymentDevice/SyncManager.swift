@@ -101,6 +101,7 @@ public class SyncManager : NSObject {
         case SyncAlreadyStarted             = 10005
         case CommitsApplyerIsBusy           = 10006
         case ConnectionWithDeviceWasLost    = 10007
+        case UserIsNill                     = 10008
         
         public var description : String {
             switch self {
@@ -120,6 +121,8 @@ public class SyncManager : NSObject {
                 return "Commits applyer is busy, sync already started?"
             case .ConnectionWithDeviceWasLost:
                 return "Connection with device was lost."
+            case .UserIsNill:
+                return "User is nill"
             }
         }
     }
@@ -201,6 +204,21 @@ public class SyncManager : NSObject {
         self.callCompletionForSyncEvent(SyncEventType.CONNECTING_TO_DEVICE)
         
         return nil
+    }
+    
+    /**
+     Tries to make sync with last user.
+     
+     If device disconnected, than system tries to connect.
+     
+     - parameter user: user from API to whom device belongs to.
+     */
+    public func tryToMakeSyncWithLastUser() -> NSError? {
+        guard let user = self.user else {
+            return NSError.error(code: SyncManager.ErrorCode.UserIsNill, domain: SyncManager.self)
+        }
+        
+        return sync(user)
     }
     
     /**

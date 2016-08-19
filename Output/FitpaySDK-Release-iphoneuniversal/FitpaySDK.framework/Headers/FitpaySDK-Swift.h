@@ -352,6 +352,29 @@ SWIFT_CLASS("_TtC9FitpaySDK18FitpayEventBinding")
 - (void)invalidate;
 @end
 
+
+SWIFT_CLASS("_TtC9FitpaySDK26FitpayNotificationsManager")
+@interface FitpayNotificationsManager : NSObject
++ (FitpayNotificationsManager * _Nonnull)sharedInstance;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+
+/// Handle notification from Fitpay platform. It may call syncing process and other stuff. When all notifications processed we should receive AllNotificationsProcessed event. In completion (or in other place where handling of hotification completed) to this event you should call fetchCompletionHandler if this function was called from background.
+///
+/// \param payload payload of notification
+- (void)handleNotification:(NSDictionary * _Nonnull)payload;
+
+/// Saves notification token in Fitpay platform.
+///
+/// \param token notifications token which should be provided by Firebase
+- (void)setNotificationsToken:(NSString * _Nonnull)token;
+
+/// Removes bind.
+- (void)removeSyncBindingWithBinding:(FitpayEventBinding * _Nonnull)binding;
+
+/// Removes all synchronization bindings.
+- (void)removeAllSyncBindings;
+@end
+
 enum SecurityNFCState : NSInteger;
 
 SWIFT_PROTOCOL("_TtP9FitpaySDK23IPaymentDeviceConnector_")
@@ -544,6 +567,7 @@ SWIFT_CLASS("_TtC9FitpaySDK9RtmConfig")
 @property (nonatomic, copy) NSString * _Nullable redirectUri;
 @property (nonatomic, copy) NSString * _Nullable userEmail;
 @property (nonatomic, strong) DeviceInfo * _Nullable deviceInfo;
+@property (nonatomic, copy) NSString * _Nullable version;
 - (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri userEmail:(NSString * _Nullable)userEmail deviceInfo:(DeviceInfo * _Nullable)deviceInfo hasAccount:(BOOL)hasAccount OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -585,6 +609,13 @@ SWIFT_CLASS("_TtC9FitpaySDK11SyncManager")
 ///
 /// \param user user from API to whom device belongs to.
 - (NSError * _Nullable)sync:(User * _Nonnull)user;
+
+/// Tries to make sync with last user.
+///
+/// If device disconnected, than system tries to connect.
+///
+/// \param user user from API to whom device belongs to.
+- (NSError * _Nullable)tryToMakeSyncWithLastUser;
 
 /// Binds to the sync event using SyncEventType and a block as callback.
 ///

@@ -6,6 +6,7 @@ public class RtmConfig: NSObject, Mappable {
     public var userEmail: String?
     public var deviceInfo: DeviceInfo?
     public var hasAccount: Bool?
+    public var version: String?
     
     public init(clientId:String, redirectUri:String, userEmail:String?, deviceInfo:DeviceInfo?, hasAccount:Bool = false) {
         self.clientId = clientId
@@ -25,6 +26,7 @@ public class RtmConfig: NSObject, Mappable {
         userEmail <- map["userEmail"]
         deviceInfo <- map["paymentDevice"]
         hasAccount <- map["account"]
+        version <- map["version"]
     }
 
 }

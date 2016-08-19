@@ -30,3 +30,33 @@ extension Array where Element : Equatable {
         }
     }
 }
+
+//Stack - LIFO
+extension Array {
+    mutating func push(newElement: Element) {
+        self.append(newElement)
+    }
+    
+    mutating func pop() -> Element? {
+        return self.removeLast()
+    }
+    
+    func peekAtStack() -> Element? {
+        return self.last
+    }
+}
+
+//Queue - FIFO
+extension Array {
+    mutating func enqueue(newElement: Element) {
+        self.append(newElement)
+    }
+    
+    mutating func dequeue() -> Element? {
+        return self.removeAtIndex(0)
+    }
+    
+    func peekAtQueue() -> Element? {
+        return self.first
+    }
+}
