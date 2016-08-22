@@ -78,11 +78,12 @@ public class SyncManager : NSObject {
     internal let syncStorage : SyncStorage = SyncStorage()
     internal let paymentDeviceConnectionTimeoutInSecs : Int = 60
     
+    internal var currentDeviceInfo : DeviceInfo?
+
     private let eventsDispatcher = FitpayEventDispatcher()
     private var user : User?
     
     private var commitsApplyer = CommitsApplyer()
-    private var currentDeviceId : String?
     
     private weak var deviceConnectedBinding : FitpayEventBinding?
     private weak var deviceDisconnectedBinding : FitpayEventBinding?
@@ -374,9 +375,9 @@ public class SyncManager : NSObject {
             (deviceInfo, error) -> Void in
             
             if let deviceInfo = deviceInfo {
-                self.currentDeviceId = deviceInfo.deviceIdentifier!
+                self.currentDeviceInfo = deviceInfo
 
-                let lastCommitId = self.syncStorage.getLastCommitId(self.currentDeviceId!)
+                let lastCommitId = self.syncStorage.getLastCommitId(self.currentDeviceInfo!.deviceIdentifier!)
 
                 deviceInfo.listCommits(commitsAfter: lastCommitId, limit: 20, offset: 0, completion:
                 {
@@ -424,8 +425,10 @@ public class SyncManager : NSObject {
     }
 
     private func syncFinished(error error: ErrorType?) {
+        self.currentDeviceInfo?.updateNotificationTokenIfNeeded()
+        
         self.isSyncing = false
-        self.currentDeviceId = nil
+        self.currentDeviceInfo = nil
         
         if let error = error as? NSError {
             callCompletionForSyncEvent(SyncEventType.SYNC_FAILED, params: ["error": error])
@@ -446,7 +449,7 @@ public class SyncManager : NSObject {
     }
 
     internal func commitCompleted(commitId:String) {
-        self.syncStorage.setLastCommitId(self.currentDeviceId!, commitId: commitId)
+        self.syncStorage.setLastCommitId(self.currentDeviceInfo!.deviceIdentifier!, commitId: commitId)
     }
     
     //TODO: delete this once approved

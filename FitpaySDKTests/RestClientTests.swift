@@ -956,7 +956,7 @@ class RestClientTests: XCTestCase
                 
                 let firmwareRev = "2.7.7.7"
                 let softwareRev = "6.8.1"
-                device?.update(firmwareRev, softwareRevision: softwareRev, completion:
+                device?.update(firmwareRev, softwareRevision: softwareRev, notifcationToken: nil, completion:
                 {
                     (updatedDevice, error) -> Void in
                     XCTAssertNil(error)

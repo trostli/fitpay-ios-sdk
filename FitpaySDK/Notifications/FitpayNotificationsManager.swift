@@ -9,17 +9,13 @@
 import Foundation
 
 public enum NotificationsType : String {
-    case Provision = "provision"
-    case Activate = "activate"
-    case Suspend = "suspend"
-    case Payment = "payment"
+    case WithSync = "sync"
+    case WithoutSync = "withoutsync"
 }
 
 public enum NotificationsEventType : Int, FitpayEventTypeProtocol {
-    case ReceivedProvisionNotification = 0x1
-    case ReceivedActivateNotification
-    case ReceivedSuspendNotification
-    case ReceivedPaymentNotification
+    case ReceivedSyncNotification = 0x1
+    case ReceivedSimpleNotification
     
     /**
      *  AllNotificationsProcessed event called when processing of notification finished e.g.
@@ -36,14 +32,10 @@ public enum NotificationsEventType : Int, FitpayEventTypeProtocol {
     
     public func eventDescription() -> String {
         switch self {
-        case .ReceivedProvisionNotification:
-            return "Received notification with type provision"
-        case .ReceivedActivateNotification:
-            return "Received notification with type activate"
-        case .ReceivedSuspendNotification:
-            return "Received notification with type suspend"
-        case .ReceivedPaymentNotification:
-            return "Received notification with type payment"
+        case .ReceivedSyncNotification:
+            return "Received notification with sync operation"
+        case .ReceivedSimpleNotification:
+            return "Received simple notification without sync operation"
         case .AllNotificationsProcessed:
             return "All notification processed"
         }
@@ -74,13 +66,14 @@ public class FitpayNotificationsManager : NSObject {
     }
     
     /**
-     Saves notification token in Fitpay platform.
+     Saves notification token after next sync process.
      
      - parameter token: notifications token which should be provided by Firebase
      */
-    public func setNotificationsToken(token: String) {
+    public func updateNotificationsToken(token: String) {
         notificationsToken = token
         
+        SyncManager.sharedInstance.currentDeviceInfo?.updateNotificationTokenIfNeeded()
     }
     
     /**
@@ -125,9 +118,11 @@ public class FitpayNotificationsManager : NSObject {
         eventsDispatcher.removeAllBindings()
     }
     
+    // MARK: internal
+    internal var notificationsToken : String = ""
+    
     // MARK: private
     private let eventsDispatcher = FitpayEventDispatcher()
-    private var notificationsToken : String = ""
     private var syncCompletedBinding : FitpayEventBinding?
     private var syncFailedBinding : FitpayEventBinding?
     private var notificationsQueue = [NotificationsPayload]()
@@ -145,11 +140,14 @@ public class FitpayNotificationsManager : NSObject {
         
         self.currentNotification = notificationsQueue.dequeue()
         if let currentNotification = self.currentNotification {
-            // TODO: get notification type from payload
-            let notificationType = NotificationsType.Provision
+            var notificationType = NotificationsType.WithoutSync
+            if currentNotification["fpField2"] as? String == "sync" {
+                notificationType = NotificationsType.WithSync
+            }
+            
             callReceivedCompletion(currentNotification, notificationType: notificationType)
             switch notificationType {
-            case .Provision, .Suspend, .Activate:
+            case .WithSync:
                 if let syncCompletedBinding = self.syncCompletedBinding {
                     SyncManager.sharedInstance.removeSyncBinding(binding: syncCompletedBinding)
                 }
@@ -166,13 +164,13 @@ public class FitpayNotificationsManager : NSObject {
                     self.processNextNotificationIfAvailable()
                 })
                 
-                if let error = SyncManager.sharedInstance.tryToMakeSyncWithLastUser() {
+                if let _ = SyncManager.sharedInstance.tryToMakeSyncWithLastUser() {
                     self.currentNotification = nil
                     self.processNextNotificationIfAvailable()
                 }
                 
                 break
-            case .Payment: // just call completion
+            case .WithoutSync: // just call completion
                 self.currentNotification = nil
                 processNextNotificationIfAvailable()
                 break
@@ -183,17 +181,11 @@ public class FitpayNotificationsManager : NSObject {
     private func callReceivedCompletion(payload: NotificationsPayload, notificationType: NotificationsType) {
         var eventType : NotificationsEventType
         switch notificationType {
-        case .Activate:
-            eventType = .ReceivedActivateNotification
+        case .WithSync:
+            eventType = .ReceivedSyncNotification
             break
-        case .Payment:
-            eventType = .ReceivedPaymentNotification
-            break
-        case .Provision:
-            eventType = .ReceivedProvisionNotification
-            break
-        case .Suspend:
-            eventType = .ReceivedSuspendNotification
+        case .WithoutSync:
+            eventType = .ReceivedSimpleNotification
             break
         }
         

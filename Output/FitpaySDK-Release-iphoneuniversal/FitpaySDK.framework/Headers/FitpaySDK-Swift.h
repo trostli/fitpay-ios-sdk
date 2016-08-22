@@ -280,6 +280,7 @@ SWIFT_CLASS("_TtC9FitpaySDK10DeviceInfo")
 @property (nonatomic, copy) NSString * _Nullable hardwareRevision;
 @property (nonatomic, copy) NSString * _Nullable firmwareRevision;
 @property (nonatomic, copy) NSString * _Nullable softwareRevision;
+@property (nonatomic, copy) NSString * _Nullable notificationToken;
 @property (nonatomic, copy) NSString * _Nullable created;
 @property (nonatomic, copy) NSString * _Nullable osName;
 @property (nonatomic, copy) NSString * _Nullable systemId;
@@ -305,7 +306,7 @@ SWIFT_CLASS("_TtC9FitpaySDK10DeviceInfo")
 /// \param softwareRevision? software revision
 ///
 /// \param completion UpdateDeviceHandler closure
-- (void)update:(NSString * _Nullable)firmwareRevision softwareRevision:(NSString * _Nullable)softwareRevision completion:(void (^ _Nonnull)(DeviceInfo * _Nullable, NSError * _Nullable))completion;
+- (void)update:(NSString * _Nullable)firmwareRevision softwareRevision:(NSString * _Nullable)softwareRevision notifcationToken:(NSString * _Nullable)notifcationToken completion:(void (^ _Nonnull)(DeviceInfo * _Nullable, NSError * _Nullable))completion;
 - (void)user:(void (^ _Nonnull)(User * _Nullable, NSError * _Nullable))completion;
 @end
 
@@ -363,10 +364,10 @@ SWIFT_CLASS("_TtC9FitpaySDK26FitpayNotificationsManager")
 /// \param payload payload of notification
 - (void)handleNotification:(NSDictionary * _Nonnull)payload;
 
-/// Saves notification token in Fitpay platform.
+/// Saves notification token after next sync process.
 ///
 /// \param token notifications token which should be provided by Firebase
-- (void)setNotificationsToken:(NSString * _Nonnull)token;
+- (void)updateNotificationsToken:(NSString * _Nonnull)token;
 
 /// Removes bind.
 - (void)removeSyncBindingWithBinding:(FitpayEventBinding * _Nonnull)binding;
