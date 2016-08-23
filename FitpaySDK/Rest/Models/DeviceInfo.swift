@@ -13,6 +13,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
     public var hardwareRevision:String?
     public var firmwareRevision:String?
     public var softwareRevision:String?
+    public var notificationToken:String?
     public var createdEpoch:NSTimeInterval?
     public var created:String?
     public var osName:String?
@@ -25,6 +26,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
     private static let userResource = "user"
     private static let commitsResource = "commits"
     private static let selfResource = "self"
+    
     private weak var _client:RestClient?
 
     // Extra metadata specific for a particural type of device
@@ -83,6 +85,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         hardwareRevision <- map["hardwareRevision"]
         firmwareRevision <- map["firmwareRevision"]
         softwareRevision <- map["softwareRevision"]
+        notificationToken <- map["notificationToken"]
         osName <- map["osName"]
         systemId <- map["systemId"]
         licenseKey <- map["licenseKey"]
@@ -202,12 +205,12 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter softwareRevision?: software revision
      - parameter completion:        UpdateDeviceHandler closure
      */
-    @objc public func update(firmwareRevision:String?, softwareRevision:String?, completion:RestClient.UpdateDeviceHandler) {
+    @objc public func update(firmwareRevision:String?, softwareRevision:String?, notifcationToken: String?, completion:RestClient.UpdateDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if  let url = url, client = self.client
         {
-            client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, completion: completion)
+            client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notifcationToken: notifcationToken, completion: completion)
         }
         else
         {
@@ -246,6 +249,44 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         else
         {
             completion(user: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    internal func addNotificationToken(token:String, completion:RestClient.UpdateDeviceHandler) {
+        let resource = DeviceInfo.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.addDeviceProperty(url, propertyPath: "/notificationToken", propertyValue: token, completion: completion)
+        }
+        else
+        {
+            completion(device: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
+    internal func updateNotificationTokenIfNeeded() {
+        let newNotificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
+        if newNotificationToken != "" {
+            if newNotificationToken != self.notificationToken {
+                if self.notificationToken != nil {
+                    update(nil, softwareRevision: nil, notifcationToken: newNotificationToken, completion: {
+                        [weak self] (device, error) in
+                        if error == nil && device != nil {
+                            print("notificationToken updated to - \(device?.notificationToken)")
+                            self?.notificationToken = device?.notificationToken
+                        }
+                    })
+                } else {
+                    addNotificationToken(newNotificationToken, completion: {
+                        [weak self] (device, error) in
+                        print("notificationToken updated to - \(device?.notificationToken)")
+                        if error == nil && device != nil {
+                            self?.notificationToken = device?.notificationToken
+                        }
+                    })
+                }
+            }
         }
     }
 }
