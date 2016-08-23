@@ -1859,6 +1859,61 @@ public class RestClient : NSObject
         }
     }
     
+    internal func addDeviceProperty(url:String, propertyPath:String, propertyValue:String, completion:UpdateDeviceHandler) {
+        var paramsArray = [AnyObject]()
+        paramsArray.append(["op" : "add", "path" : propertyPath, "value" : propertyValue])
+        self.prepareAuthAndKeyHeaders
+            {
+                [unowned self] (headers, error) -> Void in
+                if let headers = headers {
+                    let params = ["params" : paramsArray]
+                    let request = self._manager.request(.PATCH, url, parameters: params, encoding: .Custom({
+                        (convertible, params) in
+                        let mutableRequest = convertible.URLRequest.copy() as! NSMutableURLRequest
+                        let jsondata = try? NSJSONSerialization.dataWithJSONObject(params!["params"]!, options: NSJSONWritingOptions(rawValue: 0))
+                        if let jsondata = jsondata {
+                            mutableRequest.HTTPBody = jsondata
+                            mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                        }
+                        return (mutableRequest, nil)
+                    }), headers: headers)
+                    request.validate().responseObject(
+                        queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        {
+                            [unowned self] (response: Response<DeviceInfo, NSError>) -> Void in
+                            dispatch_async(dispatch_get_main_queue(),
+                                {
+                                    () -> Void in
+                                    if let resultError = response.result.error
+                                    {
+                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                        
+                                        completion(device:nil, error: error)
+                                    }
+                                    else if let resultValue = response.result.value
+                                    {
+                                        resultValue.client = self
+                                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                        
+                                        completion(device:resultValue, error:response.result.error)
+                                    }
+                                    else
+                                    {
+                                        completion(device: nil, error: NSError.unhandledError(RestClient.self))
+                                    }
+                            })
+                        })
+                }
+                else
+                {
+                    dispatch_async(dispatch_get_main_queue(),
+                        {
+                            completion(device: nil, error: error)
+                    })
+                }
+        }
+    }
+    
     public func commits(url:String, commitsAfter:String?, limit:Int, offset:Int,
         completion:CommitsHandler)
     {

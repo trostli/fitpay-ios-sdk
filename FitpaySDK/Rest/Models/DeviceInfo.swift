@@ -252,16 +252,40 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         }
     }
     
+    internal func addNotificationToken(token:String, completion:RestClient.UpdateDeviceHandler) {
+        let resource = DeviceInfo.selfResource
+        let url = self.links?.url(resource)
+        if  let url = url, client = self.client
+        {
+            client.addDeviceProperty(url, propertyPath: "/notificationToken", propertyValue: token, completion: completion)
+        }
+        else
+        {
+            completion(device: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+        }
+    }
+    
     internal func updateNotificationTokenIfNeeded() {
         let newNotificationToken = FitpayNotificationsManager.sharedInstance.notificationsToken
         if newNotificationToken != "" {
             if newNotificationToken != self.notificationToken {
-                update(nil, softwareRevision: nil, notifcationToken: newNotificationToken, completion: {
-                    [weak self] (device, error) in
-                    if error == nil && device != nil {
-                        self?.notificationToken = device?.notificationToken
-                    }
-                })
+                if self.notificationToken != nil {
+                    update(nil, softwareRevision: nil, notifcationToken: newNotificationToken, completion: {
+                        [weak self] (device, error) in
+                        if error == nil && device != nil {
+                            print("notificationToken updated to - \(device?.notificationToken)")
+                            self?.notificationToken = device?.notificationToken
+                        }
+                    })
+                } else {
+                    addNotificationToken(newNotificationToken, completion: {
+                        [weak self] (device, error) in
+                        print("notificationToken updated to - \(device?.notificationToken)")
+                        if error == nil && device != nil {
+                            self?.notificationToken = device?.notificationToken
+                        }
+                    })
+                }
             }
         }
     }

@@ -6,47 +6,47 @@
 	<dict>
 		<key>Frameworks/libswiftContacts.dylib</key>
 		<data>
-		lqYJw6rwbNLnFFjIYsteBWAXN5I=
+		rAXkbeC8W0de8ub3eHueDdZD0vk=
 		</data>
 		<key>Frameworks/libswiftCore.dylib</key>
 		<data>
-		KQWOzFr2Wzorz3+PN5Hlmrylt9w=
+		M2XOyHfoXS8nW5STAhvy7yAnDes=
 		</data>
 		<key>Frameworks/libswiftCoreBluetooth.dylib</key>
 		<data>
-		QWMvny2I/fIP/yumWTAoAcl2+Xw=
+		013kM1SaoWNKKKf3PeP6nZ+y6JY=
 		</data>
 		<key>Frameworks/libswiftCoreGraphics.dylib</key>
 		<data>
-		bA6RtfIOIMj4D7cPm+NANZ8gieY=
+		g2ebJVfS1aDyCIoqT/DA7L2pYUQ=
 		</data>
 		<key>Frameworks/libswiftCoreImage.dylib</key>
 		<data>
-		2j0XKBqBj/yeQLDjwG/RB3z037g=
+		204utc9FEvQy1uwYIcyrsuLCDjg=
 		</data>
 		<key>Frameworks/libswiftDarwin.dylib</key>
 		<data>
-		jsEgKu4zzuXUOceiDh0krYVlwDc=
+		5dP0yYWZaifqRb9R8bo52Le9/UE=
 		</data>
 		<key>Frameworks/libswiftDispatch.dylib</key>
 		<data>
-		leLU6zsAmbJOlVpdEmhKDq5h2l4=
+		NYNs+pjoeCk2LeCboVO+nEc/rsM=
 		</data>
 		<key>Frameworks/libswiftFoundation.dylib</key>
 		<data>
-		divTIiIl/+8LXoNAq7/w6huz1Kk=
+		TGUU7231s6c0X4+1lAekcm/WCkY=
 		</data>
 		<key>Frameworks/libswiftObjectiveC.dylib</key>
 		<data>
-		UUXorc4k4SI7PMhPkBDbK9JqSPw=
+		AUg8n4w5CrOds6VcMcJ88m2JLQE=
 		</data>
 		<key>Frameworks/libswiftUIKit.dylib</key>
 		<data>
-		CsRyYsAxNxAr9dCdV17UwQLIFrU=
+		6vqsO0THepEz8wkKzkaWY894VE4=
 		</data>
 		<key>Frameworks/libswiftWebKit.dylib</key>
 		<data>
-		VuqM6r+ywyp/+ZlklC5tKN9soO8=
+		py2SQysD4xcvEX32UB9Ek7k8Zp4=
 		</data>
 		<key>Headers/FitpaySDK-Swift.h</key>
 		<data>
@@ -74,7 +74,7 @@
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm.swiftmodule</key>
 		<data>
-		ETSc51rtYK+UK4Z84vaSi1lPH8Y=
+		0GpfZaPGm0l+jQLrvdt/8mDV/f4=
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -82,7 +82,7 @@
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		9RjbyB6fYsriTwPBQ2WwYyeFaek=
+		ImF6fISeJsVJGDNpJot/rPvp6Tw=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -93,47 +93,47 @@
 	<dict>
 		<key>Frameworks/libswiftContacts.dylib</key>
 		<data>
-		lqYJw6rwbNLnFFjIYsteBWAXN5I=
+		rAXkbeC8W0de8ub3eHueDdZD0vk=
 		</data>
 		<key>Frameworks/libswiftCore.dylib</key>
 		<data>
-		KQWOzFr2Wzorz3+PN5Hlmrylt9w=
+		M2XOyHfoXS8nW5STAhvy7yAnDes=
 		</data>
 		<key>Frameworks/libswiftCoreBluetooth.dylib</key>
 		<data>
-		QWMvny2I/fIP/yumWTAoAcl2+Xw=
+		013kM1SaoWNKKKf3PeP6nZ+y6JY=
 		</data>
 		<key>Frameworks/libswiftCoreGraphics.dylib</key>
 		<data>
-		bA6RtfIOIMj4D7cPm+NANZ8gieY=
+		g2ebJVfS1aDyCIoqT/DA7L2pYUQ=
 		</data>
 		<key>Frameworks/libswiftCoreImage.dylib</key>
 		<data>
-		2j0XKBqBj/yeQLDjwG/RB3z037g=
+		204utc9FEvQy1uwYIcyrsuLCDjg=
 		</data>
 		<key>Frameworks/libswiftDarwin.dylib</key>
 		<data>
-		jsEgKu4zzuXUOceiDh0krYVlwDc=
+		5dP0yYWZaifqRb9R8bo52Le9/UE=
 		</data>
 		<key>Frameworks/libswiftDispatch.dylib</key>
 		<data>
-		leLU6zsAmbJOlVpdEmhKDq5h2l4=
+		NYNs+pjoeCk2LeCboVO+nEc/rsM=
 		</data>
 		<key>Frameworks/libswiftFoundation.dylib</key>
 		<data>
-		divTIiIl/+8LXoNAq7/w6huz1Kk=
+		TGUU7231s6c0X4+1lAekcm/WCkY=
 		</data>
 		<key>Frameworks/libswiftObjectiveC.dylib</key>
 		<data>
-		UUXorc4k4SI7PMhPkBDbK9JqSPw=
+		AUg8n4w5CrOds6VcMcJ88m2JLQE=
 		</data>
 		<key>Frameworks/libswiftUIKit.dylib</key>
 		<data>
-		CsRyYsAxNxAr9dCdV17UwQLIFrU=
+		6vqsO0THepEz8wkKzkaWY894VE4=
 		</data>
 		<key>Frameworks/libswiftWebKit.dylib</key>
 		<data>
-		VuqM6r+ywyp/+ZlklC5tKN9soO8=
+		py2SQysD4xcvEX32UB9Ek7k8Zp4=
 		</data>
 		<key>Headers/FitpaySDK-Swift.h</key>
 		<data>
@@ -157,7 +157,7 @@
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm.swiftmodule</key>
 		<data>
-		ETSc51rtYK+UK4Z84vaSi1lPH8Y=
+		0GpfZaPGm0l+jQLrvdt/8mDV/f4=
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -165,7 +165,7 @@
 		</data>
 		<key>Modules/FitpaySDK.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		9RjbyB6fYsriTwPBQ2WwYyeFaek=
+		ImF6fISeJsVJGDNpJot/rPvp6Tw=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
