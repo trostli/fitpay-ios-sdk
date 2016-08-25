@@ -37,6 +37,18 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
     var sessionDataCallBackId: Int?
     var syncCallBacks = [Int]()
     
+    public var demoModeEnabled : Bool {
+        get {
+            if let isEnabled = self.rtmConfig?.demoMode {
+                return isEnabled
+            }
+            return false
+        }
+        set {
+            self.rtmConfig?.demoMode = newValue
+        }
+    }
+    
     public convenience init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice, userEmail:String?, isNewAccount:Bool) {
         self.init(paymentDevice: paymentDevice, userEmail: userEmail, isNewAccount: isNewAccount, SDKConfiguration: FitpaySDKConfiguration(clientId: clientId, redirectUri: redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL))
     }
@@ -54,6 +66,8 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         
         super.init()
         
+        self.demoModeEnabled = false
+
         self.notificationCenter.addObserver(self, selector: #selector(logout), name: UIApplicationWillEnterForegroundNotification, object: nil)
         self.bindEvents()
     }
