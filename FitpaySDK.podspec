@@ -14,7 +14,6 @@ Pod::Spec.new do |s|
   s.dependency 'ObjectMapper', '~> 1.3.0'
   s.dependency 'AlamofireObjectMapper', '~> 3.0.0'
   s.dependency 'JWTDecode', '~> 1.0.0'
-  s.dependency 'libPusher', '~> 1.6.1'
   s.dependency 'KeychainAccess', '~> 2.3.4'
   s.dependency 'OpenSSL-Universal', '~> 1.0'
 
