@@ -781,6 +781,7 @@ SWIFT_CLASS("_TtC9FitpaySDK8WvConfig")
 @property (nonatomic, readonly, strong) RestSession * _Nullable restSession;
 @property (nonatomic, readonly, strong) RestClient * _Nullable restClient;
 @property (nonatomic, strong) User * _Nullable user;
+@property (nonatomic) BOOL demoModeEnabled;
 - (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice userEmail:(NSString * _Nullable)userEmail isNewAccount:(BOOL)isNewAccount;
 
 /// In order to open a web-view the SDK must have a connection to the payment device in order to gather data about that device. This will attempt to connect, and call the completion with either an error or nil if the connection attempt is successful.
