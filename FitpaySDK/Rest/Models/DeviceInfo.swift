@@ -23,6 +23,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
     public var bdAddress:String?
     public var pairing:String?
     public var secureElementId:String?
+    public var casd:String?
     private static let userResource = "user"
     private static let commitsResource = "commits"
     private static let selfResource = "self"
@@ -91,6 +92,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         licenseKey <- map["licenseKey"]
         bdAddress <- map["bdAddress"]
         pairing <- map["pairing"]
+        casd <- map["casd"]
         if let secureElement = map["secureElement"].currentValue as? [String:String] {
             secureElementId = secureElement["secureElementId"]
         }  else {

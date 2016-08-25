@@ -289,6 +289,7 @@ SWIFT_CLASS("_TtC9FitpaySDK10DeviceInfo")
 @property (nonatomic, copy) NSString * _Nullable bdAddress;
 @property (nonatomic, copy) NSString * _Nullable pairing;
 @property (nonatomic, copy) NSString * _Nullable secureElementId;
+@property (nonatomic, copy) NSString * _Nullable casd;
 @property (nonatomic, copy) NSDictionary<NSString *, id> * _Nullable metadata;
 @property (nonatomic, readonly) BOOL userAvailable;
 @property (nonatomic, readonly) BOOL listCommitsAvailable;
