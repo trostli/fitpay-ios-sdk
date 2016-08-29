@@ -28,7 +28,7 @@ class PaymentDeviceTests: XCTestCase
         {
             (event) in
             debugPrint("event: \(event), eventData: \(event.eventData)")
-            let deviceInfo = event.eventData["deviceInfo"] as? DeviceInfo
+            let deviceInfo = event.eventData["deviceInfo"] as AnyObject as? DeviceInfo
             let error = event.eventData["error"]
             
             XCTAssertNil(error)
@@ -232,7 +232,7 @@ class PaymentDeviceTests: XCTestCase
         let username = "testableuser2@something.com"
         let password = "1029"
         
-        let restSession:RestSession = RestSession(configuration: FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL))
+        let restSession:RestSession = RestSession(configuration: FitpaySDKConfiguration(clientId:clientId, clientSecret: "", redirectUri:redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL))
         let restClient:RestClient = RestClient(session: restSession)
 
         restSession.login(username: username, password: password)

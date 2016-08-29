@@ -1,3 +1,3 @@
-internal let BASE_URL = "https://demo-qa.pagare.me"
-internal let API_BASE_URL = "\(BASE_URL)/api"
-internal let AUTHORIZE_URL = "\(BASE_URL)/oauth/authorize"
+internal let BASE_URL = "https://fit-pay.com"
+internal let API_BASE_URL = "https://api.fit-pay.com"
+internal let AUTHORIZE_BASE_URL = "https://auth.fit-pay.com"
