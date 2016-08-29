@@ -4,7 +4,7 @@ import XCTest
 
 class RestClientTests: XCTestCase
 {
-    let clientId = "fp_api_xMRFHdJh"
+    var clientId = "fp_api_xMRFHdJh"
     let redirectUri = "https://demo.pagare.me"
     let password = "1029"
 
@@ -30,7 +30,10 @@ class RestClientTests: XCTestCase
         let config = FitpaySDKConfiguration(clientId:clientId, clientSecret: "", redirectUri:redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL)
         if let error = config.loadEnvironmentVariables() {
             print("Can't load config from environment. Error: \(error)")
+        } else {
+            clientId = config.clientId
         }
+        
         self.session = RestSession(configuration: config)
         self.client = RestClient(session: self.session!)
         self.testHelper = TestHelpers(clientId: clientId, redirectUri: redirectUri, session: self.session, client: self.client)
