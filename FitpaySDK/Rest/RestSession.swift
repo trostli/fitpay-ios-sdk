@@ -75,7 +75,7 @@ public class RestSession : NSObject
     {
         self.clientId = configuration.clientId
         self.redirectUri = configuration.redirectUri
-        self.authorizeURL = configuration.authorizeURL
+        self.authorizeURL = "\(configuration.baseAuthURL)/oauth/authorize"
         self.baseAPIURL = configuration.baseAPIURL
     }
 
