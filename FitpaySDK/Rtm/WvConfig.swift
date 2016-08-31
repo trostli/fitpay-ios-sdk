@@ -164,7 +164,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
                 let jsonData = try NSJSONSerialization.dataWithJSONObject(data!, options: NSJSONWritingOptions.PrettyPrinted)
                 let jsonString = NSString(data: jsonData, encoding: NSUTF8StringEncoding)! as String
                 let webViewSessionData = Mapper<WebViewSessionData>().map(jsonString)
-
+                
                 handleSessionData(webViewSessionData!)
             } catch let error as NSError {
                 print(error)
