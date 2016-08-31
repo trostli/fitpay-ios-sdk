@@ -8,13 +8,20 @@ class RestSessionTests: XCTestCase {
     var session:RestSession!
     var client:RestClient!
     var testHelper:TestHelpers!
-    let clientId = "pagare"
-    let redirectUri = "https://demo.pagare.me"
+    var clientId = "fp_webapp_pJkVp2Rl"
+    let redirectUri = "https://webapp.fit-pay.com"
     let password = "1029"
     
     override func setUp() {
         super.setUp()
-        self.session = RestSession(configuration: FitpaySDKConfiguration(clientId:clientId, clientSecret: "", redirectUri:redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL))
+        let config = FitpaySDKConfiguration(clientId:clientId, clientSecret: "", redirectUri:redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL)
+        if let error = config.loadEnvironmentVariables() {
+            print("Can't load config from environment. Error: \(error)")
+        } else {
+            clientId = config.clientId
+        }
+        
+        self.session = RestSession(configuration: config)
         self.client = RestClient(session: self.session!)
         self.testHelper = TestHelpers(clientId: clientId, redirectUri: redirectUri, session: self.session, client: self.client)
     }
