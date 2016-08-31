@@ -4,8 +4,8 @@ import XCTest
 
 class RestClientTests: XCTestCase
 {
-    var clientId = "fp_api_xMRFHdJh"
-    let redirectUri = "https://demo.pagare.me"
+    var clientId = "fp_webapp_pJkVp2Rl"
+    let redirectUri = "https://webapp.fit-pay.com"
     let password = "1029"
 
     var session:RestSession!

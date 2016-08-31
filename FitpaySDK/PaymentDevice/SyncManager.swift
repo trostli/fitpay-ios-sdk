@@ -464,7 +464,7 @@ public class SyncManager : NSObject {
             }
         }
         let resourceLink = ResourceLink()
-        resourceLink.href = "https://demo.pagare.me/apduPackages/baff08fb-0b73-5019-8877-7c490a43dc64/confirm"
+        resourceLink.href = "https://webapp.fit-pay.com/apduPackages/baff08fb-0b73-5019-8877-7c490a43dc64/confirm"
         resourceLink.target = "apduResponse"
         commit.links?.append(resourceLink)
         
