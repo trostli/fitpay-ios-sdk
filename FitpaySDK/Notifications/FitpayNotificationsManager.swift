@@ -141,7 +141,7 @@ public class FitpayNotificationsManager : NSObject {
         self.currentNotification = notificationsQueue.dequeue()
         if let currentNotification = self.currentNotification {
             var notificationType = NotificationsType.WithoutSync
-            if currentNotification["fpField2"] as? String == "sync" {
+            if currentNotification["fpField1"] as? String == "sync" {
                 notificationType = NotificationsType.WithSync
             }
             
