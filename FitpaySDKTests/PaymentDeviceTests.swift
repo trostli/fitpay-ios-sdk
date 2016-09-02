@@ -232,7 +232,7 @@ class PaymentDeviceTests: XCTestCase
         let username = "testableuser2@something.com"
         let password = "1029"
         
-        let config = FitpaySDKConfiguration(clientId:clientId, clientSecret: "", redirectUri:redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL)
+        let config = FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL)
         if let error = config.loadEnvironmentVariables() {
             print("Can't load config from environment. Error: \(error)")
         } else {
