@@ -60,8 +60,24 @@ public enum WVMessageType : Int {
 }
 
 @objc public protocol WvConfigDelegate : NSObjectProtocol {
+    /**
+     This method will be called after successful user authorization.
+     */
     func didAuthorizeWithEmail(email:String?)
-    optional func willDisplayStatusMessage(status:WVDeviceStatuses, defaultMessage:String) -> String
+    
+    /**
+     This method can be used for user messages customization.
+     
+     Will be called when status has changed and system going to show message.
+     
+     - parameter status:         New device status
+     - parameter defaultMessage: Default message for new status
+     - parameter error:          If we had an error during status change than it will be here.
+                                 For now error will be used with SyncError status
+     
+     - returns:                  Message string which will be shown on status board.
+     */
+    optional func willDisplayStatusMessage(status:WVDeviceStatuses, defaultMessage:String, error: NSError?) -> String
 }
 
 /**
@@ -229,9 +245,9 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         }
     }
     
-    public func showStatusMessage(status: WVDeviceStatuses, message: String? = nil) {
+    public func showStatusMessage(status: WVDeviceStatuses, message: String? = nil, error: ErrorType? = nil) {
         var realMessage = message ?? status.defaultMessage()
-        if let newMessage = delegate?.willDisplayStatusMessage?(status, defaultMessage: realMessage) {
+        if let newMessage = delegate?.willDisplayStatusMessage?(status, defaultMessage: realMessage, error: error as? NSError) {
             realMessage = newMessage
         }
         
@@ -288,7 +304,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
                     success: false,
                     response: self.getWVResponse(WVResponse.failed, message: error.debugDescription))
 
-                self.showStatusMessage(.SyncError, message: "Can't get user, error: \(error.debugDescription)")
+                self.showStatusMessage(.SyncError, message: "Can't get user, error: \(error.debugDescription)", error: error)
                 
                 return
             }
