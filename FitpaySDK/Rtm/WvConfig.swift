@@ -238,6 +238,10 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         sendStatusMessage(realMessage, type: status.statusMessageType())
     }
     
+    public func showCustomStatusMessage(message:String, type: WVMessageType) {
+        sendStatusMessage(message, type: type)
+    }
+    
     private func sendStatusMessage(message:String, type:WVMessageType) {
         guard let webview = self.webview else {
             print("Can't send status message, webview is nil!")
@@ -258,7 +262,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
             syncCallBacks.append(callBackId)
 
             if !SyncManager.sharedInstance.isSyncing {
-                self.showStatusMessage(.Synchronizing)
+                self.showStatusMessage(.SyncStarted)
                 goSync()
             }
         } else {
@@ -300,7 +304,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
                 success: true,
                 response: self.getWVResponse(WVResponse.success, message: nil))
             
-            self.showStatusMessage(.SyncStarted)
+            self.showStatusMessage(.Synchronizing)
         })
     }
 
