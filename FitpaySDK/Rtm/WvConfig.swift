@@ -3,8 +3,81 @@ import Foundation
 import WebKit
 import ObjectMapper
 
-public protocol WvConfigDelegate : NSObjectProtocol {
+public enum WVMessageType : Int {
+    case Error = 0
+    case Success
+    case Progress
+    case Pending
+}
+
+@objc public enum WVDeviceStatuses : Int {
+    case Disconnected = 0
+    case Pairing
+    case Connected
+    case Synchronizing
+    case SyncStarted
+    case SyncDataRetrieved
+    case Synchronized
+    case SyncError
+    
+    func statusMessageType() -> WVMessageType {
+        switch self {
+        case .Disconnected:
+            return .Pending
+        case .Connected,
+             .Synchronized:
+            return .Success
+        case .Pairing,
+             .Synchronizing,
+             .SyncStarted,
+             .SyncDataRetrieved:
+            return .Progress
+        case .SyncError:
+            return .Error
+        }
+    }
+    
+    func defaultMessage() -> String {
+        switch self {
+        case .Disconnected:
+            return "Device is disconnected."
+        case .Connected:
+            return "Ready to sync with device."
+        case .Synchronized:
+            return "Device is up to date."
+        case .Pairing:
+            return "Pairing with device..."
+        case .Synchronizing:
+            return "Synchronizing with device."
+        case .SyncStarted:
+            return "Synchronizing with device.."
+        case .SyncDataRetrieved:
+            return "Synchronizing with device..."
+        case .SyncError:
+            return "Sync error"
+        }
+    }
+}
+
+@objc public protocol WvConfigDelegate : NSObjectProtocol {
+    /**
+     This method will be called after successful user authorization.
+     */
     func didAuthorizeWithEmail(email:String?)
+    
+    /**
+     This method can be used for user messages customization.
+     
+     Will be called when status has changed and system going to show message.
+     
+     - parameter status:         New device status
+     - parameter defaultMessage: Default message for new status
+     - parameter error:          If we had an error during status change than it will be here.
+                                 For now error will be used with SyncError status
+     
+     - returns:                  Message string which will be shown on status board.
+     */
+    optional func willDisplayStatusMessage(status:WVDeviceStatuses, defaultMessage:String, error: NSError?) -> String
 }
 
 /**
@@ -172,11 +245,40 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         }
     }
     
+    public func showStatusMessage(status: WVDeviceStatuses, message: String? = nil, error: ErrorType? = nil) {
+        var realMessage = message ?? status.defaultMessage()
+        if let newMessage = delegate?.willDisplayStatusMessage?(status, defaultMessage: realMessage, error: error as? NSError) {
+            realMessage = newMessage
+        }
+        
+        sendStatusMessage(realMessage, type: status.statusMessageType())
+    }
+    
+    public func showCustomStatusMessage(message:String, type: WVMessageType) {
+        sendStatusMessage(message, type: type)
+    }
+    
+    private func sendStatusMessage(message:String, type:WVMessageType) {
+        guard let webview = self.webview else {
+            print("Can't send status message, webview is nil!")
+            return
+        }
+        
+        webview.evaluateJavaScript("window.RtmBridge.setDeviceStatus({\"message\":\"\(message)\",\"type\":\(type.rawValue)})", completionHandler: {
+            (result, error) in
+            
+            if let error = error {
+                print("Can't send status message, error: \(error)")
+            }
+        })
+    }
+    
     private func handleSync(callBackId:Int) -> Void {
         if (self.webViewSessionData != nil && self.user != nil ) {
             syncCallBacks.append(callBackId)
 
             if !SyncManager.sharedInstance.isSyncing {
+                self.showStatusMessage(.SyncStarted)
                 goSync()
             }
         } else {
@@ -184,6 +286,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
                 self.syncCallBacks.first!,
                 success: false,
                 response: self.getWVResponse(WVResponse.noSessionData, message: nil))
+            self.showStatusMessage(.SyncError, message: "Can't make sync. Session data or user is nil.")
         }
     }
     
@@ -195,11 +298,14 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
             (user, error) in
             
             guard (error == nil || user == nil) else {
+                
                 self.callBack(
                     self.sessionDataCallBackId!,
                     success: false,
                     response: self.getWVResponse(WVResponse.failed, message: error.debugDescription))
 
+                self.showStatusMessage(.SyncError, message: "Can't get user, error: \(error.debugDescription)", error: error)
+                
                 return
             }
 
@@ -213,6 +319,8 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
                 self.sessionDataCallBackId!,
                 success: true,
                 response: self.getWVResponse(WVResponse.success, message: nil))
+            
+            self.showStatusMessage(.Synchronizing)
         })
     }
 
@@ -241,6 +349,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
                     id,
                     success: true,
                     response: getWVResponse(WVResponse.success, message: nil))
+                self.showStatusMessage(.Synchronized)
             }
 
             self.syncCallBacks.removeFirst()
