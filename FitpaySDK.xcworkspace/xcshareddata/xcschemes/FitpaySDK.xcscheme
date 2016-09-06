@@ -91,11 +91,6 @@
             value = "$(FITPAY_SDK_CLIENT_ID)"
             isEnabled = "YES">
          </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "SDK_CLIENT_SECRET"
-            value = "$(FITPAY_SDK_CLIENT_SECRET)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
       </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
