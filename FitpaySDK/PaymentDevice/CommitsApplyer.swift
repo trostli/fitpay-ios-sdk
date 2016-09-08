@@ -7,7 +7,7 @@ internal class CommitsApplyer {
     private var totalApduCommands = 0
     private var appliedApduCommands = 0
     private let maxCommitsRetries = 0
-    private let maxAPDUCommandsRetries = 2
+    private let maxAPDUCommandsRetries = 0
     
     internal var isRunning : Bool {
         guard let thread = self.thread else {
