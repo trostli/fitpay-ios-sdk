@@ -150,10 +150,18 @@ internal class CommitsApplyer {
             } else {
                 apduPackage.state = APDUPackageResponseState.PROCESSED
             }
+            
+            var realError = error
+            
+            // if we received apdu with error response than confirm it and move next, do not stop sync process
+            if (error as? NSError)?.code == PaymentDevice.ErrorCode.APDUErrorResponse.rawValue {
+                realError = nil
+            }
+            
             debugPrint("about to call confirm")
             commit.confirmAPDU({
                 (confirmError) -> Void in
-                completion(error: error ?? confirmError)
+                completion(error: realError ?? confirmError)
             })
         }
     }
