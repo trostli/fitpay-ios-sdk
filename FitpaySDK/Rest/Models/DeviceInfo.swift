@@ -1,44 +1,44 @@
 
 import ObjectMapper
 
-public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
+open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links:[ResourceLink]?
-    public var deviceIdentifier:String?
-    public var deviceName:String?
-    public var deviceType:String?
-    public var manufacturerName:String?
-    public var serialNumber:String?
-    public var modelNumber:String?
-    public var hardwareRevision:String?
-    public var firmwareRevision:String?
-    public var softwareRevision:String?
-    public var notificationToken:String?
-    public var createdEpoch:NSTimeInterval?
-    public var created:String?
-    public var osName:String?
-    public var systemId:String?
-    public var cardRelationships:[CardRelationship]?
-    public var licenseKey:String?
-    public var bdAddress:String?
-    public var pairing:String?
-    public var secureElementId:String?
-    public var casd:String?
-    private static let userResource = "user"
-    private static let commitsResource = "commits"
-    private static let selfResource = "self"
+    open var deviceIdentifier:String?
+    open var deviceName:String?
+    open var deviceType:String?
+    open var manufacturerName:String?
+    open var serialNumber:String?
+    open var modelNumber:String?
+    open var hardwareRevision:String?
+    open var firmwareRevision:String?
+    open var softwareRevision:String?
+    open var notificationToken:String?
+    open var createdEpoch:TimeInterval?
+    open var created:String?
+    open var osName:String?
+    open var systemId:String?
+    open var cardRelationships:[CardRelationship]?
+    open var licenseKey:String?
+    open var bdAddress:String?
+    open var pairing:String?
+    open var secureElementId:String?
+    open var casd:String?
+    fileprivate static let userResource = "user"
+    fileprivate static let commitsResource = "commits"
+    fileprivate static let selfResource = "self"
     
-    private weak var _client:RestClient?
+    fileprivate weak var _client:RestClient?
 
     // Extra metadata specific for a particural type of device
-    public var metadata:[String : AnyObject]?
+    open var metadata:[String : AnyObject]?
     
-    public var userAvailable:Bool
+    open var userAvailable:Bool
     {
         return self.links?.url(DeviceInfo.userResource) != nil
     }
     
-    public var listCommitsAvailable:Bool
+    open var listCommitsAvailable:Bool
     {
         return self.links?.url(DeviceInfo.commitsResource) != nil
     }
@@ -67,12 +67,12 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         
     }
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    public func mapping(map: Map)
+    open func mapping(map: Map)
     {
         links <- (map["_links"], ResourceLinkTransformType())
         created <- map["createdTs"]
@@ -114,7 +114,7 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         metadata = map.JSONDictionary
     }
     
-    func applySecret(secret:NSData, expectedKeyId:String?) {
+    func applySecret(_ secret:Data, expectedKeyId:String?) {
         if let cardRelationships = self.cardRelationships {
             for modelObject in cardRelationships {
                 modelObject.applySecret(secret, expectedKeyId: expectedKeyId)
@@ -127,58 +127,58 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         var dic : [String:AnyObject] = [:]
         
         if let deviceType = self.deviceType {
-            dic["deviceType"] = deviceType
+            dic["deviceType"] = deviceType as AnyObject?
         }
         
         if let deviceName = self.deviceName {
-            dic["deviceName"] = deviceName
+            dic["deviceName"] = deviceName as AnyObject?
         }
         
         if let manufacturerName = self.manufacturerName {
-            dic["manufacturerName"] = manufacturerName
+            dic["manufacturerName"] = manufacturerName as AnyObject?
         }
         
         if let modelNumber = self.modelNumber {
-            dic["modelNumber"] = modelNumber
+            dic["modelNumber"] = modelNumber as AnyObject?
         }
         
         if let hardwareRevision = self.hardwareRevision {
-            dic["hardwareRevision"] = hardwareRevision
+            dic["hardwareRevision"] = hardwareRevision as AnyObject?
         }
         
         if let firmwareRevision = self.firmwareRevision {
-            dic["firmwareRevision"] = firmwareRevision
+            dic["firmwareRevision"] = firmwareRevision as AnyObject?
         }
         
         if let softwareRevision = self.softwareRevision {
-            dic["softwareRevision"] = softwareRevision
+            dic["softwareRevision"] = softwareRevision as AnyObject?
         }
         
         if let systemId = self.systemId {
-            dic["systemId"] = systemId
+            dic["systemId"] = systemId as AnyObject?
         }
         
         if let osName = self.osName {
-            dic["osName"] = osName
+            dic["osName"] = osName as AnyObject?
         }
         
         if let licenseKey = self.licenseKey {
-            dic["licenseKey"] = licenseKey
+            dic["licenseKey"] = licenseKey as AnyObject?
         }
         
         if let bdAddress = self.bdAddress {
-            dic["bdAddress"] = bdAddress
+            dic["bdAddress"] = bdAddress as AnyObject?
         }
         
         if let secureElementId = self.secureElementId {
             dic["secureElement"] = ["secureElementId" : secureElementId]
         }
         
-        guard let jsonData = try? NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0)) else {
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0)) else {
             return nil
         }
         
-        return String(data: jsonData, encoding: NSUTF8StringEncoding)
+        return String(data: jsonData, encoding: String.Encoding.utf8)
     }
     
     /**
@@ -186,10 +186,10 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion: DeleteDeviceHandler closure
      */
-    @objc public func deleteDeviceInfo(completion:RestClient.DeleteDeviceHandler) {
+    @objc open func deleteDeviceInfo(_ completion:RestClient.DeleteDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.deleteDevice(url, completion: completion)
         }
@@ -207,10 +207,10 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter softwareRevision?: software revision
      - parameter completion:        UpdateDeviceHandler closure
      */
-    @objc public func update(firmwareRevision:String?, softwareRevision:String?, notifcationToken: String?, completion:RestClient.UpdateDeviceHandler) {
+    @objc open func update(_ firmwareRevision:String?, softwareRevision:String?, notifcationToken: String?, completion:RestClient.UpdateDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notifcationToken: notifcationToken, completion: completion)
         }
@@ -228,10 +228,10 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter offset:       start index position for list of entities returned
      - parameter completion:   CommitsHandler closure
      */
-    public func listCommits(commitsAfter commitsAfter:String?, limit:Int, offset:Int, completion:RestClient.CommitsHandler) {
+    open func listCommits(commitsAfter:String?, limit:Int, offset:Int, completion:RestClient.CommitsHandler) {
         let resource = DeviceInfo.commitsResource
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.commits(url, commitsAfter: commitsAfter, limit: limit, offset: offset, completion: completion)
         }
@@ -241,10 +241,10 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         }
     }
     
-    @objc public func user(completion:RestClient.UserHandler) {
+    @objc open func user(_ completion:RestClient.UserHandler) {
         let resource = DeviceInfo.userResource
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.user(url, completion: completion)
         }
@@ -254,10 +254,10 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         }
     }
     
-    internal func addNotificationToken(token:String, completion:RestClient.UpdateDeviceHandler) {
+    internal func addNotificationToken(_ token:String, completion:RestClient.UpdateDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.addDeviceProperty(url, propertyPath: "/notificationToken", propertyValue: token, completion: completion)
         }
@@ -293,16 +293,16 @@ public class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
     }
 }
 
-public class CardRelationship : NSObject, ClientModel, Mappable, SecretApplyable
+open class CardRelationship : NSObject, ClientModel, Mappable, SecretApplyable
 {
     internal var links:[ResourceLink]?
-    public var creditCardId:String?
-    public var pan:String?
-    public var expMonth:Int?
-    public var expYear:Int?
+    open var creditCardId:String?
+    open var pan:String?
+    open var expMonth:Int?
+    open var expYear:Int?
     
     internal var encryptedData:String?
-    private static let selfResource = "self"
+    fileprivate static let selfResource = "self"
     internal weak var client:RestClient?
     
     public required init?(_ map: Map)
@@ -310,7 +310,7 @@ public class CardRelationship : NSObject, ClientModel, Mappable, SecretApplyable
         
     }
     
-    public func mapping(map: Map)
+    open func mapping(_ map: Map)
     {
         links <- (map["_links"], ResourceLinkTransformType())
         creditCardId <- map["creditCardId"]
@@ -320,7 +320,7 @@ public class CardRelationship : NSObject, ClientModel, Mappable, SecretApplyable
         expYear <- map["expYear"]
     }
     
-    internal func applySecret(secret:NSData, expectedKeyId:String?)
+    internal func applySecret(_ secret:Data, expectedKeyId:String?)
     {
         if let decryptedObj : CardRelationship? = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
             self.pan = decryptedObj?.pan
@@ -334,10 +334,10 @@ public class CardRelationship : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   RelationshipHandler closure
      */
-    @objc public func relationship(completion:RestClient.RelationshipHandler) {
+    @objc open func relationship(_ completion:RestClient.RelationshipHandler) {
         let resource = CardRelationship.selfResource
         let url = self.links?.url(resource)
-        if let url = url, client = self.client
+        if let url = url, let client = self.client
         {
             client.relationship(url, completion: completion)
         }

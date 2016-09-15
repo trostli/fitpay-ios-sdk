@@ -6,13 +6,13 @@
     
     func isConnected() -> Bool
     
-    func writeSecurityState(state: SecurityNFCState) -> NSError?
+    func writeSecurityState(_ state: SecurityNFCState) -> NSError?
     
-    func sendDeviceControl(state: DeviceControlState) -> NSError?
+    func sendDeviceControl(_ state: DeviceControlState) -> NSError?
     
-    func sendNotification(notificationData: NSData) -> NSError?
+    func sendNotification(_ notificationData: Data) -> NSError?
     
-    func executeAPDUCommand(apduCommand: APDUCommand)
+    func executeAPDUCommand(_ apduCommand: APDUCommand)
     
     func deviceInfo() -> DeviceInfo?
 

@@ -4,8 +4,8 @@ class JWEHeader
     var cty : String?
     var enc : JWEEncryption?
     var alg : JWEAlgorithm?
-    var iv  : NSData?
-    var tag : NSData?
+    var iv  : Data?
+    var tag : Data?
     var kid : String?
     
     var sender: String?
@@ -20,7 +20,7 @@ class JWEHeader
     init(headerPayload:String)
     {
         let headerData = headerPayload.base64URLdecoded()
-        guard let json = try? NSJSONSerialization.JSONObjectWithData(headerData!, options: .MutableContainers) else {
+        guard let json = try? JSONSerialization.jsonObject(with: headerData! as Data, options: .mutableContainers) else {
             return
         }
         
@@ -30,8 +30,8 @@ class JWEHeader
         
         cty = mappedJson["cty"]
         kid = mappedJson["kid"]
-        iv = mappedJson["iv"]?.base64URLdecoded()
-        tag = mappedJson["tag"]?.base64URLdecoded()
+        iv = mappedJson["iv"]?.base64URLdecoded() as Data?
+        tag = mappedJson["tag"]?.base64URLdecoded() as Data?
         
         if let encStr = mappedJson["enc"] {
             enc = JWEEncryption(rawValue: encStr)
@@ -47,19 +47,19 @@ class JWEHeader
         var paramsDict : [String:String]! = [String:String]()
     
         guard enc != nil else {
-            throw JWEObjectError.EncryptionNotSpecified
+            throw JWEObjectError.encryptionNotSpecified
         }
         
         guard alg != nil else {
-            throw JWEObjectError.AlgorithmNotSpecified
+            throw JWEObjectError.algorithmNotSpecified
         }
         
         guard iv != nil else {
-            throw JWEObjectError.HeadersIVNotSpecified
+            throw JWEObjectError.headersIVNotSpecified
         }
         
         guard tag != nil else {
-            throw JWEObjectError.HeadersTagNotSpecified
+            throw JWEObjectError.headersTagNotSpecified
         }
         
         if (cty == nil) {
@@ -87,11 +87,11 @@ class JWEHeader
         do
         {
             // we will serialize cty separately, because NSJSONSerialization is adding escape for "/"
-            let dataWithoutCty = try NSJSONSerialization.dataWithJSONObject(paramsDict, options: NSJSONWritingOptions(rawValue: 0))
-            jsonData = dataWithoutCty.mutableCopy() as! NSMutableData
+            let dataWithoutCty = try JSONSerialization.data(withJSONObject: paramsDict, options: JSONSerialization.WritingOptions(rawValue: 0))
+            jsonData = (dataWithoutCty as NSData).mutableCopy() as! NSMutableData
             
-            let ctyData = "{\"cty\":\"\(cty!)\",".dataUsingEncoding(NSUTF8StringEncoding)
-            jsonData.replaceBytesInRange(NSMakeRange(0, 1), withBytes: ctyData!.bytes, length: ctyData!.length)
+            let ctyData = "{\"cty\":\"\(cty!)\",".data(using: String.Encoding.utf8)
+            jsonData.replaceBytes(in: NSMakeRange(0, 1), withBytes: (ctyData! as NSData).bytes, length: ctyData!.count)
         } catch let error {
             throw error
         }

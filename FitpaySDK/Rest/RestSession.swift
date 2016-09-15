@@ -13,6 +13,21 @@ public enum AuthScope : String
     case tokenWrite = "token.write"
 }
 
+class StringToUrl : URLConvertible {
+    let str : String
+    init(str: String) {
+        self.str = str
+    }
+    /// Returns a URL that conforms to RFC 2396 or throws an `Error`.
+    ///
+    /// - throws: An `Error` if the type cannot be converted to a `URL`.
+    ///
+    /// - returns: A URL or throws an `Error`.
+    func asURL() throws -> URL {
+        return URL(string: str)!
+    }
+}
+
 internal class AuthorizationDetails : Mappable
 {
     var tokenType:String?
@@ -26,7 +41,7 @@ internal class AuthorizationDetails : Mappable
         
     }
     
-    func mapping(map: Map)
+    func mapping(_ map: Map)
     {
         tokenType <- map["token_type"]
         accessToken <- map["access_token"]
@@ -36,40 +51,40 @@ internal class AuthorizationDetails : Mappable
     }
 }
 
-public class RestSession : NSObject
+open class RestSession : NSObject
 {
-    public enum Error : Int, ErrorType, RawIntValue
+    public enum ErrorEnum : Int, Error, RawIntValue
     {
-        case DecodeFailure = 1000
-        case ParsingFailure
-        case AccessTokenFailure
+        case decodeFailure = 1000
+        case parsingFailure
+        case accessTokenFailure
     }
 
-    private var clientId:String
-    private var redirectUri:String
+    fileprivate var clientId:String
+    fileprivate var redirectUri:String
 
-    public var userId:String?
+    open var userId:String?
     internal var accessToken:String?
-    public var isAuthorized:Bool
+    open var isAuthorized:Bool
     {
         return self.accessToken != nil
     }
     
-    public func setWebViewAuthorization(webViewSessionData:WebViewSessionData) {
+    open func setWebViewAuthorization(_ webViewSessionData:WebViewSessionData) {
         self.accessToken = webViewSessionData.token
         self.userId = webViewSessionData.userId
     }
     
-    lazy private var manager:Manager =
-    {
-        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-        configuration.HTTPAdditionalHeaders = Manager.defaultHTTPHeaders
-        configuration.requestCachePolicy = .ReloadIgnoringLocalCacheData
-        return Manager(configuration: configuration)
+    lazy fileprivate var _manager:SessionManager =
+        {
+            let configuration = URLSessionConfiguration.default
+            configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+            configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+            return SessionManager(configuration: configuration)
     }()
     
-    private (set) internal var baseAPIURL:String
-    private (set) internal var authorizeURL:String
+    fileprivate (set) internal var baseAPIURL:String
+    fileprivate (set) internal var authorizeURL:String
 
     public init(configuration : FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration)
     {
@@ -79,25 +94,23 @@ public class RestSession : NSObject
         self.baseAPIURL = configuration.baseAPIURL
     }
 
-    public typealias LoginHandler = (error:NSError?)->Void
+    public typealias LoginHandler = (_ error:NSError?)->Void
 
-    @objc public func login(username username:String, password:String, completion:LoginHandler)
+    @objc open func login(username:String, password:String, completion:@escaping LoginHandler)
     {
         self.acquireAccessToken(clientId: self.clientId, redirectUri: self.redirectUri, username: username, password:password, completion:
         {
             (details:AuthorizationDetails?, error:NSError?)->Void in
 
-            dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
-            {
+            DispatchQueue.global( priority: DispatchQueue.GlobalQueuePriority.default).async(execute: {
                 () -> Void in
 
                 if let error = error
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
+                    DispatchQueue.main.async(execute: {
                         () -> Void in
 
-                        completion(error:error)
+                        completion(error)
                     })
                 }
                 else
@@ -106,11 +119,10 @@ public class RestSession : NSObject
                     {
                         guard let jwt = try? decode(accessToken) else
                         {
-                            dispatch_async(dispatch_get_main_queue(),
-                            {
+                            DispatchQueue.main.async(execute: {
                                 () -> Void in
 
-                                completion(error:NSError.error(code:Error.DecodeFailure, domain:RestSession.self, message: "Failed to decode access token"))
+                                completion(NSError.error(code:Error.decodeFailure, domain:RestSession.self, message: "Failed to decode access token"))
                             })
 
                             return
@@ -118,33 +130,30 @@ public class RestSession : NSObject
 
                         if let userId = jwt.body["user_id"] as? String
                         {
-                            dispatch_async(dispatch_get_main_queue(),
-                            {
+                            DispatchQueue.main.async(execute: {
                                 [unowned self] () -> Void in
 
                                 debugPrint("successful login for user: \(userId)")
                                 self.userId = userId
                                 self.accessToken = accessToken
-                                completion(error:nil)
+                                completion(nil)
                             })
                         }
                         else
                         {
-                            dispatch_async(dispatch_get_main_queue(),
-                            {
+                            DispatchQueue.main.async(execute: {
                                 () -> Void in
 
-                                completion(error:NSError.error(code:Error.ParsingFailure, domain:RestSession.self, message: "Failed to parse user id"))
+                                completion(NSError.error(code:ErrorEnum.parsingFailure, domain:RestSession.self, message: "Failed to parse user id"))
                             })
                         }
                     }
                     else
                     {
-                        dispatch_async(dispatch_get_main_queue(),
-                        {
+                        DispatchQueue.main.async(execute: {
                             () -> Void in
 
-                            completion(error:NSError.error(code:Error.AccessTokenFailure, domain:RestSession.self, message: "Failed to retrieve access token"))
+                            completion(NSError.error(code:ErrorEnum.accessTokenFailure, domain:RestSession.self, message: "Failed to retrieve access token"))
                         })
                     }
                 }
@@ -154,7 +163,7 @@ public class RestSession : NSObject
 
     internal typealias AcquireAccessTokenHandler = (AuthorizationDetails?, NSError?)->Void
 
-    internal func acquireAccessToken(clientId clientId:String, redirectUri:String, username:String, password:String, completion:AcquireAccessTokenHandler)
+    internal func acquireAccessToken(clientId:String, redirectUri:String, username:String, password:String, completion:@escaping AcquireAccessTokenHandler)
     {
         let headers = ["Accept" : "application/json"]
         let parameters = [
@@ -164,9 +173,9 @@ public class RestSession : NSObject
                 "credentials" : ["username" : username, "password" : password].JSONString!
         ]
 
-        let request = manager.request(.POST, self.authorizeURL, parameters: parameters, encoding:.URL, headers: headers)
+        let request = _manager.request(StringToUrl(str: self.authorizeURL), method: HTTPMethod.get, parameters: parameters, encoding:.URL, headers: headers)
     
-        request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        request.validate().responseObject(queue: dispatch_get_global_queue( DispatchQueue.GlobalQueuePriority.default, 0))
         {
             (response: Response<AuthorizationDetails, NSError>) -> Void in
 

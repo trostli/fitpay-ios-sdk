@@ -1,13 +1,13 @@
 
 import Foundation
 
-extension NSJSONSerialization
+extension JSONSerialization
 {
-    class func JSONString(object:AnyObject)->String?
+    class func JSONString(_ object:AnyObject)->String?
     {
-        guard let data = try? NSJSONSerialization.dataWithJSONObject(object, options: .PrettyPrinted),
+        guard let data = try? JSONSerialization.data(withJSONObject: object, options: .prettyPrinted),
 
-        let string = String(data: data, encoding: NSUTF8StringEncoding) else
+        let string = String(data: data, encoding: String.Encoding.utf8) else
         {
             return nil
         }

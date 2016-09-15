@@ -23,7 +23,7 @@ class PaymentDeviceTests: XCTestCase
     
     func testConnectToDeviceCheck()
     {
-        let expectation = super.expectationWithDescription("connection to device check")
+        let expectation = super.expectation(description: "connection to device check")
         self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
             (event) in
@@ -42,12 +42,12 @@ class PaymentDeviceTests: XCTestCase
         
         self.paymentDevice.connect()
         
-        super.waitForExpectationsWithTimeout(20, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     func testDisconnectFromDeviceCheck()
     {
-        let expectation = super.expectationWithDescription("disconnect from device check")
+        let expectation = super.expectation(description: "disconnect from device check")
         self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
             (event) in
@@ -67,12 +67,12 @@ class PaymentDeviceTests: XCTestCase
         
         self.paymentDevice.connect()
         
-        super.waitForExpectationsWithTimeout(20, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     func testSecurityNotification()
     {
-        let expectation = super.expectationWithDescription("disconnection from device check")
+        let expectation = super.expectation(description: "disconnection from device check")
         
         var newState = SecurityNFCState.Disabled
         self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
@@ -111,14 +111,14 @@ class PaymentDeviceTests: XCTestCase
         
         self.paymentDevice.connect()
         
-        super.waitForExpectationsWithTimeout(20, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     func testAPDUPacket()
     {
-        let expectation = super.expectationWithDescription("disconnection from device check")
+        let expectation = super.expectation(description: "disconnection from device check")
         
-        let successResponse = NSData(bytes: [0x90, 0x00] as [UInt8], length: 2)
+        let successResponse = Data(bytes: UnsafePointer<UInt8>([0x90, 0x00] as [UInt8]), count: 2)
         
         self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion:
         {
@@ -155,12 +155,12 @@ class PaymentDeviceTests: XCTestCase
         
         self.paymentDevice.connect()
         
-        super.waitForExpectationsWithTimeout(20, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
 
     func testSync()
     {
-        let expectation = super.expectationWithDescription("test sync with commit")
+        let expectation = super.expectation(description: "test sync with commit")
         
         SyncManager.sharedInstance.paymentDevice = self.paymentDevice
         
@@ -268,6 +268,6 @@ class PaymentDeviceTests: XCTestCase
             })
         }
         
-        super.waitForExpectationsWithTimeout(180, handler: nil)
+        super.waitForExpectations(timeout: 180, handler: nil)
     }
 }

@@ -34,7 +34,7 @@ class RestSessionTests: XCTestCase {
     
     func testAcquireAccessTokenRetrievesToken() {
         let email = self.testHelper.randomEmail()
-        let expectation = super.expectationWithDescription("'acquireAccessToken' retrieves auth details")
+        let expectation = super.expectation(description: "'acquireAccessToken' retrieves auth details")
 
         self.client.createUser(
             email, password: self.password, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
@@ -57,12 +57,12 @@ class RestSessionTests: XCTestCase {
             });
         })
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testLoginRetrievesUserId() {
         let email = self.testHelper.randomEmail()
-        let expectation = super.expectationWithDescription("'login' retrieves user id")
+        let expectation = super.expectation(description: "'login' retrieves user id")
 
         self.client.createUser(
             email, password: self.password, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
@@ -81,11 +81,11 @@ class RestSessionTests: XCTestCase {
             }
         })
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testLoginFailsForWrongCredentials() {
-        let expectation = super.expectationWithDescription("'login' fails for wrong credentials")
+        let expectation = super.expectation(description: "'login' fails for wrong credentials")
         
         self.session.login(username: "totally@wrong.abc", password:"fail") {
                 [unowned self]
@@ -97,6 +97,6 @@ class RestSessionTests: XCTestCase {
                 expectation.fulfill()
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 }

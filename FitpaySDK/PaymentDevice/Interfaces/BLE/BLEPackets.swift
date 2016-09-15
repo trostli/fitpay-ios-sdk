@@ -2,17 +2,17 @@ import CoreBluetooth
 
 struct Continuation {
     var uuid : CBUUID
-    var dataParts : [Int:NSData]
+    var dataParts : [Int:Data]
     init()  {
         uuid = CBUUID()
-        dataParts =  [Int:NSData]()
+        dataParts =  [Int:Data]()
     }
     init(uuidValue: CBUUID) {
         uuid = uuidValue
-        dataParts =  [Int:NSData]()
+        dataParts =  [Int:Data]()
     }
     
-    var data : NSData? {
+    var data : Data? {
         let dataFromParts = NSMutableData()
         var expectedKey = 0
         for (key, value) in dataParts {
@@ -22,30 +22,30 @@ struct Continuation {
             
             expectedKey += 1
             
-            dataFromParts.appendData(value)
+            dataFromParts.append(value)
         }
-        return dataFromParts
+        return dataFromParts as Data
     }
 }
 
 struct ContinuationPacketMessage {
     let sortOrder: UInt16
-    let data: NSData
-    init(msg: NSData) {
+    let data: Data
+    init(msg: Data) {
         let sortOrderRange : NSRange = NSMakeRange(0, 2)
-        var buffer = [UInt8](count: 2, repeatedValue: 0x00)
-        msg.getBytes(&buffer, range: sortOrderRange)
+        var buffer = [UInt8](repeating: 0x00, count: 2)
+        (msg as NSData).getBytes(&buffer, range: sortOrderRange)
         
-        let sortOrderData = NSData(bytes: buffer, length: 2)
+        let sortOrderData = Data(bytes: UnsafePointer<UInt8>(buffer), count: 2)
         var u16 : UInt16 = 0
-        sortOrderData.getBytes(&u16, length: 2)
+        (sortOrderData as NSData).getBytes(&u16, length: 2)
         sortOrder = UInt16(littleEndian: u16)
         
-        let range : NSRange = NSMakeRange(2, msg.length - 2)
-        buffer = [UInt8](count: (msg.length) - 2, repeatedValue: 0x00)
-        msg.getBytes(&buffer, range: range)
+        let range : NSRange = NSMakeRange(2, msg.count - 2)
+        buffer = [UInt8](repeating: 0x00, count: (msg.count) - 2)
+        (msg as NSData).getBytes(&buffer, range: range)
         
-        data = NSData(bytes: buffer, length: (msg.length) - 2)
+        data = Data(bytes: UnsafePointer<UInt8>(buffer), count: (msg.count) - 2)
     }
 }
 
@@ -53,7 +53,7 @@ struct ContinuationControlMessage {
     let type: UInt8
     let isBeginning: Bool
     let isEnd: Bool
-    let data: NSData
+    let data: Data
     let uuid: CBUUID
     let crc32: UInt32
     init(withUuid: CBUUID) {
@@ -61,12 +61,12 @@ struct ContinuationControlMessage {
         isBeginning = true
         isEnd = false
         uuid = withUuid
-        data = NSData()
+        data = Data()
         crc32 = UInt32()
     }
-    init(msg: NSData) {
-        var buffer = [UInt8](count: (msg.length), repeatedValue: 0x00)
-        msg.getBytes(&buffer, length: buffer.count)
+    init(msg: Data) {
+        var buffer = [UInt8](repeating: 0x00, count: (msg.count))
+        (msg as NSData).getBytes(&buffer, length: buffer.count)
         
         type = buffer[0]
         if (buffer[0] == 0x00) {
@@ -77,28 +77,28 @@ struct ContinuationControlMessage {
             isEnd = true
         }
         
-        let range : NSRange = NSMakeRange(1, msg.length - 1)
-        buffer = [UInt8](count: (msg.length) - 1, repeatedValue: 0x00)
-        msg.getBytes(&buffer, range: range)
+        let range : NSRange = NSMakeRange(1, msg.count - 1)
+        buffer = [UInt8](repeating: 0x00, count: (msg.count) - 1)
+        (msg as NSData).getBytes(&buffer, range: range)
         
-        data = NSData(bytes: buffer, length: (msg.length) - 1)
-        if (data.length == 16) {
+        data = Data(bytes: UnsafePointer<UInt8>(buffer), count: (msg.count) - 1)
+        if (data.count == 16) {
             //reverse bytes for little endian representation
-            var inData = [UInt8](count: data.length, repeatedValue: 0)
-            data.getBytes(&inData, length: data.length)
-            var outData = [UInt8](count: data.length, repeatedValue: 0)
+            var inData = [UInt8](repeating: 0, count: data.count)
+            (data as NSData).getBytes(&inData, length: data.count)
+            var outData = [UInt8](repeating: 0, count: data.count)
             var outPos = inData.count;
             for i in 0 ..< inData.count {
                 outPos -= 1
                 outData[i] = inData[outPos]
             }
-            let out = NSData(bytes: outData, length: outData.count)
+            let out = Data(bytes: UnsafePointer<UInt8>(outData), count: outData.count)
             uuid = CBUUID(data: out)
             crc32 = UInt32()
-        } else if (data.length == 4) {
+        } else if (data.count == 4) {
             uuid = CBUUID()
             var u32 : UInt32 = 0
-            data.getBytes(&u32, length: 4)
+            (data as NSData).getBytes(&u32, length: 4)
             crc32 = UInt32(littleEndian: u32)
         } else {
             uuid = CBUUID()
@@ -109,21 +109,21 @@ struct ContinuationControlMessage {
 
 
 public struct ApplicationControlMessage {
-    let msg : NSData
+    let msg : Data
     let deviceAction : UInt8
     let ATRHex : String
-    init(msg: NSData) {
+    init(msg: Data) {
         self.msg = msg
-        var buffer = [UInt8](count: (msg.length), repeatedValue: 0x00)
-        msg.getBytes(&buffer, length: buffer.count)
+        var buffer = [UInt8](repeating: 0x00, count: (msg.count))
+        (msg as NSData).getBytes(&buffer, length: buffer.count)
         
         deviceAction = UInt8(buffer[0])
         
-        if msg.length > 1 {
-            let range : NSRange = NSMakeRange(1, msg.length-1)
-            buffer = [UInt8](count: msg.length-1, repeatedValue: 0x00)
-            msg.getBytes(&buffer, range: range)
-            ATRHex = String(data:NSData(bytes: buffer, length: 2), encoding: NSUTF8StringEncoding)!
+        if msg.count > 1 {
+            let range : NSRange = NSMakeRange(1, msg.count-1)
+            buffer = [UInt8](repeating: 0x00, count: msg.count-1)
+            (msg as NSData).getBytes(&buffer, range: range)
+            ATRHex = String(data:Data(bytes: UnsafePointer<UInt8>(buffer), count: 2), encoding: String.Encoding.utf8)!
         } else {
             ATRHex = ""
         }
@@ -138,22 +138,22 @@ struct DeviceControlMessage {
         op = UInt8(operation.rawValue)
         msg = NSMutableData()
         var op8 = op
-        msg.appendBytes(&op8, length: sizeofValue(op))
+        msg.append(&op8, length: MemoryLayout.size(ofValue: op))
     }
 }
 
 struct SecurityStateMessage {
     let nfcState: UInt8
     let nfcErrorCode: UInt8
-    init(msg: NSData) {
-        if (msg.length == 0) {
+    init(msg: Data) {
+        if (msg.count == 0) {
             nfcState = 0x00
             nfcErrorCode = 0x00
             return
         }
         
-        var buffer = [UInt8](count: (msg.length), repeatedValue: 0x00)
-        msg.getBytes(&buffer, length: buffer.count)
+        var buffer = [UInt8](repeating: 0x00, count: (msg.count))
+        (msg as NSData).getBytes(&buffer, length: buffer.count)
         
         nfcState = buffer[0]
 

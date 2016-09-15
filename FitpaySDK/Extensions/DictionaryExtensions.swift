@@ -3,11 +3,11 @@ extension Dictionary
 {
     var JSONString:String?
     {
-        return Foundation.NSJSONSerialization.JSONString(self as! AnyObject)
+        return Foundation.JSONSerialization.JSONString(self as! AnyObject)
     }
 }
 
-func += <KeyType, ValueType> (inout left: Dictionary<KeyType, ValueType>, right: Dictionary<KeyType, ValueType>)
+func += <KeyType, ValueType> (left: inout Dictionary<KeyType, ValueType>, right: Dictionary<KeyType, ValueType>)
 {
     for (k, v) in right
     {

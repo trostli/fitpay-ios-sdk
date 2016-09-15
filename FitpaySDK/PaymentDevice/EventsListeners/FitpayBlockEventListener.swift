@@ -7,30 +7,30 @@
 //
 
 
-public class FitpayBlockEventListener {
+open class FitpayBlockEventListener {
     
-    public typealias BlockCompletion = (event:FitpayEvent) -> Void
+    public typealias BlockCompletion = (_ event:FitpayEvent) -> Void
     
     var blockCompletion : BlockCompletion
-    var completionQueue : dispatch_queue_t
+    var completionQueue : DispatchQueue
 
-    private var isValid : Bool = true
+    fileprivate var isValid : Bool = true
     
-    public init(completion: BlockCompletion, queue: dispatch_queue_t = dispatch_get_main_queue()) {
+    public init(completion: @escaping BlockCompletion, queue: DispatchQueue = DispatchQueue.main) {
         self.blockCompletion = completion
         self.completionQueue = queue
     }
 }
 
 extension FitpayBlockEventListener : FitpayEventListener {
-    public func dispatchEvent(event: FitpayEvent) {
+    public func dispatchEvent(_ event: FitpayEvent) {
         guard isValid else {
             return
         }
         
-        dispatch_async(completionQueue) {
+        completionQueue.async {
             _ in
-            self.blockCompletion(event: event)
+            self.blockCompletion(event)
         }
     }
     

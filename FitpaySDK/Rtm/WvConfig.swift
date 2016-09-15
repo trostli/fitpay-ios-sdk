@@ -4,56 +4,56 @@ import WebKit
 import ObjectMapper
 
 public enum WVMessageType : Int {
-    case Error = 0
-    case Success
-    case Progress
-    case Pending
+    case error = 0
+    case success
+    case progress
+    case pending
 }
 
 @objc public enum WVDeviceStatuses : Int {
-    case Disconnected = 0
-    case Pairing
-    case Connected
-    case Synchronizing
-    case SyncStarted
-    case SyncDataRetrieved
-    case Synchronized
-    case SyncError
+    case disconnected = 0
+    case pairing
+    case connected
+    case synchronizing
+    case syncStarted
+    case syncDataRetrieved
+    case synchronized
+    case syncError
     
     func statusMessageType() -> WVMessageType {
         switch self {
-        case .Disconnected:
-            return .Pending
-        case .Connected,
-             .Synchronized:
-            return .Success
-        case .Pairing,
-             .Synchronizing,
-             .SyncStarted,
-             .SyncDataRetrieved:
-            return .Progress
-        case .SyncError:
-            return .Error
+        case .disconnected:
+            return .pending
+        case .connected,
+             .synchronized:
+            return .success
+        case .pairing,
+             .synchronizing,
+             .syncStarted,
+             .syncDataRetrieved:
+            return .progress
+        case .syncError:
+            return .error
         }
     }
     
     func defaultMessage() -> String {
         switch self {
-        case .Disconnected:
+        case .disconnected:
             return "Device is disconnected."
-        case .Connected:
+        case .connected:
             return "Ready to sync with device."
-        case .Synchronized:
+        case .synchronized:
             return "Device is up to date."
-        case .Pairing:
+        case .pairing:
             return "Pairing with device..."
-        case .Synchronizing:
+        case .synchronizing:
             return "Synchronizing with device."
-        case .SyncStarted:
+        case .syncStarted:
             return "Synchronizing with device.."
-        case .SyncDataRetrieved:
+        case .syncDataRetrieved:
             return "Synchronizing with device..."
-        case .SyncError:
+        case .syncError:
             return "Sync error"
         }
     }
@@ -63,7 +63,7 @@ public enum WVMessageType : Int {
     /**
      This method will be called after successful user authorization.
      */
-    func didAuthorizeWithEmail(email:String?)
+    func didAuthorizeWithEmail(_ email:String?)
     
     /**
      This method can be used for user messages customization.
@@ -77,7 +77,7 @@ public enum WVMessageType : Int {
      
      - returns:                  Message string which will be shown on status board.
      */
-    optional func willDisplayStatusMessage(status:WVDeviceStatuses, defaultMessage:String, error: NSError?) -> String
+    @objc optional func willDisplayStatusMessage(_ status:WVDeviceStatuses, defaultMessage:String, error: NSError?) -> String
 }
 
 /**
@@ -92,17 +92,17 @@ internal enum WVResponse: String {
 }
 
 
-public class WvConfig : NSObject, WKScriptMessageHandler {
+open class WvConfig : NSObject, WKScriptMessageHandler {
 
-    weak public var delegate : WvConfigDelegate?
+    weak open var delegate : WvConfigDelegate?
     
     var url = BASE_URL
     let paymentDevice: PaymentDevice?
-    public let restSession: RestSession?
-    public let restClient: RestClient?
-    let notificationCenter = NSNotificationCenter.defaultCenter()
+    open let restSession: RestSession?
+    open let restClient: RestClient?
+    let notificationCenter = NotificationCenter.default
 
-    public var user: User?
+    open var user: User?
     var rtmConfig: RtmConfig?
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
@@ -110,7 +110,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
     var sessionDataCallBackId: Int?
     var syncCallBacks = [Int]()
     
-    public var demoModeEnabled : Bool {
+    open var demoModeEnabled : Bool {
         get {
             if let isEnabled = self.rtmConfig?.demoMode {
                 return isEnabled
@@ -141,7 +141,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         
         self.demoModeEnabled = false
 
-        self.notificationCenter.addObserver(self, selector: #selector(logout), name: UIApplicationWillEnterForegroundNotification, object: nil)
+        self.notificationCenter.addObserver(self, selector: #selector(logout), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         self.bindEvents()
     }
 
@@ -150,30 +150,30 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
       that device. This will attempt to connect, and call the completion with either an error or nil if the connection 
       attempt is successful.
      */
-    public func openDeviceConnection(completion: (error:NSError?) -> Void) {
-        self.connectionBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.OnDeviceConnected, completion: {
+    open func openDeviceConnection(_ completion: @escaping (_ error:NSError?) -> Void) {
+        self.connectionBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion: {
             (event) in
             
             self.paymentDevice!.removeBinding(binding: self.connectionBinding!)
 
             if let error = event.eventData["error"]! as? NSError {
-                completion(error: error)
+                completion(error)
                 return
             }
 
             if let deviceInfo = event.eventData["deviceInfo"]! as? DeviceInfo {
                 self.rtmConfig?.deviceInfo = deviceInfo
-                completion(error: nil)
+                completion(nil)
                 return
             }
 
-            completion(error: NSError.error(code: 1, domain: WvConfig.self, message: "Could not open connection. OnDeviceConnected event did not supply valid device data"))
+            completion(NSError.error(code: 1, domain: WvConfig.self, message: "Could not open connection. OnDeviceConnected event did not supply valid device data"))
         })
         
         self.paymentDevice!.connect()
     }
     
-    public func setWebView(webview:WKWebView!) {
+    open func setWebView(_ webview:WKWebView!) {
         self.webview = webview
     }
     
@@ -181,9 +181,9 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
      This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app. Note that
      the value "rtmBridge" is an agreeded upon value between this and the web-view.
      */
-    public func wvConfig() -> WKWebViewConfiguration {
+    open func wvConfig() -> WKWebViewConfiguration {
         let config:WKWebViewConfiguration = WKWebViewConfiguration()
-        config.userContentController.addScriptMessageHandler(self, name: "rtmBridge")
+        config.userContentController.add(self, name: "rtmBridge")
         
         return config
     }
@@ -191,16 +191,16 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
     /**
      This returns the request object clients will require in order to open a WKWebView
      */
-    public func wvRequest() -> NSURLRequest {
+    open func wvRequest() -> URLRequest {
         let JSONString = Mapper().toJSONString(rtmConfig!)
-        let utfString = JSONString!.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        let utfString = JSONString!.dataUsingEncoding(String.Encoding.utf8, allowLossyConversion: true)
         let encodedConfig = utfString?.base64URLencoded()
         let configuredUrl = "\(url)?config=\(encodedConfig! as String)"
         
         print(configuredUrl)
         
-        let requestUrl = NSURL(string: configuredUrl)
-        let request = NSURLRequest(URL: requestUrl!)
+        let requestUrl = URL(string: configuredUrl)
+        let request = URLRequest(URL: requestUrl!)
         return request
     }
     
@@ -221,7 +221,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
             }
         }
      */
-    public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
+    open func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         let sentData = message.body as! NSDictionary
 
         if sentData["data"]!["action"] as! String == "sync" {
@@ -234,8 +234,8 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
 
             do {
                 let data = sentData["data"]!["data"]!
-                let jsonData = try NSJSONSerialization.dataWithJSONObject(data!, options: NSJSONWritingOptions.PrettyPrinted)
-                let jsonString = NSString(data: jsonData, encoding: NSUTF8StringEncoding)! as String
+                let jsonData = try JSONSerialization.data(withJSONObject: data!, options: JSONSerialization.WritingOptions.prettyPrinted)
+                let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8)! as String
                 let webViewSessionData = Mapper<WebViewSessionData>().map(jsonString)
                 
                 handleSessionData(webViewSessionData!)
@@ -245,7 +245,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         }
     }
     
-    public func showStatusMessage(status: WVDeviceStatuses, message: String? = nil, error: ErrorType? = nil) {
+    open func showStatusMessage(_ status: WVDeviceStatuses, message: String? = nil, error: Error? = nil) {
         var realMessage = message ?? status.defaultMessage()
         if let newMessage = delegate?.willDisplayStatusMessage?(status, defaultMessage: realMessage, error: error as? NSError) {
             realMessage = newMessage
@@ -254,11 +254,11 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         sendStatusMessage(realMessage, type: status.statusMessageType())
     }
     
-    public func showCustomStatusMessage(message:String, type: WVMessageType) {
+    open func showCustomStatusMessage(_ message:String, type: WVMessageType) {
         sendStatusMessage(message, type: type)
     }
     
-    private func sendStatusMessage(message:String, type:WVMessageType) {
+    fileprivate func sendStatusMessage(_ message:String, type:WVMessageType) {
         guard let webview = self.webview else {
             print("Can't send status message, webview is nil!")
             return
@@ -273,12 +273,12 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         })
     }
     
-    private func handleSync(callBackId:Int) -> Void {
+    fileprivate func handleSync(_ callBackId:Int) -> Void {
         if (self.webViewSessionData != nil && self.user != nil ) {
             syncCallBacks.append(callBackId)
 
             if !SyncManager.sharedInstance.isSyncing {
-                self.showStatusMessage(.SyncStarted)
+                self.showStatusMessage(.syncStarted)
                 goSync()
             }
         } else {
@@ -286,11 +286,11 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
                 self.syncCallBacks.first!,
                 success: false,
                 response: self.getWVResponse(WVResponse.noSessionData, message: nil))
-            self.showStatusMessage(.SyncError, message: "Can't make sync. Session data or user is nil.")
+            self.showStatusMessage(.syncError, message: "Can't make sync. Session data or user is nil.")
         }
     }
     
-    private func handleSessionData(webViewSessionData:WebViewSessionData) -> Void {
+    fileprivate func handleSessionData(_ webViewSessionData:WebViewSessionData) -> Void {
         self.webViewSessionData = webViewSessionData
         self.restSession!.setWebViewAuthorization(webViewSessionData)
 
@@ -304,7 +304,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
                     success: false,
                     response: self.getWVResponse(WVResponse.failed, message: error.debugDescription))
 
-                self.showStatusMessage(.SyncError, message: "Can't get user, error: \(error.debugDescription)", error: error)
+                self.showStatusMessage(.syncError, message: "Can't get user, error: \(error.debugDescription)", error: error)
                 
                 return
             }
@@ -320,11 +320,11 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
                 success: true,
                 response: self.getWVResponse(WVResponse.success, message: nil))
             
-            self.showStatusMessage(.Synchronizing)
+            self.showStatusMessage(.synchronizing)
         })
     }
 
-    private func rejectAndResetSyncCallbacks(reason:String) {
+    fileprivate func rejectAndResetSyncCallbacks(_ reason:String) {
         for cbId in self.syncCallBacks {
             callBack(
                 cbId,
@@ -335,7 +335,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         self.syncCallBacks = [Int]()
     }
 
-    private func resolveSync() {
+    fileprivate func resolveSync() {
         if let id = self.syncCallBacks.first {
             if self.syncCallBacks.count > 1 {
                 self.callBack(
@@ -349,7 +349,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
                     id,
                     success: true,
                     response: getWVResponse(WVResponse.success, message: nil))
-                self.showStatusMessage(.Synchronized)
+                self.showStatusMessage(.synchronized)
             }
 
             self.syncCallBacks.removeFirst()
@@ -358,7 +358,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         }
     }
 
-    private func callBack(callBackId:Int, success:Bool, response:String) {
+    fileprivate func callBack(_ callBackId:Int, success:Bool, response:String) {
         self.webview!.evaluateJavaScript("window.RtmBridge.resolve(\(callBackId), \(success), \(response))", completionHandler: {
             (result, error) in
 
@@ -368,27 +368,27 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         })
     }
 
-    private func goSync() {
+    fileprivate func goSync() {
         if SyncManager.sharedInstance.sync(self.user!) != nil {
             rejectAndResetSyncCallbacks("SyncManager failed to regulate sequential syncs, all pending syncs have been rejected")
         }
     }
 
-    private func bindEvents() {
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_COMPLETED, completion: {
+    fileprivate func bindEvents() {
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.sync_COMPLETED, completion: {
             (event) in
 
             self.resolveSync()
         })
 
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.SYNC_FAILED, completion: {
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.sync_FAILED, completion: {
             (event) in
 
             self.rejectAndResetSyncCallbacks("SyncManager failed to complete the sync, all pending syncs have been rejected")
         })
     }
 
-    private func getWVResponse(response:WVResponse, message:String?) -> String {
+    fileprivate func getWVResponse(_ response:WVResponse, message:String?) -> String {
         switch response {
         case .success:
             return response.rawValue
@@ -407,7 +407,7 @@ public class WvConfig : NSObject, WKScriptMessageHandler {
         }
     }
 
-    @objc private func logout() {
+    @objc fileprivate func logout() {
         self.webview!.evaluateJavaScript("window.RtmBridge.forceLogout()") { (result, error) in
             if error != nil {
                 print("failed to log out user through window.RtmBridge.logout")

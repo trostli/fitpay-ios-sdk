@@ -9,14 +9,14 @@
 import Foundation
 import Alamofire
 
-public class Test {
+open class Test {
     public init() {}
     
-    public func getApiHealth(callback: (arg: String) -> Void) {
+    open func getApiHealth(_ callback: @escaping (_ arg: String) -> Void) {
         var url = "https://httpbin.org/get"
-        url = url.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+        url = url.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
         
-        Alamofire.request(
+        /*Alamofire.request(
             .GET, url, parameters: nil)
             .responseJSON { response in
                 print(response.request)  // original URL request
@@ -27,6 +27,6 @@ public class Test {
                 if let JSON = response.result.value {
                     callback(arg: "JSON: \(JSON)")
                 }
-            }
+            }*/
     }
 }

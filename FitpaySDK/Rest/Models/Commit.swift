@@ -1,27 +1,27 @@
 
 import ObjectMapper
 
-public class Commit : NSObject, ClientModel, Mappable, SecretApplyable
+open class Commit : NSObject, ClientModel, Mappable, SecretApplyable
 {
     var links:[ResourceLink]?
-    public var commitType:CommitType?
-    public var payload:Payload?
-    public var created:CLong?
-    public var previousCommit:String?
-    public var commit:String?
+    open var commitType:CommitType?
+    open var payload:Payload?
+    open var created:CLong?
+    open var previousCommit:String?
+    open var commit:String?
     
-    private static let apduResponseResource = "apduResponse"
+    fileprivate static let apduResponseResource = "apduResponse"
     
     internal weak var client:RestClient?
     
     internal var encryptedData:String?
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    public func mapping(map: Map)
+    open func mapping(map: Map)
     {
         links <- (map["_links"], ResourceLinkTransformType())
         commitType <- map["commitType"]
@@ -31,31 +31,31 @@ public class Commit : NSObject, ClientModel, Mappable, SecretApplyable
         encryptedData <- map["encryptedData"]
     }
     
-    internal func applySecret(secret:NSData, expectedKeyId:String?)
+    internal func applySecret(_ secret:Data, expectedKeyId:String?)
     {
         self.payload = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret)
     }
     
-    internal func confirmAPDU(completion:RestClient.ConfirmAPDUPackageHandler) {
+    internal func confirmAPDU(_ completion:@escaping RestClient.ConfirmAPDUPackageHandler) {
         print("in the confirmAPDU method")
         guard self.commitType == CommitType.APDU_PACKAGE else {
-            completion(error: NSError.unhandledError(Commit.self))
+            completion(NSError.unhandledError(Commit.self))
             return
         }
         
         let resource = Commit.apduResponseResource
         guard let url = self.links?.url(resource) else {
-            completion(error: NSError.clientUrlError(domain:Commit.self, code:0, client: client, url: nil, resource: resource))
+            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: client, url: nil, resource: resource))
             return
         }
         
         guard let client = self.client else {
-            completion(error: NSError.clientUrlError(domain:Commit.self, code:0, client: nil, url: url, resource: resource))
+            completion(NSError.clientUrlError(domain:Commit.self, code:0, client: nil, url: url, resource: resource))
             return
         }
         
         guard let apduPackage = self.payload?.apduPackage else {
-            completion(error: NSError.unhandledError(Commit.self))
+            completion(NSError.unhandledError(Commit.self))
             return
         }
         debugPrint("apdu package \(apduPackage)")
@@ -75,28 +75,28 @@ public enum CommitType : String
     case APDU_PACKAGE = "APDU_PACKAGE"
 }
 
-public class Payload : NSObject, Mappable
+open class Payload : NSObject, Mappable
 {
-    public var creditCard:CreditCard?
+    open var creditCard:CreditCard?
     internal var payloadDictionary:[String : AnyObject]?
     internal var apduPackage:ApduPackage?
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    public func mapping(map: Map)
+    open func mapping(map: Map)
     {
-        let info = map.JSONDictionary
+        let info = map.JSON
         
         if let _ = info["creditCardId"]
         {
-            self.creditCard = Mapper<CreditCard>().map(info)
+            self.creditCard = Mapper<CreditCard>().map(JSON: info)
         }
         else if let _ = info["packageId"]
         {
-            self.apduPackage = Mapper<ApduPackage>().map(info)
+            self.apduPackage = Mapper<ApduPackage>().map(JSON: info)
         }
         
         self.payloadDictionary = info

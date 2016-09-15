@@ -1,22 +1,22 @@
 
 import ObjectMapper
 
-public class EncryptionKey : NSObject, Mappable
+open class EncryptionKey : NSObject, Mappable
 {
     internal var links:[ResourceLink]?
-    public var keyId:String?
-    public var created:String?
-    public var createdEpoch:NSTimeInterval?
-    public var serverPublicKey:String?
-    public var clientPublicKey:String?
-    public var active:Bool?
+    open var keyId:String?
+    open var created:String?
+    open var createdEpoch:TimeInterval?
+    open var serverPublicKey:String?
+    open var clientPublicKey:String?
+    open var active:Bool?
 
     public required init?(_ map: Map)
     {
 
     }
 
-    public func mapping(map: Map)
+    open func mapping(_ map: Map)
     {
         links <- (map["_links"], ResourceLinkTransformType())
         keyId <- map["keyId"]

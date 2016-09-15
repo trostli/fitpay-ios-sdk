@@ -6,76 +6,76 @@
 //  Copyright © 2016 Fitpay. All rights reserved.
 //
 
-public class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
+open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     
     weak var paymentDevice : PaymentDevice!
     var responseData : ApduResultMessage!
     var connected = false;
-    var _nfcState = SecurityNFCState.Disabled
+    var _nfcState = SecurityNFCState.disabled
     var sendingAPDU : Bool = false
     let maxPacketSize : Int = 20
     let apduSecsTimeout : Double = 5
     var sequenceId: UInt16 = 0
     
-    var timeoutTimer : NSTimer?
+    var timeoutTimer : Timer?
     
     required public init(paymentDevice device:PaymentDevice) {
         self.paymentDevice = device
     }
     
-    public func connect() {
+    open func connect() {
         print("connecting")
-        dispatch_after(getDelayTime(), dispatch_get_main_queue(), {
+        DispatchQueue.main.asyncAfter(deadline: getDelayTime(), execute: {
             self.connected = true
-            self._nfcState = SecurityNFCState.Enabled
+            self._nfcState = SecurityNFCState.enabled
             let deviceInfo = self.deviceInfo()
             print("triggering device data")
-            self.paymentDevice?.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceConnected, params: ["deviceInfo": deviceInfo!])
-            self.paymentDevice?.connectionState = ConnectionState.Connected
+            self.paymentDevice?.callCompletionForEvent(PaymentDeviceEventTypes.onDeviceConnected, params: ["deviceInfo": deviceInfo!])
+            self.paymentDevice?.connectionState = ConnectionState.connected
         })
     }
     
-    public func disconnect() {
-        dispatch_after(getDelayTime(), dispatch_get_main_queue(), {
+    open func disconnect() {
+        DispatchQueue.main.asyncAfter(deadline: getDelayTime(), execute: {
             self.connected = false
-            self.paymentDevice?.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceDisconnected)
-            self.paymentDevice?.connectionState = ConnectionState.Disconnected
+            self.paymentDevice?.callCompletionForEvent(PaymentDeviceEventTypes.onDeviceDisconnected)
+            self.paymentDevice?.connectionState = ConnectionState.disconnected
         })
     }
     
-    public func isConnected() -> Bool {
+    open func isConnected() -> Bool {
         debugPrint("checking is connected")
         return connected;
     }
     
-    public func writeSecurityState(state: SecurityNFCState) -> NSError?{
+    open func writeSecurityState(_ state: SecurityNFCState) -> NSError?{
         _nfcState = state
-        self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.OnSecurityStateChanged, params: ["securityState":state.rawValue])
+        self.paymentDevice.callCompletionForEvent(PaymentDeviceEventTypes.onSecurityStateChanged, params: ["securityState":state.rawValue])
         return nil
     }
     
-    public func sendDeviceControl(state: DeviceControlState) -> NSError? {
-        return nil
-
-    }
-    
-    public func sendNotification(notificationData: NSData) -> NSError? {
+    open func sendDeviceControl(_ state: DeviceControlState) -> NSError? {
         return nil
 
     }
     
-    public func executeAPDUCommand(apduCommand: APDUCommand) {
+    open func sendNotification(_ notificationData: Data) -> NSError? {
+        return nil
+
+    }
+    
+    open func executeAPDUCommand(_ apduCommand: APDUCommand) {
         guard let commandData = apduCommand.command?.hexToData() else {
             if let completion = self.paymentDevice.apduResponseHandler {
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUDataNotFull, domain: IPaymentDeviceConnector.self))
+                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
             }
             return
         }
         
-        sendAPDUData(commandData, sequenceNumber: UInt16(apduCommand.sequence))
+        sendAPDUData(commandData as Data, sequenceNumber: UInt16(apduCommand.sequence))
     }
     
-    public func sendAPDUData(data: NSData, sequenceNumber: UInt16) {
+    open func sendAPDUData(_ data: Data, sequenceNumber: UInt16) {
         let response = "9000"
         let packet = ApduResultMessage(hexResult: response, sequenceId: String(sequenceNumber))
         
@@ -86,7 +86,7 @@ public class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     }
     
     
-    public func deviceInfo() -> DeviceInfo? {
+    open func deviceInfo() -> DeviceInfo? {
         let deviceInfo = DeviceInfo()
         
         deviceInfo.deviceType = "WATCH"
@@ -106,18 +106,18 @@ public class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         return deviceInfo;
     }
 
-    public func nfcState() -> SecurityNFCState {
-       return SecurityNFCState.Disabled
+    open func nfcState() -> SecurityNFCState {
+       return SecurityNFCState.disabled
     }
     
-    public func resetToDefaultState() {
+    open func resetToDefaultState() {
         
     }
     
-    public func getDelayTime() -> UInt64{
+    open func getDelayTime() -> UInt64{
         let seconds = 4.0
         let delay = seconds * Double(NSEC_PER_SEC)  // nanoseconds per seconds
-        let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+        let dispatchTime = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)
         return dispatchTime
     }
 

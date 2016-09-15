@@ -1,5 +1,5 @@
 
 internal protocol SecretApplyable
 {
-    func applySecret(secret:Foundation.NSData, expectedKeyId:String?)
+    func applySecret(_ secret:Foundation.Data, expectedKeyId:String?)
 }
