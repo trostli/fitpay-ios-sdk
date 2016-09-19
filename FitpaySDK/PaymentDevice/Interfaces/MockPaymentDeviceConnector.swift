@@ -67,7 +67,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     open func executeAPDUCommand(_ apduCommand: APDUCommand) {
         guard let commandData = apduCommand.command?.hexToData() else {
             if let completion = self.paymentDevice.apduResponseHandler {
-                completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
+                completion(nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
             }
             return
         }
@@ -81,7 +81,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         
         if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
             self.paymentDevice.apduResponseHandler = nil
-            apduResponseHandler(apduResponse: packet, error: nil)
+            apduResponseHandler(packet, nil)
         }
     }
     
@@ -114,7 +114,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         
     }
     
-    open func getDelayTime() -> UInt64{
+    open func getDelayTime() -> DispatchTime {
         let seconds = 4.0
         let delay = seconds * Double(NSEC_PER_SEC)  // nanoseconds per seconds
         let dispatchTime = DispatchTime.now() + Double(Int64(delay)) / Double(NSEC_PER_SEC)

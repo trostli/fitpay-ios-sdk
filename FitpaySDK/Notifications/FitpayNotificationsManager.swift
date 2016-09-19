@@ -89,7 +89,7 @@ open class FitpayNotificationsManager : NSObject {
      - parameter eventType: type of event which you want to bind to
      - parameter completion: completion handler which will be called
      */
-    open func bindToEvent(eventType: NotificationsEventType, completion: NotificationsEventBlockHandler) -> FitpayEventBinding? {
+    open func bindToEvent(eventType: NotificationsEventType, completion: @escaping NotificationsEventBlockHandler) -> FitpayEventBinding? {
         return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion), eventId: eventType)
     }
     
@@ -100,7 +100,7 @@ open class FitpayNotificationsManager : NSObject {
      - parameter completion: completion handler which will be called
      - parameter queue: queue in which completion will be called
      */
-    open func bindToEvent(eventType: NotificationsEventType, completion: NotificationsEventBlockHandler, queue: DispatchQueue) -> FitpayEventBinding? {
+    open func bindToEvent(eventType: NotificationsEventType, completion: @escaping NotificationsEventBlockHandler, queue: DispatchQueue) -> FitpayEventBinding? {
         return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion, queue: queue), eventId: eventType)
     }
     
@@ -190,7 +190,7 @@ open class FitpayNotificationsManager : NSObject {
             break
         }
         
-        eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: payload))
+        eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: payload as AnyObject))
     }
     
     fileprivate func callAllNotificationProcessedCompletion() {

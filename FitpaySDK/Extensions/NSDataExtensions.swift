@@ -63,7 +63,8 @@ extension Data
     {
         let SHA_DIGEST_LENGTH = OpenSSLHelper.sharedInstance().shaDigestLength()
         let result = NSMutableData(length: Int(SHA_DIGEST_LENGTH*2))!
-        guard OpenSSLHelper.sharedInstance().simpleSHA1(bytes, length: UInt(count), output: UnsafeMutablePointer<Int8>(result.mutableBytes)) else {
+        
+        guard OpenSSLHelper.sharedInstance().simpleSHA1((self as NSData).bytes, length: UInt(count), output: result.mutableBytes.bindMemory(to:Int8.self, capacity: Int(SHA_DIGEST_LENGTH*2))) else {
             return nil
         }
         return String(data: result as Data, encoding: String.Encoding.utf8)

@@ -50,7 +50,7 @@ internal class CommitsApplyer {
             
             // retry if error occurred
             for _ in 0 ..< maxCommitsRetries+1 {
-                DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async(execute: {
+                DispatchQueue.global().async(execute: {
                     self.processCommit(commit)
                     {
                         (error) -> Void in
@@ -59,7 +59,7 @@ internal class CommitsApplyer {
                     }
                 })
                 
-                self.semaphore.wait(timeout: DispatchTime.distantFuture)
+                let _ = self.semaphore.wait(timeout: DispatchTime.distantFuture)
                 
                 // if there is no error than leave retry cycle
                 if errorItr == nil {
@@ -69,7 +69,7 @@ internal class CommitsApplyer {
             
             if let error = errorItr {
                 DispatchQueue.main.async(execute: {
-                    self.applyerCompletionHandler(error: error)
+                    self.applyerCompletionHandler(error)
                 })
                 return
             }
@@ -80,7 +80,7 @@ internal class CommitsApplyer {
         }
         
         DispatchQueue.main.async(execute: {
-            self.applyerCompletionHandler(error: nil)
+            self.applyerCompletionHandler(nil)
         })
     }
     
@@ -125,7 +125,7 @@ internal class CommitsApplyer {
             commit.confirmAPDU(
             {
                 (error) -> Void in
-                completion(error: error)
+                completion(error)
             })
             
             return
@@ -158,7 +158,7 @@ internal class CommitsApplyer {
             debugPrint("about to call confirm")
             commit.confirmAPDU({
                 (confirmError) -> Void in
-                completion(error: realError ?? confirmError)
+                completion(realError ?? confirmError)
             })
         }
     }
@@ -207,14 +207,18 @@ internal class CommitsApplyer {
             return
         }
         
-        var apdu = apduPackage.apduCommands![apduCommandIndex]
-        SyncManager.sharedInstance.paymentDevice!.executeAPDUCommand(&apdu, completion:
+        var mutableApduPackage = apduPackage.apduCommands![apduCommandIndex]
+        SyncManager.sharedInstance.paymentDevice!.executeAPDUCommand(mutableApduPackage, completion:
         {
             [unowned self] (apduPack, error) -> Void in
-
+            
+            if let apduPack = apduPack {
+                mutableApduPackage = apduPack
+            }
+            
             if let error = error {
                 if retryCount >= self.maxAPDUCommandsRetries {
-                    completion(error: error)
+                    completion(error)
                 } else {
                     self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex, retryCount: retryCount + 1, completion: completion)
                 }

@@ -11,12 +11,12 @@ open class Address : Mappable
     open var postalCode:String?
     open var countryCode:String?
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    open func mapping(_ map: Map)
+    open func mapping(map: Map)
     {
         self.street1 <- map["street1"]
         self.street2 <- map["street2"]

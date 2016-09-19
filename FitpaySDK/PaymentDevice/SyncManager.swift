@@ -181,8 +181,8 @@ open class SyncManager : NSObject {
         {
             [unowned self] (event) in
             
-            let deviceInfo = event.eventData["deviceInfo"] as? DeviceInfo
-            let error = event.eventData["error"] as? ErrorProtocol
+            let deviceInfo = (event.eventData as? [String:Any])?["deviceInfo"] as? DeviceInfo
+            let error = (event.eventData as? [String:Any])?["error"] as? Error
             
             guard (error == nil && deviceInfo != nil) else {
                 
@@ -255,7 +255,7 @@ open class SyncManager : NSObject {
      - parameter eventType: type of event which you want to bind to
      - parameter completion: completion handler which will be called when system receives commit with eventType
      */
-    @objc open func bindToSyncEvent(eventType: SyncEventType, completion: SyncEventBlockHandler) -> FitpayEventBinding? {
+    @objc open func bindToSyncEvent(eventType: SyncEventType, completion: @escaping SyncEventBlockHandler) -> FitpayEventBinding? {
         return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion), eventId: eventType)
     }
     
@@ -266,7 +266,7 @@ open class SyncManager : NSObject {
      - parameter completion: completion handler which will be called when system receives commit with eventType
      - parameter queue: queue in which completion will be called
      */
-    open func bindToSyncEvent(eventType: SyncEventType, completion: SyncEventBlockHandler, queue: DispatchQueue) -> FitpayEventBinding? {
+    open func bindToSyncEvent(eventType: SyncEventType, completion: @escaping SyncEventBlockHandler, queue: DispatchQueue) -> FitpayEventBinding? {
         return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion, queue: queue), eventId: eventType)
     }				
     
@@ -300,7 +300,7 @@ open class SyncManager : NSObject {
             
             if result!.nextAvailable {
                 result?.collectAllAvailable({ (results, error) in
-                    completion(cards: results, error: error)
+                    completion(results, error)
                 })
             } else {
                 completion(result?.results, error)
@@ -404,12 +404,12 @@ open class SyncManager : NSObject {
                     (result, error) -> Void in
                     
                     if let error = error {
-                        completion(commits: nil, error: error)
+                        completion(nil, error)
                         return
                     }
                     
                     guard let result = result else {
-                        completion(commits: nil, error: NSError.unhandledError(SyncManager.self))
+                        completion(nil, NSError.unhandledError(SyncManager.self))
                         return
                     }
                     
@@ -419,19 +419,19 @@ open class SyncManager : NSObject {
                             (results, error) -> Void in
                             
                             if let error = error {
-                                completion(commits: nil, error: error)
+                                completion(nil, error)
                                 return
                             }
                             
                             guard let results = results else {
-                                completion(commits: nil, error: NSError.unhandledError(SyncManager.self))
+                                completion(nil, NSError.unhandledError(SyncManager.self))
                                 return
                             }
                             
-                            completion(commits: results, error: nil)
+                            completion(results, nil)
                         })
                     } else {
-                        completion(commits: result.results, error: nil)
+                        completion(result.results, nil)
                     }
                 })
             } else {
@@ -440,7 +440,7 @@ open class SyncManager : NSObject {
         }
     }
 
-    internal func callCompletionForSyncEvent(_ event: SyncEventType, params: [String:AnyObject] = [:]) {
+    internal func callCompletionForSyncEvent(_ event: SyncEventType, params: [String:Any] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: event, eventData: params))
     }
 
@@ -489,7 +489,7 @@ open class SyncManager : NSObject {
         commit.links?.append(resourceLink)
         
         commit.commitType = CommitType.APDU_PACKAGE
-        let apduPackage = Mapper<ApduPackage>().map("{  \r\n   \"seIdType\":\"iccid\",\r\n   \"targetDeviceType\":\"fitpay.gandd.model.Device\",\r\n   \"targetDeviceId\":\"72425c1e-3a17-4e1a-b0a4-a41ffcd00a5a\",\r\n   \"packageId\":\"baff08fb-0b73-5019-8877-7c490a43dc64\",\r\n   \"seId\":\"333274689f09352405792e9493356ac880c44444442\",\r\n   \"targetAid\":\"8050200008CF0AFB2A88611AD51C\",\r\n   \"commandApdus\":[  \r\n      {  \r\n         \"commandId\":\"5f2acf6f-536d-4444-9cf4-7c83fdf394bf\",\r\n         \"groupId\":0,\r\n         \"sequence\":0,\r\n         \"command\":\"00E01234567890ABCDEF\",\r\n         \"type\":\"CREATE FILE\"\r\n      },\r\n      {  \r\n         \"commandId\":\"00df5f39-7627-447d-9380-46d8574e0643\",\r\n         \"groupId\":1,\r\n         \"sequence\":1,\r\n         \"command\":\"8050200008CF0AFB2A88611AD51C\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"9c719928-8bb0-459c-b7c0-2bc48ec53f3c\",\r\n         \"groupId\":1,\r\n         \"sequence\":2,\r\n         \"command\":\"84820300106BBC29E6A224522E83A9B26FD456111500\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"b148bea5-6d98-4c83-8a20-575b4edd7a42\",\r\n         \"groupId\":1,\r\n         \"sequence\":3,\r\n         \"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"905fc5ab-4b15-4704-889b-2c5ffcfb2d68\",\r\n         \"groupId\":2,\r\n         \"sequence\":4,\r\n         \"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"8e87ff12-dfc2-472a-bbf1-5f2e891e864c\",\r\n         \"groupId\":3,\r\n         \"sequence\":5,\r\n         \"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\r\n         \"type\":\"UNKNOWN\"\r\n      }\r\n   ],\r\n   \"validUntil\":\"2015-12-11T21:22:58.691Z\",\r\n   \"apduPackageUrl\":\"http://localhost:9103/transportservice/v1/apdupackages/baff08fb-0b73-5019-8877-7c490a43dc64\"\r\n}")
+        let apduPackage = Mapper<ApduPackage>().map(JSONString: "{  \r\n   \"seIdType\":\"iccid\",\r\n   \"targetDeviceType\":\"fitpay.gandd.model.Device\",\r\n   \"targetDeviceId\":\"72425c1e-3a17-4e1a-b0a4-a41ffcd00a5a\",\r\n   \"packageId\":\"baff08fb-0b73-5019-8877-7c490a43dc64\",\r\n   \"seId\":\"333274689f09352405792e9493356ac880c44444442\",\r\n   \"targetAid\":\"8050200008CF0AFB2A88611AD51C\",\r\n   \"commandApdus\":[  \r\n      {  \r\n         \"commandId\":\"5f2acf6f-536d-4444-9cf4-7c83fdf394bf\",\r\n         \"groupId\":0,\r\n         \"sequence\":0,\r\n         \"command\":\"00E01234567890ABCDEF\",\r\n         \"type\":\"CREATE FILE\"\r\n      },\r\n      {  \r\n         \"commandId\":\"00df5f39-7627-447d-9380-46d8574e0643\",\r\n         \"groupId\":1,\r\n         \"sequence\":1,\r\n         \"command\":\"8050200008CF0AFB2A88611AD51C\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"9c719928-8bb0-459c-b7c0-2bc48ec53f3c\",\r\n         \"groupId\":1,\r\n         \"sequence\":2,\r\n         \"command\":\"84820300106BBC29E6A224522E83A9B26FD456111500\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"b148bea5-6d98-4c83-8a20-575b4edd7a42\",\r\n         \"groupId\":1,\r\n         \"sequence\":3,\r\n         \"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"905fc5ab-4b15-4704-889b-2c5ffcfb2d68\",\r\n         \"groupId\":2,\r\n         \"sequence\":4,\r\n         \"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\r\n         \"type\":\"UNKNOWN\"\r\n      },\r\n      {  \r\n         \"commandId\":\"8e87ff12-dfc2-472a-bbf1-5f2e891e864c\",\r\n         \"groupId\":3,\r\n         \"sequence\":5,\r\n         \"command\":\"84F2200210F25397DCFB728E25FBEE52E748A116A800\",\r\n         \"type\":\"UNKNOWN\"\r\n      }\r\n   ],\r\n   \"validUntil\":\"2015-12-11T21:22:58.691Z\",\r\n   \"apduPackageUrl\":\"http://localhost:9103/transportservice/v1/apdupackages/baff08fb-0b73-5019-8877-7c490a43dc64\"\r\n}")
         apduPackage?.validUntilEpoch = 1559862740
 
         

@@ -13,21 +13,6 @@ public enum AuthScope : String
     case tokenWrite = "token.write"
 }
 
-class StringToUrl : URLConvertible {
-    let str : String
-    init(str: String) {
-        self.str = str
-    }
-    /// Returns a URL that conforms to RFC 2396 or throws an `Error`.
-    ///
-    /// - throws: An `Error` if the type cannot be converted to a `URL`.
-    ///
-    /// - returns: A URL or throws an `Error`.
-    func asURL() throws -> URL {
-        return URL(string: str)!
-    }
-}
-
 internal class AuthorizationDetails : Mappable
 {
     var tokenType:String?
@@ -36,12 +21,12 @@ internal class AuthorizationDetails : Mappable
     var scope:String?
     var jti:String?
 
-    required init?(_ map: Map)
+    required init?(map: Map)
     {
         
     }
     
-    func mapping(_ map: Map)
+    func mapping(map: Map)
     {
         tokenType <- map["token_type"]
         accessToken <- map["access_token"]
@@ -102,7 +87,7 @@ open class RestSession : NSObject
         {
             (details:AuthorizationDetails?, error:NSError?)->Void in
 
-            DispatchQueue.global( priority: DispatchQueue.GlobalQueuePriority.default).async(execute: {
+            DispatchQueue.global().async(execute: {
                 () -> Void in
 
                 if let error = error
@@ -117,12 +102,12 @@ open class RestSession : NSObject
                 {
                     if let accessToken = details?.accessToken
                     {
-                        guard let jwt = try? decode(accessToken) else
+                        guard let jwt = try? decode(jwt: accessToken) else
                         {
                             DispatchQueue.main.async(execute: {
                                 () -> Void in
 
-                                completion(NSError.error(code:Error.decodeFailure, domain:RestSession.self, message: "Failed to decode access token"))
+                                completion(NSError.error(code:ErrorEnum.decodeFailure, domain:RestSession.self, message: "Failed to decode access token"))
                             })
 
                             return
@@ -173,19 +158,19 @@ open class RestSession : NSObject
                 "credentials" : ["username" : username, "password" : password].JSONString!
         ]
 
-        let request = _manager.request(StringToUrl(str: self.authorizeURL), method: HTTPMethod.get, parameters: parameters, encoding:.URL, headers: headers)
+        let request = _manager.request(self.authorizeURL, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
     
-        request.validate().responseObject(queue: dispatch_get_global_queue( DispatchQueue.GlobalQueuePriority.default, 0))
+        request.validate().responseObject(queue: DispatchQueue.global())
         {
-            (response: Response<AuthorizationDetails, NSError>) -> Void in
+            (response: DataResponse<AuthorizationDetails>) -> Void in
 
-            dispatch_async(dispatch_get_main_queue(),
+            DispatchQueue.main.async
             {
                 () -> Void in
                 
                 if let resultError = response.result.error
                 {
-                    completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError))
+                    completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))
                 }
                 else if let resultValue = response.result.value
                 {
@@ -195,7 +180,7 @@ open class RestSession : NSObject
                 {
                     completion(nil, NSError.unhandledError(RestClient.self))
                 }
-            })
+            }
         }
     }
 }

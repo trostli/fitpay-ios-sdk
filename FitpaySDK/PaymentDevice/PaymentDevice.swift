@@ -112,7 +112,7 @@ open class PaymentDevice : NSObject
      - parameter eventType: type of event which you want to bind to
      - parameter completion: completion handler which will be called when event occurs
      */
-    open func bindToEvent(eventType: PaymentDeviceEventTypes, completion: PaymentDeviceEventBlockHandler) -> FitpayEventBinding? {
+    open func bindToEvent(eventType: PaymentDeviceEventTypes, completion: @escaping PaymentDeviceEventBlockHandler) -> FitpayEventBinding? {
         return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion), eventId: eventType)
     }
     
@@ -123,7 +123,7 @@ open class PaymentDevice : NSObject
      - parameter completion: completion handler which will be called when event occurs
      - parameter queue: queue in which completion will be called
      */
-    open func bindToEvent(eventType: PaymentDeviceEventTypes, completion: PaymentDeviceEventBlockHandler, queue: DispatchQueue) -> FitpayEventBinding? {
+    open func bindToEvent(eventType: PaymentDeviceEventTypes, completion: @escaping PaymentDeviceEventBlockHandler, queue: DispatchQueue) -> FitpayEventBinding? {
         return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion, queue: queue), eventId: eventType)
     }
     
@@ -275,7 +275,7 @@ open class PaymentDevice : NSObject
     }
     
     internal typealias APDUExecutionHandler = (_ apduCommand:APDUCommand?, _ error:Error?)->Void
-    internal func executeAPDUCommand(_ apduCommand: inout APDUCommand, completion: @escaping APDUExecutionHandler) {
+    internal func executeAPDUCommand(_ apduCommand: APDUCommand, completion: @escaping APDUExecutionHandler) {
         self.sendAPDUCommand(apduCommand)
         {
             (apduResponse, error) -> Void in
@@ -298,7 +298,7 @@ open class PaymentDevice : NSObject
         }
     }
     
-    open func callCompletionForEvent(_ eventType: FitpayEventTypeProtocol, params: [String:AnyObject] = [:]) {
+    open func callCompletionForEvent(_ eventType: FitpayEventTypeProtocol, params: [String:Any] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: params))
     }
 }

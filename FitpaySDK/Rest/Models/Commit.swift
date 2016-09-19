@@ -99,6 +99,6 @@ open class Payload : NSObject, Mappable
             self.apduPackage = Mapper<ApduPackage>().map(JSON: info)
         }
         
-        self.payloadDictionary = info
+        self.payloadDictionary = info as [String : AnyObject]?
     }
 }

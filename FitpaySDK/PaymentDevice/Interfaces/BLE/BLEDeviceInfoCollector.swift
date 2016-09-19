@@ -32,9 +32,9 @@ internal class BLEDeviceInfoCollector {
         }
         
         if let secureElementId = deviceInfoMap["secureElementId"] {
-            deviceInfoMap["secureElement"] = ["secureElementId" : secureElementId]
+            deviceInfoMap["secureElement"] = ["secureElementId" : secureElementId] as NSDictionary
         }
         
-        return Mapper<DeviceInfo>().map(deviceInfoMap)
+        return Mapper<DeviceInfo>().map(JSON: deviceInfoMap)
     }
 }

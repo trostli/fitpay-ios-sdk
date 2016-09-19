@@ -83,15 +83,15 @@ class JWEHeader
             paramsDict["destination"] = destination!
         }
         
-        var jsonData : NSMutableData
+        var jsonData : Data
         do
         {
             // we will serialize cty separately, because NSJSONSerialization is adding escape for "/"
             let dataWithoutCty = try JSONSerialization.data(withJSONObject: paramsDict, options: JSONSerialization.WritingOptions(rawValue: 0))
-            jsonData = (dataWithoutCty as NSData).mutableCopy() as! NSMutableData
+            jsonData = ((dataWithoutCty as NSData).mutableCopy() as! NSMutableData) as Data
             
             let ctyData = "{\"cty\":\"\(cty!)\",".data(using: String.Encoding.utf8)
-            jsonData.replaceBytes(in: NSMakeRange(0, 1), withBytes: (ctyData! as NSData).bytes, length: ctyData!.count)
+            jsonData.replaceSubrange(jsonData.startIndex..<jsonData.startIndex+2, with: ctyData!)
         } catch let error {
             throw error
         }

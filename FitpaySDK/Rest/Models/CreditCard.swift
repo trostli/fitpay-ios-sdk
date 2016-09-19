@@ -142,7 +142,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         self.state <- map["state"]
         self.cardType <- map["cardType"]
-        self.cardMetaData = Mapper<CardMetadata>().map(map["cardMetaData"].currentValue)
+        self.cardMetaData = Mapper<CardMetadata>().map(JSONString: map.JSON["cardMetaData"] as! String)
         self.termsAssetId <- map["termsAssetId"]
         self.termsAssetReferences <- (map["termsAssetReferences"], TermsAssetReferencesTransformType())
         self.eligibilityExpiration <- map["eligibilityExpiration"]
@@ -159,7 +159,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         self.expYear <- map["expYear"]
         self.cvv <- map["cvv"]
         self.name <- map["name"]
-        self.address = Mapper<Address>().map(map["address"].currentValue)
+        self.address = Mapper<Address>().map(JSON: map["address"].currentValue as! [String : Any])
         self.name <- map["name"]
         self.topOfWalletAPDUCommands <- map["offlineSeActions.topOfWallet.apduCommands"]
     }
@@ -174,14 +174,14 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
 
      - parameter completion:   CreditCardHandler closure
      */
-    @objc open func getCreditCard(_ completion:RestClient.CreditCardHandler) {
+    @objc open func getCreditCard(_ completion:@escaping RestClient.CreditCardHandler) {
         let resource = CreditCard.selfResource
         let url = self.links?.url(resource)
 
         if  let url = url, let client = self.client {
             client.retrieveCreditCard(url, completion: completion)
         } else {
-            completion(creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
 
@@ -190,7 +190,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   DeleteCreditCardHandler closure
      */
-    @objc open func deleteCreditCard(_ completion:RestClient.DeleteCreditCardHandler)
+    @objc open func deleteCreditCard(_ completion:@escaping RestClient.DeleteCreditCardHandler)
     {
         let resource = CreditCard.selfResource
         let url = self.links?.url(resource)
@@ -200,7 +200,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(error:NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -216,7 +216,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter countryCode:  country code
      - parameter completion:   UpdateCreditCardHandler closure
      */
-    @objc open func update(name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:RestClient.UpdateCreditCardHandler)
+    @objc open func update(name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:@escaping RestClient.UpdateCreditCardHandler)
     {
         let resource = CreditCard.selfResource
         let url = self.links?.url(resource)
@@ -226,7 +226,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(creditCard:nil, error:NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -235,7 +235,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   AcceptTermsHandler closure
      */
-    @objc open func acceptTerms(_ completion:RestClient.AcceptTermsHandler)
+    @objc open func acceptTerms(_ completion:@escaping RestClient.AcceptTermsHandler)
     {
         let resource = CreditCard.acceptTermsResource
         let url = self.links?.url(resource)
@@ -245,7 +245,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(pending: false, card: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(false, nil, NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -254,7 +254,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   DeclineTermsHandler closure
      */
-    @objc open func declineTerms(_ completion:RestClient.DeclineTermsHandler)
+    @objc open func declineTerms(_ completion:@escaping RestClient.DeclineTermsHandler)
     {
         let resource = CreditCard.declineTermsResource
         let url = self.links?.url(resource)
@@ -264,7 +264,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(pending: false, card: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(false, nil, NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -275,7 +275,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter reason:       deactivation reason
      - parameter completion:   DeactivateHandler closure
      */
-    open func deactivate(causedBy:CreditCardInitiator, reason:String, completion:RestClient.DeactivateHandler)
+    open func deactivate(causedBy:CreditCardInitiator, reason:String, completion:@escaping RestClient.DeactivateHandler)
     {
         let resource = CreditCard.deactivateResource
         let url = self.links?.url(resource)
@@ -285,7 +285,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(pending: false, creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(false, nil, NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -296,7 +296,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter reason:       reactivation reason
      - parameter completion:   ReactivateHandler closure
      */
-    open func reactivate(causedBy:CreditCardInitiator, reason:String, completion:RestClient.ReactivateHandler)
+    open func reactivate(causedBy:CreditCardInitiator, reason:String, completion:@escaping RestClient.ReactivateHandler)
     {
         let resource = CreditCard.reactivateResource
         let url = self.links?.url(resource)
@@ -306,7 +306,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(pending: false, creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(false, nil, NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -315,7 +315,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   MakeDefaultHandler closure
      */
-     @objc open func makeDefault(_ completion:RestClient.MakeDefaultHandler)
+     @objc open func makeDefault(_ completion:@escaping RestClient.MakeDefaultHandler)
     {
         let resource = CreditCard.makeDefaultResource
         let url = self.links?.url(resource)
@@ -325,7 +325,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(pending: false, creditCard: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(false, nil, NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -336,7 +336,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter offset:     start index position for list of entities returned
      - parameter completion: TransactionsHandler closure
      */
-    open func listTransactions(limit:Int, offset:Int, completion:RestClient.TransactionsHandler)
+    open func listTransactions(limit:Int, offset:Int, completion:@escaping RestClient.TransactionsHandler)
     {
         let resource = CreditCard.transactionsResource
         let url = self.links?.url(resource)
@@ -346,7 +346,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(result: nil, error: NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, NSError.clientUrlError(domain:CreditCard.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }
@@ -430,12 +430,12 @@ open class CardMetadata : NSObject, ClientModel, Mappable
         }
     }
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    open func mapping(_ map: Map)
+    open func mapping(map: Map)
     {
         self.labelColor <- map["labelColor"]
         self.issuerName <- map["issuerName"]
@@ -464,12 +464,12 @@ open class Image : NSObject, ClientModel, Mappable, AssetRetrivable
     internal var client:RestClient?
     fileprivate static let selfResource = "self"
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    open func mapping(_ map: Map)
+    open func mapping(map: Map)
     {
         self.links <- (map["_links"], ResourceLinkTransformType())
         self.mimeType <- map["mimeType"]
@@ -477,7 +477,7 @@ open class Image : NSObject, ClientModel, Mappable, AssetRetrivable
         self.width <- map["width"]
     }
     
-    open func retrieveAsset(_ completion: RestClient.AssetsHandler)
+    open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler)
     {
         let resource = Image.selfResource
         let url = self.links?.url(resource)
@@ -488,7 +488,7 @@ open class Image : NSObject, ClientModel, Mappable, AssetRetrivable
         else
         {
             let error = NSError.clientUrlError(domain:Image.self, code:0, client: client, url: url, resource: resource)
-            completion(asset: nil, error: error)
+            completion(nil, error)
         }
     }
 }
@@ -498,7 +498,7 @@ internal class ImageTransformType : TransformType
     typealias Object = [Image]
     typealias JSON = [[String:AnyObject]]
     
-    func transformFromJSON(_ value: AnyObject?) -> [Image]?
+    func transformFromJSON(_ value: Any?) -> [Image]?
     {
         if let images = value as? [[String:AnyObject]]
         {
@@ -506,7 +506,7 @@ internal class ImageTransformType : TransformType
             
             for raw in images
             {
-                if let image = Mapper<Image>().map(raw)
+                if let image = Mapper<Image>().map(JSON: raw)
                 {
                     list.append(image)
                 }
@@ -532,18 +532,18 @@ open class TermsAssetReferences : NSObject, ClientModel, Mappable, AssetRetrivab
     internal var client:RestClient?
     fileprivate static let selfResource = "self"
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    open func mapping(_ map: Map)
+    open func mapping(map: Map)
     {
         self.links <- (map["_links"], ResourceLinkTransformType())
         self.mimeType <- map["mimeType"]
     }
     
-    @objc open func retrieveAsset(_ completion: RestClient.AssetsHandler)
+    @objc open func retrieveAsset(_ completion: @escaping RestClient.AssetsHandler)
     {
         let resource = TermsAssetReferences.selfResource
         let url = self.links?.url(resource)
@@ -554,7 +554,7 @@ open class TermsAssetReferences : NSObject, ClientModel, Mappable, AssetRetrivab
         else
         {
             let error = NSError.clientUrlError(domain:TermsAssetReferences.self, code:0, client: client, url: url, resource: resource)
-            completion(asset: nil, error: error)
+            completion(nil, error)
         }
     }
 }
@@ -564,7 +564,7 @@ internal class TermsAssetReferencesTransformType : TransformType
     typealias Object = [TermsAssetReferences]
     typealias JSON = [[String:AnyObject]]
     
-    func transformFromJSON(_ value: AnyObject?) -> [TermsAssetReferences]?
+    func transformFromJSON(_ value: Any?) -> [TermsAssetReferences]?
     {
         if let items = value as? [[String:AnyObject]]
         {
@@ -572,7 +572,7 @@ internal class TermsAssetReferencesTransformType : TransformType
             
             for raw in items
             {
-                if let item = Mapper<TermsAssetReferences>().map(raw)
+                if let item = Mapper<TermsAssetReferences>().map(JSON: raw)
                 {
                     list.append(item)
                 }
@@ -610,12 +610,12 @@ open class DeviceRelationships : NSObject, ClientModel, Mappable
     fileprivate static let selfResource = "self"
     internal var client:RestClient?
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    open func mapping(_ map: Map)
+    open func mapping(map: Map)
     {
         self.deviceType <- map["deviceType"]
         self.links <- (map["_links"], ResourceLinkTransformType())
@@ -633,7 +633,7 @@ open class DeviceRelationships : NSObject, ClientModel, Mappable
         self.systemId <- map["systemId"]
     }
     
-    @objc func relationship(_ completion:RestClient.RelationshipHandler) {
+    @objc func relationship(_ completion:@escaping RestClient.RelationshipHandler) {
         let resource = DeviceRelationships.selfResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client
@@ -642,7 +642,7 @@ open class DeviceRelationships : NSObject, ClientModel, Mappable
         }
         else
         {
-            completion(relationship: nil, error: NSError.clientUrlError(domain:DeviceRelationships.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, NSError.clientUrlError(domain:DeviceRelationships.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }
@@ -652,7 +652,7 @@ internal class DeviceRelationshipsTransformType : TransformType
     typealias Object = [DeviceRelationships]
     typealias JSON = [[String:AnyObject]]
     
-    func transformFromJSON(_ value: AnyObject?) -> [DeviceRelationships]?
+    func transformFromJSON(_ value: Any?) -> [DeviceRelationships]?
     {
         if let items = value as? [[String:AnyObject]]
         {
@@ -660,7 +660,7 @@ internal class DeviceRelationshipsTransformType : TransformType
             
             for raw in items
             {
-                if let item = Mapper<DeviceRelationships>().map(raw)
+                if let item = Mapper<DeviceRelationships>().map(JSON: raw)
                 {
                     list.append(item)
                 }
@@ -689,12 +689,12 @@ open class CardInfo : Mappable
     open var name:String?
     open var address:Address?
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    open func mapping(_ map: Map)
+    open func mapping(map: Map)
     {
         self.pan <- map["pan"]
         self.creditCardId <- map["creditCardId"]
@@ -702,7 +702,7 @@ open class CardInfo : Mappable
         self.expYear <- map["expYear"]
         self.cvv <- map["cvv"]
         self.name <- map["name"]
-        self.address = Mapper<Address>().map(map["address"].currentValue)
+        self.address = Mapper<Address>().map(JSON: map["address"].currentValue as! [String : Any])
         self.name <- map["name"]
     }
 }

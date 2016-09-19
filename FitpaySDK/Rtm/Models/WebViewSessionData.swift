@@ -10,12 +10,12 @@ open class WebViewSessionData : Mappable
     
     internal var encryptedData:String?
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    open func mapping(_ map: Map)
+    open func mapping(map: Map)
     {
         encryptedData <- map["encryptedData"]
         userId <- map["userId"]

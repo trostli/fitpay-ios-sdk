@@ -162,12 +162,12 @@ open class APDUCommand : NSObject, Mappable {
         super.init()
     }
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    open func mapping(_ map: Map)
+    open func mapping(map: Map)
     {
         links <- (map["_links"], ResourceLinkTransformType())
         commandId <- map["commandId"]

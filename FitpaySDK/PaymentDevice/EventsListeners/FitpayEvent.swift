@@ -9,9 +9,9 @@
 open class FitpayEvent: NSObject {
 
     open fileprivate(set) var eventId : FitpayEventTypeProtocol
-    open fileprivate(set) var eventData : AnyObject
+    open fileprivate(set) var eventData : Any
     
-    public init(eventId: FitpayEventTypeProtocol, eventData: AnyObject) {
+    public init(eventId: FitpayEventTypeProtocol, eventData: Any) {
         
         self.eventData = eventData
         self.eventId = eventId

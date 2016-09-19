@@ -170,7 +170,7 @@ class JWEObject {
             aadUInt8 = UnsafeMutablePointer<UInt8>(mutating: (aad! as NSData).bytes.bindMemory(to: UInt8.self, capacity: aad!.count))
             aadLenght = aad!.count
         } else {
-            aadUInt8 = UnsafeMutablePointer<UInt8>(nil)
+            aadUInt8 = UnsafeMutablePointer<UInt8>(mutating: "")
             aadLenght = 0
         }
         
@@ -201,7 +201,7 @@ class JWEObject {
             aadUInt8 = UnsafeMutablePointer<UInt8>(mutating: (aad! as NSData).bytes.bindMemory(to: UInt8.self, capacity: aad!.count))
             aadLenght = aad!.count
         } else {
-            aadUInt8 = UnsafeMutablePointer<UInt8>(nil)
+            aadUInt8 = UnsafeMutablePointer<UInt8>(mutating: "")
             aadLenght = 0
         }
         let encryptResult = UnsafeMutablePointer<AESGCM_EncryptionResult>.allocate(capacity: MemoryLayout<AESGCM_EncryptionResult>.size)

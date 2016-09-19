@@ -156,12 +156,12 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             
             self.paymentDevice!.removeBinding(binding: self.connectionBinding!)
 
-            if let error = event.eventData["error"]! as? NSError {
+            if let error = (event.eventData as! [String: Any])["error"] as? NSError {
                 completion(error)
                 return
             }
 
-            if let deviceInfo = event.eventData["deviceInfo"]! as? DeviceInfo {
+            if let deviceInfo = (event.eventData as! [String: Any])["deviceInfo"] as? DeviceInfo {
                 self.rtmConfig?.deviceInfo = deviceInfo
                 completion(nil)
                 return
@@ -193,14 +193,14 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
      */
     open func wvRequest() -> URLRequest {
         let JSONString = Mapper().toJSONString(rtmConfig!)
-        let utfString = JSONString!.dataUsingEncoding(String.Encoding.utf8, allowLossyConversion: true)
+        let utfString = JSONString!.data(using: String.Encoding.utf8, allowLossyConversion: true)
         let encodedConfig = utfString?.base64URLencoded()
         let configuredUrl = "\(url)?config=\(encodedConfig! as String)"
         
         print(configuredUrl)
         
         let requestUrl = URL(string: configuredUrl)
-        let request = URLRequest(URL: requestUrl!)
+        let request = URLRequest(url: requestUrl!)
         return request
     }
     
@@ -224,19 +224,19 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     open func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         let sentData = message.body as! NSDictionary
 
-        if sentData["data"]!["action"] as! String == "sync" {
+        if (sentData["data"] as? NSDictionary)?["action"] as? String == "sync" {
             print("received sync message from web-view")
             handleSync(sentData["callBackId"] as! Int)
-        } else if sentData["data"]!["action"] as! String == "userData" {
+        } else if (sentData["data"] as? NSDictionary)?["action"] as? String == "userData" {
             print("received user session data from web-view")
 
             sessionDataCallBackId = sentData["callBackId"] as? Int
 
             do {
-                let data = sentData["data"]!["data"]!
+                let data = (sentData["data"] as? NSDictionary)?["data"]!
                 let jsonData = try JSONSerialization.data(withJSONObject: data!, options: JSONSerialization.WritingOptions.prettyPrinted)
-                let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8)! as String
-                let webViewSessionData = Mapper<WebViewSessionData>().map(jsonString)
+                let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)! as String
+                let webViewSessionData = Mapper<WebViewSessionData>().map(JSONString: jsonString)
                 
                 handleSessionData(webViewSessionData!)
             } catch let error as NSError {

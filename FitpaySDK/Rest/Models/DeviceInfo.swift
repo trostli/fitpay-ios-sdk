@@ -104,14 +104,14 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
                 self.cardRelationships = [CardRelationship]()
                 
                 for itrObj in cardRelationships {
-                    if let parsedObj = Mapper<CardRelationship>().map(itrObj) {
+                    if let parsedObj = Mapper<CardRelationship>().map(JSON: itrObj as! [String : Any]) {
                         self.cardRelationships!.append(parsedObj)
                     }
                 }
             }
         }
         
-        metadata = map.JSONDictionary
+        metadata = map.JSON as [String : AnyObject]?
     }
     
     func applySecret(_ secret:Data, expectedKeyId:String?) {
@@ -124,7 +124,7 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
     
     var shortRTMRepersentation:String? {
         
-        var dic : [String:AnyObject] = [:]
+        var dic : [String:Any] = [:]
         
         if let deviceType = self.deviceType {
             dic["deviceType"] = deviceType as AnyObject?
@@ -186,7 +186,7 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion: DeleteDeviceHandler closure
      */
-    @objc open func deleteDeviceInfo(_ completion:RestClient.DeleteDeviceHandler) {
+    @objc open func deleteDeviceInfo(_ completion:@escaping RestClient.DeleteDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client
@@ -195,7 +195,7 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+            completion(NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -207,7 +207,7 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter softwareRevision?: software revision
      - parameter completion:        UpdateDeviceHandler closure
      */
-    @objc open func update(_ firmwareRevision:String?, softwareRevision:String?, notifcationToken: String?, completion:RestClient.UpdateDeviceHandler) {
+    @objc open func update(_ firmwareRevision:String?, softwareRevision:String?, notifcationToken: String?, completion:@escaping RestClient.UpdateDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client
@@ -216,7 +216,7 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(device: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -228,7 +228,7 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
      - parameter offset:       start index position for list of entities returned
      - parameter completion:   CommitsHandler closure
      */
-    open func listCommits(commitsAfter:String?, limit:Int, offset:Int, completion:RestClient.CommitsHandler) {
+    open func listCommits(commitsAfter:String?, limit:Int, offset:Int, completion:@escaping RestClient.CommitsHandler) {
         let resource = DeviceInfo.commitsResource
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client
@@ -237,11 +237,11 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(result: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
-    @objc open func user(_ completion:RestClient.UserHandler) {
+    @objc open func user(_ completion:@escaping RestClient.UserHandler) {
         let resource = DeviceInfo.userResource
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client
@@ -250,11 +250,11 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(user: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
-    internal func addNotificationToken(_ token:String, completion:RestClient.UpdateDeviceHandler) {
+    internal func addNotificationToken(_ token:String, completion:@escaping RestClient.UpdateDeviceHandler) {
         let resource = DeviceInfo.selfResource
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client
@@ -263,7 +263,7 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(device: nil, error: NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, NSError.clientUrlError(domain:DeviceInfo.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -305,12 +305,12 @@ open class CardRelationship : NSObject, ClientModel, Mappable, SecretApplyable
     fileprivate static let selfResource = "self"
     internal weak var client:RestClient?
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    open func mapping(_ map: Map)
+    open func mapping(map: Map)
     {
         links <- (map["_links"], ResourceLinkTransformType())
         creditCardId <- map["creditCardId"]
@@ -334,7 +334,7 @@ open class CardRelationship : NSObject, ClientModel, Mappable, SecretApplyable
      
      - parameter completion:   RelationshipHandler closure
      */
-    @objc open func relationship(_ completion:RestClient.RelationshipHandler) {
+    @objc open func relationship(_ completion:@escaping RestClient.RelationshipHandler) {
         let resource = CardRelationship.selfResource
         let url = self.links?.url(resource)
         if let url = url, let client = self.client
@@ -343,7 +343,7 @@ open class CardRelationship : NSObject, ClientModel, Mappable, SecretApplyable
         }
         else
         {
-            completion(relationship: nil, error: NSError.clientUrlError(domain:CardRelationship.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, NSError.clientUrlError(domain:CardRelationship.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }
