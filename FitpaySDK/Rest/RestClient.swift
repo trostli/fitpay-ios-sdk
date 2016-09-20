@@ -454,6 +454,7 @@ open class RestClient : NSObject
                     "deviceId" : "\(deviceId)"
                 ]
                 let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+                debugPrint(request)
                 request.validate().responseObject(
                 queue: DispatchQueue.global(), completionHandler:
                 {

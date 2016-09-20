@@ -20,7 +20,7 @@ class JWEHeader
     init(headerPayload:String)
     {
         let headerData = headerPayload.base64URLdecoded()
-        guard let json = try? JSONSerialization.jsonObject(with: headerData! as Data, options: .mutableContainers) else {
+        guard let json = try? JSONSerialization.jsonObject(with: headerData!, options: .mutableContainers) else {
             return
         }
         
@@ -91,7 +91,7 @@ class JWEHeader
             jsonData = ((dataWithoutCty as NSData).mutableCopy() as! NSMutableData) as Data
             
             let ctyData = "{\"cty\":\"\(cty!)\",".data(using: String.Encoding.utf8)
-            jsonData.replaceSubrange(jsonData.startIndex..<jsonData.startIndex+2, with: ctyData!)
+            jsonData.replaceSubrange(jsonData.startIndex..<jsonData.startIndex+1, with: ctyData!)
         } catch let error {
             throw error
         }

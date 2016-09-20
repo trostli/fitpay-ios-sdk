@@ -105,8 +105,6 @@ open class RestSession : NSObject
                         guard let jwt = try? decode(jwt: accessToken) else
                         {
                             DispatchQueue.main.async(execute: {
-                                () -> Void in
-
                                 completion(NSError.error(code:ErrorEnum.decodeFailure, domain:RestSession.self, message: "Failed to decode access token"))
                             })
 
@@ -127,8 +125,6 @@ open class RestSession : NSObject
                         else
                         {
                             DispatchQueue.main.async(execute: {
-                                () -> Void in
-
                                 completion(NSError.error(code:ErrorEnum.parsingFailure, domain:RestSession.self, message: "Failed to parse user id"))
                             })
                         }
@@ -158,16 +154,15 @@ open class RestSession : NSObject
                 "credentials" : ["username" : username, "password" : password].JSONString!
         ]
 
-        let request = _manager.request(self.authorizeURL, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        let request = _manager.request(self.authorizeURL, method: .get, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
     
+        debugPrint(request)
+        
         request.validate().responseObject(queue: DispatchQueue.global())
         {
             (response: DataResponse<AuthorizationDetails>) -> Void in
 
-            DispatchQueue.main.async
-            {
-                () -> Void in
-                
+            DispatchQueue.main.async {
                 if let resultError = response.result.error
                 {
                     completion(nil, NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestSession.self, data: response.data, alternativeError: resultError as NSError?))

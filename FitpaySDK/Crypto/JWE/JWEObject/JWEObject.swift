@@ -43,10 +43,10 @@ class JWEObject {
         
         let jwe = payload.components(separatedBy: ".")
         jweObject.header = JWEHeader(headerPayload: jwe[0])
-        jweObject.cekCt = jwe[1].base64URLdecoded() as Data?
-        jweObject.iv = jwe[2].base64URLdecoded() as Data?
-        jweObject.ct = jwe[3].base64URLdecoded() as Data?
-        jweObject.tag = jwe[4].base64URLdecoded() as Data?
+        jweObject.cekCt = jwe[1].base64URLdecoded()
+        jweObject.iv = jwe[2].base64URLdecoded()
+        jweObject.ct = jwe[3].base64URLdecoded()
+        jweObject.tag = jwe[4].base64URLdecoded()
 
         return jweObject
     }

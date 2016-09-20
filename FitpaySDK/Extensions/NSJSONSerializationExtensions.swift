@@ -5,7 +5,7 @@ extension JSONSerialization
 {
     class func JSONString(_ object:AnyObject)->String?
     {
-        guard let data = try? JSONSerialization.data(withJSONObject: object, options: .prettyPrinted),
+        guard let data = try? JSONSerialization.data(withJSONObject: object),
 
         let string = String(data: data, encoding: String.Encoding.utf8) else
         {

@@ -142,7 +142,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         self.createdEpoch <- (map["createdTsEpoch"], NSTimeIntervalTransform())
         self.state <- map["state"]
         self.cardType <- map["cardType"]
-        self.cardMetaData = Mapper<CardMetadata>().map(JSONString: map.JSON["cardMetaData"] as! String)
+        self.cardMetaData = Mapper<CardMetadata>().map(JSONObject: map.JSON["cardMetaData"])
         self.termsAssetId <- map["termsAssetId"]
         self.termsAssetReferences <- (map["termsAssetReferences"], TermsAssetReferencesTransformType())
         self.eligibilityExpiration <- map["eligibilityExpiration"]
@@ -159,7 +159,7 @@ open class CreditCard : NSObject, ClientModel, Mappable, SecretApplyable
         self.expYear <- map["expYear"]
         self.cvv <- map["cvv"]
         self.name <- map["name"]
-        self.address = Mapper<Address>().map(JSON: map["address"].currentValue as! [String : Any])
+        self.address = Mapper<Address>().map(JSONObject: map["address"].currentValue)
         self.name <- map["name"]
         self.topOfWalletAPDUCommands <- map["offlineSeActions.topOfWallet.apduCommands"]
     }

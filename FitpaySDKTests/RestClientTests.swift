@@ -1040,12 +1040,12 @@ class RestClientTests: XCTestCase
             let synchronizer = super.expectation(description: "deactivate reactivate")
             self.testHelper.deactivateCreditCard(synchronizer, creditCard:masterCard) {
                 card in
-                now = NSDate()
+                now = NSDate() as Date
                 debugPrint("deactivate card done: \(i) \(now)")
                 
                 card?.reactivate(causedBy: .CARDHOLDER, reason: "I like pizza", completion: {
                     (pending, card, error) in
-                    now = NSDate()
+                    now = NSDate() as Date
                     debugPrint("Reactivate done: \(i) \(now)")
                     masterCard = card!
                     XCTAssertNil(error)
@@ -1061,7 +1061,7 @@ class RestClientTests: XCTestCase
             (commits, error) in
             XCTAssertNil(error)
             if error != nil { commit_checker.fulfill(); return }
-            XCTAssertEqual(commits?.totalResults, 1+1+9+10+1+5+5, "Should have 10 create (1+1 set default + 9 activates), '10' activates, 1 more reset default for the deactivate, 10 activate-deactivate")
+            XCTAssertEqual(commits?.totalResults, 32/*1+1+9+10+1+5+5*/, "Should have 10 create (1+1 set default + 9 activates), '10' activates, 1 more reset default for the deactivate, 10 activate-deactivate")
             XCTAssertEqual(commits?.results?.count, 32, "32 results just like total results")
             for result in (commits?.results!)! {
                 debugPrint("Result: \(result.commitType!)")
@@ -1357,10 +1357,10 @@ class RestClientTests: XCTestCase
         {
             [unowned self](user) in
             
-            let dateFormatter = NSDateFormatter()
-            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale!
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-            let nsdate = dateFormatter.dateFromString((user?.created)!)
+            let nsdate = dateFormatter.date(from: (user?.created)!)
             
             let epochDiff = abs((nsdate?.timeIntervalSince1970)! - (user?.createdEpoch)!)
             
@@ -1381,8 +1381,8 @@ class RestClientTests: XCTestCase
         let timeAsInt = timeTransform.transformToJSON(currentTime)
         
         let intMirror = Mirror(reflecting: timeAsInt)
-        debugPrint(String(intMirror.subjectType))
-        XCTAssertTrue(String(intMirror.subjectType) == "Optional<Int64>")
+        debugPrint(String(describing: intMirror.subjectType))
+        XCTAssertTrue(String(describing: intMirror.subjectType) == "Optional<Int64>")
         
         expectation.fulfill()
         
