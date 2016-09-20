@@ -164,25 +164,25 @@ class PaymentDeviceTests: XCTestCase
         
         SyncManager.sharedInstance.paymentDevice = self.paymentDevice
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connecting_TO_DEVICE)
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connectingToDevice)
         {
             (event) -> Void in
             print("connecting to device started")
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connecting_TO_DEVICE_COMPLETED)
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.connectingToDeviceCompleted)
         {
             (event) -> Void in
             print("connecting to device finished")
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.sync_STARTED)
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncStarted)
         {
             (event) -> Void in
             print("sync started")
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.sync_FAILED)
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed)
         {
             (event) -> Void in
             print("sync failed", event.eventData)
@@ -194,25 +194,25 @@ class PaymentDeviceTests: XCTestCase
             expectation.fulfill()
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.commit_PROCESSED)
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.commitProcessed)
         {
             (event) -> Void in
             print("COMMIT_PROCESSED")
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.sync_PROGRESS)
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncProgress)
         {
             (event) -> Void in
             print("sync progress", event.eventData)
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.apdu_COMMANDS_PROGRESS)
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.apduCommandsProgress)
         {
             (event) -> Void in
             print("apdu progress", event.eventData)
         }
         
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.sync_COMPLETED)
+        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted)
         {
             (event) -> Void in
             print("sync finished", event.eventData)
