@@ -154,7 +154,7 @@ open class RestSession : NSObject
                 "credentials" : ["username" : username, "password" : password].JSONString!
         ]
 
-        let request = _manager.request(self.authorizeURL, method: .get, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
+        let request = _manager.request(self.authorizeURL, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
     
         debugPrint(request)
         

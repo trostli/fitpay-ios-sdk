@@ -453,7 +453,7 @@ open class RestClient : NSObject
                     "creditCardId" : "\(creditCardId)",
                     "deviceId" : "\(deviceId)"
                 ]
-                let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+                let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
                 debugPrint(request)
                 request.validate().responseObject(
                 queue: DispatchQueue.global(), completionHandler:

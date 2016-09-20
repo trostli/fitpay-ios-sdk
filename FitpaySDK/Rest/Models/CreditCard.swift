@@ -702,7 +702,7 @@ open class CardInfo : Mappable
         self.expYear <- map["expYear"]
         self.cvv <- map["cvv"]
         self.name <- map["name"]
-        self.address = Mapper<Address>().map(JSON: map["address"].currentValue as! [String : Any])
+        self.address = Mapper<Address>().map(JSONObject: map["address"].currentValue)
         self.name <- map["name"]
     }
 }
