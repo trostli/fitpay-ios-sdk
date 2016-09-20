@@ -3,7 +3,9 @@ extension String {
         var randomNum = ""
         var randomBytes = [UInt8](repeating: 0, count: size)
         
-        SecRandomCopyBytes(kSecRandomDefault, size, &randomBytes)
+        guard SecRandomCopyBytes(kSecRandomDefault, size, &randomBytes) == 0 else {
+            return ""
+        }
         
         // Turn randomBytes into array of hexadecimal strings
         // Join array of strings into single string

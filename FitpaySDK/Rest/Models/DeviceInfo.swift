@@ -322,10 +322,10 @@ open class CardRelationship : NSObject, ClientModel, Mappable, SecretApplyable
     
     internal func applySecret(_ secret:Data, expectedKeyId:String?)
     {
-        if let decryptedObj : CardRelationship? = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
-            self.pan = decryptedObj?.pan
-            self.expMonth = decryptedObj?.expMonth
-            self.expYear = decryptedObj?.expYear
+        if let decryptedObj : CardRelationship = JWEObject.decrypt(self.encryptedData, expectedKeyId: expectedKeyId, secret: secret) {
+            self.pan = decryptedObj.pan
+            self.expMonth = decryptedObj.expMonth
+            self.expYear = decryptedObj.expYear
         }
     }
     

@@ -22,26 +22,26 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 
 
 @objc public enum SyncEventType : Int, FitpayEventTypeProtocol {
-    case connecting_TO_DEVICE = 0x1
-    case connecting_TO_DEVICE_FAILED
-    case connecting_TO_DEVICE_COMPLETED
+    case connectingToDevice = 0x1
+    case connectingToDeviceFailed
+    case connectingToDeviceCompleted
     
-    case sync_STARTED
-    case sync_FAILED
-    case sync_COMPLETED
-    case sync_PROGRESS
-    case received_CARDS_WITH_TOW_APDU_COMMANDS
-    case apdu_COMMANDS_PROGRESS
+    case syncStarted
+    case syncFailed
+    case syncCompleted
+    case syncProgress
+    case receivedCardsWithTowApduCommands
+    case apduCommandsProgress
     
-    case commit_PROCESSED
+    case commitProcessed
 
-    case card_ADDED
-    case card_DELETED
-    case card_ACTIVATED
-    case card_DEACTIVATED
-    case card_REACTIVATED
-    case set_DEFAULT_CARD
-    case reset_DEFAULT_CARD
+    case cardAdded
+    case cardDeleted
+    case cardActivated
+    case cardDeactivated
+    case cardReactivated
+    case setDefaultCard
+    case resetDefaultCard
     
     public func eventId() -> Int {
         return rawValue
@@ -49,39 +49,39 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     
     public func eventDescription() -> String {
         switch self {
-        case .connecting_TO_DEVICE:
+        case .connectingToDevice:
             return "Connecting to device"
-        case .connecting_TO_DEVICE_FAILED:
+        case .connectingToDeviceFailed:
             return "Connecting to device failed"
-        case .connecting_TO_DEVICE_COMPLETED:
+        case .connectingToDeviceCompleted:
             return "Connecting to device completed"
-        case .sync_STARTED:
+        case .syncStarted:
             return "Sync started"
-        case .sync_FAILED:
+        case .syncFailed:
             return "Sync failed"
-        case .sync_COMPLETED:
+        case .syncCompleted:
             return "Sync completed"
-        case .sync_PROGRESS:
+        case .syncProgress:
             return "Sync progress"
-        case .received_CARDS_WITH_TOW_APDU_COMMANDS:
+        case .receivedCardsWithTowApduCommands:
             return "Received cards with Top of Wallet APDU commands"
-        case .apdu_COMMANDS_PROGRESS:
+        case .apduCommandsProgress:
             return "APDU progress"
-        case .commit_PROCESSED:
+        case .commitProcessed:
             return "Processed commit"
-        case .card_ADDED:
+        case .cardAdded:
             return "New card was added"
-        case .card_DELETED:
+        case .cardDeleted:
             return "Card was deleted"
-        case .card_ACTIVATED:
+        case .cardActivated:
             return "Card was activated"
-        case .card_DEACTIVATED:
+        case .cardDeactivated:
             return "Card was deactivated"
-        case .card_REACTIVATED:
+        case .cardReactivated:
             return "Card was reactivated"
-        case .set_DEFAULT_CARD:
+        case .setDefaultCard:
             return "New default card was manually set"
-        case .reset_DEFAULT_CARD:
+        case .resetDefaultCard:
             return "New default card was automatically set"
         }
     }
@@ -186,14 +186,14 @@ open class SyncManager : NSObject {
             
             guard (error == nil && deviceInfo != nil) else {
                 
-                self.callCompletionForSyncEvent(SyncEventType.connecting_TO_DEVICE_COMPLETED, params: ["error": NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self)])
+                self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted, params: ["error": NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self)])
                 
                 self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self))
                 
                 return
             }
             
-            self.callCompletionForSyncEvent(SyncEventType.connecting_TO_DEVICE_COMPLETED)
+            self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted)
             
             self.startSync()
             
@@ -206,7 +206,7 @@ open class SyncManager : NSObject {
         
         self.deviceDisconnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: {
             [unowned self] (event) in
-            self.callCompletionForSyncEvent(SyncEventType.sync_FAILED, params: ["error": NSError.error(code: SyncManager.ErrorCode.connectionWithDeviceWasLost, domain: SyncManager.self)])
+            self.callCompletionForSyncEvent(SyncEventType.syncFailed, params: ["error": NSError.error(code: SyncManager.ErrorCode.connectionWithDeviceWasLost, domain: SyncManager.self)])
             
             if let binding = self.deviceConnectedBinding {
                 self.paymentDevice!.removeBinding(binding: binding)
@@ -222,7 +222,7 @@ open class SyncManager : NSObject {
         
         self.paymentDevice!.connect(self.paymentDeviceConnectionTimeoutInSecs)
         
-        self.callCompletionForSyncEvent(SyncEventType.connecting_TO_DEVICE)
+        self.callCompletionForSyncEvent(SyncEventType.connectingToDevice)
         
         return nil
     }
@@ -310,7 +310,7 @@ open class SyncManager : NSObject {
     
     fileprivate func startSync() {
         
-        self.callCompletionForSyncEvent(SyncEventType.sync_STARTED)
+        self.callCompletionForSyncEvent(SyncEventType.syncStarted)
         
         getCommits()
         {
@@ -347,7 +347,7 @@ open class SyncManager : NSObject {
                     }
                     
                     if let cards = cards {
-                        self.callCompletionForSyncEvent(SyncEventType.received_CARDS_WITH_TOW_APDU_COMMANDS, params: ["cards":cards])
+                        self.callCompletionForSyncEvent(SyncEventType.receivedCardsWithTowApduCommands, params: ["cards":cards])
                     }
                 })
             })
@@ -451,9 +451,9 @@ open class SyncManager : NSObject {
         self.currentDeviceInfo = nil
         
         if let error = error as? NSError {
-            callCompletionForSyncEvent(SyncEventType.sync_FAILED, params: ["error": error])
+            callCompletionForSyncEvent(SyncEventType.syncFailed, params: ["error": error])
         } else {
-            callCompletionForSyncEvent(SyncEventType.sync_COMPLETED, params: [:])
+            callCompletionForSyncEvent(SyncEventType.syncCompleted, params: [:])
         }
         
         if let binding = self.deviceConnectedBinding {

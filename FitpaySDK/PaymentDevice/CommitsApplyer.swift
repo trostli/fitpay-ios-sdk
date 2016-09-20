@@ -76,7 +76,7 @@ internal class CommitsApplyer {
             
             commitsApplied += 1
             
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.sync_PROGRESS, params: ["applied":commitsApplied, "total":commits.count])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.syncProgress, params: ["applied":commitsApplied, "total":commits.count])
         }
         
         DispatchQueue.main.async(execute: {
@@ -168,29 +168,29 @@ internal class CommitsApplyer {
             return
         }
         
-        SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.commit_PROCESSED, params: ["commit":commit])
+        SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.commitProcessed, params: ["commit":commit])
 
         switch commit.commitType! {
         case .CREDITCARD_CREATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.card_ADDED, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardAdded, params: ["commit":commit])
             break;
         case .CREDITCARD_DELETED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.card_DELETED, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeleted, params: ["commit":commit])
             break;
         case .CREDITCARD_ACTIVATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.card_ACTIVATED, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardActivated, params: ["commit":commit])
             break;
         case .CREDITCARD_DEACTIVATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.card_DEACTIVATED, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeactivated, params: ["commit":commit])
             break;
         case .CREDITCARD_REACTIVATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.card_REACTIVATED, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardReactivated, params: ["commit":commit])
             break;
         case .SET_DEFAULT_CREDITCARD:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.set_DEFAULT_CARD, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.setDefaultCard, params: ["commit":commit])
             break;
         case .RESET_DEFAULT_CREDITCARD:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.reset_DEFAULT_CARD, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.resetDefaultCard, params: ["commit":commit])
             break;
         default:
             break;
@@ -225,7 +225,7 @@ internal class CommitsApplyer {
             } else {
                 self.appliedApduCommands += 1
                 
-                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.apdu_COMMANDS_PROGRESS, params: ["applied":self.appliedApduCommands, "total":self.totalApduCommands])
+                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.apduCommandsProgress, params: ["applied":self.appliedApduCommands, "total":self.totalApduCommands])
                 
                 self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, retryCount: 0, completion: completion)
             }

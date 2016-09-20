@@ -152,7 +152,7 @@ open class FitpayNotificationsManager : NSObject {
                 if let syncCompletedBinding = self.syncCompletedBinding {
                     SyncManager.sharedInstance.removeSyncBinding(binding: syncCompletedBinding)
                 }
-                syncCompletedBinding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.sync_COMPLETED, completion: { (event) in
+                syncCompletedBinding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: { (event) in
                     self.currentNotification = nil
                     self.processNextNotificationIfAvailable()
                 })
@@ -160,7 +160,7 @@ open class FitpayNotificationsManager : NSObject {
                 if let syncFailedBinding = self.syncFailedBinding {
                     SyncManager.sharedInstance.removeSyncBinding(binding: syncFailedBinding)
                 }
-                syncFailedBinding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.sync_FAILED, completion: { (event) in
+                syncFailedBinding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: { (event) in
                     self.currentNotification = nil
                     self.processNextNotificationIfAvailable()
                 })

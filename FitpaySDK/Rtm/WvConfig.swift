@@ -375,13 +375,13 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
 
     fileprivate func bindEvents() {
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.sync_COMPLETED, completion: {
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: {
             (event) in
 
             self.resolveSync()
         })
 
-        SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.sync_FAILED, completion: {
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: {
             (event) in
 
             self.rejectAndResetSyncCallbacks("SyncManager failed to complete the sync, all pending syncs have been rejected")
