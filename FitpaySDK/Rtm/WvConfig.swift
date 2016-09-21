@@ -408,9 +408,11 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
 
     @objc fileprivate func logout() {
-        self.webview!.evaluateJavaScript("window.RtmBridge.forceLogout()") { (result, error) in
-            if error != nil {
-                print("failed to log out user through window.RtmBridge.logout")
+        if let _ = user {
+            self.webview!.evaluateJavaScript("window.RtmBridge.forceLogout()") { (result, error) in
+                if error != nil {
+                    print("failed to log out user through window.RtmBridge.logout")
+                }
             }
         }
     }
