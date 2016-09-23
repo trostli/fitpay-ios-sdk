@@ -631,6 +631,7 @@ SWIFT_CLASS("_TtC9FitpaySDK9RtmConfig")
 @property (nonatomic, copy) NSString * _Nullable userEmail;
 @property (nonatomic, strong) DeviceInfo * _Nullable deviceInfo;
 @property (nonatomic, copy) NSString * _Nullable version;
+@property (nonatomic, copy) NSString * _Nullable customCSSUrl;
 - (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri userEmail:(NSString * _Nullable)userEmail deviceInfo:(DeviceInfo * _Nullable)deviceInfo hasAccount:(BOOL)hasAccount OBJC_DESIGNATED_INITIALIZER;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 @end

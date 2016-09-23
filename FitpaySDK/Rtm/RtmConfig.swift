@@ -8,8 +8,9 @@ open class RtmConfig: NSObject, Mappable {
     open var hasAccount: Bool?
     open var version: String?
     open var demoMode: Bool?
+    open var customCSSUrl : String?
     
-    public init(clientId:String, redirectUri:String, userEmail:String?, deviceInfo:DeviceInfo?, hasAccount:Bool = false) {
+    public init(clientId:String = FitpaySDKConfiguration.defaultConfiguration.clientId, redirectUri:String = FitpaySDKConfiguration.defaultConfiguration.redirectUri, userEmail:String?, deviceInfo:DeviceInfo?, hasAccount:Bool = false) {
         self.clientId = clientId
         self.redirectUri = redirectUri
         self.userEmail = userEmail
@@ -29,6 +30,6 @@ open class RtmConfig: NSObject, Mappable {
         hasAccount <- map["account"]
         version <- map["version"]
         demoMode <- map["demoMode"]
+        customCSSUrl <- map["themeOverrideCssUrl"]
     }
-
 }

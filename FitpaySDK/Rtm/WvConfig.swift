@@ -123,12 +123,12 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
     
     public convenience init(clientId:String, redirectUri:String, paymentDevice:PaymentDevice, userEmail:String?, isNewAccount:Bool) {
-        self.init(paymentDevice: paymentDevice, userEmail: userEmail, isNewAccount: isNewAccount, SDKConfiguration: FitpaySDKConfiguration(clientId: clientId, redirectUri: redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL))
+        self.init(paymentDevice: paymentDevice, rtmConfig: RtmConfig(clientId: clientId, redirectUri: redirectUri, userEmail: userEmail, deviceInfo: nil, hasAccount: !isNewAccount), SDKConfiguration: FitpaySDKConfiguration(clientId: clientId, redirectUri: redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL))
     }
     
-    public init(paymentDevice:PaymentDevice, userEmail:String?, isNewAccount:Bool, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
+    public init(paymentDevice:PaymentDevice, rtmConfig: RtmConfig, SDKConfiguration: FitpaySDKConfiguration = FitpaySDKConfiguration.defaultConfiguration) {
         self.paymentDevice = paymentDevice
-        self.rtmConfig = RtmConfig(clientId: SDKConfiguration.clientId, redirectUri: SDKConfiguration.redirectUri, userEmail: userEmail, deviceInfo: nil, hasAccount: !isNewAccount)
+        self.rtmConfig = rtmConfig
         self.restSession = RestSession(configuration: SDKConfiguration)
         self.restClient = RestClient(session: self.restSession!)
         self.paymentDevice!.deviceInfo?.client = self.restClient
