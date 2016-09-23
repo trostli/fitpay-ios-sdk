@@ -8,14 +8,14 @@
 
 import Foundation
 
-public class FitpaySDKConfiguration {
-    public static let defaultConfiguration = FitpaySDKConfiguration()
+open class FitpaySDKConfiguration {
+    open static let defaultConfiguration = FitpaySDKConfiguration()
     
-    public var clientId : String
-    public var redirectUri : String
-    public var baseAuthURL : String
-    public var baseAPIURL : String
-    public var webViewURL : String
+    open var clientId : String
+    open var redirectUri : String
+    open var baseAuthURL : String
+    open var baseAPIURL : String
+    open var webViewURL : String
     
     public init() {
         self.clientId = ""
@@ -33,41 +33,41 @@ public class FitpaySDKConfiguration {
         self.webViewURL = webViewURL
     }
     
-    enum EnvironmentLoadingErrors : ErrorType {
-        case ClientIdIsEmpty
-        case ClientSecretIsEmpty
-        case BaseApiUrlIsEmpty
-        case AuthorizeURLIsEmpty
+    enum EnvironmentLoadingErrors : Error {
+        case clientIdIsEmpty
+        case clientSecretIsEmpty
+        case baseApiUrlIsEmpty
+        case authorizeURLIsEmpty
     }
     
-    public func loadEnvironmentVariables() -> ErrorType? {
-        let envDict = NSProcessInfo.processInfo().environment
+    open func loadEnvironmentVariables() -> Error? {
+        let envDict = ProcessInfo.processInfo.environment
 
         //cleintId checks
         guard let clientId = envDict["SDK_CLIENT_ID"] else {
-            return EnvironmentLoadingErrors.ClientIdIsEmpty
+            return EnvironmentLoadingErrors.clientIdIsEmpty
         }
         
         guard clientId.characters.count > 0 else {
-            return EnvironmentLoadingErrors.ClientIdIsEmpty
+            return EnvironmentLoadingErrors.clientIdIsEmpty
         }
         
         //baseAPIUrl checks
         guard let baseAPIUrl = envDict["SDK_API_BASE_URL"] else {
-            return EnvironmentLoadingErrors.BaseApiUrlIsEmpty
+            return EnvironmentLoadingErrors.baseApiUrlIsEmpty
         }
         
         guard baseAPIUrl.characters.count > 0 else {
-            return EnvironmentLoadingErrors.BaseApiUrlIsEmpty
+            return EnvironmentLoadingErrors.baseApiUrlIsEmpty
         }
         
         //baseAuthBaseUrl checks
         guard let baseAuthBaseUrl = envDict["SDK_AUTHORIZE_BASE_URL"] else {
-            return EnvironmentLoadingErrors.AuthorizeURLIsEmpty
+            return EnvironmentLoadingErrors.authorizeURLIsEmpty
         }
         
         guard baseAuthBaseUrl.characters.count > 0 else {
-            return EnvironmentLoadingErrors.AuthorizeURLIsEmpty
+            return EnvironmentLoadingErrors.authorizeURLIsEmpty
         }
         
         self.clientId = clientId

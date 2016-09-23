@@ -31,47 +31,47 @@ public enum VerificationResult : String
     EXPIRED_SESSION = "EXPIRED_SESSION"
 }
 
-public class VerificationMethod : NSObject, ClientModel, Mappable
+open class VerificationMethod : NSObject, ClientModel, Mappable
 {
     internal var links:[ResourceLink]?
-    public var verificationId:String?
-    public var state:VerificationState?
-    public var methodType:VerificationMethodType?
-    public var value:String?
-    public var verificationResult:VerificationResult? 
-    public var created:String?
-    public var createdEpoch:NSTimeInterval?
-    public var lastModified:String?
-    public var lastModifiedEpoch:NSTimeInterval?
-    public var verified:String?
-    public var verifiedEpoch:NSTimeInterval?
-    private static let selectResource = "select"
-    private static let verifyResource = "verify"
-    private static let cardResource = "card"
+    open var verificationId:String?
+    open var state:VerificationState?
+    open var methodType:VerificationMethodType?
+    open var value:String?
+    open var verificationResult:VerificationResult? 
+    open var created:String?
+    open var createdEpoch:TimeInterval?
+    open var lastModified:String?
+    open var lastModifiedEpoch:TimeInterval?
+    open var verified:String?
+    open var verifiedEpoch:TimeInterval?
+    fileprivate static let selectResource = "select"
+    fileprivate static let verifyResource = "verify"
+    fileprivate static let cardResource = "card"
     
     internal weak var client:RestClient?
     
-    public var selectAvailable:Bool
+    open var selectAvailable:Bool
     {
         return self.links?.url(VerificationMethod.selectResource) != nil
     }
     
-    public var verifyAvailable:Bool
+    open var verifyAvailable:Bool
     {
         return self.links?.url(VerificationMethod.verifyResource) != nil
     }
     
-    public var cardAvailable:Bool
+    open var cardAvailable:Bool
     {
         return self.links?.url(VerificationMethod.cardResource) != nil
     }
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    public func mapping(map: Map)
+    open func mapping(map: Map)
     {
         self.links <- (map["_links"], ResourceLinkTransformType())
         self.verificationId <- map["verificationId"]
@@ -92,17 +92,17 @@ public class VerificationMethod : NSObject, ClientModel, Mappable
      
      - parameter completion:         SelectVerificationTypeHandler closure
      */
-    @objc public func selectVerificationType(completion:RestClient.SelectVerificationTypeHandler)
+    @objc open func selectVerificationType(_ completion:@escaping RestClient.SelectVerificationTypeHandler)
     {
         let resource = VerificationMethod.selectResource
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.selectVerificationType(url, completion: completion)
         }
         else
         {
-            completion(pending: false, verificationMethod: nil, error: NSError.clientUrlError(domain:VerificationMethod.self, code:0, client: client, url: url, resource: resource))
+            completion(false, nil, NSError.clientUrlError(domain:VerificationMethod.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -111,17 +111,17 @@ public class VerificationMethod : NSObject, ClientModel, Mappable
      
      - parameter completion:         VerifyHandler closure
      */
-    @objc public func verify(verificationCode:String, completion:RestClient.VerifyHandler)
+    @objc open func verify(_ verificationCode:String, completion:@escaping RestClient.VerifyHandler)
     {
         let resource = VerificationMethod.verifyResource
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.verify(url, verificationCode:verificationCode, completion: completion)
         }
         else
         {
-            completion(pending: false, verificationMethod: nil, error: NSError.clientUrlError(domain:VerificationMethod.self, code:0, client: client, url: url, resource: resource))
+            completion(false, nil, NSError.clientUrlError(domain:VerificationMethod.self, code:0, client: client, url: url, resource: resource))
         }
     }
     
@@ -130,17 +130,17 @@ public class VerificationMethod : NSObject, ClientModel, Mappable
      
      - parameter completion:   CreditCardHandler closure
      */
-    @objc public func retrieveCreditCard(completion:RestClient.CreditCardHandler)
+    @objc open func retrieveCreditCard(_ completion:@escaping RestClient.CreditCardHandler)
     {
         let resource = VerificationMethod.cardResource
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.retrieveCreditCard(url, completion: completion)
         }
         else
         {
-            completion(creditCard: nil, error: NSError.clientUrlError(domain:VerificationMethod.self, code:0, client: client, url: url, resource: resource))
+            completion(nil, NSError.clientUrlError(domain:VerificationMethod.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }
@@ -150,7 +150,7 @@ internal class VerificationMethodTransformType : TransformType
     typealias Object = [VerificationMethod]
     typealias JSON = [[String:AnyObject]]
     
-    func transformFromJSON(value: AnyObject?) -> [VerificationMethod]?
+    func transformFromJSON(_ value: Any?) -> Array<VerificationMethod>?
     {
         if let items = value as? [[String:AnyObject]]
         {
@@ -158,7 +158,7 @@ internal class VerificationMethodTransformType : TransformType
             
             for raw in items
             {
-                if let item = Mapper<VerificationMethod>().map(raw)
+                if let item = Mapper<VerificationMethod>().map(JSON: raw)
                 {
                     list.append(item)
                 }
@@ -170,7 +170,7 @@ internal class VerificationMethodTransformType : TransformType
         return nil
     }
     
-    func transformToJSON(value:[VerificationMethod]?) -> [[String:AnyObject]]?
+    func transformToJSON(_ value:[VerificationMethod]?) -> [[String:AnyObject]]?
     {
         return nil
     }

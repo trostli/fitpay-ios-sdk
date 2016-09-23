@@ -3,17 +3,17 @@ extension Array
 {
     var JSONString:String?
     {
-        return Foundation.NSJSONSerialization.JSONString(self as! AnyObject)
+        return Foundation.JSONSerialization.JSONString(self as AnyObject)
     }
 }
 
-extension _ArrayType where Generator.Element == ResourceLink
+extension Array where Element : ResourceLink
 {
-    func url(resource:String) -> String?
+    func url(_ resource:String) -> String?
     {
         for link in self
         {
-            if let target = link.target where target == resource
+            if let target = link.target , target == resource
             {
                 return link.href
             }
@@ -24,16 +24,16 @@ extension _ArrayType where Generator.Element == ResourceLink
 }
 
 extension Array where Element : Equatable {
-    mutating func removeObject(object : Element) {
-        if let index = self.indexOf(object) {
-            self.removeAtIndex(index)
+    mutating func removeObject(_ object : Element) {
+        if let index = self.index(of: object) {
+            self.remove(at: index)
         }
     }
 }
 
 //Stack - LIFO
 extension Array {
-    mutating func push(newElement: Element) {
+    mutating func push(_ newElement: Element) {
         self.append(newElement)
     }
     
@@ -48,12 +48,12 @@ extension Array {
 
 //Queue - FIFO
 extension Array {
-    mutating func enqueue(newElement: Element) {
+    mutating func enqueue(_ newElement: Element) {
         self.append(newElement)
     }
     
     mutating func dequeue() -> Element? {
-        return self.removeAtIndex(0)
+        return self.remove(at: 0)
     }
     
     func peekAtQueue() -> Element? {

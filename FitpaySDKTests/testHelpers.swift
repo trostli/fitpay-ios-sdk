@@ -22,7 +22,7 @@ class TestHelpers {
         self.client = client
     }
 
-    func userValid(user:User) {
+    func userValid(_ user:User) {
         XCTAssertNotNil(user.info)
         XCTAssertNotNil(user.created)
         XCTAssertNotNil(user.links)
@@ -32,11 +32,11 @@ class TestHelpers {
         
     }
     
-    func createAndLoginUser(expectation:XCTestExpectation, completion:(User?)->Void) {
+    func createAndLoginUser(_ expectation:XCTestExpectation, completion:@escaping (User?)->Void) {
         let email = self.randomEmail()
         let pin = "1234" //needs to be a parameter eventually.
 
-        let currentTime = NSDate().timeIntervalSince1970 //double or NSTimeInterval
+        let currentTime = Date().timeIntervalSince1970 //double or NSTimeInterval
         
         self.client.createUser(
             email, password: pin, firstName:nil, lastName:nil, birthDate:nil, termsVersion:nil,
@@ -98,7 +98,7 @@ class TestHelpers {
         })
     }
 
-    func deleteUser(user:User?, expectation:XCTestExpectation) {
+    func deleteUser(_ user:User?, expectation:XCTestExpectation) {
         user?.deleteUser {
                 (error) in
                 XCTAssertNil(error)
@@ -106,7 +106,7 @@ class TestHelpers {
         }
     }
 
-    func createDevice(expectation:XCTestExpectation, user:User?, completion:(user:User?, device:DeviceInfo?) -> Void) {
+    func createDevice(_ expectation:XCTestExpectation, user:User?, completion:@escaping (_ user:User?, _ device:DeviceInfo?) -> Void) {
         let deviceType = "WATCH"
         let manufacturerName = "Fitpay"
         let deviceName = "PSPS"
@@ -135,11 +135,11 @@ class TestHelpers {
                 expectation.fulfill()
                 return
             }
-            completion(user:user, device: device)
+            completion(user, device)
         })
     }
 
-    func assetCreditCard(card:CreditCard?) {
+    func assetCreditCard(_ card:CreditCard?) {
         XCTAssertNotNil(card?.links)
         XCTAssertNotNil(card?.creditCardId)
         XCTAssertNotNil(card?.userId)
@@ -160,7 +160,7 @@ class TestHelpers {
         XCTAssertNotNil(card?.info?.pan)
     }
 
-    func createEricCard(expectation:XCTestExpectation, pan: String, expMonth: Int, expYear: Int, user: User?, completion:(user:User?, creditCard:CreditCard?) -> Void) {
+    func createEricCard(_ expectation:XCTestExpectation, pan: String, expMonth: Int, expYear: Int, user: User?, completion:@escaping (_ user:User?, _ creditCard:CreditCard?) -> Void) {
         user?.createCreditCard(
             pan: pan, expMonth: expMonth, expYear: expYear, cvv: "1234", name: "Eric Peers", street1: "4883 Dakota Blvd.",
             street2: "Ste. #209-A", street3: "underneath a bird's nest", city: "Boulder", state: "CO", postalCode: "80304-1111", country: "USA"
@@ -178,15 +178,15 @@ class TestHelpers {
             
             if card?.state == .PENDING_ACTIVE {
                 self.waitForActive(card!, completion: { (activeCard) in
-                    completion(user: user, creditCard: activeCard)
+                    completion(user, activeCard)
                 })
             } else {
-                completion(user: user, creditCard: card)
+                completion(user, card)
             }
         }
     }
 
-    func createCreditCard(expectation:XCTestExpectation, user:User?, completion:(user:User?, creditCard:CreditCard?) -> Void) {
+    func createCreditCard(_ expectation:XCTestExpectation, user:User?, completion:@escaping (_ user:User?, _ creditCard:CreditCard?) -> Void) {
         user?.createCreditCard(
             pan: "9999411111111116", expMonth: 12, expYear: 2016, cvv: "434", name: "Jon Doe", street1: "Street 1",
             street2: "Street 2", street3: "Street 3", city: "Kansas City", state: "MO", postalCode: "66002", country: "USA"
@@ -203,15 +203,15 @@ class TestHelpers {
 
             if card?.state == .PENDING_ACTIVE {
                 self.waitForActive(card!, completion: { (activeCard) in
-                    completion(user: user, creditCard: activeCard)
+                    completion(user, activeCard)
                 })
             } else {
-                completion(user: user, creditCard: card)
+                completion(user, card)
             }
         }
     }
 
-    func listCreditCards(expectation:XCTestExpectation, user:User?, completion:(user:User?, result:ResultCollection<CreditCard>?) -> Void) {
+    func listCreditCards(_ expectation:XCTestExpectation, user:User?, completion:@escaping (_ user:User?, _ result:ResultCollection<CreditCard>?) -> Void) {
         user?.listCreditCards(excludeState:[], limit: 10, offset: 0) {
             [unowned self](result, error) -> Void in
 
@@ -236,11 +236,11 @@ class TestHelpers {
                 }
             }
 
-            completion(user: user, result: result)
+            completion(user, result)
         }
     }
 
-    func createDefaultDevice(userId: String, completion:RestClient.CreateNewDeviceHandler) {
+    func createDefaultDevice(_ userId: String, completion:@escaping  RestClient.CreateNewDeviceHandler) {
         let deviceType = "WATCH"
         let manufacturerName = "Fitpay"
         let deviceName = "PSPS"
@@ -260,7 +260,7 @@ class TestHelpers {
             (user, error) -> Void in
 
             if (error != nil) {
-                completion(device: nil, error: error)
+                completion(nil, error)
                 return
             }
 
@@ -271,12 +271,12 @@ class TestHelpers {
                 bdAddress: bdAddress, secureElementId: secureElementId, pairing: pairing, completion:
             {
                 (device, error) -> Void in
-                completion(device: device, error: error)
+                completion(device, error)
             })
         })
     }
 
-    func acceptTermsForCreditCard(expectation:XCTestExpectation, card:CreditCard?, completion:(card:CreditCard?) -> Void) {
+    func acceptTermsForCreditCard(_ expectation:XCTestExpectation, card:CreditCard?, completion:@escaping (_ card:CreditCard?) -> Void) {
         debugPrint("acceptingTerms for card: \(card)")
         card?.acceptTerms {
             (pending, acceptedCard, error) in
@@ -299,15 +299,15 @@ class TestHelpers {
 
             if acceptedCard?.state == .PENDING_ACTIVE {
                 self.waitForActive(acceptedCard!, completion: { (activeCard) in
-                    completion(card: activeCard)
+                    completion(activeCard)
                 })
             } else {
-                completion(card: acceptedCard)
+                completion(acceptedCard)
             }
         }
     }
 
-    func selectVerificationType(expectation:XCTestExpectation, card:CreditCard?, completion:(verificationMethod:VerificationMethod?) -> Void) {
+    func selectVerificationType(_ expectation:XCTestExpectation, card:CreditCard?, completion:@escaping (_ verificationMethod:VerificationMethod?) -> Void) {
         let verificationMethod = card?.verificationMethods?.first
 
         verificationMethod?.selectVerificationType {
@@ -321,11 +321,11 @@ class TestHelpers {
                 return
             }
 
-            completion(verificationMethod: verificationMethod)
+            completion(verificationMethod)
         }
     }
 
-    func verifyCreditCard(expectation:XCTestExpectation, verificationMethod:VerificationMethod?, completion:(card:CreditCard?) -> Void) {
+    func verifyCreditCard(_ expectation:XCTestExpectation, verificationMethod:VerificationMethod?, completion:@escaping (_ card:CreditCard?) -> Void) {
         verificationMethod?.verify("12345") {
             (pending, verificationMethod, error) -> Void in
 
@@ -341,13 +341,13 @@ class TestHelpers {
 
             verificationMethod?.retrieveCreditCard { (creditCard, error) in
                 self.waitForActive(creditCard!, completion: { (activeCard) in
-                    completion(card: activeCard)
+                    completion(activeCard)
                 })
             }
         }
     }
 
-    func makeCreditCardDefault(expectation:XCTestExpectation, card:CreditCard?, completion:(defaultCreditCard:CreditCard?) -> Void) {
+    func makeCreditCardDefault(_ expectation:XCTestExpectation, card:CreditCard?, completion:@escaping (_ defaultCreditCard:CreditCard?) -> Void) {
         card?.makeDefault {
             (pending, defaultCreditCard, error) -> Void in
             XCTAssertNil(error)
@@ -359,15 +359,15 @@ class TestHelpers {
 
             XCTAssertNotNil(defaultCreditCard)
             XCTAssertTrue(defaultCreditCard!.isDefault!)
-            completion(defaultCreditCard: defaultCreditCard)
+            completion(defaultCreditCard)
         }
     }
 
-    func waitForActive(pendingCard:CreditCard, retries:Int=0, completion:(activeCard:CreditCard) -> Void) {
+    func waitForActive(_ pendingCard:CreditCard, retries:Int=0, completion:@escaping (_ activeCard:CreditCard) -> Void) {
         debugPrint("pending card state is \(pendingCard.state)")
 
         if pendingCard.state == TokenizationState.ACTIVE {
-            completion(activeCard: pendingCard)
+            completion(pendingCard)
             return
         }
 
@@ -381,9 +381,9 @@ class TestHelpers {
             return
         }
 
-        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(Double(1000) * Double(NSEC_PER_MSEC)))
+        let time = DispatchTime.now() + Double(Int64(Double(1000) * Double(NSEC_PER_MSEC))) / Double(NSEC_PER_SEC)
 
-        dispatch_after(time, dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: time) {
 
             pendingCard.getCreditCard({ (creditCard, error) in
                 guard error == nil else {
@@ -396,7 +396,7 @@ class TestHelpers {
         }
     }
 
-    func createAcceptVerifyAmExCreditCard(expectation:XCTestExpectation, pan:String, user:User?, completion:(creditCard:CreditCard?) -> Void) {
+    func createAcceptVerifyAmExCreditCard(_ expectation:XCTestExpectation, pan:String, user:User?, completion:@escaping (_ creditCard:CreditCard?) -> Void) {
         user?.createCreditCard(
             pan: pan, expMonth: 5, expYear: 2020, cvv: "434", name: "John Smith", street1: "Street 1", street2: "Street 2",
             street3: "Street 3", city: "New York", state: "NY", postalCode: "80302", country: "USA"
@@ -419,14 +419,14 @@ class TestHelpers {
                     (verificationMethod) in
                     self.verifyCreditCard(expectation, verificationMethod: verificationMethod) {
                         (card) in
-                        completion(creditCard: card)
+                        completion(card)
                     }
                 }
             }
         }
     }
 
-    func deactivateCreditCard(expectation:XCTestExpectation, creditCard:CreditCard?, completion:(deactivatedCard:CreditCard?) -> Void) {
+    func deactivateCreditCard(_ expectation:XCTestExpectation, creditCard:CreditCard?, completion:@escaping (_ deactivatedCard:CreditCard?) -> Void) {
         debugPrint("deactivateCreditCard")
         creditCard?.deactivate(causedBy: .CARDHOLDER, reason: "lost card") {
             (pending, creditCard, error) in
@@ -439,11 +439,11 @@ class TestHelpers {
             }
 
             XCTAssertEqual(creditCard?.state, TokenizationState.DEACTIVATED)
-            completion(deactivatedCard: creditCard)
+            completion(creditCard)
         }
     }
 
-    func randomStringWithLength (len : Int) -> String {
+    func randomStringWithLength (_ len : Int) -> String {
 
         let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
@@ -452,13 +452,13 @@ class TestHelpers {
         for _ in 0 ... (len-1) {
             let length = UInt32 (letters.length)
             let rand = arc4random_uniform(length)
-            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
+            randomString.appendFormat("%C", letters.character(at: Int(rand)))
         }
 
         return randomString as String
     }
 
-    func randomNumbers (len:Int = 16) -> String {
+    func randomNumbers (_ len:Int = 16) -> String {
 
         let letters : NSString = "0123456789"
 
@@ -467,18 +467,14 @@ class TestHelpers {
         for _ in 0 ... (len-1) {
             let length = UInt32 (letters.length)
             let rand = arc4random_uniform(length)
-            randomString.appendFormat("%C", letters.characterAtIndex(Int(rand)))
+            randomString.appendFormat("%C", letters.character(at: Int(rand)))
         }
         
         return randomString as String
     }
 
     func randomEmail() -> String {
-        let email = randomStringWithLength(8)
-            .stringByAppendingString("@")
-            .stringByAppendingString(randomStringWithLength(5))
-            .stringByAppendingString(".")
-            .stringByAppendingString(randomStringWithLength(5))
+        let email = (((randomStringWithLength(8) + "@") + randomStringWithLength(5)) + ".") + randomStringWithLength(5)
 
         return email
     }

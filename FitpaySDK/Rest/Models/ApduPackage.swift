@@ -7,34 +7,34 @@ public enum APDUPackageResponseState : String {
     case EXPIRED = "EXPIRED"
 }
 
-public class ApduPackage : NSObject, Mappable
+open class ApduPackage : NSObject, Mappable
 {
     internal var links:[ResourceLink]?
-    public var seIdType:String?
-    public var targetDeviceType:String?
-    public var targetDeviceId:String?
-    public var packageId:String?
-    public var seId:String?
-    public var targetAid:String?
-    public var apduCommands:[APDUCommand]?
+    open var seIdType:String?
+    open var targetDeviceType:String?
+    open var targetDeviceId:String?
+    open var packageId:String?
+    open var seId:String?
+    open var targetAid:String?
+    open var apduCommands:[APDUCommand]?
     
-    public var state:APDUPackageResponseState?
-    public var executedEpoch:NSTimeInterval?
-    public var executedDuration:Int?
+    open var state:APDUPackageResponseState?
+    open var executedEpoch:TimeInterval?
+    open var executedDuration:Int?
     
-    public var validUntil:String?
-    public var validUntilEpoch:NSTimeInterval?
-    public var apduPackageUrl:String?
+    open var validUntil:String?
+    open var validUntilEpoch:TimeInterval?
+    open var apduPackageUrl:String?
     
     override init() {
         super.init()
     }
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
     }
     
-    public func mapping(map: Map)
+    open func mapping(map: Map)
     {
         links <- (map["_links"], ResourceLinkTransformType())
         seIdType <- map["seIdType"]
@@ -48,27 +48,27 @@ public class ApduPackage : NSObject, Mappable
         apduPackageUrl <- map["apduPackageUrl"]
     }
     
-    public var isExpired : Bool {
+    open var isExpired : Bool {
 //        return validUntilEpoch <= CLong(NSDate().timeIntervalSince1970)
         // validUntilEpoch not currently in the commit event
 
         return false
     }
     
-    public var responseDictionary : [String:AnyObject] {
+    open var responseDictionary : [String:AnyObject] {
         get {
             var dic : [String:AnyObject] = [:]
             
             if let packageId = self.packageId {
-                dic["packageId"] = packageId
+                dic["packageId"] = packageId as AnyObject?
             }
             
             if let state = self.state {
-                dic["state"] = state.rawValue
+                dic["state"] = state.rawValue as AnyObject?
             }
             
             if let executed = self.executedEpoch {
-                dic["executedTsEpoch"] = Int(executed)
+                dic["executedTsEpoch"] = Int(executed) as AnyObject?
             }
             
             if state == APDUPackageResponseState.EXPIRED {
@@ -76,7 +76,7 @@ public class ApduPackage : NSObject, Mappable
             }
             
             if let executedDuration = self.executedDuration {
-                dic["executedDuration"] = executedDuration
+                dic["executedDuration"] = executedDuration as AnyObject?
             }
             
             if let apduResponses = self.apduCommands {
@@ -84,11 +84,11 @@ public class ApduPackage : NSObject, Mappable
                     var responsesArray : [AnyObject] = []
                     for resp in apduResponses {
                         if let _ = resp.responseData {
-                            responsesArray.append(resp.responseDictionary)
+                            responsesArray.append(resp.responseDictionary as AnyObject)
                         }
                     }
                     
-                    dic["apduResponses"] = responsesArray
+                    dic["apduResponses"] = responsesArray as AnyObject?
                 }
             }
             
@@ -99,29 +99,29 @@ public class ApduPackage : NSObject, Mappable
 }
 
 public enum APDUResponseType : Int {
-    case Success = 0x0
-    case Warning
-    case Error
+    case success = 0x0
+    case warning
+    case error
 }
 
-public class APDUCommand : NSObject, Mappable {
+open class APDUCommand : NSObject, Mappable {
 
     internal var links:[ResourceLink]?
-    public var commandId:String?
-    public var groupId:Int = 0
-    public var sequence:Int = 0
-    public var command:String?
-    public var type:String?
+    open var commandId:String?
+    open var groupId:Int = 0
+    open var sequence:Int = 0
+    open var command:String?
+    open var type:String?
     
-    public var responseCode:String?
-    public var responseData:String?
+    open var responseCode:String?
+    open var responseData:String?
     
-    public var responseType : APDUResponseType? {
-        guard let responseCode = self.responseCode, responseCodeDataType = responseCode.hexToData() else {
+    open var responseType : APDUResponseType? {
+        guard let responseCode = self.responseCode, let responseCodeDataType = responseCode.hexToData() else {
             return nil
         }
         
-        let responseArray = Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>(responseCodeDataType.bytes), count: responseCodeDataType.length))
+        let responseArray = Array(UnsafeBufferPointer(start: (responseCodeDataType as NSData).bytes.bindMemory(to: UInt8.self, capacity: responseCodeDataType.count), count: responseCodeDataType.count))
         
         for successCode in APDUCommand.successResponses {
             if responseArray[0] != successCode[0] {
@@ -129,12 +129,12 @@ public class APDUCommand : NSObject, Mappable {
             }
             
             if successCode.count == 1 {
-                return APDUResponseType.Success
+                return APDUResponseType.success
             }
             
             if responseArray.count > 1 && successCode.count > 1 {
                 if responseArray[1] == successCode[1] {
-                    return APDUResponseType.Success
+                    return APDUResponseType.success
                 }
             }
         }
@@ -145,29 +145,29 @@ public class APDUCommand : NSObject, Mappable {
             }
             
             if warningCode.count == 1 {
-                return APDUResponseType.Warning
+                return APDUResponseType.warning
             }
             
             if responseArray.count > 1 && warningCode.count > 1 {
                 if responseArray[1] == warningCode[1] {
-                    return APDUResponseType.Warning
+                    return APDUResponseType.warning
                 }
             }
         }
         
-        return APDUResponseType.Error
+        return APDUResponseType.error
     }
     
     override init() {
         super.init()
     }
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    public func mapping(map: Map)
+    open func mapping(map: Map)
     {
         links <- (map["_links"], ResourceLinkTransformType())
         commandId <- map["commandId"]
@@ -177,20 +177,20 @@ public class APDUCommand : NSObject, Mappable {
         type <- map["type"]
     }
     
-    public var responseDictionary : [String:AnyObject] {
+    open var responseDictionary : [String:AnyObject] {
         get {
             var dic : [String:AnyObject] = [:]
             
             if let commandId = self.commandId {
-                dic["commandId"] = commandId
+                dic["commandId"] = commandId as AnyObject?
             }
             
             if let responseCode = self.responseCode {
-                dic["responseCode"] = responseCode
+                dic["responseCode"] = responseCode as AnyObject?
             }
             
             if let responseData = self.responseData {
-                dic["responseData"] = responseData
+                dic["responseData"] = responseData as AnyObject?
             }
             
             return dic

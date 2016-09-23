@@ -1,14 +1,14 @@
 import ObjectMapper
 
-public class RtmConfig: NSObject, Mappable {
-    public var clientId: String?
-    public var redirectUri: String?
-    public var userEmail: String?
-    public var deviceInfo: DeviceInfo?
-    public var hasAccount: Bool?
-    public var version: String?
-    public var demoMode: Bool?
-    public var customCSSUrl : String?
+open class RtmConfig: NSObject, Mappable {
+    open var clientId: String?
+    open var redirectUri: String?
+    open var userEmail: String?
+    open var deviceInfo: DeviceInfo?
+    open var hasAccount: Bool?
+    open var version: String?
+    open var demoMode: Bool?
+    open var customCSSUrl : String?
     
     public init(clientId:String = FitpaySDKConfiguration.defaultConfiguration.clientId, redirectUri:String = FitpaySDKConfiguration.defaultConfiguration.redirectUri, userEmail:String?, deviceInfo:DeviceInfo?, hasAccount:Bool = false) {
         self.clientId = clientId
@@ -18,11 +18,11 @@ public class RtmConfig: NSObject, Mappable {
         self.hasAccount = hasAccount
     }
     
-    public required init?(_ map: Map) {
+    public required init?(map: Map) {
         
     }
     
-    public func mapping(map: Map) {
+    open func mapping(map: Map) {
         clientId <- map["clientId"]
         redirectUri <- map["redirectUri"]
         userEmail <- map["userEmail"]

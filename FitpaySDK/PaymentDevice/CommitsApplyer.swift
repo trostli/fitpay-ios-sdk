@@ -1,25 +1,25 @@
 
 internal class CommitsApplyer {
-    private var commits : [Commit]!
-    private let semaphore = dispatch_semaphore_create(0)
-    private var thread : NSThread?
-    private var applyerCompletionHandler : ApplyerCompletionHandler!
-    private var totalApduCommands = 0
-    private var appliedApduCommands = 0
-    private let maxCommitsRetries = 0
-    private let maxAPDUCommandsRetries = 0
+    fileprivate var commits : [Commit]!
+    fileprivate let semaphore = DispatchSemaphore(value: 0)
+    fileprivate var thread : Thread?
+    fileprivate var applyerCompletionHandler : ApplyerCompletionHandler!
+    fileprivate var totalApduCommands = 0
+    fileprivate var appliedApduCommands = 0
+    fileprivate let maxCommitsRetries = 0
+    fileprivate let maxAPDUCommandsRetries = 0
     
     internal var isRunning : Bool {
         guard let thread = self.thread else {
             return false
         }
         
-        return thread.executing
+        return thread.isExecuting
     }
     
-    internal typealias ApplyerCompletionHandler = (error: ErrorType?)->Void
+    internal typealias ApplyerCompletionHandler = (_ error: Error?)->Void
     
-    internal func apply(commits:[Commit], completion: ApplyerCompletionHandler) -> Bool {
+    internal func apply(_ commits:[Commit], completion: @escaping ApplyerCompletionHandler) -> Bool {
         if isRunning {
             return false
         }
@@ -37,30 +37,29 @@ internal class CommitsApplyer {
         }
         
         self.applyerCompletionHandler = completion
-        self.thread = NSThread(target: self, selector:#selector(CommitsApplyer.processCommits), object: nil)
+        self.thread = Thread(target: self, selector:#selector(CommitsApplyer.processCommits), object: nil)
         self.thread?.start()
         
         return true
     }
     
-    @objc private func processCommits() {
+    @objc fileprivate func processCommits() {
         var commitsApplied = 0
         for commit in commits {
-            var errorItr : ErrorType? = nil
+            var errorItr : Error? = nil
             
             // retry if error occurred
             for _ in 0 ..< maxCommitsRetries+1 {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
-                {
+                DispatchQueue.global().async(execute: {
                     self.processCommit(commit)
                     {
                         (error) -> Void in
                         errorItr = error
-                        dispatch_semaphore_signal(self.semaphore)
+                        self.semaphore.signal()
                     }
                 })
                 
-                dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER)
+                let _ = self.semaphore.wait(timeout: DispatchTime.distantFuture)
                 
                 // if there is no error than leave retry cycle
                 if errorItr == nil {
@@ -69,38 +68,36 @@ internal class CommitsApplyer {
             }
             
             if let error = errorItr {
-                dispatch_async(dispatch_get_main_queue(),
-                {
-                    self.applyerCompletionHandler(error: error)
+                DispatchQueue.main.async(execute: {
+                    self.applyerCompletionHandler(error)
                 })
                 return
             }
             
             commitsApplied += 1
             
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.SYNC_PROGRESS, params: ["applied":commitsApplied, "total":commits.count])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.syncProgress, params: ["applied":commitsApplied, "total":commits.count])
         }
         
-        dispatch_async(dispatch_get_main_queue(),
-        {
-            self.applyerCompletionHandler(error: nil)
+        DispatchQueue.main.async(execute: {
+            self.applyerCompletionHandler(nil)
         })
     }
     
-    private typealias CommitCompletion = (error: ErrorType?)->Void
+    fileprivate typealias CommitCompletion = (_ error: Error?)->Void
     
-    private func processCommit(commit: Commit, completion: CommitCompletion) {
+    fileprivate func processCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
         guard let commitType = commit.commitType else {
-            completion(error: NSError.unhandledError(SyncManager.self))
+            completion(NSError.unhandledError(SyncManager.self))
             return
         }
         
-        let commitCompletion = { (error: ErrorType?) -> Void in
+        let commitCompletion = { (error: Error?) -> Void in
             if error == nil {
                 SyncManager.sharedInstance.commitCompleted(commit.commit!)
             }
             
-            completion(error: error)
+            completion(error)
         }
         print("in commitApplyer with commitType \(commitType)")
         switch (commitType) {
@@ -111,14 +108,14 @@ internal class CommitsApplyer {
         }
     }
     
-    private func processAPDUCommit(commit: Commit, completion: CommitCompletion) {
+    fileprivate func processAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
         print("in getCommits")
         guard let apduPackage = commit.payload?.apduPackage else {
-            completion(error: NSError.unhandledError(SyncManager.self))
+            completion(NSError.unhandledError(SyncManager.self))
             return
         }
         
-        let applyingStartDate = NSDate().timeIntervalSince1970
+        let applyingStartDate = Date().timeIntervalSince1970
         
         if apduPackage.isExpired {
             print("packageExpired")
@@ -128,7 +125,7 @@ internal class CommitsApplyer {
             commit.confirmAPDU(
             {
                 (error) -> Void in
-                completion(error: error)
+                completion(error)
             })
             
             return
@@ -138,12 +135,12 @@ internal class CommitsApplyer {
         {
             (error) -> Void in
 
-            let currentTimestamp = NSDate().timeIntervalSince1970
+            let currentTimestamp = Date().timeIntervalSince1970
 
             apduPackage.executedDuration = Int(currentTimestamp - applyingStartDate)
-            apduPackage.executedEpoch = NSTimeInterval(currentTimestamp)
+            apduPackage.executedEpoch = TimeInterval(currentTimestamp)
             
-            if (error != nil && error as? NSError != nil && (error as! NSError).code == PaymentDevice.ErrorCode.APDUErrorResponse.rawValue) {
+            if (error != nil && error as? NSError != nil && (error as! NSError).code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue) {
                 apduPackage.state = APDUPackageResponseState.FAILED
             } else if error != nil {
                 apduPackage.state = APDUPackageResponseState.ERROR
@@ -154,77 +151,81 @@ internal class CommitsApplyer {
             var realError = error
             
             // if we received apdu with error response than confirm it and move next, do not stop sync process
-            if (error as? NSError)?.code == PaymentDevice.ErrorCode.APDUErrorResponse.rawValue {
+            if (error as? NSError)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
                 realError = nil
             }
             
             debugPrint("about to call confirm")
             commit.confirmAPDU({
                 (confirmError) -> Void in
-                completion(error: realError ?? confirmError)
+                completion(realError ?? confirmError)
             })
         }
     }
     
-    private func processNonAPDUCommit(commit: Commit, completion: CommitCompletion) {
+    fileprivate func processNonAPDUCommit(_ commit: Commit, completion: CommitCompletion) {
         guard let _ = commit.commitType else {
             return
         }
         
-        SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.COMMIT_PROCESSED, params: ["commit":commit])
+        SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.commitProcessed, params: ["commit":commit])
 
         switch commit.commitType! {
         case .CREDITCARD_CREATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.CARD_ADDED, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardAdded, params: ["commit":commit])
             break;
         case .CREDITCARD_DELETED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.CARD_DELETED, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeleted, params: ["commit":commit])
             break;
         case .CREDITCARD_ACTIVATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.CARD_ACTIVATED, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardActivated, params: ["commit":commit])
             break;
         case .CREDITCARD_DEACTIVATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.CARD_DEACTIVATED, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardDeactivated, params: ["commit":commit])
             break;
         case .CREDITCARD_REACTIVATED:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.CARD_REACTIVATED, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.cardReactivated, params: ["commit":commit])
             break;
         case .SET_DEFAULT_CREDITCARD:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.SET_DEFAULT_CARD, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.setDefaultCard, params: ["commit":commit])
             break;
         case .RESET_DEFAULT_CREDITCARD:
-            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.RESET_DEFAULT_CARD, params: ["commit":commit])
+            SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.resetDefaultCard, params: ["commit":commit])
             break;
         default:
             break;
         }
         
-        completion(error: nil)
+        completion(nil)
     }
     
-    private func applyAPDUPackage(apduPackage: ApduPackage, apduCommandIndex: Int, retryCount: Int, completion: (error:ErrorType?)->Void) {
-        let isFinished = apduPackage.apduCommands?.count <= apduCommandIndex
+    fileprivate func applyAPDUPackage(_ apduPackage: ApduPackage, apduCommandIndex: Int, retryCount: Int, completion: @escaping (_ error:Error?)->Void) {
+        let isFinished = (apduPackage.apduCommands?.count)! <= apduCommandIndex
         
         if isFinished {
-            completion(error: nil)
+            completion(nil)
             return
         }
         
-        var apdu = apduPackage.apduCommands![apduCommandIndex]
-        SyncManager.sharedInstance.paymentDevice!.executeAPDUCommand(&apdu, completion:
+        var mutableApduPackage = apduPackage.apduCommands![apduCommandIndex]
+        SyncManager.sharedInstance.paymentDevice!.executeAPDUCommand(mutableApduPackage, completion:
         {
             [unowned self] (apduPack, error) -> Void in
-
+            
+            if let apduPack = apduPack {
+                mutableApduPackage = apduPack
+            }
+            
             if let error = error {
                 if retryCount >= self.maxAPDUCommandsRetries {
-                    completion(error: error)
+                    completion(error)
                 } else {
                     self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex, retryCount: retryCount + 1, completion: completion)
                 }
             } else {
                 self.appliedApduCommands += 1
                 
-                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.APDU_COMMANDS_PROGRESS, params: ["applied":self.appliedApduCommands, "total":self.totalApduCommands])
+                SyncManager.sharedInstance.callCompletionForSyncEvent(SyncEventType.apduCommandsProgress, params: ["applied":self.appliedApduCommands, "total":self.totalApduCommands])
                 
                 self.applyAPDUPackage(apduPackage, apduCommandIndex: apduCommandIndex + 1, retryCount: 0, completion: completion)
             }

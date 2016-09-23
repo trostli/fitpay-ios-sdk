@@ -1,28 +1,28 @@
 
 import ObjectMapper
 
-public class ResultCollection<T: Mappable> : NSObject, ClientModel, Mappable, SecretApplyable
+open class ResultCollection<T: Mappable> : NSObject, ClientModel, Mappable, SecretApplyable
 {
-    public var limit:Int?
-    public var offset:Int?
-    public var totalResults:Int?
-    public var results:[T]?
+    open var limit:Int?
+    open var offset:Int?
+    open var totalResults:Int?
+    open var results:[T]?
     internal var links:[ResourceLink]?
-    private let lastResourse = "last"
-    private let nextResourse = "next"
-    private let previousResource = "previous"
+    fileprivate let lastResourse = "last"
+    fileprivate let nextResourse = "next"
+    fileprivate let previousResource = "previous"
     
-    public var nextAvailable:Bool
+    open var nextAvailable:Bool
     {
         return self.links?.url(self.nextResourse) != nil
     }
     
-    public var lastAvailable:Bool
+    open var lastAvailable:Bool
     {
         return self.links?.url(self.lastResourse) != nil
     }
     
-    public var previousAvailable:Bool
+    open var previousAvailable:Bool
     {
         return self.links?.url(self.previousResource) != nil
     }
@@ -64,12 +64,12 @@ public class ResultCollection<T: Mappable> : NSObject, ClientModel, Mappable, Se
         }
     }
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    public func mapping(map: Map)
+    open func mapping(map: Map)
     {
         links <- (map["_links"], ResourceLinkTransformType())
         limit <- map["limit"]
@@ -79,14 +79,14 @@ public class ResultCollection<T: Mappable> : NSObject, ClientModel, Mappable, Se
         if let objectsArray = map["results"].currentValue as? [AnyObject] {
             results = [T]()
             for objectMap in objectsArray {
-                if let modelObject = Mapper<T>().map(objectMap) {
+                if let modelObject = Mapper<T>().map(JSON: objectMap as! [String : Any]) {
                     results!.append(modelObject)
                 }
             }
         }
     }
     
-    internal func applySecret(secret:NSData, expectedKeyId:String?)
+    internal func applySecret(_ secret:Data, expectedKeyId:String?)
     {
         if let results = self.results {
             for modelObject in results {
@@ -97,147 +97,150 @@ public class ResultCollection<T: Mappable> : NSObject, ClientModel, Mappable, Se
         }
     }
     
-    public typealias CollectAllAvailableCompletion = (results: [T]?, error: ErrorType?) -> Void
+    public typealias CollectAllAvailableCompletion = (_ results: [T]?, _ error: Error?) -> Void
     
-    public func collectAllAvailable(completion: CollectAllAvailableCompletion) {
-        if let nextUrl = self.links?.url(self.nextResourse), _ = self.results {
-            self.collectAllAvailable(&self.results!, nextUrl: nextUrl, completion: completion)
+    open func collectAllAvailable(_ completion: @escaping CollectAllAvailableCompletion) {
+        if let nextUrl = self.links?.url(self.nextResourse), let _ = self.results {
+            self.collectAllAvailable(self.results!, nextUrl: nextUrl, completion: {
+                (results, error) -> Void in
+                self.results = results
+            })
         } else {
-            completion(results: nil, error: NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: nil, resource: self.nextResourse))
+            completion(nil, NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: nil, resource: self.nextResourse))
         }
     }
     
-    private func collectAllAvailable(inout storage: [T], nextUrl: String, completion: CollectAllAvailableCompletion) {
+    fileprivate func collectAllAvailable(_ storage: [T], nextUrl: String, completion: @escaping CollectAllAvailableCompletion) {
         if let client = self.client {
             let _ : T? = client.collectionItems(nextUrl)
             {
                 (resultCollection, error) -> Void in
                 
                 guard error == nil else {
-                    completion(results: nil, error: error)
+                    completion(nil, error)
                     return
                 }
                 
-                guard let resultCollection = resultCollection, results = resultCollection.results else {
-                    completion(results: nil, error: NSError.unhandledError(ResultCollection.self))
+                guard let resultCollection = resultCollection, let results = resultCollection.results else {
+                    completion(nil, NSError.unhandledError(ResultCollection.self))
                     return
                 }
                 
-                storage += results
+                let newStorage = storage + results
                 
                 if let nextUrlItr = resultCollection.links?.url(self.nextResourse) {
-                    self.collectAllAvailable(&storage, nextUrl: nextUrlItr, completion: completion)
+                    self.collectAllAvailable(newStorage, nextUrl: nextUrlItr, completion: completion)
                 } else {
-                    completion(results: storage, error: nil)
+                    completion(storage, nil)
                 }
             }
         } else {
-            completion(results: nil, error: NSError.unhandledError(ResultCollection.self))
+            completion(nil, NSError.unhandledError(ResultCollection.self))
         }
     }
     
-    public func next(completion:RestClient.CreditCardsHandler)
+    open func next(_ completion:@escaping RestClient.CreditCardsHandler)
     {
         let resource = self.nextResourse
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.creditCards(url, parameters: nil, completion: completion)
         }
         else
         {
             let error = NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: url, resource: resource)
-            completion(result: nil, error: error)
+            completion(nil, error)
         }
     }
     
-    public func last(completion:RestClient.CreditCardsHandler)
+    open func last(_ completion:@escaping RestClient.CreditCardsHandler)
     {
         let resource = self.lastResourse
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.creditCards(url, parameters: nil, completion: completion)
         }
         else
         {
             let error = NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: url, resource: resource)
-            completion(result: nil, error: error)
+            completion(nil, error)
         }
     }
     
-    public func next(completion:RestClient.DevicesHandler)
+    open func next(_ completion:@escaping RestClient.DevicesHandler)
     {
         let resource = self.nextResourse
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.devices(url, parameters: nil, completion: completion)
         }
         else
         {
             let error = NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: url, resource: resource)
-            completion(result: nil, error: error)
+            completion(nil, error)
         }
     }
     
-    public func last(completion:RestClient.DevicesHandler)
+    open func last(_ completion:@escaping RestClient.DevicesHandler)
     {
         let resource = self.lastResourse
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.devices(url, parameters: nil, completion: completion)
         }
         else
         {
             let error = NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: url, resource: resource)
-            completion(result: nil, error: error)
+            completion(nil, error)
         }
     }
     
-    public func next(completion:RestClient.TransactionsHandler)
+    open func next(_ completion:@escaping RestClient.TransactionsHandler)
     {
         let resource = self.nextResourse
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.transactions(url, parameters: nil, completion: completion)
         }
         else
         {
             let error = NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: url, resource: resource)
-            completion(result: nil, error: error)
+            completion(nil, error)
         }
     }
     
-    public func last(completion:RestClient.TransactionsHandler)
+    open func last(_ completion:@escaping RestClient.TransactionsHandler)
     {
         let resource = self.lastResourse
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.transactions(url, parameters: nil, completion: completion)
         }
         else
         {
             let error = NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: url, resource: resource)
-            completion(result: nil, error: error)
+            completion(nil, error)
         }
     }
     
-    public func previous(completion:RestClient.CommitsHandler)
+    open func previous(_ completion:@escaping RestClient.CommitsHandler)
     {
         let resource = self.previousResource
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.commits(url, parameters: nil, completion: completion)
         }
         else
         {
             let error = NSError.clientUrlError(domain:ResultCollection.self, code:0, client: client, url: url, resource: resource)
-            completion(result: nil, error: error)
+            completion(nil, error)
         }
     }
 }

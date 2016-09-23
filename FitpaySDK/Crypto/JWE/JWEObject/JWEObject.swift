@@ -7,15 +7,15 @@ enum JWEEncryption : String {
     case A256GCM = "A256GCM"
 }
 
-enum JWEObjectError: ErrorType {
-    case UnsupportedAlgorithm
-    case UnsupportedEncryption
+enum JWEObjectError: Error {
+    case unsupportedAlgorithm
+    case unsupportedEncryption
     
-    case HeaderNotSpecified
-    case EncryptionNotSpecified
-    case AlgorithmNotSpecified
-    case HeadersIVNotSpecified
-    case HeadersTagNotSpecified
+    case headerNotSpecified
+    case encryptionNotSpecified
+    case algorithmNotSpecified
+    case headersIVNotSpecified
+    case headersTagNotSpecified
 }
 
 class JWEObject {
@@ -27,21 +27,21 @@ class JWEObject {
     
     var header : JWEHeader?
     
-    private var cekCt : NSData?
-    private var iv : NSData?
-    private var ct : NSData?
-    private var tag : NSData?
+    fileprivate var cekCt : Data?
+    fileprivate var iv : Data?
+    fileprivate var ct : Data?
+    fileprivate var tag : Data?
     
-    private(set) var encryptedPayload : String?
-    private(set) var decryptedPayload : String?
-    private var payloadToEncrypt : String?
+    fileprivate(set) var encryptedPayload : String?
+    fileprivate(set) var decryptedPayload : String?
+    fileprivate var payloadToEncrypt : String?
     
-    static func parse(payload payload:String) -> JWEObject?
+    static func parse(payload:String) -> JWEObject?
     {
         let jweObject : JWEObject = JWEObject()
         jweObject.encryptedPayload = payload
         
-        let jwe = payload.componentsSeparatedByString(".")
+        let jwe = payload.components(separatedBy: ".")
         jweObject.header = JWEHeader(headerPayload: jwe[0])
         jweObject.cekCt = jwe[1].base64URLdecoded()
         jweObject.iv = jwe[2].base64URLdecoded()
@@ -51,7 +51,7 @@ class JWEObject {
         return jweObject
     }
     
-    static func createNewObject(alg: JWEAlgorithm, enc: JWEEncryption, payload: String, keyId: String?) throws -> JWEObject?
+    static func createNewObject(_ alg: JWEAlgorithm, enc: JWEEncryption, payload: String, keyId: String?) throws -> JWEObject?
     {
         
         let jweObj = JWEObject()
@@ -63,39 +63,39 @@ class JWEObject {
         return jweObj
     }
     
-    func encrypt(sharedSecret: NSData) throws -> String?
+    func encrypt(_ sharedSecret: Data) throws -> String?
     {
         guard payloadToEncrypt != nil else {
             return nil
         }
         
         guard header != nil else {
-            throw JWEObjectError.HeaderNotSpecified
+            throw JWEObjectError.headerNotSpecified
         }
         
         if (header?.alg == JWEAlgorithm.A256GCMKW && header?.enc == JWEEncryption.A256GCM) {
-            let cek = String.random(JWEObject.CekSize).dataUsingEncoding(NSUTF8StringEncoding)
-            let cekIV = String.random(JWEObject.CekIVSize).dataUsingEncoding(NSUTF8StringEncoding)
+            let cek = String.random(JWEObject.CekSize).data(using: String.Encoding.utf8)
+            let cekIV = String.random(JWEObject.CekIVSize).data(using: String.Encoding.utf8)
             
             let (cekCtCt, cekCTTag) = A256GCMEncryptData(sharedSecret, data: cek!, iv: cekIV!, aad: nil)
             let encodedCekCt = cekCtCt!.base64URLencoded()
             
-            let payloadIV = String.random(JWEObject.PayloadIVSize).dataUsingEncoding(NSUTF8StringEncoding)
+            let payloadIV = String.random(JWEObject.PayloadIVSize).data(using: String.Encoding.utf8)
             let encodedPayloadIV = payloadIV?.base64URLencoded()
             
-            let encodedHeader : NSData!
+            let encodedHeader : Data!
             let base64UrlHeader : String!
             do {
                 header?.tag = cekCTTag
                 header?.iv = cekIV
                 
                 base64UrlHeader = try header?.serialize()
-                encodedHeader = base64UrlHeader.dataUsingEncoding(NSUTF8StringEncoding)
+                encodedHeader = base64UrlHeader.data(using: String.Encoding.utf8)
             } catch let error {
                 throw error
             }
             
-            let (encryptedPayloadCt, encryptedPayloadTag) = A256GCMEncryptData(cek!, data: payloadToEncrypt!.dataUsingEncoding(NSUTF8StringEncoding)!, iv: payloadIV!, aad: encodedHeader)
+            let (encryptedPayloadCt, encryptedPayloadTag) = A256GCMEncryptData(cek!, data: payloadToEncrypt!.data(using: String.Encoding.utf8)!, iv: payloadIV!, aad: encodedHeader)
             
             let encodedCipherText = encryptedPayloadCt?.base64URLencoded()
             let encodedAuthTag = encryptedPayloadTag?.base64URLencoded()
@@ -110,112 +110,112 @@ class JWEObject {
         return encryptedPayload
     }
     
-    func decrypt(sharedSecret: NSData) throws -> String?
+    func decrypt(_ sharedSecret: Data) throws -> String?
     {
         guard header != nil else {
-            throw JWEObjectError.HeaderNotSpecified
+            throw JWEObjectError.headerNotSpecified
         }
         
         if (header?.alg == JWEAlgorithm.A256GCMKW && header?.enc == JWEEncryption.A256GCM) {
             
             guard header!.iv != nil else {
-                throw JWEObjectError.HeadersIVNotSpecified
+                throw JWEObjectError.headersIVNotSpecified
             }
             
             guard header!.tag != nil else {
-                throw JWEObjectError.HeadersTagNotSpecified
+                throw JWEObjectError.headersTagNotSpecified
             }
             
             guard ct != nil && tag != nil else {
                 return nil
             }
             
-            guard let cek = A256GCMDecryptData(sharedSecret, data: cekCt!, iv: header!.iv!, tag: header!.tag!, aad: nil) else {
+            guard let cek = A256GCMDecryptData(sharedSecret, data: cekCt!, iv: header!.iv! as Data, tag: header!.tag! as Data, aad: nil) else {
                 return nil
             }
-            let jwe = encryptedPayload!.componentsSeparatedByString(".")
-            let aad = jwe[0].dataUsingEncoding(NSUTF8StringEncoding)
+            let jwe = encryptedPayload!.components(separatedBy: ".")
+            let aad = jwe[0].data(using: String.Encoding.utf8)
             
             // ensure that we have 16 bytes in Authentication Tag
-            if (tag?.length < JWEObject.AuthenticationTagSize) {
+            if ((tag?.count)! < JWEObject.AuthenticationTagSize) {
                 let concatedCtAndTag = NSMutableData(data: ct!)
-                concatedCtAndTag.appendData(tag!)
+                concatedCtAndTag.append(tag!)
                 if (concatedCtAndTag.length > JWEObject.AuthenticationTagSize) {
-                    ct = concatedCtAndTag.subdataWithRange(NSRange(location: 0, length: concatedCtAndTag.length-JWEObject.AuthenticationTagSize))
-                    tag = concatedCtAndTag.subdataWithRange(NSRange(location: concatedCtAndTag.length-JWEObject.AuthenticationTagSize, length: JWEObject.AuthenticationTagSize))
+                    ct = concatedCtAndTag.subdata(with: NSRange(location: 0, length: concatedCtAndTag.length-JWEObject.AuthenticationTagSize))
+                    tag = concatedCtAndTag.subdata(with: NSRange(location: concatedCtAndTag.length-JWEObject.AuthenticationTagSize, length: JWEObject.AuthenticationTagSize))
                 }
             }
             
             let data = A256GCMDecryptData(cek, data: ct!, iv: iv!, tag: tag!, aad: aad)
-            decryptedPayload = String(data: data!, encoding: NSUTF8StringEncoding)
+            decryptedPayload = String(data: data!, encoding: String.Encoding.utf8)
         }
         
         return decryptedPayload
     }
     
-    private init() {
+    fileprivate init() {
         
     }
     
-    private func A256GCMDecryptData(cipherKey:NSData, data:NSData, iv:NSData, tag:NSData, aad:NSData?) -> NSData?
+    fileprivate func A256GCMDecryptData(_ cipherKey:Data, data:Data, iv:Data, tag:Data, aad:Data?) -> Data?
     {
-        let cipherKeyUInt8 = UnsafeMutablePointer<UInt8>(cipherKey.bytes)
-        let dataUInt8 = UnsafeMutablePointer<UInt8>(data.bytes)
-        let ivUInt8 = UnsafeMutablePointer<UInt8>(iv.bytes)
-        let tagUInt8 = UnsafeMutablePointer<UInt8>(tag.bytes)
+        let cipherKeyUInt8 = UnsafeMutablePointer<UInt8>(mutating: (cipherKey as NSData).bytes.bindMemory(to: UInt8.self, capacity: cipherKey.count))
+        let dataUInt8 = UnsafeMutablePointer<UInt8>(mutating: (data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count))
+        let ivUInt8 = UnsafeMutablePointer<UInt8>(mutating: (iv as NSData).bytes.bindMemory(to: UInt8.self, capacity: iv.count))
+        let tagUInt8 = UnsafeMutablePointer<UInt8>(mutating: (tag as NSData).bytes.bindMemory(to: UInt8.self, capacity: tag.count))
         
         let aadUInt8 : UnsafeMutablePointer<UInt8>!
         let aadLenght : Int
         if (aad != nil) {
-            aadUInt8 = UnsafeMutablePointer<UInt8>(aad!.bytes)
-            aadLenght = aad!.length
+            aadUInt8 = UnsafeMutablePointer<UInt8>(mutating: (aad! as NSData).bytes.bindMemory(to: UInt8.self, capacity: aad!.count))
+            aadLenght = aad!.count
         } else {
-            aadUInt8 = UnsafeMutablePointer<UInt8>(nil)
+            aadUInt8 = UnsafeMutablePointer<UInt8>(mutating: "")
             aadLenght = 0
         }
         
-        let decryptResult = UnsafeMutablePointer<AESGCM_DecryptionResult>.alloc(sizeof(AESGCM_DecryptionResult))
+        let decryptResult = UnsafeMutablePointer<AESGCM_DecryptionResult>.allocate(capacity: MemoryLayout<AESGCM_DecryptionResult>.size)
         
         let openssl = OpenSSLHelper.sharedInstance()
         
-        guard openssl.AES_GSM_decrypt(cipherKeyUInt8, keySize: Int32(cipherKey.length), iv: ivUInt8, ivSize: Int32(iv.length), aad: aadUInt8, aadSize: Int32(aadLenght), cipherText: dataUInt8, cipherTextSize: Int32(data.length), authTag: tagUInt8, authTagSize: Int32(tag.length), result: decryptResult) else {
+        guard (openssl?.aes_GSM_decrypt(cipherKeyUInt8, keySize: Int32(cipherKey.count), iv: ivUInt8, ivSize: Int32(iv.count), aad: aadUInt8, aadSize: Int32(aadLenght), cipherText: dataUInt8, cipherTextSize: Int32(data.count), authTag: tagUInt8, authTagSize: Int32(tag.count), result: decryptResult))! else {
             return nil
         }
         
-        let nsdata = NSData(bytes:  decryptResult.memory.plain_text,
-                            length: Int(decryptResult.memory.plain_text_size))
-        openssl.AES_GSM_freeDecryptionResult(decryptResult)
+        let nsdata = Data(bytes: UnsafePointer<UInt8>(decryptResult.pointee.plain_text),
+                            count: Int(decryptResult.pointee.plain_text_size))
+        openssl?.aes_GSM_freeDecryptionResult(decryptResult)
         
         return nsdata
     }
     
-    private func A256GCMEncryptData(key: NSData, data: NSData, iv: NSData, aad: NSData?) -> (NSData?, NSData?)
+    fileprivate func A256GCMEncryptData(_ key: Data, data: Data, iv: Data, aad: Data?) -> (Data?, Data?)
     {
-        let cipherKeyUInt8 = UnsafeMutablePointer<UInt8>(key.bytes)
-        let dataUInt8 = UnsafeMutablePointer<UInt8>(data.bytes)
-        let ivUInt8 = UnsafeMutablePointer<UInt8>(iv.bytes)
+        let cipherKeyUInt8 = UnsafeMutablePointer<UInt8>(mutating: (key as NSData).bytes.bindMemory(to: UInt8.self, capacity: key.count))
+        let dataUInt8 = UnsafeMutablePointer<UInt8>(mutating: (data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count))
+        let ivUInt8 = UnsafeMutablePointer<UInt8>(mutating: (iv as NSData).bytes.bindMemory(to: UInt8.self, capacity: iv.count))
         
         let aadUInt8 : UnsafeMutablePointer<UInt8>!
         let aadLenght : Int
         if (aad != nil) {
-            aadUInt8 = UnsafeMutablePointer<UInt8>(aad!.bytes)
-            aadLenght = aad!.length
+            aadUInt8 = UnsafeMutablePointer<UInt8>(mutating: (aad! as NSData).bytes.bindMemory(to: UInt8.self, capacity: aad!.count))
+            aadLenght = aad!.count
         } else {
-            aadUInt8 = UnsafeMutablePointer<UInt8>(nil)
+            aadUInt8 = UnsafeMutablePointer<UInt8>(mutating: "")
             aadLenght = 0
         }
-        let encryptResult = UnsafeMutablePointer<AESGCM_EncryptionResult>.alloc(sizeof(AESGCM_EncryptionResult))
+        let encryptResult = UnsafeMutablePointer<AESGCM_EncryptionResult>.allocate(capacity: MemoryLayout<AESGCM_EncryptionResult>.size)
         
         let openssl = OpenSSLHelper.sharedInstance()
 
-        openssl.AES_GSM_encrypt(cipherKeyUInt8, keySize: Int32(key.length), iv: ivUInt8, ivSize: Int32(iv.length), aad: aadUInt8, aadSize: Int32(aadLenght), plainText: dataUInt8, plainTextSize: Int32(data.length), result: encryptResult)
+        openssl?.aes_GSM_encrypt(cipherKeyUInt8, keySize: Int32(key.count), iv: ivUInt8, ivSize: Int32(iv.count), aad: aadUInt8, aadSize: Int32(aadLenght), plainText: dataUInt8, plainTextSize: Int32(data.count), result: encryptResult)
         
-        let cipherText = NSData(bytes:  encryptResult.memory.cipher_text,
-                                length: Int(encryptResult.memory.cipher_text_size))
-        let tag = NSData(bytes:  encryptResult.memory.auth_tag,
-                         length: Int(encryptResult.memory.auth_tag_size))
+        let cipherText = Data(bytes: UnsafePointer<UInt8>(encryptResult.pointee.cipher_text),
+                                count: Int(encryptResult.pointee.cipher_text_size))
+        let tag = Data(bytes: UnsafePointer<UInt8>(encryptResult.pointee.auth_tag),
+                         count: Int(encryptResult.pointee.auth_tag_size))
 
-        openssl.AES_GSM_freeEncryptionResult(encryptResult)
+        openssl?.aes_GSM_freeEncryptionResult(encryptResult)
         
         return (cipherText, tag)
     }
