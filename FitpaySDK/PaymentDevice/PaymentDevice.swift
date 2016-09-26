@@ -244,8 +244,10 @@ open class PaymentDevice : NSObject
      Can be changed if device disconnected.
      */
     @objc open func changeDeviceInterface(_ interface: IPaymentDeviceConnector) -> NSError? {
-        if isConnected {
-            return NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeDisconnected, domain: IPaymentDeviceConnector.self)
+        if interface !== self.deviceInterface {
+            guard !isConnected else {
+                return NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeDisconnected, domain: IPaymentDeviceConnector.self)
+            }
         }
         
         self.deviceInterface = interface
