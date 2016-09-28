@@ -161,6 +161,7 @@ open class PaymentDevice : NSObject
                 if (!self.isConnected || self.deviceInfo == nil) {
                     self.deviceInterface.resetToDefaultState()
                     self.callCompletionForEvent(PaymentDeviceEventTypes.onDeviceConnected, params: ["error":NSError.error(code: PaymentDevice.ErrorCode.operationTimeout, domain: PaymentDevice.self)])
+                    self.connectionState = .disconnected
                 }
             }
         }
@@ -179,7 +180,7 @@ open class PaymentDevice : NSObject
     /**
      Returns state of connection.
      */
-    open internal(set) var connectionState : ConnectionState = ConnectionState.new {
+    open var connectionState : ConnectionState = ConnectionState.new {
         didSet {
             callCompletionForEvent(PaymentDeviceEventTypes.onConnectionStateChanged, params: ["state" : NSNumber(value: connectionState.rawValue as Int)])
         }
