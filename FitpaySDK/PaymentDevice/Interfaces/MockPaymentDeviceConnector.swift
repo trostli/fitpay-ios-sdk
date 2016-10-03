@@ -47,7 +47,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         return connected;
     }
     
-    open func validateConnection(completion: (Bool, NSError?) -> Void) {
+    open func validateConnection(completion: @escaping (Bool, NSError?) -> Void) {
         completion(isConnected(), nil)
     }
     

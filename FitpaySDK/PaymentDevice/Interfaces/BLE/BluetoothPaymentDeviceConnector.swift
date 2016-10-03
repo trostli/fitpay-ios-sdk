@@ -69,7 +69,7 @@ internal class BluetoothPaymentDeviceConnector : NSObject, IPaymentDeviceConnect
         return wearablePeripheral.state == CBPeripheralState.connected && self._deviceInfo != nil
     }
     
-    func validateConnection(completion: (Bool, NSError?) -> Void) {
+    func validateConnection(completion: @escaping (Bool, NSError?) -> Void) {
         completion(isConnected(), nil)
     }
     

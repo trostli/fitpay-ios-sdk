@@ -7,7 +7,7 @@
     
     func isConnected() -> Bool
     
-    func validateConnection(completion : (_ isValid:Bool, _ error: NSError?) -> Void)
+    func validateConnection(completion : @escaping (_ isValid:Bool, _ error: NSError?) -> Void)
     
     func writeSecurityState(_ state: SecurityNFCState) -> NSError?
     
