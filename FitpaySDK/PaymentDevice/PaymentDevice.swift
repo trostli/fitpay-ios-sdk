@@ -194,6 +194,13 @@ open class PaymentDevice : NSObject
     }
     
     /**
+     Tries to validate connection.
+     */
+    open func validateConnection(completion : @escaping (_ isValid:Bool, _ error: NSError?) -> Void) {
+        self.deviceInterface.validateConnection(completion: completion)
+    }
+    
+    /**
      Returns DeviceInfo if phone already connected to payment device.
      */
     open var deviceInfo : DeviceInfo? {
