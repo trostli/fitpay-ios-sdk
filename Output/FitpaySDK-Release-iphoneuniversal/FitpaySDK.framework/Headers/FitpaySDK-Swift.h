@@ -430,6 +430,7 @@ SWIFT_PROTOCOL("_TtP9FitpaySDK23IPaymentDeviceConnector_")
 - (void)connect;
 - (void)disconnect;
 - (BOOL)isConnected;
+- (void)validateConnectionWithCompletion:(void (^ _Nonnull)(BOOL, NSError * _Nullable))completion;
 - (NSError * _Nullable)writeSecurityState:(enum SecurityNFCState)state;
 - (NSError * _Nullable)sendDeviceControl:(enum DeviceControlState)state;
 - (NSError * _Nullable)sendNotification:(NSData * _Nonnull)notificationData;
@@ -459,6 +460,7 @@ SWIFT_CLASS("_TtC9FitpaySDK26MockPaymentDeviceConnector")
 - (void)connect;
 - (void)disconnect;
 - (BOOL)isConnected;
+- (void)validateConnectionWithCompletion:(void (^ _Nonnull)(BOOL, NSError * _Nullable))completion;
 - (NSError * _Nullable)writeSecurityState:(enum SecurityNFCState)state;
 - (NSError * _Nullable)sendDeviceControl:(enum DeviceControlState)state;
 - (NSError * _Nullable)sendNotification:(NSData * _Nonnull)notificationData;
@@ -520,6 +522,10 @@ SWIFT_CLASS("_TtC9FitpaySDK13PaymentDevice")
   Returns true if phone connected to payment device and device info was collected.
 */
 @property (nonatomic, readonly) BOOL isConnected;
+/**
+  Tries to validate connection.
+*/
+- (void)validateConnectionWithCompletion:(void (^ _Nonnull)(BOOL, NSError * _Nullable))completion;
 /**
   Returns DeviceInfo if phone already connected to payment device.
 */
