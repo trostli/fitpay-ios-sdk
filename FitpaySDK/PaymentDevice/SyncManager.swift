@@ -165,64 +165,22 @@ open class SyncManager : NSObject {
         self.user = user
         
         if self.paymentDevice!.isConnected {
-            startSync()
+            self.paymentDevice?.validateConnection(completion: { (isValid, error) in
+                if let error = error {
+                    self.syncFinished(error: error)
+                    return
+                }
+                
+                if isValid {
+                    self.startSync()
+                } else {
+                    self.syncWithDeviceConnection()
+                }
+            })
             return nil
         }
         
-        if let binding = self.deviceConnectedBinding {
-            self.paymentDevice!.removeBinding(binding: binding)
-        }
-        
-        if let binding = self.deviceDisconnectedBinding {
-            self.paymentDevice!.removeBinding(binding: binding)
-        }
-        
-        self.deviceConnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
-        {
-            [unowned self] (event) in
-            
-            let deviceInfo = (event.eventData as? [String:Any])?["deviceInfo"] as? DeviceInfo
-            let error = (event.eventData as? [String:Any])?["error"] as? Error
-            
-            guard (error == nil && deviceInfo != nil) else {
-                
-                self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted, params: ["error": NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self)])
-                
-                self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self))
-                
-                return
-            }
-            
-            self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted)
-            
-            self.startSync()
-            
-            if let binding = self.deviceConnectedBinding {
-                self.paymentDevice!.removeBinding(binding: binding)
-            }
-            
-            self.deviceConnectedBinding = nil
-        })
-        
-        self.deviceDisconnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: {
-            [unowned self] (event) in
-            self.callCompletionForSyncEvent(SyncEventType.syncFailed, params: ["error": NSError.error(code: SyncManager.ErrorCode.connectionWithDeviceWasLost, domain: SyncManager.self)])
-            
-            if let binding = self.deviceConnectedBinding {
-                self.paymentDevice!.removeBinding(binding: binding)
-            }
-            
-            if let binding = self.deviceDisconnectedBinding {
-                self.paymentDevice!.removeBinding(binding: binding)
-            }
-            
-            self.deviceConnectedBinding = nil
-            self.deviceDisconnectedBinding = nil
-        })
-        
-        self.paymentDevice!.connect(self.paymentDeviceConnectionTimeoutInSecs)
-        
-        self.callCompletionForSyncEvent(SyncEventType.connectingToDevice)
+        self.syncWithDeviceConnection()
         
         return nil
     }
@@ -282,6 +240,63 @@ open class SyncManager : NSObject {
      */
     open func removeAllSyncBindings() {
         eventsDispatcher.removeAllBindings()
+    }
+    
+    internal func syncWithDeviceConnection() {
+        if let binding = self.deviceConnectedBinding {
+            self.paymentDevice!.removeBinding(binding: binding)
+        }
+        
+        if let binding = self.deviceDisconnectedBinding {
+            self.paymentDevice!.removeBinding(binding: binding)
+        }
+        
+        self.deviceConnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
+            {
+                [unowned self] (event) in
+                
+                let deviceInfo = (event.eventData as? [String:Any])?["deviceInfo"] as? DeviceInfo
+                let error = (event.eventData as? [String:Any])?["error"] as? Error
+                
+                guard (error == nil && deviceInfo != nil) else {
+                    
+                    self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted, params: ["error": NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self)])
+                    
+                    self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.cantConnectToDevice, domain: SyncManager.self))
+                    
+                    return
+                }
+                
+                self.callCompletionForSyncEvent(SyncEventType.connectingToDeviceCompleted)
+                
+                self.startSync()
+                
+                if let binding = self.deviceConnectedBinding {
+                    self.paymentDevice!.removeBinding(binding: binding)
+                }
+                
+                self.deviceConnectedBinding = nil
+            })
+        
+        self.deviceDisconnectedBinding = self.paymentDevice!.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion: {
+            [unowned self] (event) in
+            self.callCompletionForSyncEvent(SyncEventType.syncFailed, params: ["error": NSError.error(code: SyncManager.ErrorCode.connectionWithDeviceWasLost, domain: SyncManager.self)])
+            
+            if let binding = self.deviceConnectedBinding {
+                self.paymentDevice!.removeBinding(binding: binding)
+            }
+            
+            if let binding = self.deviceDisconnectedBinding {
+                self.paymentDevice!.removeBinding(binding: binding)
+            }
+            
+            self.deviceConnectedBinding = nil
+            self.deviceDisconnectedBinding = nil
+            })
+        
+        self.paymentDevice!.connect(self.paymentDeviceConnectionTimeoutInSecs)
+        
+        self.callCompletionForSyncEvent(SyncEventType.connectingToDevice)
     }
     
     internal typealias ToWAPDUCommandsHandler = (_ cards:[CreditCard]?, _ error:Error?)->Void

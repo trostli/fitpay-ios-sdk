@@ -7,7 +7,6 @@
 //
 
 open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
-    
     weak var paymentDevice : PaymentDevice!
     var responseData : ApduResultMessage!
     var connected = false;
@@ -46,6 +45,10 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     open func isConnected() -> Bool {
         debugPrint("checking is connected")
         return connected;
+    }
+    
+    open func validateConnection(completion: @escaping (Bool, NSError?) -> Void) {
+        completion(isConnected(), nil)
     }
     
     open func writeSecurityState(_ state: SecurityNFCState) -> NSError?{
