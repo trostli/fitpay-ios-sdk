@@ -212,7 +212,7 @@ open class DeviceInfo : NSObject, ClientModel, Mappable, SecretApplyable
         let url = self.links?.url(resource)
         if  let url = url, let client = self.client
         {
-            client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notifcationToken: notifcationToken, completion: completion)
+            client.updateDevice(url, firmwareRevision: firmwareRevision, softwareRevision: softwareRevision, notificationToken: notifcationToken, completion: completion)
         }
         else
         {

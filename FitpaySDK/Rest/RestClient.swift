@@ -1767,7 +1767,7 @@ open class RestClient : NSObject
         }
     }
     
-    internal func updateDevice(_ url:String, firmwareRevision:String?, softwareRevision:String?, notifcationToken: String?,
+    internal func updateDevice(_ url:String, firmwareRevision:String?, softwareRevision:String?, notificationToken: String?,
         completion:@escaping UpdateDeviceHandler)
     {
         var paramsArray = [Any]()
@@ -1779,8 +1779,8 @@ open class RestClient : NSObject
             paramsArray.append(["op" : "replace", "path" : "/softwareRevision", "value" : softwareRevision])
         }
         
-        if let notifcationToken = notifcationToken {
-            paramsArray.append(["op" : "replace", "path" : "/notifcationToken", "value" : notifcationToken])
+        if let notificationToken = notificationToken {
+            paramsArray.append(["op" : "replace", "path" : "/notificationToken", "value" : notificationToken])
         }
         
         self.prepareAuthAndKeyHeaders
