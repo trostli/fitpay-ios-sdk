@@ -109,7 +109,7 @@ internal class CommitsApplyer {
     }
     
     fileprivate func processAPDUCommit(_ commit: Commit, completion: @escaping CommitCompletion) {
-        print("in getCommits")
+        print("Processing APDU commit: \(commit.commit!).")
         guard let apduPackage = commit.payload?.apduPackage else {
             completion(NSError.unhandledError(SyncManager.self))
             return
@@ -155,9 +155,10 @@ internal class CommitsApplyer {
                 realError = nil
             }
             
-            debugPrint("about to call confirm")
+            print("Processed APDU commit (\(commit.commit!)) with state: \(apduPackage.state) and error: \(realError).")
             commit.confirmAPDU({
                 (confirmError) -> Void in
+                print("Apdu package confirmed with error: \(confirmError).")
                 completion(realError ?? confirmError)
             })
         }
