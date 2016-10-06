@@ -54,7 +54,7 @@ public enum ConnectionState : Int {
 
 open class PaymentDevice : NSObject
 {
-    public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible
+    public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible, CustomNSError
     {
         case unknownError               = 0
         case badBLEState                = 10001
@@ -96,6 +96,18 @@ open class PaymentDevice : NSObject
             case .apduErrorResponse:
                 return "Received APDU command with error response."
             }
+        }
+        
+        public var errorCode: Int {
+            return self.rawValue
+        }
+        
+        public var errorUserInfo: [String : Any] {
+            return [NSLocalizedDescriptionKey : self.description]
+        }
+        
+        public static var errorDomain: String {
+            return "\(PaymentDevice.self)"
         }
     }
 

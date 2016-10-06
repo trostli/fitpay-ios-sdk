@@ -38,6 +38,7 @@ internal class CommitsApplyer {
         
         self.applyerCompletionHandler = completion
         self.thread = Thread(target: self, selector:#selector(CommitsApplyer.processCommits), object: nil)
+        self.thread?.qualityOfService = .utility
         self.thread?.start()
         
         return true
@@ -139,8 +140,8 @@ internal class CommitsApplyer {
 
             apduPackage.executedDuration = Int(currentTimestamp - applyingStartDate)
             apduPackage.executedEpoch = TimeInterval(currentTimestamp)
-            
-            if (error != nil && error as? NSError != nil && (error as! NSError).code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue) {
+                        
+            if (error != nil && error as? NSError != nil && ((error as! NSError).code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue || (error as! NSError).code == PaymentDevice.ErrorCode.apduSendingTimeout.rawValue)) {
                 apduPackage.state = APDUPackageResponseState.FAILED
             } else if error != nil {
                 apduPackage.state = APDUPackageResponseState.ERROR
@@ -151,7 +152,7 @@ internal class CommitsApplyer {
             var realError = error
             
             // if we received apdu with error response than confirm it and move next, do not stop sync process
-            if (error as? NSError)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
+            if (error as? NSError)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue || (error as? NSError)?.code == PaymentDevice.ErrorCode.apduSendingTimeout.rawValue {
                 realError = nil
             }
             
