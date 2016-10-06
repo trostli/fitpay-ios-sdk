@@ -464,8 +464,8 @@ open class SyncManager : NSObject {
         
         self.isSyncing = false
         self.currentDeviceInfo = nil
-        
-        if let error = error as? NSError {
+
+        if let error = error {
             callCompletionForSyncEvent(SyncEventType.syncFailed, params: ["error": error])
         } else {
             callCompletionForSyncEvent(SyncEventType.syncCompleted, params: [:])
