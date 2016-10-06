@@ -140,10 +140,11 @@ internal class CommitsApplyer {
 
             apduPackage.executedDuration = Int(currentTimestamp - applyingStartDate)
             apduPackage.executedEpoch = TimeInterval(currentTimestamp)
-                        
-            if (error != nil && error as? NSError != nil && ((error as! NSError).code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue || (error as! NSError).code == PaymentDevice.ErrorCode.apduSendingTimeout.rawValue)) {
+
+            if error != nil && error as? NSError != nil && (error as! NSError).code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
                 apduPackage.state = APDUPackageResponseState.FAILED
             } else if error != nil {
+                // This will catch (error as! NSError).code == PaymentDevice.ErrorCode.apduSendingTimeout.rawValue
                 apduPackage.state = APDUPackageResponseState.ERROR
             } else {
                 apduPackage.state = APDUPackageResponseState.PROCESSED
