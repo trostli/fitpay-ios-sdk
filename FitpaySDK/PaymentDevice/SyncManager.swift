@@ -157,6 +157,7 @@ open class SyncManager : NSObject {
      - parameter user: user from API to whom device belongs to.
      */
     open func sync(_ user: User) -> NSError? {
+        print("--- STARTING SYNC ---")
         if self.isSyncing {
             return NSError.error(code: SyncManager.ErrorCode.syncAlreadyStarted, domain: SyncManager.self)
         }
@@ -332,6 +333,7 @@ open class SyncManager : NSObject {
             [unowned self] (commits, error) -> Void in
             
             guard (error == nil && commits != nil) else {
+                print("--- failed to get the fucking commit!!! ---")
                 self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.cantFetchCommits, domain: SyncManager.self))
                 return
             }
@@ -344,14 +346,19 @@ open class SyncManager : NSObject {
 //                cmts = commits!
 //            }
 
+            print("--- \(commits?.count) COMMITS ARE HERE ---")
+
             let applayerStarted = self.commitsApplyer.apply(commits!, completion:
             {
                 [unowned self] (error) -> Void in
                 
                 if let _ = error {
+                    print("--- the damn commit applier returned a failure ---")
                     self.syncFinished(error: error)
                     return
                 }
+
+                print("--- commit applier returned with out errors ---")
                 
                 self.syncFinished(error: nil)
                 
@@ -460,6 +467,7 @@ open class SyncManager : NSObject {
     }
 
     fileprivate func syncFinished(error: Error?) {
+        print("--- called syncFinished ---")
         self.currentDeviceInfo?.updateNotificationTokenIfNeeded()
         
         self.isSyncing = false
@@ -484,6 +492,7 @@ open class SyncManager : NSObject {
     }
 
     internal func commitCompleted(_ commitId:String) {
+        print("--- SETTING NEW LAST COMMIT ID ---")
         self.syncStorage.setLastCommitId(self.currentDeviceInfo!.deviceIdentifier!, commitId: commitId)
     }
     

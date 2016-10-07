@@ -129,11 +129,14 @@ open class FitpayNotificationsManager : NSObject {
     fileprivate var currentNotification : NotificationsPayload?
     
     fileprivate func processNextNotificationIfAvailable() {
+        print("--- processing next notification if available ---")
         guard currentNotification == nil else {
+            print("--- currentNotification was nil returning ---")
             return
         }
         
         if notificationsQueue.peekAtQueue() == nil {
+            print("--- peeking at the queue ---")
             self.callAllNotificationProcessedCompletion()
             return
         }
@@ -143,6 +146,7 @@ open class FitpayNotificationsManager : NSObject {
             var notificationType = NotificationsType.WithoutSync
 
             if (currentNotification["fpField1"] as? String)?.lowercased() == "sync" {
+                print("--- notification was of type sync ---")
                 notificationType = NotificationsType.WithSync
             }
             
@@ -150,6 +154,7 @@ open class FitpayNotificationsManager : NSObject {
             switch notificationType {
             case .WithSync:
                 if let syncCompletedBinding = self.syncCompletedBinding {
+                    print("--- notif manager removing sync binding ---")
                     SyncManager.sharedInstance.removeSyncBinding(binding: syncCompletedBinding)
                 }
                 syncCompletedBinding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: { (event) in

@@ -11,7 +11,9 @@ internal class SyncStorage {
     internal func getLastCommitId(_ deviceId:String) -> String {
         if let commitId = self.keychain[deviceId] {
             return commitId
+            print("--- returning last commitID \(commitId) ---")
         } else {
+            print("--- NO LAST COMMIT ID. So empty string ---")
             return String()
         }
     }

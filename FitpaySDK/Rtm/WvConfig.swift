@@ -274,6 +274,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
     
     fileprivate func handleSync(_ callBackId:Int) -> Void {
+        print("--- handling rtm sync ---")
         if (self.webViewSessionData != nil && self.user != nil ) {
             syncCallBacks.append(callBackId)
 
@@ -336,6 +337,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
 
     fileprivate func resolveSync() {
+        print("--- resolving rtm sync promise ---")
         if let id = self.syncCallBacks.first {
             if self.syncCallBacks.count > 1 {
                 self.callBack(
@@ -359,6 +361,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
 
     fileprivate func callBack(_ callBackId:Int, success:Bool, response:String) {
+        print("--- calling web-view callback ---")
         self.webview!.evaluateJavaScript("window.RtmBridge.resolve(\(callBackId), \(success), \(response))", completionHandler: {
             (result, error) in
 
@@ -369,6 +372,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
 
     fileprivate func goSync() {
+        print("--- initiating SyncManager sync via rtm ---")
         if SyncManager.sharedInstance.sync(self.user!) != nil {
             rejectAndResetSyncCallbacks("SyncManager failed to regulate sequential syncs, all pending syncs have been rejected")
         }
@@ -377,12 +381,14 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     fileprivate func bindEvents() {
         let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: {
             (event) in
+            print("--- received sync complete from SyncManager ---")
 
             self.resolveSync()
         })
 
         let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: {
             (event) in
+            print("--- reveiced sync FAILED from SyncManager ---")
             self.showStatusMessage(.syncError, error: (event.eventData as? [String:Any])?["error"] as? Error)
 
             self.rejectAndResetSyncCallbacks("SyncManager failed to complete the sync, all pending syncs have been rejected")
