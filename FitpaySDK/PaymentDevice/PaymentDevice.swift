@@ -68,6 +68,7 @@ open class PaymentDevice : NSObject
         case operationTimeout           = 10009
         case deviceShouldBeDisconnected = 10010
         case deviceShouldBeConnected    = 10011
+        case tryLater                   = 10012
         
         public var description : String {
             switch self {
@@ -95,6 +96,8 @@ open class PaymentDevice : NSObject
                 return "Received APDU with wrong sequenceId."
             case .apduErrorResponse:
                 return "Received APDU command with error response."
+            case .tryLater:
+                return "Device not ready for sync, try later."
             }
         }
         
