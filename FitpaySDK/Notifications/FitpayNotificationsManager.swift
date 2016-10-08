@@ -60,6 +60,7 @@ open class FitpayNotificationsManager : NSObject {
      - parameter payload: payload of notification
      */
     open func handleNotification(_ payload: NotificationsPayload) {
+        print("--- handling notification ---")
         notificationsQueue.enqueue(payload)
         
         processNextNotificationIfAvailable()
@@ -136,7 +137,7 @@ open class FitpayNotificationsManager : NSObject {
         }
         
         if notificationsQueue.peekAtQueue() == nil {
-            print("--- peeking at the queue ---")
+            print("--- peeked at queue and found nothing ---")
             self.callAllNotificationProcessedCompletion()
             return
         }
@@ -173,12 +174,14 @@ open class FitpayNotificationsManager : NSObject {
                 })
                 
                 if let _ = SyncManager.sharedInstance.tryToMakeSyncWithLastUser() {
+                    print("--- SyncManager.sharedInstance.tryToMakeSyncWithLastUser was not nil (WTF?) so processing next notif if available ---")
                     self.currentNotification = nil
                     self.processNextNotificationIfAvailable()
                 }
                 
                 break
             case .WithoutSync: // just call completion
+                print("--- notif was non-sync ---")
                 self.currentNotification = nil
                 processNextNotificationIfAvailable()
                 break

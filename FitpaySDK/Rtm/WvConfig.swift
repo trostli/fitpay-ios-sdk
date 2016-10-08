@@ -276,13 +276,18 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     fileprivate func handleSync(_ callBackId:Int) -> Void {
         print("--- handling rtm sync ---")
         if (self.webViewSessionData != nil && self.user != nil ) {
+            print("--- adding sync to rtm callback queue ---")
             syncCallBacks.append(callBackId)
 
             if !SyncManager.sharedInstance.isSyncing {
                 self.showStatusMessage(.syncStarted)
+                print("--- initiating sync ---")
                 goSync()
+            } else {
+                print("--- sync manager was syncing in RTM sync request. So doing nothing ---")
             }
         } else {
+            print("--- rtm not yet configured to hand syncs requests, failing sync ---")
             self.callBack(
                 self.syncCallBacks.first!,
                 success: false,
@@ -326,6 +331,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
 
     fileprivate func rejectAndResetSyncCallbacks(_ reason:String) {
+        print("--- rejecting and resettting callback queue in rtm ---")
         for cbId in self.syncCallBacks {
             callBack(
                 cbId,
@@ -337,14 +343,15 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
 
     fileprivate func resolveSync() {
-        print("--- resolving rtm sync promise ---")
         if let id = self.syncCallBacks.first {
+            print("--- resolving rtm sync promise ---")
             if self.syncCallBacks.count > 1 {
                 self.callBack(
                     id,
                     success: true,
                     response: getWVResponse(WVResponse.successStillWorking, message: "\(self.syncCallBacks.count)"))
 
+                print("--- there was another rtm sync request, syncing again ---")
                 goSync()
             } else {
                 self.callBack(
@@ -352,6 +359,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
                     success: true,
                     response: getWVResponse(WVResponse.success, message: nil))
                 self.showStatusMessage(.synchronized)
+                print("--- no more rtm sync requests in queue ---")
             }
 
             self.syncCallBacks.removeFirst()
@@ -366,7 +374,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             (result, error) in
 
             if error != nil {
-                print("error")
+                print("--- error evaluating JS from swift rtm bridge ---")
             }
         })
     }
