@@ -21,7 +21,7 @@ internal class CommitsApplyer {
     
     internal func apply(_ commits:[Commit], completion: @escaping ApplyerCompletionHandler) -> Bool {
         if isRunning {
-            print("--- CANT RUN COMMIT APPLIER IF ITS ALREADY RUNNING!!! WHAT THE FUCK HAPPENS HERE? ---")
+            print("--- [CommitApplier] cannot apply commints, applying already in progress ---")
             return false
         }
         
@@ -104,10 +104,10 @@ internal class CommitsApplyer {
         print("in commitApplyer with commitType \(commitType)")
         switch (commitType) {
         case CommitType.APDU_PACKAGE:
-            print("--- processing APDU commit ---")
+            print("--- [CommitApplier] processing APDU commit ---")
             processAPDUCommit(commit, completion: commitCompletion)
         default:
-            print("--- processing non-APDU commit ---")
+            print("--- [CommitApplier] processing non-APDU commit ---")
             processNonAPDUCommit(commit, completion: commitCompletion)
         }
     }
@@ -145,11 +145,11 @@ internal class CommitsApplyer {
             apduPackage.executedEpoch = TimeInterval(currentTimestamp)
 
             if error != nil && error as? NSError != nil && (error as! NSError).code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
-                print("--- got a failed APDU response ---")
+                print("--- [CommitApplier] got a failed APDU response ---")
                 apduPackage.state = APDUPackageResponseState.FAILED
             } else if error != nil {
                 // This will catch (error as! NSError).code == PaymentDevice.ErrorCode.apduSendingTimeout.rawValue
-                print("--- got some kind of failure on apdu that was not failed response code ---")
+                print("--- [CommitApplier] got failure on apdu ---")
                 apduPackage.state = APDUPackageResponseState.ERROR
             } else {
                 apduPackage.state = APDUPackageResponseState.PROCESSED

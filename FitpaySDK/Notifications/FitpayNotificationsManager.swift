@@ -130,14 +130,14 @@ open class FitpayNotificationsManager : NSObject {
     fileprivate var currentNotification : NotificationsPayload?
     
     fileprivate func processNextNotificationIfAvailable() {
-        print("--- processing next notification if available ---")
+        print("--- [NotificationManager] processing next notification if available ---")
         guard currentNotification == nil else {
             print("--- currentNotification was nil returning ---")
             return
         }
         
         if notificationsQueue.peekAtQueue() == nil {
-            print("--- peeked at queue and found nothing ---")
+            print("--- [NotificationManager] peeked at queue and found nothing ---")
             self.callAllNotificationProcessedCompletion()
             return
         }
@@ -147,7 +147,7 @@ open class FitpayNotificationsManager : NSObject {
             var notificationType = NotificationsType.WithoutSync
 
             if (currentNotification["fpField1"] as? String)?.lowercased() == "sync" {
-                print("--- notification was of type sync ---")
+                print("--- [NotificationManager] notification was of type sync ---")
                 notificationType = NotificationsType.WithSync
             }
             
@@ -155,11 +155,11 @@ open class FitpayNotificationsManager : NSObject {
             switch notificationType {
             case .WithSync:
                 if let syncCompletedBinding = self.syncCompletedBinding {
-                    print("--- notif manager removing sync binding ---")
+                    print("--- [NotificationManager] notif manager removing sync binding ---")
                     SyncManager.sharedInstance.removeSyncBinding(binding: syncCompletedBinding)
                 }
                 syncCompletedBinding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: { (event) in
-                    print("Sync from notification completed.")
+                    print("[NotificationManager] Sync from notification completed.")
                     self.currentNotification = nil
                     self.processNextNotificationIfAvailable()
                 })
@@ -168,20 +168,20 @@ open class FitpayNotificationsManager : NSObject {
                     SyncManager.sharedInstance.removeSyncBinding(binding: syncFailedBinding)
                 }
                 syncFailedBinding = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: { (event) in
-                    print("Sync from notification falied. Error: \((event.eventData as? [String:Any])?["error"])")
+                    print("[NotificationManager] Sync from notification falied. Error: \((event.eventData as? [String:Any])?["error"])")
                     self.currentNotification = nil
                     self.processNextNotificationIfAvailable()
                 })
                 
                 if let _ = SyncManager.sharedInstance.tryToMakeSyncWithLastUser() {
-                    print("--- SyncManager.sharedInstance.tryToMakeSyncWithLastUser was not nil (WTF?) so processing next notif if available ---")
+                    print("--- [NotificationManager] SyncManager.sharedInstance.tryToMakeSyncWithLastUser was not nil (WTF?) so processing next notif if available ---")
                     self.currentNotification = nil
                     self.processNextNotificationIfAvailable()
                 }
                 
                 break
             case .WithoutSync: // just call completion
-                print("--- notif was non-sync ---")
+                print("--- [NotificationManager] notif was non-sync ---")
                 self.currentNotification = nil
                 processNextNotificationIfAvailable()
                 break
