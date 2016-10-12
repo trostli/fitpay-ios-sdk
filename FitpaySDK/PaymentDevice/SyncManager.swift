@@ -477,8 +477,15 @@ open class SyncManager : NSObject {
         self.isSyncing = false
         self.currentDeviceInfo = nil
 
+        
         if let error = error {
-            callCompletionForSyncEvent(SyncEventType.syncFailed, params: ["error": error])
+            // TODO: it's a hack, because currently we can move to wallet screen only if we received SyncEventType.syncCompleted
+            if (error as NSError).code == PaymentDevice.ErrorCode.tryLater.rawValue {
+                debugPrint("PaymentDevice.ErrorCode.tryLater")
+                callCompletionForSyncEvent(SyncEventType.syncCompleted, params: [:])
+            } else {
+                callCompletionForSyncEvent(SyncEventType.syncFailed, params: ["error": error])
+            }
         } else {
             callCompletionForSyncEvent(SyncEventType.syncCompleted, params: [:])
         }
