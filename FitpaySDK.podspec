@@ -1,6 +1,4 @@
 Pod::Spec.new do |s|
-  s.platform = :ios
-  s.ios.deployment_target = '9.0'
   s.requires_arc = true
   s.name = 'FitpaySDK'
   s.version = '0.4.2'
@@ -17,7 +15,6 @@ Pod::Spec.new do |s|
   s.dependency 'KeychainAccess', '3.0.0'
   s.dependency 'OpenSSL-Universal', '1.0.1.19'
 
-  s.ios.platform          = :ios, '9.0'
   s.ios.deployment_target = '9.0'
   s.ios.source_files        = 'Output/FitpaySDK-Release-iphoneuniversal/FitpaySDK.framework/**/*.h'
   s.ios.public_header_files = 'Output/FitpaySDK-Release-iphoneuniversal/FitpaySDK.framework/**/*.h'
