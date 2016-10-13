@@ -6,12 +6,12 @@
 //  Copyright © 2016 Fitpay. All rights reserved.
 //
 
-public class FitpayEventBinding : NSObject {
-    static private var bindingIdCounter : Int = 0
-    private let bindingId : Int
+open class FitpayEventBinding : NSObject {
+    static fileprivate var bindingIdCounter : Int = 0
+    fileprivate let bindingId : Int
     
-    public var eventId : FitpayEventTypeProtocol
-    public var listener : FitpayEventListener
+    open var eventId : FitpayEventTypeProtocol
+    open var listener : FitpayEventListener
     
     public init(eventId: FitpayEventTypeProtocol, listener: FitpayEventListener) {
 
@@ -26,7 +26,7 @@ public class FitpayEventBinding : NSObject {
 }
 
 extension FitpayEventBinding : FitpayEventListener {
-    public func dispatchEvent(event: FitpayEvent) {
+    public func dispatchEvent(_ event: FitpayEvent) {
         listener.dispatchEvent(event)
     }
     

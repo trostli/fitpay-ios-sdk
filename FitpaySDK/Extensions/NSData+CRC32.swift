@@ -56,7 +56,7 @@ private let crcTable: [UInt32] = [
     0x5d681b02, 0x2a6f2b94, 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b,
     0x2d02ef8d]
 
-extension NSData
+extension Data
 {
     var CRC32HashValue : Int {
         var crc : UInt32 = 0
@@ -64,11 +64,11 @@ extension NSData
         return Int(crc)
     }
     
-    internal func crc32(crc: UInt32, data: NSData?) -> UInt32 {
+    internal func crc32(_ crc: UInt32, data: Data?) -> UInt32 {
         guard let data = data else {
             return crc32(0, buffer: nil, length: 0)
         }
-        return crc32(crc, buffer: UnsafePointer<UInt8>(data.bytes), length: data.length)
+        return crc32(crc, buffer: (data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), length: data.count)
     }
     
     /**
@@ -84,7 +84,7 @@ extension NSData
      }
      if (crc != original_crc) error();
      */
-    internal func crc32(crc: UInt32, buffer: UnsafePointer<UInt8>, length: Int) -> UInt32 {
+    internal func crc32(_ crc: UInt32, buffer: UnsafePointer<UInt8>?, length: Int) -> UInt32 {
         if buffer == nil {
             return 0
         }
@@ -92,9 +92,9 @@ extension NSData
         var len = length
         var buf = buffer
         func DO1() {
-            let toBuf = buf.memory
-            buf = buf.successor()
-            crc1 = crcTable[Int((crc1 ^ UInt32(toBuf)) & 0xFF)] ^ crc1 >> 8
+            let toBuf = buf?.pointee
+            buf = buf?.successor()
+            crc1 = crcTable[Int((crc1 ^ UInt32(toBuf!)) & 0xFF)] ^ crc1 >> 8
         }
         func DO2() { DO1(); DO1(); }
         func DO4() { DO2(); DO2(); }

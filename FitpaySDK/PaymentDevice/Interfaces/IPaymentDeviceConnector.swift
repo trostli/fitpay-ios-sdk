@@ -1,3 +1,4 @@
+
 @objc public protocol IPaymentDeviceConnector
 {
     func connect()
@@ -6,13 +7,15 @@
     
     func isConnected() -> Bool
     
-    func writeSecurityState(state: SecurityNFCState) -> NSError?
+    func validateConnection(completion : @escaping (_ isValid:Bool, _ error: NSError?) -> Void)
     
-    func sendDeviceControl(state: DeviceControlState) -> NSError?
+    func writeSecurityState(_ state: SecurityNFCState) -> NSError?
     
-    func sendNotification(notificationData: NSData) -> NSError?
+    func sendDeviceControl(_ state: DeviceControlState) -> NSError?
     
-    func sendAPDUData(data: NSData, sequenceNumber: UInt16)
+    func sendNotification(_ notificationData: Data) -> NSError?
+    
+    func executeAPDUCommand(_ apduCommand: APDUCommand)
     
     func deviceInfo() -> DeviceInfo?
 

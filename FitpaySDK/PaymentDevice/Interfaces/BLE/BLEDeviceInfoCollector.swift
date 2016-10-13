@@ -13,12 +13,12 @@ internal class BLEDeviceInfoCollector {
         PAYMENT_CHARACTERISTIC_UUID_SECURE_ELEMENT_ID : "secureElementId"
     ]
     
-    private var deviceInfoMap : [String:AnyObject] = [:]
+    fileprivate var deviceInfoMap : [String:AnyObject] = [:]
     
-    func collectDataFromCharacteristicIfPossible(characteristic: CBCharacteristic) {
-        if let deviceInfoKey = BLEDeviceInfoCollector.characteristicBindings[characteristic.UUID],
+    func collectDataFromCharacteristicIfPossible(_ characteristic: CBCharacteristic) {
+        if let deviceInfoKey = BLEDeviceInfoCollector.characteristicBindings[characteristic.uuid],
            let value = characteristic.value {
-            deviceInfoMap[deviceInfoKey] = String(data: value, encoding: NSUTF8StringEncoding)
+            deviceInfoMap[deviceInfoKey] = String(data: value, encoding: String.Encoding.utf8) as AnyObject?
         }
     }
     
@@ -32,9 +32,9 @@ internal class BLEDeviceInfoCollector {
         }
         
         if let secureElementId = deviceInfoMap["secureElementId"] {
-            deviceInfoMap["secureElement"] = ["secureElementId" : secureElementId]
+            deviceInfoMap["secureElement"] = ["secureElementId" : secureElementId] as NSDictionary
         }
         
-        return Mapper<DeviceInfo>().map(deviceInfoMap)
+        return Mapper<DeviceInfo>().map(JSON: deviceInfoMap)
     }
 }

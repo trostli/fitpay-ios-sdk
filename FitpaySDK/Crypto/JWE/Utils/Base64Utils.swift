@@ -1,10 +1,10 @@
-extension NSData {
+extension Data {
     func base64URLencoded() -> String {
-        var base64 = self.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
+        var base64 = self.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
         
-        base64 = base64.stringByReplacingOccurrencesOfString("/", withString: "_")
-        base64 = base64.stringByReplacingOccurrencesOfString("+", withString: "-")
-        base64 = base64.stringByReplacingOccurrencesOfString("=", withString: "")
+        base64 = base64.replacingOccurrences(of: "/", with: "_")
+        base64 = base64.replacingOccurrences(of: "+", with: "-")
+        base64 = base64.replacingOccurrences(of: "=", with: "")
         
         return base64
     }
@@ -12,20 +12,20 @@ extension NSData {
 
 extension String {
     func base64URLencoded() -> String? {
-        return self.dataUsingEncoding(NSUTF8StringEncoding)?.base64URLencoded()
+        return self.data(using: String.Encoding.utf8)?.base64URLencoded()
     }
     
-    func base64URLdecoded() -> NSData? {
+    func base64URLdecoded() -> Data? {
         let base64EncodedString = convertBase64URLtoBase64(self)
-        if let decodedData = NSData(base64EncodedString: base64EncodedString, options:NSDataBase64DecodingOptions(rawValue: 0)){
+        if let decodedData = Data(base64Encoded: base64EncodedString, options:NSData.Base64DecodingOptions(rawValue: 0)){
             return decodedData
         }
         return nil
     }
     
-    private func convertBase64URLtoBase64(encodedString: String) -> String {
-        var tempEncodedString = encodedString.stringByReplacingOccurrencesOfString("-", withString: "+", options: NSStringCompareOptions.LiteralSearch, range: nil)
-        tempEncodedString = tempEncodedString.stringByReplacingOccurrencesOfString("_", withString: "/", options: NSStringCompareOptions.LiteralSearch, range: nil)
+    fileprivate func convertBase64URLtoBase64(_ encodedString: String) -> String {
+        var tempEncodedString = encodedString.replacingOccurrences(of: "-", with: "+", options: NSString.CompareOptions.literal, range: nil)
+        tempEncodedString = tempEncodedString.replacingOccurrences(of: "_", with: "/", options: NSString.CompareOptions.literal, range: nil)
         let equalsToBeAdded = (encodedString as NSString).length % 4
         if (equalsToBeAdded > 0) {
             for _ in 0..<equalsToBeAdded {

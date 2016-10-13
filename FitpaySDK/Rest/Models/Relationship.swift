@@ -1,22 +1,22 @@
 
 import ObjectMapper
 
-public class Relationship : NSObject, ClientModel, Mappable
+open class Relationship : NSObject, ClientModel, Mappable
 {
     internal var links:[ResourceLink]?
     internal var card:CardInfo?
-    public var device: DeviceInfo?
+    open var device: DeviceInfo?
     
-    private static let selfResource = "self"
+    fileprivate static let selfResource = "self"
     
     internal weak var client:RestClient?
     
-    public required init?(_ map: Map)
+    public required init?(map: Map)
     {
         
     }
     
-    public func mapping(map: Map)
+    open func mapping(map: Map)
     {
         links <- (map["_links"], ResourceLinkTransformType())
         card <- map["card"]
@@ -28,16 +28,16 @@ public class Relationship : NSObject, ClientModel, Mappable
      
         - parameter completion:   DeleteRelationshipHandler closure
      */
-    @objc public func deleteRelationship(completion:RestClient.DeleteRelationshipHandler) {
+    @objc open func deleteRelationship(_ completion:@escaping RestClient.DeleteRelationshipHandler) {
         let resource = Relationship.selfResource
         let url = self.links?.url(resource)
-        if  let url = url, client = self.client
+        if  let url = url, let client = self.client
         {
             client.deleteRelationship(url, completion: completion)
         }
         else
         {
-            completion(error: NSError.clientUrlError(domain:Relationship.self, code:0, client: client, url: url, resource: resource))
+            completion(NSError.clientUrlError(domain:Relationship.self, code:0, client: client, url: url, resource: resource))
         }
     }
 }

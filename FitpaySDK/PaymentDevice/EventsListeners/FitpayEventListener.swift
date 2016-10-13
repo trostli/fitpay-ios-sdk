@@ -7,6 +7,6 @@
 //
 
 public protocol FitpayEventListener {
-    func dispatchEvent(event: FitpayEvent)
+    func dispatchEvent(_ event: FitpayEvent)
     func invalidate()
 }

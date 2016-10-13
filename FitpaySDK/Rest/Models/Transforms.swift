@@ -12,25 +12,25 @@ import ObjectMapper
 
 internal class NSTimeIntervalTransform: TransformType
 {
-    typealias Object = NSTimeInterval
+    typealias Object = TimeInterval
     typealias JSON = Int64
     
     init() {}
     
-    func transformFromJSON(value: AnyObject?) -> NSTimeInterval?
+    func transformFromJSON(_ value: Any?) -> Double?
     {
         if let timeInt = value as? NSNumber
         {
-            return NSTimeInterval(timeInt.integerValue)/1000
+            return TimeInterval(timeInt.int64Value/1000)
         }
         if let timeStr = value as? String
         {
-            return NSTimeInterval(atof(timeStr))/1000
+            return TimeInterval(atof(timeStr)/1000)
         }
         return nil
     }
     
-    func transformToJSON(value: NSTimeInterval?) -> Int64?
+    func transformToJSON(_ value: TimeInterval?) -> Int64?
     {
         if let epoch = value
         {
