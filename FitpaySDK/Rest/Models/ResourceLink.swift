@@ -16,10 +16,11 @@ import ObjectMapper
 
 internal class ResourceLinkTransformType : TransformType
 {
+
     typealias Object = [ResourceLink]
     typealias JSON = [String:[String:String]]
 
-    func transformFromJSON(value: AnyObject?) -> [ResourceLink]?
+    func transformFromJSON(_ value: Any?) -> Array<ResourceLink>?
     {
         if let links = value as? [String:[String:String]]
         {
@@ -39,7 +40,7 @@ internal class ResourceLinkTransformType : TransformType
         return nil
     }
 
-    func transformToJSON(value:[ResourceLink]?) -> [String:[String:String]]?
+    func transformToJSON(_ value:[ResourceLink]?) -> [String:[String:String]]?
     {
         if let links = value
         {
@@ -47,7 +48,7 @@ internal class ResourceLinkTransformType : TransformType
 
             for link in links
             {
-                if let target = link.target, href = link.href
+                if let target = link.target, let href = link.href
                 {
                     map[target] = ["href" : href]
                 }

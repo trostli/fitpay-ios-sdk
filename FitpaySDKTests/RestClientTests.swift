@@ -4,8 +4,8 @@ import XCTest
 
 class RestClientTests: XCTestCase
 {
-    let clientId = "pagare"
-    let redirectUri = "https://demo.pagare.me"
+    var clientId = "fp_webapp_pJkVp2Rl"
+    let redirectUri = "https://webapp.fit-pay.com"
     let password = "1029"
 
     var session:RestSession!
@@ -27,7 +27,14 @@ class RestClientTests: XCTestCase
     override func setUp()
     {
         super.setUp()
-        self.session = RestSession(configuration: FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL))
+        let config = FitpaySDKConfiguration(clientId:"pagare", redirectUri:"https://demo-qa.pagare.me", baseAuthURL: "https://demo-qa.pagare.me", baseAPIURL: "https://demo-qa.pagare.me/api")
+//        if let error = config.loadEnvironmentVariables() {
+//            print("Can't load config from environment. Error: \(error)")
+//        } else {
+            clientId = config.clientId
+//        }
+        
+        self.session = RestSession(configuration: config)
         self.client = RestClient(session: self.session!)
         self.testHelper = TestHelpers(clientId: clientId, redirectUri: redirectUri, session: self.session, client: self.client)
     }
@@ -41,7 +48,7 @@ class RestClientTests: XCTestCase
 
     func testCreateEncryptionKeyCreatesKey()
     {
-        let expectation = super.expectationWithDescription("'createEncryptionKey' creates key")
+        let expectation = super.expectation(description: "'createEncryptionKey' creates key")
         
         self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!, completion: { (encryptionKey, error) -> Void in
 
@@ -60,12 +67,12 @@ class RestClientTests: XCTestCase
             expectation.fulfill()
         })
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testEncryptionKeyRetrievesKeyWithSameFieldsAsCreated()
     {
-        let expectation = super.expectationWithDescription("'encryptionKey' retrieves key")
+        let expectation = super.expectation(description: "'encryptionKey' retrieves key")
 
         self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!, completion:
         {
@@ -100,12 +107,12 @@ class RestClientTests: XCTestCase
 
         })
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testEncryptionKeyFailsToRetrieveKeyWithFakeId()
     {
-        let expectation = super.expectationWithDescription("'encryptionKey' fails to retrieve key with fale id")
+        let expectation = super.expectation(description: "'encryptionKey' fails to retrieve key with fale id")
         
         self.client.encryptionKey("some_fake_id", completion:
         {
@@ -115,12 +122,12 @@ class RestClientTests: XCTestCase
                 expectation.fulfill()
         })
         
-        super.waitForExpectationsWithTimeout(100, handler: nil)
+        super.waitForExpectations(timeout: 100, handler: nil)
     }
 
     func testDeleteEncryptionKeyDeletesCreatedKey()
     {
-        let expectation = super.expectationWithDescription("'deleteEncryptionKey' deletes key")
+        let expectation = super.expectation(description: "'deleteEncryptionKey' deletes key")
 
         self.client.createEncryptionKey(clientPublicKey:self.client.keyPair.publicKey!, completion:
         {
@@ -172,12 +179,12 @@ class RestClientTests: XCTestCase
             
         })
 
-        super.waitForExpectationsWithTimeout(100, handler: nil)
+        super.waitForExpectations(timeout: 100, handler: nil)
     }
  
     func testUserCreate()
     {
-        let expectation = super.expectationWithDescription("'user' created")
+        let expectation = super.expectation(description: "'user' created")
         
         let email = self.testHelper.randomEmail()
         let pin = "1234"
@@ -200,13 +207,13 @@ class RestClientTests: XCTestCase
             expectation.fulfill()
         })
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     
     func testUserCreateAndLogin()
     {
-        let expectation = super.expectationWithDescription("'user' created")
+        let expectation = super.expectation(description: "'user' created")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -214,7 +221,7 @@ class RestClientTests: XCTestCase
             self.testHelper.deleteUser(user, expectation: expectation)
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     //this tries to populate all the optional fields and check they are set. - PLAT-1414
@@ -246,7 +253,7 @@ class RestClientTests: XCTestCase
   */  
     func testUserDeleteUserDeletesUser()
     {
-        let expectation = super.expectationWithDescription("'user.deleteUser' deletes user")
+        let expectation = super.expectation(description: "'user.deleteUser' deletes user")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -254,12 +261,12 @@ class RestClientTests: XCTestCase
             self.testHelper.deleteUser(user, expectation: expectation)
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testUserUpdateUserGetsError400()
     {
-        let expectation = super.expectationWithDescription("'user.updateUser' gets error 400")
+        let expectation = super.expectation(description: "'user.updateUser' gets error 400")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -280,12 +287,12 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testUserRetrievesUserById()
     {
-        let expectation = super.expectationWithDescription("'user' retrieves user by her id")
+        let expectation = super.expectation(description: "'user' retrieves user by her id")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -297,12 +304,12 @@ class RestClientTests: XCTestCase
             })
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCreateCreditCard()
     {
-        let expectation = super.expectationWithDescription("'creditCards' retrieves credit cards for user")
+        let expectation = super.expectation(description: "'creditCards' retrieves credit cards for user")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -319,7 +326,7 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectationsWithTimeout(15, handler: nil)
+        super.waitForExpectations(timeout: 15, handler: nil)
     }
     /* disabled due to PLAT-1404, PLAT-1406
      
@@ -375,7 +382,7 @@ class RestClientTests: XCTestCase
     */
     func testUserListCreditCardsListsCreditCardsForUser()
     {
-        let expectation = super.expectationWithDescription("'listCreditCards' lists credit cards for user")
+        let expectation = super.expectation(description: "'listCreditCards' lists credit cards for user")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -399,12 +406,12 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCreditCardDeleteDeletesCreditCardAfterCreatingIt()
     {
-        let expectation = super.expectationWithDescription("'delete' deletes credit card after creating it")
+        let expectation = super.expectation(description: "'delete' deletes credit card after creating it")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -435,12 +442,12 @@ class RestClientTests: XCTestCase
         }
         
        
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testUpdateUpdatesCreditCard()
     {
-        let expectation = super.expectationWithDescription("'update' updates credit card")
+        let expectation = super.expectation(description: "'update' updates credit card")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -508,12 +515,12 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testMakeDefaultMakesCreditCardDefault()
     {
-        let expectation = super.expectationWithDescription("'makeDefault' makes credit card default")
+        let expectation = super.expectation(description: "'makeDefault' makes credit card default")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -555,12 +562,12 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectationsWithTimeout(20, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     func testDeactivateCreditCard()
     {
-        let expectation = super.expectationWithDescription("'deactivate' makes credit card deactivated")
+        let expectation = super.expectation(description: "'deactivate' makes credit card deactivated")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -597,12 +604,12 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectationsWithTimeout(20, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     func testReactivateCreditCardActivatesCard()
     {
-        let expectation = super.expectationWithDescription("'reactivate' makes credit card activated")
+        let expectation = super.expectation(description: "'reactivate' makes credit card activated")
         
         
         self.testHelper.createAndLoginUser(expectation)
@@ -654,12 +661,12 @@ class RestClientTests: XCTestCase
         }
 
         
-        super.waitForExpectationsWithTimeout(30, handler: nil)
+        super.waitForExpectations(timeout: 30, handler: nil)
     }
     
     func testCreditCardAcceptTerms()
     {
-        let expectation = super.expectationWithDescription("'creditCard' accept terms")
+        let expectation = super.expectation(description: "'creditCard' accept terms")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -681,13 +688,13 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     
     func testCreditCardDeclineTerms()
     {
-        let expectation = super.expectationWithDescription("'creditCard' decline terms")
+        let expectation = super.expectation(description: "'creditCard' decline terms")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -718,12 +725,12 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testCreditCardSelectVerificationMethod()
     {
-        let expectation = super.expectationWithDescription("'selectVerificationType' selects verification method")
+        let expectation = super.expectation(description: "'selectVerificationType' selects verification method")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -749,12 +756,12 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 
     func testCreditCardVerify()
     {
-        let expectation = super.expectationWithDescription("'creditCard' verify card with id")
+        let expectation = super.expectation(description: "'creditCard' verify card with id")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -785,12 +792,12 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectationsWithTimeout(20, handler: nil)
+        super.waitForExpectations(timeout: 20, handler: nil)
     }
     
     func testUserListDevisesListsDevices()
     {
-        let expectation = super.expectationWithDescription("test 'device' retrieves devices by user id")
+        let expectation = super.expectation(description: "test 'device' retrieves devices by user id")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -824,12 +831,12 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testUserCreateNewDeviceCreatesDevice()
     {
-        let expectation = super.expectationWithDescription("test 'user.createDevice' creates device")
+        let expectation = super.expectation(description: "test 'user.createDevice' creates device")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -842,12 +849,12 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testDeviceDelete()
     {
-        let expectation = super.expectationWithDescription("test 'device.deleteDevice' deletes device")
+        let expectation = super.expectation(description: "test 'device.deleteDevice' deletes device")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -906,12 +913,12 @@ class RestClientTests: XCTestCase
         }
 
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testDeviceUserRetrievesUser()
     {
-        let expectation = super.expectationWithDescription("test 'device.user' retrieves user ")
+        let expectation = super.expectation(description: "test 'device.user' retrieves user ")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -939,12 +946,12 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testDeviceUpdate()
     {
-        let expectation = super.expectationWithDescription("test 'device' update device")
+        let expectation = super.expectation(description: "test 'device' update device")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -956,7 +963,7 @@ class RestClientTests: XCTestCase
                 
                 let firmwareRev = "2.7.7.7"
                 let softwareRev = "6.8.1"
-                device?.update(firmwareRev, softwareRevision: softwareRev, completion:
+                device?.update(firmwareRev, softwareRevision: softwareRev, notifcationToken: nil, completion:
                 {
                     (updatedDevice, error) -> Void in
                     XCTAssertNil(error)
@@ -976,12 +983,12 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     //ejp - need to populate a few cards with lots of commits, and then fetch the commits.
     // Test should be reactivated as part of PLAT-1648
     func skipped_testCheckCommits() {
-        let expectation = super.expectationWithDescription("fetch commits (multiples) for a device")
+        let expectation = super.expectation(description: "fetch commits (multiples) for a device")
         var masterCard : CreditCard?
         var masterUser : User?
         var masterDevice : DeviceInfo?
@@ -1005,10 +1012,10 @@ class RestClientTests: XCTestCase
                 }
             }
         }
-        super.waitForExpectationsWithTimeout(20, handler:nil)
+        super.waitForExpectations(timeout: 20, handler:nil)
 
         var accepted = 0
-        let cardExpectation = super.expectationWithDescription("creating cards 1-9")
+        let cardExpectation = super.expectation(description: "creating cards 1-9")
         for i in 1...9 {
             self.testHelper.createEricCard(expectation, pan:"9999411122220\(i)33", expMonth:i, expYear:2019, user: masterUser!) {
                 (user, card) in
@@ -1024,37 +1031,37 @@ class RestClientTests: XCTestCase
                 }
             }
         }
-        super.waitForExpectationsWithTimeout(40, handler:nil)
+        super.waitForExpectations(timeout: 40, handler:nil)
 
-        var now = NSDate()
+        var now = Date()
         debugPrint("All card creation/acceptance done \(now)")
         
         for i in 0...4 {
-            let synchronizer = super.expectationWithDescription("deactivate reactivate")
+            let synchronizer = super.expectation(description: "deactivate reactivate")
             self.testHelper.deactivateCreditCard(synchronizer, creditCard:masterCard) {
                 card in
-                now = NSDate()
+                now = NSDate() as Date
                 debugPrint("deactivate card done: \(i) \(now)")
                 
                 card?.reactivate(causedBy: .CARDHOLDER, reason: "I like pizza", completion: {
                     (pending, card, error) in
-                    now = NSDate()
+                    now = NSDate() as Date
                     debugPrint("Reactivate done: \(i) \(now)")
                     masterCard = card!
                     XCTAssertNil(error)
                     synchronizer.fulfill()
                 })
             }
-            super.waitForExpectationsWithTimeout(10, handler:nil)
+            super.waitForExpectations(timeout: 10, handler:nil)
         }
 
-        let commit_checker = super.expectationWithDescription("check the commits")
+        let commit_checker = super.expectation(description: "check the commits")
 
         masterDevice!.listCommits(commitsAfter: nil, limit: 100, offset: 0) {
             (commits, error) in
             XCTAssertNil(error)
             if error != nil { commit_checker.fulfill(); return }
-            XCTAssertEqual(commits?.totalResults, 1+1+9+10+1+5+5, "Should have 10 create (1+1 set default + 9 activates), '10' activates, 1 more reset default for the deactivate, 10 activate-deactivate")
+            XCTAssertEqual(commits?.totalResults, 32/*1+1+9+10+1+5+5*/, "Should have 10 create (1+1 set default + 9 activates), '10' activates, 1 more reset default for the deactivate, 10 activate-deactivate")
             XCTAssertEqual(commits?.results?.count, 32, "32 results just like total results")
             for result in (commits?.results!)! {
                 debugPrint("Result: \(result.commitType!)")
@@ -1066,12 +1073,12 @@ class RestClientTests: XCTestCase
             }
             commit_checker.fulfill()
         }
-        super.waitForExpectationsWithTimeout(10, handler:nil)
+        super.waitForExpectations(timeout: 10, handler:nil)
 
-        let commit_checker2 = super.expectationWithDescription("check the commits")
-        let commit_checker3 = super.expectationWithDescription("check the commits")
-        let commit_checker4 = super.expectationWithDescription("check the commits")
-        let commit_checker5 = super.expectationWithDescription("check the commits")
+        let commit_checker2 = super.expectation(description: "check the commits")
+        let commit_checker3 = super.expectation(description: "check the commits")
+        let commit_checker4 = super.expectation(description: "check the commits")
+        let commit_checker5 = super.expectation(description: "check the commits")
 
         //page 0, limited to 10.
         masterDevice!.listCommits(commitsAfter: nil, limit: 10, offset: 0) {
@@ -1122,12 +1129,12 @@ class RestClientTests: XCTestCase
             commit_checker5.fulfill()
         }
 
-        super.waitForExpectationsWithTimeout(20, handler:nil)
+        super.waitForExpectations(timeout: 20, handler:nil)
     }
 
     func testDeviceRetrievesCommitsFromDevice()
     {
-        let expectation = super.expectationWithDescription("test 'device' retrieving commits from device")
+        let expectation = super.expectation(description: "test 'device' retrieving commits from device")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -1180,12 +1187,12 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testRelationshipsCreatesAndDeletesRelationship()
     {
-        let expectation = super.expectationWithDescription("test 'relationships' creates and deletes relationship")
+        let expectation = super.expectation(description: "test 'relationships' creates and deletes relationship")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -1245,12 +1252,12 @@ class RestClientTests: XCTestCase
             }
         }
         
-        super.waitForExpectationsWithTimeout(15, handler: nil)
+        super.waitForExpectations(timeout: 15, handler: nil)
     }
     
     func testAssetsRetrievesAsset()
     {
-        let expectation = super.expectationWithDescription("'assets' retrievs asset")
+        let expectation = super.expectation(description: "'assets' retrievs asset")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -1281,12 +1288,12 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectationsWithTimeout(30, handler: nil)
+        super.waitForExpectations(timeout: 30, handler: nil)
     }
     
     func testTransactionRetrievesTransactionsByUserId()
     {
-        let expectation = super.expectationWithDescription("'transaction' retrieves transactions by user id")
+        let expectation = super.expectation(description: "'transaction' retrieves transactions by user id")
         
         self.testHelper.createAndLoginUser(expectation)
         {
@@ -1336,7 +1343,7 @@ class RestClientTests: XCTestCase
             }
         }
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     /**
@@ -1344,16 +1351,16 @@ class RestClientTests: XCTestCase
     */
     func testCompareCreatedEpochToCreatedTS()
     {
-        let expectation = super.expectationWithDescription("'createdEpoch' converted correctly to seconds from ms")
+        let expectation = super.expectation(description: "'createdEpoch' converted correctly to seconds from ms")
         
         self.testHelper.createAndLoginUser(expectation)
         {
             [unowned self](user) in
             
-            let dateFormatter = NSDateFormatter()
-            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale!
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-            let nsdate = dateFormatter.dateFromString((user?.created)!)
+            let nsdate = dateFormatter.date(from: (user?.created)!)
             
             let epochDiff = abs((nsdate?.timeIntervalSince1970)! - (user?.createdEpoch)!)
             
@@ -1362,24 +1369,24 @@ class RestClientTests: XCTestCase
             self.testHelper.deleteUser(user, expectation: expectation)
         }
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testNSTimeIntervalToInt()
     {
-        let expectation = super.expectationWithDescription("NSTimeInterval converted to int correctly")
+        let expectation = super.expectation(description: "NSTimeInterval converted to int correctly")
         
-        let currentTime = NSDate().timeIntervalSince1970
+        let currentTime = Date().timeIntervalSince1970
         let timeTransform = NSTimeIntervalTransform()
         let timeAsInt = timeTransform.transformToJSON(currentTime)
         
         let intMirror = Mirror(reflecting: timeAsInt)
-        debugPrint(String(intMirror.subjectType))
-        XCTAssertTrue(String(intMirror.subjectType) == "Optional<Int64>")
+        debugPrint(String(describing: intMirror.subjectType))
+        XCTAssertTrue(String(describing: intMirror.subjectType) == "Optional<Int64>")
         
         expectation.fulfill()
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
 //    func testAPDUPackageConfirm()

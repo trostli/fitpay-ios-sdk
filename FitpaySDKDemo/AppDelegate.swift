@@ -13,7 +13,7 @@ import FitpaySDK
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    let restSession = RestSession(clientId: "pagare", redirectUri: "https://demo.pagare.me", authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
+    let restSession = RestSession(clientId: "fp_webapp_pJkVp2Rl", redirectUri: "https://webapp.fit-pay.com", authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL)
     var restClient:RestClient?
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {

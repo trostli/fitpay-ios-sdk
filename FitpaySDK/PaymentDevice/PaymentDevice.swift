@@ -1,34 +1,34 @@
 
 @objc public enum SecurityNFCState : Int
 {
-    case Disabled         = 0x00
-    case Enabled          = 0x01
-    case DoNotChangeState = 0xFF
+    case disabled         = 0x00
+    case enabled          = 0x01
+    case doNotChangeState = 0xFF
 }
 
 @objc public enum DeviceControlState : Int
 {
-    case ESEPowerOFF    = 0x00
-    case ESEPowerON     = 0x02
-    case ESEPowerReset  = 0x01
+    case esePowerOFF    = 0x00
+    case esePowerON     = 0x02
+    case esePowerReset  = 0x01
 }
 
 public enum ConnectionState : Int {
-    case New = 0
-    case Disconnected
-    case Connecting
-    case Connected
-    case Disconnecting
-    case Initialized
+    case new = 0
+    case disconnected
+    case connecting
+    case connected
+    case disconnecting
+    case initialized
 }
 
 @objc public enum PaymentDeviceEventTypes : Int, FitpayEventTypeProtocol {
-    case OnDeviceConnected = 0
-    case OnDeviceDisconnected
-    case OnNotificationReceived
-    case OnSecurityStateChanged
-    case OnApplicationControlReceived
-    case OnConnectionStateChanged
+    case onDeviceConnected = 0
+    case onDeviceDisconnected
+    case onNotificationReceived
+    case onSecurityStateChanged
+    case onApplicationControlReceived
+    case onConnectionStateChanged
     
     public func eventId() -> Int {
         return rawValue
@@ -36,66 +36,81 @@ public enum ConnectionState : Int {
     
     public func eventDescription() -> String {
         switch self {
-        case .OnDeviceConnected:
+        case .onDeviceConnected:
             return "On device connected or when error occurs, returns ['deviceInfo':DeviceInfo, 'error':ErrorType]."
-        case .OnDeviceDisconnected:
+        case .onDeviceDisconnected:
             return "On device disconnected."
-        case .OnNotificationReceived:
+        case .onNotificationReceived:
             return "On notification received, returns ['notificationData':NSData]."
-        case .OnSecurityStateChanged:
+        case .onSecurityStateChanged:
             return "On security state changed, return ['securityState':Int]."
-        case .OnApplicationControlReceived:
+        case .onApplicationControlReceived:
             return "On application control received"
-        case .OnConnectionStateChanged:
+        case .onConnectionStateChanged:
             return "On connection state changed, returns ['state':Int]"
         }
     }
 }
 
-public class PaymentDevice : NSObject
+open class PaymentDevice : NSObject
 {
-    public enum ErrorCode : Int, ErrorType, RawIntValue, CustomStringConvertible
+    public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible, CustomNSError
     {
-        case UnknownError               = 0
-        case BadBLEState                = 10001
-        case DeviceDataNotCollected     = 10002
-        case WaitingForAPDUResponse     = 10003
-        case APDUPacketCorrupted        = 10004
-        case APDUDataNotFull            = 10005
-        case APDUErrorResponse          = 10006
-        case APDUWrongSequenceId        = 10007
-        case APDUSendingTimeout         = 10008
-        case OperationTimeout           = 10009
-        case DeviceShouldBeDisconnected = 10010
-        case DeviceShouldBeConnected    = 10011
+        case unknownError               = 0
+        case badBLEState                = 10001
+        case deviceDataNotCollected     = 10002
+        case waitingForAPDUResponse     = 10003
+        case apduPacketCorrupted        = 10004
+        case apduDataNotFull            = 10005
+        case apduErrorResponse          = 10006
+        case apduWrongSequenceId        = 10007
+        case apduSendingTimeout         = 10008
+        case operationTimeout           = 10009
+        case deviceShouldBeDisconnected = 10010
+        case deviceShouldBeConnected    = 10011
+        case tryLater                   = 10012
         
         public var description : String {
             switch self {
-            case .UnknownError:
+            case .unknownError:
                 return "Unknown error"
-            case .BadBLEState:
+            case .badBLEState:
                 return "Can't connect to the device. BLE state: %d."
-            case .DeviceDataNotCollected:
+            case .deviceDataNotCollected:
                 return "Device data not collected."
-            case .WaitingForAPDUResponse:
+            case .waitingForAPDUResponse:
                 return "Waiting for APDU response."
-            case .APDUPacketCorrupted:
+            case .apduPacketCorrupted:
                 return "APDU packet checksum is not equal."
-            case .APDUDataNotFull:
+            case .apduDataNotFull:
                 return "APDU data not fully filled in."
-            case .OperationTimeout:
+            case .operationTimeout:
                 return "Connection timeout. Can't find device."
-            case .DeviceShouldBeDisconnected:
+            case .deviceShouldBeDisconnected:
                 return "Payment device should be disconnected."
-            case .DeviceShouldBeConnected:
+            case .deviceShouldBeConnected:
                 return "Payment device should be connected."
-            case .APDUSendingTimeout:
+            case .apduSendingTimeout:
                 return "APDU timeout error occurred."
-            case .APDUWrongSequenceId:
+            case .apduWrongSequenceId:
                 return "Received APDU with wrong sequenceId."
-            case .APDUErrorResponse:
+            case .apduErrorResponse:
                 return "Received APDU command with error response."
+            case .tryLater:
+                return "Device not ready for sync, try later."
             }
+        }
+        
+        public var errorCode: Int {
+            return self.rawValue
+        }
+        
+        public var errorUserInfo: [String : Any] {
+            return [NSLocalizedDescriptionKey : self.description]
+        }
+        
+        public static var errorDomain: String {
+            return "\(PaymentDevice.self)"
         }
     }
 
@@ -104,7 +119,7 @@ public class PaymentDevice : NSObject
      
      - parameter event: Provides event with payload in eventData property
      */
-    public typealias PaymentDeviceEventBlockHandler = (event:FitpayEvent) -> Void
+    public typealias PaymentDeviceEventBlockHandler = (_ event:FitpayEvent) -> Void
     
     /**
      Binds to the event using SyncEventType and a block as callback. 
@@ -112,7 +127,7 @@ public class PaymentDevice : NSObject
      - parameter eventType: type of event which you want to bind to
      - parameter completion: completion handler which will be called when event occurs
      */
-    public func bindToEvent(eventType eventType: PaymentDeviceEventTypes, completion: PaymentDeviceEventBlockHandler) -> FitpayEventBinding? {
+    open func bindToEvent(eventType: PaymentDeviceEventTypes, completion: @escaping PaymentDeviceEventBlockHandler) -> FitpayEventBinding? {
         return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion), eventId: eventType)
     }
     
@@ -123,21 +138,21 @@ public class PaymentDevice : NSObject
      - parameter completion: completion handler which will be called when event occurs
      - parameter queue: queue in which completion will be called
      */
-    public func bindToEvent(eventType eventType: PaymentDeviceEventTypes, completion: PaymentDeviceEventBlockHandler, queue: dispatch_queue_t) -> FitpayEventBinding? {
+    open func bindToEvent(eventType: PaymentDeviceEventTypes, completion: @escaping PaymentDeviceEventBlockHandler, queue: DispatchQueue) -> FitpayEventBinding? {
         return eventsDispatcher.addListenerToEvent(FitpayBlockEventListener(completion: completion, queue: queue), eventId: eventType)
     }
     
     /**
      Removes bind with eventType.
      */
-    public func removeBinding(binding binding: FitpayEventBinding) {
+    open func removeBinding(binding: FitpayEventBinding) {
         eventsDispatcher.removeBinding(binding)
     }
     
     /**
      Removes all bindings.
      */
-    public func removeAllBindings() {
+    open func removeAllBindings() {
         eventsDispatcher.removeAllBindings()
     }
     
@@ -147,20 +162,21 @@ public class PaymentDevice : NSObject
      
      - parameter secsTimeout: timeout for connection process in seconds. If nil then there is no timeout.
      */
-    public func connect(secsTimeout: Int? = nil) {
+    open func connect(_ secsTimeout: Int? = nil) {
         if isConnected {
             self.deviceInterface.resetToDefaultState()
         }
         
-        self.connectionState = ConnectionState.Connecting
+        self.connectionState = ConnectionState.connecting
 
         if let secsTimeout = secsTimeout {
-            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(UInt64(secsTimeout) * NSEC_PER_SEC))
-            dispatch_after(delayTime, dispatch_get_main_queue()) {
+            let delayTime = DispatchTime.now() + Double(Int64(UInt64(secsTimeout) * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)
+            DispatchQueue.main.asyncAfter(deadline: delayTime) {
                 [unowned self] () -> Void in
                 if (!self.isConnected || self.deviceInfo == nil) {
                     self.deviceInterface.resetToDefaultState()
-                    self.callCompletionForEvent(PaymentDeviceEventTypes.OnDeviceConnected, params: ["error":NSError.error(code: PaymentDevice.ErrorCode.OperationTimeout, domain: PaymentDevice.self)])
+                    self.callCompletionForEvent(PaymentDeviceEventTypes.onDeviceConnected, params: ["error":NSError.error(code: PaymentDevice.ErrorCode.operationTimeout, domain: PaymentDevice.self)])
+                    self.connectionState = .disconnected
                 }
             }
         }
@@ -171,38 +187,45 @@ public class PaymentDevice : NSObject
     /**
      Close connection with payment device.
      */
-    public func disconnect() {
-        self.connectionState = ConnectionState.Disconnecting
+    open func disconnect() {
+        self.connectionState = ConnectionState.disconnecting
         self.deviceInterface.disconnect()
     }
     
     /**
      Returns state of connection.
      */
-    public internal(set) var connectionState : ConnectionState = ConnectionState.New {
+    open var connectionState : ConnectionState = ConnectionState.new {
         didSet {
-            callCompletionForEvent(PaymentDeviceEventTypes.OnConnectionStateChanged, params: ["state" : NSNumber(integer: connectionState.rawValue)])
+            callCompletionForEvent(PaymentDeviceEventTypes.onConnectionStateChanged, params: ["state" : NSNumber(value: connectionState.rawValue as Int)])
         }
     }
     
     /**
      Returns true if phone connected to payment device and device info was collected.
      */
-    public var isConnected : Bool {
+    open var isConnected : Bool {
         return self.deviceInterface.isConnected()
+    }
+    
+    /**
+     Tries to validate connection.
+     */
+    open func validateConnection(completion : @escaping (_ isValid:Bool, _ error: NSError?) -> Void) {
+        self.deviceInterface.validateConnection(completion: completion)
     }
     
     /**
      Returns DeviceInfo if phone already connected to payment device.
      */
-    public var deviceInfo : DeviceInfo? {
+    open var deviceInfo : DeviceInfo? {
         return self.deviceInterface.deviceInfo()
     }
     
     /**
      Returns NFC state on payment device.
      */
-    public var nfcState : SecurityNFCState {
+    open var nfcState : SecurityNFCState {
         return self.deviceInterface.nfcState()
     }
     
@@ -212,7 +235,7 @@ public class PaymentDevice : NSObject
      
      - parameter state: desired security state
      */
-    public func sendDeviceControl(state: DeviceControlState) -> NSError? {
+    open func sendDeviceControl(_ state: DeviceControlState) -> NSError? {
         return self.deviceInterface.sendDeviceControl(state)
     }
     
@@ -222,7 +245,7 @@ public class PaymentDevice : NSObject
      
      - parameter notificationData: //TODO:????
      */
-    public func sendNotification(notificationData: NSData) -> NSError? {
+    open func sendNotification(_ notificationData: Data) -> NSError? {
         return self.deviceInterface.sendNotification(notificationData)
     }
     
@@ -233,7 +256,7 @@ public class PaymentDevice : NSObject
      - parameter state: desired security state
      */
     // TODO: shoud it be public?
-    internal func writeSecurityState(state:SecurityNFCState) -> NSError? {
+    internal func writeSecurityState(_ state:SecurityNFCState) -> NSError? {
         return self.deviceInterface.writeSecurityState(state)
     }
     
@@ -243,9 +266,11 @@ public class PaymentDevice : NSObject
      Also implementation should call PaymentDevice.callCompletionForEvent() for events.
      Can be changed if device disconnected.
      */
-    @objc public func changeDeviceInterface(interface: IPaymentDeviceConnector) -> NSError? {
-        if isConnected {
-            return NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeDisconnected, domain: IPaymentDeviceConnector.self)
+    @objc open func changeDeviceInterface(_ interface: IPaymentDeviceConnector) -> NSError? {
+        if interface !== self.deviceInterface {
+            guard !isConnected else {
+                return NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeDisconnected, domain: IPaymentDeviceConnector.self)
+            }
         }
         
         self.deviceInterface = interface
@@ -253,10 +278,10 @@ public class PaymentDevice : NSObject
     }
     
     internal var deviceInterface : IPaymentDeviceConnector!
-    private let eventsDispatcher = FitpayEventDispatcher()
+    fileprivate let eventsDispatcher = FitpayEventDispatcher()
     
-    public typealias APDUResponseHandler = (apduResponse:ApduResultMessage?, error:ErrorType?)->Void
-    public var apduResponseHandler : APDUResponseHandler?
+    public typealias APDUResponseHandler = (_ apduResponse:ApduResultMessage?, _ error:Error?)->Void
+    open var apduResponseHandler : APDUResponseHandler?
     
     override public init() {
         super.init()
@@ -264,46 +289,43 @@ public class PaymentDevice : NSObject
         self.deviceInterface = BluetoothPaymentDeviceConnector(paymentDevice: self)
     }
     
-    internal func sendAPDUData(data: NSData, sequenceNumber: UInt16, completion: APDUResponseHandler) {
+    internal func sendAPDUCommand(_ apduCommand:APDUCommand, completion: @escaping APDUResponseHandler) {
         guard isConnected else {
-            completion(apduResponse: nil, error: NSError.error(code: PaymentDevice.ErrorCode.DeviceShouldBeConnected, domain: IPaymentDeviceConnector.self))
+            completion(nil, NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeConnected, domain: IPaymentDeviceConnector.self))
             return
         }
         
         self.apduResponseHandler = completion
-        self.deviceInterface.sendAPDUData(data, sequenceNumber: sequenceNumber)
+        print("--- calling device interface to execute APDU's ---")
+        self.deviceInterface.executeAPDUCommand(apduCommand)
     }
     
-    internal typealias APDUExecutionHandler = (apduCommand:APDUCommand?, error:ErrorType?)->Void
-    internal func executeAPDUCommand(inout apduCommand: APDUCommand, completion: APDUExecutionHandler) {
-        guard let commandData = apduCommand.command?.hexToData() else {
-            completion(apduCommand: nil, error: NSError.error(code: PaymentDevice.ErrorCode.APDUDataNotFull, domain: IPaymentDeviceConnector.self))
-            return
-        }
-        
-        self.sendAPDUData(commandData, sequenceNumber: UInt16(apduCommand.sequence))
+    internal typealias APDUExecutionHandler = (_ apduCommand:APDUCommand?, _ error:Error?)->Void
+    internal func executeAPDUCommand(_ apduCommand: APDUCommand, completion: @escaping APDUExecutionHandler) {
+        self.sendAPDUCommand(apduCommand)
         {
             (apduResponse, error) -> Void in
             
             if let error = error {
-                completion(apduCommand: apduCommand, error: error)
+                completion(apduCommand, error)
                 return
             }
+
             print("apduResponse \(apduResponse)")
             
             apduCommand.responseData = apduResponse?.msg.hex
             apduCommand.responseCode = apduResponse?.responseCode.hex
             
-            if apduCommand.responseType == APDUResponseType.Error {
-                completion(apduCommand: apduCommand, error: NSError.error(code: PaymentDevice.ErrorCode.APDUErrorResponse, domain: IPaymentDeviceConnector.self))
+            if apduCommand.responseType == APDUResponseType.error {
+                completion(apduCommand, NSError.error(code: PaymentDevice.ErrorCode.apduErrorResponse, domain: IPaymentDeviceConnector.self))
                 return
             }
             
-            completion(apduCommand: apduCommand, error: nil)
+            completion(apduCommand, nil)
         }
     }
     
-    public func callCompletionForEvent(eventType: FitpayEventTypeProtocol, params: [String:AnyObject] = [:]) {
+    open func callCompletionForEvent(_ eventType: FitpayEventTypeProtocol, params: [String:Any] = [:]) {
         eventsDispatcher.dispatchEvent(FitpayEvent(eventId: eventType, eventData: params))
     }
 }

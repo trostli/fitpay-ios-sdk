@@ -1,12 +1,12 @@
 
 import ObjectMapper
 
-public class Asset : NSObject
+open class Asset : NSObject
 {
     // Only one item available for specific context
     var text:String?
     var image:UIImage?
-    var data:NSData?
+    var data:Data?
     
     init(text:String)
     {
@@ -18,7 +18,7 @@ public class Asset : NSObject
         self.image = image
     }
     
-    init(data:NSData)
+    init(data:Data)
     {
         self.data = data
     }

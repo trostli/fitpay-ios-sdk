@@ -6,12 +6,12 @@
 //  Copyright © 2016 Fitpay. All rights reserved.
 //
 
-public class FitpayEvent: NSObject {
+open class FitpayEvent: NSObject {
 
-    public private(set) var eventId : FitpayEventTypeProtocol
-    public private(set) var eventData : AnyObject
+    open fileprivate(set) var eventId : FitpayEventTypeProtocol
+    open fileprivate(set) var eventData : Any
     
-    public init(eventId: FitpayEventTypeProtocol, eventData: AnyObject) {
+    public init(eventId: FitpayEventTypeProtocol, eventData: Any) {
         
         self.eventData = eventData
         self.eventId = eventId

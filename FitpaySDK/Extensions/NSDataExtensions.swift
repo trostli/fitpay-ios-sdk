@@ -1,21 +1,21 @@
 
 import Foundation
 
-extension NSData
+extension Data
 {
     var UTF8String:String?
     {
-        return self.stringWithEncoding(NSUTF8StringEncoding)
+        return self.stringWithEncoding(String.Encoding.utf8)
     }
 
-    @inline(__always) func stringWithEncoding(encoding:NSStringEncoding) -> String?
+    @inline(__always) func stringWithEncoding(_ encoding:String.Encoding) -> String?
     {
         return String(data: self, encoding: encoding)
     }
 
     var dictionary:Dictionary<String, AnyObject>?
     {
-        guard let dictionary:[String : AnyObject] = try? NSJSONSerialization.JSONObjectWithData(self, options:.MutableContainers) as! [String : AnyObject] else
+        guard let dictionary:[String : AnyObject] = try? JSONSerialization.jsonObject(with: self, options:.mutableContainers) as! [String : AnyObject] else
         {
             return nil
         }
@@ -63,10 +63,11 @@ extension NSData
     {
         let SHA_DIGEST_LENGTH = OpenSSLHelper.sharedInstance().shaDigestLength()
         let result = NSMutableData(length: Int(SHA_DIGEST_LENGTH*2))!
-        guard OpenSSLHelper.sharedInstance().simpleSHA1(bytes, length: UInt(length), output: UnsafeMutablePointer<Int8>(result.mutableBytes)) else {
+        
+        guard OpenSSLHelper.sharedInstance().simpleSHA1((self as NSData).bytes, length: UInt(count), output: result.mutableBytes.bindMemory(to:Int8.self, capacity: Int(SHA_DIGEST_LENGTH*2))) else {
             return nil
         }
-        return String(data: result, encoding: NSUTF8StringEncoding)
+        return String(data: result as Data, encoding: String.Encoding.utf8)
     }
     
     var hex:String
@@ -74,24 +75,24 @@ extension NSData
         var s = ""
         
         var byte: UInt8 = 0
-        for i in 0 ..< self.length {
-            self.getBytes(&byte, range: NSMakeRange(i, 1))
+        for i in 0 ..< self.count {
+            (self as NSData).getBytes(&byte, range: NSMakeRange(i, 1))
             s += String(format: "%02x", byte)
         }
         
         return s
     }
     
-    var reverseEndian:NSData {
-        var inData = [UInt8](count: self.length, repeatedValue: 0)
-        self.getBytes(&inData, length: self.length)
-        var outData = [UInt8](count: self.length, repeatedValue: 0)
+    var reverseEndian:Data {
+        var inData = [UInt8](repeating: 0, count: self.count)
+        (self as NSData).getBytes(&inData, length: self.count)
+        var outData = [UInt8](repeating: 0, count: self.count)
         var outPos = inData.count;
         for i in 0 ..< inData.count {
             outPos -= 1
             outData[i] = inData[outPos]
         }
-        let out = NSData(bytes: outData, length: outData.count)
+        let out = Data(bytes: UnsafePointer<UInt8>(outData), count: outData.count)
         return out
     }
 }

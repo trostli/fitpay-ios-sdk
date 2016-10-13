@@ -8,13 +8,20 @@ class RestSessionTests: XCTestCase {
     var session:RestSession!
     var client:RestClient!
     var testHelper:TestHelpers!
-    let clientId = "pagare"
-    let redirectUri = "https://demo.pagare.me"
+    var clientId = "fp_webapp_pJkVp2Rl"
+    let redirectUri = "https://webapp.fit-pay.com"
     let password = "1029"
     
     override func setUp() {
         super.setUp()
-        self.session = RestSession(configuration: FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, authorizeURL: AUTHORIZE_URL, baseAPIURL: API_BASE_URL))
+        let config = FitpaySDKConfiguration(clientId:clientId, redirectUri:redirectUri, baseAuthURL: AUTHORIZE_BASE_URL, baseAPIURL: API_BASE_URL)
+        if let error = config.loadEnvironmentVariables() {
+            print("Can't load config from environment. Error: \(error)")
+        } else {
+            clientId = config.clientId
+        }
+        
+        self.session = RestSession(configuration: config)
         self.client = RestClient(session: self.session!)
         self.testHelper = TestHelpers(clientId: clientId, redirectUri: redirectUri, session: self.session, client: self.client)
     }
@@ -27,7 +34,7 @@ class RestSessionTests: XCTestCase {
     
     func testAcquireAccessTokenRetrievesToken() {
         let email = self.testHelper.randomEmail()
-        let expectation = super.expectationWithDescription("'acquireAccessToken' retrieves auth details")
+        let expectation = super.expectation(description: "'acquireAccessToken' retrieves auth details")
 
         self.client.createUser(
             email, password: self.password, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
@@ -50,12 +57,12 @@ class RestSessionTests: XCTestCase {
             });
         })
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testLoginRetrievesUserId() {
         let email = self.testHelper.randomEmail()
-        let expectation = super.expectationWithDescription("'login' retrieves user id")
+        let expectation = super.expectation(description: "'login' retrieves user id")
 
         self.client.createUser(
             email, password: self.password, firstName: nil, lastName: nil, birthDate: nil, termsVersion: nil,
@@ -74,11 +81,11 @@ class RestSessionTests: XCTestCase {
             }
         })
 
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testLoginFailsForWrongCredentials() {
-        let expectation = super.expectationWithDescription("'login' fails for wrong credentials")
+        let expectation = super.expectation(description: "'login' fails for wrong credentials")
         
         self.session.login(username: "totally@wrong.abc", password:"fail") {
                 [unowned self]
@@ -90,6 +97,6 @@ class RestSessionTests: XCTestCase {
                 expectation.fulfill()
         }
         
-        super.waitForExpectationsWithTimeout(10, handler: nil)
+        super.waitForExpectations(timeout: 10, handler: nil)
     }
 }

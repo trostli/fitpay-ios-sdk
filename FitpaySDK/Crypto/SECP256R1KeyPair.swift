@@ -3,7 +3,7 @@ class SECP256R1KeyPair
 {
     static let sharedInstance = SECP256R1KeyPair()
 
-    private let keyPair = SECP256R1KeyPairContainer()
+    fileprivate let keyPair = SECP256R1KeyPairContainer()
 
     var publicKey:String?
     {
@@ -15,8 +15,8 @@ class SECP256R1KeyPair
         return self.keyPair.privateKey
     }
     
-    func generateSecretForPublicKey(publicKey:String) -> NSData?
+    func generateSecretForPublicKey(_ publicKey:String) -> Data?
     {
-        return self.keyPair.generateSecretForPublicKey(publicKey)
+        return self.keyPair.generateSecret(forPublicKey: publicKey)
     }
 }

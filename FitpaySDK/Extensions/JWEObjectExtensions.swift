@@ -3,7 +3,7 @@ import ObjectMapper
 
 extension JWEObject
 {
-    class func decrypt<T:Mappable>(encryptedData:String?, expectedKeyId:String?, secret:NSData )->T?
+    class func decrypt<T:Mappable>(_ encryptedData:String?, expectedKeyId:String?, secret:Data )->T?
     {
         if let encryptedData = encryptedData
         {
@@ -16,14 +16,14 @@ extension JWEObject
                     {
                         if let decryptResult = try? jweResult?.decrypt(secret)
                         {
-                            return Mapper<T>().map(decryptResult)
+                            return Mapper<T>().map(JSONString: decryptResult!)
                         }
                     }
                 }
             } else {
                 if let decryptResult = try? jweResult?.decrypt(secret)
                 {
-                    return Mapper<T>().map(decryptResult)
+                    return Mapper<T>().map(JSONString: decryptResult!)
                 }
             }
         }

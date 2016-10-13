@@ -2,8 +2,42 @@
 import Foundation
 import Alamofire
 import AlamofireObjectMapper
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
 
-public class RestClient : NSObject
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
+class CustomJSONArrayEncoding : ParameterEncoding {
+    public static var `default`: CustomJSONArrayEncoding { return CustomJSONArrayEncoding() }
+    
+    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
+        var mutableRequest = try urlRequest.asURLRequest()
+        let jsondata = try? JSONSerialization.data(withJSONObject: parameters!["params"]!, options: JSONSerialization.WritingOptions(rawValue: 0))
+        if let jsondata = jsondata {
+            mutableRequest.httpBody = jsondata
+            mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+        return mutableRequest
+    }
+}
+
+
+open class RestClient : NSObject
 {
     /**
      FitPay uses conventional HTTP response codes to indicate success or failure of an API request. In general, codes in the 2xx range indicate success, codes in the 4xx range indicate an error that resulted from the provided information (e.g. a required parameter was missing, etc.), and codes in the 5xx range indicate an error with FitPay servers.
@@ -17,34 +51,34 @@ public class RestClient : NSObject
      - NotFound:         The requested item doesn't exist
      - ServerError[0-3]: Something went wrong on FitPay's end
      */
-    public enum ErrorCode : Int, ErrorType, RawIntValue
+    public enum ErrorCode : Int, Error, RawIntValue
     {
-        case OK = 200
-        case BadRequest = 400
-        case Unauthorized = 401
-        case RequestFailed = 402
-        case NotFound = 404
-        case ServerError0 = 500
-        case ServerError1 = 502
-        case ServerError2 = 503
-        case ServerError3 = 504
+        case ok = 200
+        case badRequest = 400
+        case unauthorized = 401
+        case requestFailed = 402
+        case notFound = 404
+        case serverError0 = 500
+        case serverError1 = 502
+        case serverError2 = 503
+        case serverError3 = 504
     }
 
-    private static let fpKeyIdKey:String = "fp-key-id"
+    fileprivate static let fpKeyIdKey:String = "fp-key-id"
 
-    private let defaultHeaders = ["Accept" : "application/json"]
-    private var _session:RestSession
+    fileprivate let defaultHeaders = ["Accept" : "application/json"]
+    fileprivate var _session:RestSession
     internal var keyPair:SECP256R1KeyPair = SECP256R1KeyPair()
 
-    lazy private var _manager:Manager =
+    lazy fileprivate var _manager:SessionManager =
     {
-        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-        configuration.HTTPAdditionalHeaders = Manager.defaultHTTPHeaders
-        configuration.requestCachePolicy = .ReloadIgnoringLocalCacheData
-        return Manager(configuration: configuration)
+        let configuration = URLSessionConfiguration.default
+        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        return SessionManager(configuration: configuration)
     }()
 
-    private var key:EncryptionKey?
+    fileprivate var key:EncryptionKey?
 
     public init(session:RestSession)
     {
@@ -59,7 +93,7 @@ public class RestClient : NSObject
      - parameter ResultCollection<User>?: Provides ResultCollection<User> object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    public typealias ListUsersHandler = (ResultCollection<User>?, ErrorType?)->Void
+    public typealias ListUsersHandler = (ResultCollection<User>?, Error?)->Void
 
     /**
       Returns a list of all users that belong to your organization. The customers are returned sorted by creation date, with the most recently created customers appearing first
@@ -68,7 +102,7 @@ public class RestClient : NSObject
      - parameter offset:     Start index position for list of entities returned
      - parameter completion: ListUsersHandler closure
      */
-    public func listUsers(limit limit:Int, offset:Int, completion: ListUsersHandler)
+    open func listUsers(limit:Int, offset:Int, completion: ListUsersHandler)
     {
         //TODO: Implement or remove this
         assertionFailure("unimplemented functionality")
@@ -80,7 +114,7 @@ public class RestClient : NSObject
      - parameter [User]?: Provides created User object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    public typealias CreateUserHandler = (user:User?, error:NSError?)->Void
+    public typealias CreateUserHandler = (_ user:User?, _ error:NSError?)->Void
     
     /**
      Creates a new user within your organization
@@ -91,10 +125,10 @@ public class RestClient : NSObject
      - parameter email:      email of the user
      - parameter completion: CreateUserHandler closure
      */
-    public func createUser(
-        email:String, password:String, firstName:String?, lastName:String?, birthDate:String?,
+    open func createUser(
+        _ email:String, password:String, firstName:String?, lastName:String?, birthDate:String?,
         termsVersion:String?, termsAccepted:String?, origin:String?, originAccountCreated:String?,
-        clientId:String, completion:CreateUserHandler
+        clientId:String, completion:@escaping CreateUserHandler
     ) {
         debugPrint("request create user: \(email)")
 
@@ -104,38 +138,38 @@ public class RestClient : NSObject
                 if let headers = headers
                 {
                     debugPrint("got headers: \(headers)")
-                    var parameters:[String : String] = [:]
+                    var parameters:[String : Any] = [:]
                     if (termsVersion != nil) {
-                        parameters + ["termsVersion": termsVersion!]
+                        parameters += ["termsVersion": termsVersion!]
                     }
                     if (termsAccepted != nil) {
-                        parameters + ["termsAcceptedTsEpoch": termsAccepted!]
+                        parameters += ["termsAcceptedTsEpoch": termsAccepted!]
                     }
                     
                     if (origin != nil) {
-                        parameters + ["origin": origin!]
+                        parameters += ["origin": origin!]
                     }
                     
                     if (termsVersion != nil) {
-                        parameters + ["originAccountCreatedTsEpoch": originAccountCreated!]
+                        parameters += ["originAccountCreatedTsEpoch": originAccountCreated!]
                     }
 
                     parameters["client_id"] = clientId
 
-                    let rawUserInfo = [
-                        "email" : email,
-                        "pin" : password
-                        ] as [String : AnyObject]
+                    var rawUserInfo = [
+                        "email" : email as AnyObject,
+                        "pin" : password as AnyObject
+                        ] as [String : Any]
                     if (firstName != nil) {
-                        rawUserInfo + ["firstName" : firstName!]
+                        rawUserInfo += ["firstName" : firstName!]
                     }
                     
                     if (lastName != nil) {
-                        rawUserInfo + ["lastName" : lastName!]
+                        rawUserInfo += ["lastName" : lastName!]
                     }
                     
                     if (birthDate != nil) {
-                        rawUserInfo + ["birthDate" : birthDate!]
+                        rawUserInfo += ["birthDate" : birthDate!]
                     }
                     
                     if let userInfoJSON = rawUserInfo.JSONString
@@ -153,40 +187,35 @@ public class RestClient : NSObject
                     debugPrint("Headers: \(headers)")
                     debugPrint("user creation json: \(parameters)")
                     
-                    let request = self._manager.request(.POST, self._session.baseAPIURL + "/users", parameters: parameters, encoding: .JSON, headers: headers)
+                    let request = self._manager.request(self._session.baseAPIURL + "/users", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                     
-                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                         {
-                            (response:Response<User, NSError>) -> Void in
-                            
-                            dispatch_async(dispatch_get_main_queue(),
+                            (response:DataResponse<User>) in
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
                                 {
-                                    () -> Void in
-                                    
-                                    if let resultError = response.result.error
-                                    {
-                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        completion(user: nil, error: error)
-                                    }
-                                    else if let resultValue = response.result.value
-                                    {
-                                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                                        resultValue.client = self
-                                        completion(user:resultValue, error: nil)
-                                    }
-                                    else
-                                    {
-                                        completion(user:nil, error: NSError.unhandledError(RestClient.self))
-                                    }
-                            })
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    completion(nil, error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                    resultValue.client = self
+                                    completion(resultValue, nil)
+                                }
+                                else
+                                {
+                                    completion(nil, NSError.unhandledError(RestClient.self))
+                                }
+                            }
                     })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                        {
+                    DispatchQueue.main.async(execute: {
                             () -> Void in
-                            completion(user:nil, error: error)
+                            completion(nil, error)
                     })
                 }
         }
@@ -198,54 +227,53 @@ public class RestClient : NSObject
      - parameter user: Provides User object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias UserHandler = (user:User?, error:NSError?)->Void
+    public typealias UserHandler = (_ user:User?, _ error:NSError?)->Void
     /**
      Retrieves the details of an existing user. You need only supply the unique user identifier that was returned upon user creation
      
      - parameter id:         user id
      - parameter completion: UserHandler closure
      */
-    @objc public func user(id id:String, completion:UserHandler)
+    @objc open func user(id:String, completion:@escaping UserHandler)
     {
         self.prepareAuthAndKeyHeaders(
         {
             [unowned self](headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.GET, self._session.baseAPIURL + "/users/" + id, parameters: nil, encoding: .JSON, headers: headers)
+                let request = self._manager.request(self._session.baseAPIURL + "/users/" + id, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
                 request.validate().responseObject(
-                queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                queue: DispatchQueue.global(), completionHandler:
                 {
-                    (response: Response<User, NSError>) -> Void in
+                    (response: DataResponse<User>) -> Void in
                     
-                    dispatch_async(dispatch_get_main_queue(),
+                    DispatchQueue.main.async
                     {
                         () -> Void in
                         if let resultError = response.result.error
                         {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                             
-                            completion(user:nil, error: error)
+                            completion(nil, error)
                         }
                         else if let resultValue = response.result.value
                         {
                             resultValue.client = self
                             resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                            completion(user:resultValue, error:response.result.error)
+                            completion(resultValue, response.result.error as NSError?)
                         }
                         else
                         {
-                            completion(user: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(nil, NSError.unhandledError(RestClient.self))
                         }
-                    })
+                    }
                 })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                {
+                DispatchQueue.main.async(execute: {
                     () -> Void in
-                    completion(user: nil, error: error)
+                    completion(nil, error)
                 })
             }
             
@@ -258,7 +286,7 @@ public class RestClient : NSObject
      - parameter User?: Provides updated User object, or nil if error occurs
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    public typealias UpdateUserHandler = (user:User?, error:NSError?)->Void
+    public typealias UpdateUserHandler = (_ user:User?, _ error:NSError?)->Void
     
     /**
      Update the details of an existing user
@@ -272,7 +300,7 @@ public class RestClient : NSObject
      - parameter termsVersion:         terms version formatted as [0.0.0]
      - parameter completion:           UpdateUserHandler closure
      */
-    internal func updateUser(url:String, firstName:String?, lastName:String?, birthDate:String?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:UpdateUserHandler)
+    internal func updateUser(_ url:String, firstName:String?, lastName:String?, birthDate:String?, originAccountCreated:String?, termsAccepted:String?, termsVersion:String?, completion:@escaping UpdateUserHandler)
     {
         self.prepareAuthAndKeyHeaders
             {
@@ -280,7 +308,7 @@ public class RestClient : NSObject
                 if let headers = headers
                 {
                     
-                    var operations = [AnyObject]()
+                    var operations = [Any]()
                     
                     if let firstName = firstName
                     {
@@ -320,41 +348,41 @@ public class RestClient : NSObject
                         {
                             if let encrypted = try? jweObject?.encrypt(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!)!
                             {
-                                parameters["encryptedData"] = encrypted
+                                parameters["encryptedData"] = encrypted as AnyObject?
                             }
                         }
                     }
 
-                    let request = self._manager.request(.PATCH, url, parameters: parameters, encoding: .JSON, headers: headers)
+                    let request = self._manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                     request.validate().responseObject(
-                        queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        queue: DispatchQueue.global(), completionHandler:
                         {
-                            [unowned self] (response: Response<User, NSError>) -> Void in
+                            [unowned self] (response: DataResponse<User>) -> Void in
                             
-                            dispatch_async(dispatch_get_main_queue(),
+                            DispatchQueue.main.async
                             {
                                 if let resultError = response.result.error
                                 {
-                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                                     
-                                    completion(user:nil, error: error)
+                                    completion(nil, error)
                                 }
                                 else if let resultValue = response.result.value
                                 {
                                     resultValue.client = self
                                     resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                                    completion(user:resultValue, error:response.result.error)
+                                    completion(resultValue, response.result.error as NSError?)
                                 }
                                 else
                                 {
-                                    completion(user: nil, error: NSError.unhandledError(RestClient.self))
+                                    completion(nil, NSError.unhandledError(RestClient.self))
                                 }
-                            })
+                            }
                         })
                 }
                 else
                 {
-                    completion(user:nil, error: error)
+                    completion(nil, error)
                 }
         }
 
@@ -365,7 +393,7 @@ public class RestClient : NSObject
      
      - parameter ErrorType?: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteUserHandler = (error:NSError?)->Void
+    public typealias DeleteUserHandler = (_ error:NSError?)->Void
 
     /**
      Delete a single user from your organization
@@ -373,27 +401,27 @@ public class RestClient : NSObject
      - parameter id:         user id
      - parameter completion: DeleteUserHandler closure
      */
-    internal func deleteUser(url:String, completion:DeleteUserHandler)
+    internal func deleteUser(_ url:String, completion:@escaping DeleteUserHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
             (headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .URLEncodedInURL, headers: headers)
+                let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
                 request.validate().responseString
                 {
-                    (response:Response<String, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                        {
-                            () -> Void in
-                            completion(error:response.result.error)
-                    })
+                    (response:DataResponse<String>) -> Void in
+                    DispatchQueue.main.async
+                    {
+                        () -> Void in
+                        completion(response.result.error as NSError?)
+                    }
                 }
             }
             else
             {
-                completion(error: error)
+                completion(error)
             }
         }
     }
@@ -405,7 +433,7 @@ public class RestClient : NSObject
      - parameter relationship: Provides created Relationship object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias CreateRelationshipHandler = (relationship:Relationship?, error:NSError?)->Void
+    public typealias CreateRelationshipHandler = (_ relationship:Relationship?, _ error:NSError?)->Void
 
     /**
      Creates a relationship between a device and a creditCard
@@ -415,7 +443,7 @@ public class RestClient : NSObject
      - parameter deviceId:     device id
      - parameter completion:   CreateRelationshipHandler closure
      */
-    internal func createRelationship(url:String, creditCardId:String, deviceId:String, completion:CreateRelationshipHandler)
+    internal func createRelationship(_ url:String, creditCardId:String, deviceId:String, completion:@escaping CreateRelationshipHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -425,34 +453,34 @@ public class RestClient : NSObject
                     "creditCardId" : "\(creditCardId)",
                     "deviceId" : "\(deviceId)"
                 ]
-                let request = self._manager.request(.PUT, url + "/relationships", parameters: parameters, encoding: .URLEncodedInURL, headers: headers)
+                let request = self._manager.request(url + "/relationships", method: .put, parameters: parameters, encoding: URLEncoding.queryString, headers: headers)
+                debugPrint(request)
                 request.validate().responseObject(
-                queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                queue: DispatchQueue.global(), completionHandler:
                 {
-                    (response: Response<Relationship, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
+                    (response: DataResponse<Relationship>) -> Void in
+                    DispatchQueue.main.async {
                         if let resultError = response.result.error
                         {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                             
-                            completion(relationship:nil, error: error)
+                            completion(nil, error)
                         }
                         else if let resultValue = response.result.value
                         {
                             resultValue.client = self
-                            completion(relationship:resultValue, error:response.result.error)
+                            completion(resultValue, response.result.error as NSError?)
                         }
                         else
                         {
-                            completion(relationship: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(nil, NSError.unhandledError(RestClient.self))
                         }
-                    })
+                    }
                 })
             }
             else
             {
-                completion(relationship: nil, error: error)
+                completion(nil, error)
             }
         }
     }
@@ -462,7 +490,7 @@ public class RestClient : NSObject
      
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteRelationshipHandler = (error:NSError?)->Void
+    public typealias DeleteRelationshipHandler = (_ error:NSError?)->Void
     
     /**
     Completion handler
@@ -470,7 +498,7 @@ public class RestClient : NSObject
     - parameter creditCard: Provides credit card object, or nil if error occurs
     - parameter error:      Provides error object, or nil if no error occurs
     */
-    public typealias CreateCreditCardHandler = (creditCard:CreditCard?, error:NSError?)->Void
+    public typealias CreateCreditCardHandler = (_ creditCard:CreditCard?, _ error:NSError?)->Void
     
     /**
     Completion handler
@@ -478,7 +506,7 @@ public class RestClient : NSObject
     - parameter result: Provides collection of credit cards, or nil if error occurs
     - parameter error:  Provides error object, or nil if no error occurs
     */
-    public typealias CreditCardsHandler = (result:ResultCollection<CreditCard>?, error:NSError?) -> Void
+    public typealias CreditCardsHandler = (_ result:ResultCollection<CreditCard>?, _ error:NSError?) -> Void
 
     /**
      Completion handler
@@ -486,14 +514,14 @@ public class RestClient : NSObject
      - parameter creditCard: Provides credit card object, or nil if error occurs
      - parameter error:  Provides error object, or nil if no error occurs
      */
-    public typealias CreditCardHandler = (creditCard:CreditCard?, error:NSError?)->Void
+    public typealias CreditCardHandler = (_ creditCard:CreditCard?, _ error:NSError?)->Void
         
     /**
      Completion handler
      
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias DeleteCreditCardHandler = (error:NSError?)->Void
+    public typealias DeleteCreditCardHandler = (_ error:NSError?)->Void
     
     /**
      Completion handler
@@ -501,7 +529,7 @@ public class RestClient : NSObject
      - parameter creditCard: Provides credit card object, or nil if error occurs
      - parameter error:  Provides error object, or nil if no error occurs
      */
-    public typealias UpdateCreditCardHandler = (creditCard:CreditCard?, error:NSError?) -> Void
+    public typealias UpdateCreditCardHandler = (_ creditCard:CreditCard?, _ error:NSError?) -> Void
     
     /**
      Completion handler
@@ -510,7 +538,7 @@ public class RestClient : NSObject
      - parameter card?:   Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error?:  Provides error object, or nil if no error occurs
      */
-    public typealias AcceptTermsHandler = (pending:Bool, card:CreditCard?, error:NSError?)->Void
+    public typealias AcceptTermsHandler = (_ pending:Bool, _ card:CreditCard?, _ error:NSError?)->Void
     
     /**
      Completion handler
@@ -519,7 +547,7 @@ public class RestClient : NSObject
      - parameter card:    Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:   Provides error object, or nil if no error occurs
      */
-    public typealias DeclineTermsHandler = (pending:Bool, card:CreditCard?, error:NSError?)->Void
+    public typealias DeclineTermsHandler = (_ pending:Bool, _ card:CreditCard?, _ error:NSError?)->Void
     
     /**
      Completion handler
@@ -528,7 +556,7 @@ public class RestClient : NSObject
      - parameter creditCard:  Provides updated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:       Provides error object, or nil if no error occurs
      */
-    public typealias MakeDefaultHandler = (pending:Bool, creditCard:CreditCard?, error:NSError?)->Void
+    public typealias MakeDefaultHandler = (_ pending:Bool, _ creditCard:CreditCard?, _ error:NSError?)->Void
 
     /**
      Completion handler
@@ -537,7 +565,7 @@ public class RestClient : NSObject
      - parameter creditCard: Provides deactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:      Provides error object, or nil if no error occurs
      */
-    public typealias DeactivateHandler = (pending:Bool, creditCard:CreditCard?, error:NSError?)->Void
+    public typealias DeactivateHandler = (_ pending:Bool, _ creditCard:CreditCard?, _ error:NSError?)->Void
     
     /**
      Completion handler
@@ -546,7 +574,7 @@ public class RestClient : NSObject
      - parameter CreditCard?: Provides reactivated CreditCard object, or nil if pending (Bool) flag is true or if error occurs
      - parameter ErrorType?:  Provides error object, or nil if no error occurs
      */
-    public typealias ReactivateHandler = (pending:Bool, creditCard:CreditCard?, error:NSError?)->Void
+    public typealias ReactivateHandler = (_ pending:Bool, _ creditCard:CreditCard?, _ error:NSError?)->Void
 
     /**
      Completion handler
@@ -554,7 +582,7 @@ public class RestClient : NSObject
      - parameter verificationMethod:  Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:               Provides error object, or nil if no error occurs
      */
-    public typealias SelectVerificationTypeHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:NSError?)->Void
+    public typealias SelectVerificationTypeHandler = (_ pending:Bool, _ verificationMethod:VerificationMethod?, _ error:NSError?)->Void
     
     /**
      Completion handler
@@ -563,7 +591,7 @@ public class RestClient : NSObject
      - parameter verificationMethod: Provides VerificationMethod object, or nil if pending (Bool) flag is true or if error occurs
      - parameter error:              Provides error object, or nil if no error occurs
      */
-    public typealias VerifyHandler = (pending:Bool, verificationMethod:VerificationMethod?, error:NSError?)->Void
+    public typealias VerifyHandler = (_ pending:Bool, _ verificationMethod:VerificationMethod?, _ error:NSError?)->Void
     
     /**
      Completion handler
@@ -571,7 +599,7 @@ public class RestClient : NSObject
      - parameter relationship: Provides Relationship object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
      */
-    public typealias RelationshipHandler = (relationship:Relationship?, error:NSError?)->Void
+    public typealias RelationshipHandler = (_ relationship:Relationship?, _ error:NSError?)->Void
     
     /**
     Completion handler
@@ -579,7 +607,7 @@ public class RestClient : NSObject
     - parameter result: Provides ResultCollection<DeviceInfo> object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DevicesHandler = (result:ResultCollection<DeviceInfo>?, error:NSError?)->Void
+    public typealias DevicesHandler = (_ result:ResultCollection<DeviceInfo>?, _ error:NSError?)->Void
     
     /**
     Completion handler
@@ -587,7 +615,7 @@ public class RestClient : NSObject
     - parameter device: Provides created DeviceInfo object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias CreateNewDeviceHandler = (device:DeviceInfo?, error:NSError?)->Void
+    public typealias CreateNewDeviceHandler = (_ device:DeviceInfo?, _ error:NSError?)->Void
 
     /**
     Completion handler
@@ -595,7 +623,7 @@ public class RestClient : NSObject
     - parameter device: Provides existing DeviceInfo object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DeviceHandler = (device:DeviceInfo?, error:NSError?) -> Void
+    public typealias DeviceHandler = (_ device:DeviceInfo?, _ error:NSError?) -> Void
     
     /**
     Completion handler
@@ -603,14 +631,14 @@ public class RestClient : NSObject
     - parameter device: Provides updated DeviceInfo object, or nil if error occurs
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias UpdateDeviceHandler = (device:DeviceInfo?, error:NSError?) -> Void
+    public typealias UpdateDeviceHandler = (_ device:DeviceInfo?, _ error:NSError?) -> Void
 
     /**
     Completion handler
 
     - parameter error: Provides error object, or nil if no error occurs
     */
-    public typealias DeleteDeviceHandler = (error:NSError?) -> Void
+    public typealias DeleteDeviceHandler = (_ error:NSError?) -> Void
 
     /**
      Completion handler
@@ -618,7 +646,7 @@ public class RestClient : NSObject
      - parameter commits: Provides ResultCollection<Commit> object, or nil if error occurs
      - parameter error:   Provides error object, or nil if no error occurs
     */
-    public typealias CommitsHandler = (result:ResultCollection<Commit>?, error:NSError?)->Void
+    public typealias CommitsHandler = (_ result:ResultCollection<Commit>?, _ error:NSError?)->Void
     
     /**
      Completion handler
@@ -626,7 +654,7 @@ public class RestClient : NSObject
      - parameter commit:    Provides Commit object, or nil if error occurs
      - parameter error:     Provides error object, or nil if no error occurs
      */
-    public typealias CommitHandler = (commit:Commit?, error:ErrorType?)->Void
+    public typealias CommitHandler = (_ commit:Commit?, _ error:Error?)->Void
     
     /**
      Completion handler
@@ -634,7 +662,7 @@ public class RestClient : NSObject
      - parameter transactions: Provides ResultCollection<Transaction> object, or nil if error occurs
      - parameter error:        Provides error object, or nil if no error occurs
     */
-    public typealias TransactionsHandler = (result:ResultCollection<Transaction>?, error:NSError?)->Void
+    public typealias TransactionsHandler = (_ result:ResultCollection<Transaction>?, _ error:NSError?)->Void
 
     /**
      Completion handler
@@ -642,14 +670,14 @@ public class RestClient : NSObject
      - parameter transaction: Provides Transaction object, or nil if error occurs
      - parameter error:       Provides error object, or nil if no error occurs
      */
-    public typealias TransactionHandler = (transaction:Transaction?, error:NSError?)->Void
+    public typealias TransactionHandler = (_ transaction:Transaction?, _ error:NSError?)->Void
 
     /**
      Completion handler
     
      - parameter ErrorType?:   Provides error object, or nil if no error occurs
      */
-    public typealias ConfirmAPDUPackageHandler = (error:NSError?)->Void
+    public typealias ConfirmAPDUPackageHandler = (_ error:NSError?)->Void
 
     /**
      Endpoint to allow for returning responses to APDU execution
@@ -657,10 +685,10 @@ public class RestClient : NSObject
      - parameter package:    ApduPackage object
      - parameter completion: ConfirmAPDUPackageHandler closure
      */
-    public func confirmAPDUPackage(url:String, package:ApduPackage, completion: ConfirmAPDUPackageHandler)
+    open func confirmAPDUPackage(_ url:String, package:ApduPackage, completion: @escaping ConfirmAPDUPackageHandler)
     {
         guard package.packageId != nil else {
-            completion(error:NSError.error(code: ErrorCode.BadRequest, domain: RestClient.self, message: "packageId should not be nil"))
+            completion(NSError.error(code: ErrorCode.badRequest, domain: RestClient.self, message: "packageId should not be nil"))
             return
         }
         
@@ -668,21 +696,19 @@ public class RestClient : NSObject
         {
             (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.POST, url, parameters: package.responseDictionary, encoding: .JSON, headers: headers)
+                let request = self._manager.request(url, method: .post, parameters: package.responseDictionary, encoding: JSONEncoding.default, headers: headers)
                 request.validate().responseString
                 {
-                    (response:Response<String, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        completion(error:response.result.error)
-                    })
+                    (response:DataResponse<String>) -> Void in
+                    DispatchQueue.main.async {
+                        completion(response.result.error as NSError?)
+                    }
                 }
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                {
-                    completion(error: error)
+                DispatchQueue.main.async(execute: {
+                    completion(error)
                 })
             }
         }
@@ -694,7 +720,7 @@ public class RestClient : NSObject
      - parameter asset: Provides Asset object, or nil if error occurs
      - parameter error: Provides error object, or nil if no error occurs
      */
-    public typealias AssetsHandler = (asset:Asset?, error:NSError?)->Void
+    public typealias AssetsHandler = (_ asset:Asset?, _ error:NSError?)->Void
 
     // MARK: EncryptionKeys
 
@@ -704,7 +730,7 @@ public class RestClient : NSObject
      - parameter encryptionKey?: Provides created EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    internal typealias CreateEncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:NSError?)->Void
+    internal typealias CreateEncryptionKeyHandler = (_ encryptionKey:EncryptionKey?, _ error:NSError?)->Void
 
     /**
      Creates a new encryption key pair
@@ -712,36 +738,34 @@ public class RestClient : NSObject
      - parameter clientPublicKey: client public key
      - parameter completion:      CreateEncryptionKeyHandler closure
      */
-    internal func createEncryptionKey(clientPublicKey clientPublicKey:String, completion:CreateEncryptionKeyHandler)
+    internal func createEncryptionKey(clientPublicKey:String, completion:@escaping CreateEncryptionKeyHandler)
     {
         let headers = self.defaultHeaders
         let parameters = [
                 "clientPublicKey" : clientPublicKey
         ]
 
-        let request = _manager.request(.POST, self._session.baseAPIURL + "/config/encryptionKeys", parameters: parameters, encoding:.JSON, headers: headers)
-        request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        let request = _manager.request(self._session.baseAPIURL + "/config/encryptionKeys", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        request.validate().responseObject(queue: DispatchQueue.global())
         {
-            (response: Response<EncryptionKey, NSError>) -> Void in
+            (response: DataResponse<EncryptionKey>) -> Void in
 
-            dispatch_async(dispatch_get_main_queue(),
-            { () -> Void in
-                
+            DispatchQueue.main.async {
                 if let resultError = response.result.error
                 {
-                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                     
-                    completion(encryptionKey:nil, error: error)
+                    completion(nil, error)
                 }
                 else if let resultValue = response.result.value
                 {
-                    completion(encryptionKey:resultValue, error:response.result.error)
+                    completion(resultValue, response.result.error as NSError?)
                 }
                 else
                 {
-                    completion(encryptionKey: nil, error: NSError.unhandledError(RestClient.self))
+                    completion(nil, NSError.unhandledError(RestClient.self))
                 }
-            })
+            }
         }
     }
 
@@ -751,7 +775,7 @@ public class RestClient : NSObject
      - parameter encryptionKey?: Provides EncryptionKey object, or nil if error occurs
      - parameter error?:         Provides error object, or nil if no error occurs
      */
-    internal typealias EncryptionKeyHandler = (encryptionKey:EncryptionKey?, error:NSError?)->Void
+    internal typealias EncryptionKeyHandler = (_ encryptionKey:EncryptionKey?, _ error:NSError?)->Void
 
     /**
      Retrieve and individual key pair
@@ -759,32 +783,30 @@ public class RestClient : NSObject
      - parameter keyId:      key id
      - parameter completion: EncryptionKeyHandler closure
      */
-    internal func encryptionKey(keyId:String, completion:EncryptionKeyHandler)
+    internal func encryptionKey(_ keyId:String, completion:@escaping EncryptionKeyHandler)
     {
         let headers = self.defaultHeaders
-        let request = _manager.request(.GET, self._session.baseAPIURL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
-        request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0))
+        let request = _manager.request(self._session.baseAPIURL + "/config/encryptionKeys/" + keyId, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+        request.validate().responseObject(queue: DispatchQueue.global())
         {
-            (response: Response<EncryptionKey, NSError>) -> Void in
+            (response: DataResponse<EncryptionKey>) -> Void in
             
-            dispatch_async(dispatch_get_main_queue(),
-            { () -> Void in
-
+            DispatchQueue.main.async {
                 if let resultError = response.result.error
                 {
-                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                     
-                    completion(encryptionKey:nil, error: error)
+                    completion(nil, error)
                 }
                 else if let resultValue = response.result.value
                 {
-                    completion(encryptionKey:resultValue, error:nil)
+                    completion(resultValue, nil)
                 }
                 else
                 {
-                    completion(encryptionKey: nil, error: NSError.unhandledError(RestClient.self))
+                    completion(nil, NSError.unhandledError(RestClient.self))
                 }
-            })
+            }
         }
         
     }
@@ -794,7 +816,7 @@ public class RestClient : NSObject
      
      - parameter error?: Provides error object, or nil if no error occurs
      */
-    internal typealias DeleteEncryptionKeyHandler = (error:ErrorType?)->Void
+    internal typealias DeleteEncryptionKeyHandler = (_ error:Error?)->Void
     
     /**
      Deletes encryption key
@@ -802,28 +824,26 @@ public class RestClient : NSObject
      - parameter keyId:      key id
      - parameter completion: DeleteEncryptionKeyHandler
      */
-    internal func deleteEncryptionKey(keyId:String, completion:DeleteEncryptionKeyHandler)
+    internal func deleteEncryptionKey(_ keyId:String, completion:@escaping DeleteEncryptionKeyHandler)
     {
         let headers = self.defaultHeaders
-        let request = _manager.request(.DELETE, self._session.baseAPIURL + "/config/encryptionKeys/" + keyId, parameters: nil, encoding:.JSON, headers: headers)
+        let request = _manager.request(self._session.baseAPIURL + "/config/encryptionKeys/" + keyId, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
         request.validate().responseString
         {
-            (response:Response<String, NSError>) -> Void in
-            dispatch_async(dispatch_get_main_queue(),
-            {
-                () -> Void in
-                completion(error:response.result.error)
-            })
+            (response:DataResponse<String>) -> Void in
+            DispatchQueue.main.async {
+                completion(response.result.error)
+            }
         }
     }
     
     typealias CreateKeyIfNeededHandler = CreateEncryptionKeyHandler
     
-    private func createKeyIfNeeded(completion: CreateKeyIfNeededHandler)
+    fileprivate func createKeyIfNeeded(_ completion: @escaping CreateKeyIfNeededHandler)
     {
         if let key = self.key
         {
-            completion(encryptionKey: key, error: nil)
+            completion(key, nil)
         }
         else
         {
@@ -833,12 +853,12 @@ public class RestClient : NSObject
                 
                 if let error = error
                 {
-                    completion(encryptionKey:nil, error:error)
+                    completion(nil, error)
                 }
                 else if let encryptionKey = encryptionKey
                 {
                     self.key = encryptionKey
-                    completion(encryptionKey: self.key, error: nil)
+                    completion(self.key, nil)
                 }
             })
         }
@@ -846,29 +866,29 @@ public class RestClient : NSObject
 
     
     // MARK: Request Signature Helpers
-    typealias CreateAuthHeaders = (headers:[String:String]?, error:NSError?) -> Void
+    typealias CreateAuthHeaders = (_ headers:[String:String]?, _ error:NSError?) -> Void
 
-    private func createAuthHeaders(completion:CreateAuthHeaders)
+    fileprivate func createAuthHeaders(_ completion:CreateAuthHeaders)
     {
         if self._session.isAuthorized
         {
-            completion(headers:["Authorization" : "Bearer " + self._session.accessToken!], error:nil)
+            completion(["Authorization" : "Bearer " + self._session.accessToken!], nil)
         }
         else
         {
-            completion(headers: nil, error: NSError.error(code: ErrorCode.Unauthorized, domain: RestClient.self, message: "\(ErrorCode.Unauthorized)"))
+            completion(nil, NSError.error(code: ErrorCode.unauthorized, domain: RestClient.self, message: "\(ErrorCode.unauthorized)"))
         }
     }
  
-    private func skipAuthHeaders(completion:CreateAuthHeaders)
+    fileprivate func skipAuthHeaders(_ completion:CreateAuthHeaders)
     {
         // do nothing
-        completion(headers: self.defaultHeaders, error:nil)
+        completion(self.defaultHeaders, nil)
     }
 
 
-    typealias PrepareAuthAndKeyHeaders = (headers:[String:String]?, error:NSError?) -> Void
-    private func prepareAuthAndKeyHeaders(completion:PrepareAuthAndKeyHeaders)
+    typealias PrepareAuthAndKeyHeaders = (_ headers:[String:String]?, _ error:NSError?) -> Void
+    fileprivate func prepareAuthAndKeyHeaders(_ completion:@escaping PrepareAuthAndKeyHeaders)
     {
         self.createAuthHeaders
         {
@@ -876,7 +896,7 @@ public class RestClient : NSObject
             
             if let error = error
             {
-                completion(headers:nil, error:error)
+                completion(nil, error)
             }
             else
             {
@@ -886,11 +906,11 @@ public class RestClient : NSObject
                     
                     if let keyError = keyError
                     {
-                        completion(headers:nil, error: keyError)
+                        completion(nil, keyError)
                     }
                     else
                     {
-                        completion(headers: headers! + [RestClient.fpKeyIdKey : encryptionKey!.keyId!], error: nil)
+                        completion(headers! + [RestClient.fpKeyIdKey : encryptionKey!.keyId!], nil)
                     }
                 })
             }
@@ -898,9 +918,9 @@ public class RestClient : NSObject
         }
     }
     
-    typealias PrepareKeyHeader = (headers:[String:String]?, error:NSError?) -> Void
+    typealias PrepareKeyHeader = (_ headers:[String:String]?, _ error:NSError?) -> Void
 
-    private func preparKeyHeader(completion:PrepareAuthAndKeyHeaders)
+    fileprivate func preparKeyHeader(_ completion:@escaping PrepareAuthAndKeyHeaders)
     {
         self.skipAuthHeaders
             {
@@ -908,7 +928,7 @@ public class RestClient : NSObject
                 
                 if let error = error
                 {
-                    completion(headers:nil, error:error)
+                    completion(nil, error)
                 }
                 else
                 {
@@ -918,11 +938,11 @@ public class RestClient : NSObject
                             
                             if let keyError = keyError
                             {
-                                completion(headers:nil, error: keyError)
+                                completion(nil, keyError)
                             }
                             else
                             {
-                                completion(headers: headers! + [RestClient.fpKeyIdKey : encryptionKey!.keyId!], error: nil)
+                                completion(headers! + [RestClient.fpKeyIdKey : encryptionKey!.keyId!], nil)
                             }
                     })
                 }
@@ -934,9 +954,9 @@ public class RestClient : NSObject
     // MARK: Hypermedia-driven implementation
     
     // MARK: Credit Card
-    internal func createCreditCard(url:String, pan:String, expMonth:Int, expYear:Int, cvv:String, name:String,
+    internal func createCreditCard(_ url:String, pan:String, expMonth:Int, expYear:Int, cvv:String, name:String,
         street1:String, street2:String, street3:String, city:String, state:String, postalCode:String, country:String,
-        completion:CreateCreditCardHandler)
+        completion:@escaping CreateCreditCardHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -946,11 +966,11 @@ public class RestClient : NSObject
                 var parameters:[String : String] = [:]
                 
                 let rawCard = [
-                    "pan" : pan,
-                    "expMonth" : expMonth,
-                    "expYear" : expYear,
-                    "cvv" : cvv,
-                    "name" : name,
+                    "pan" : pan as AnyObject,
+                    "expMonth" : expMonth as AnyObject,
+                    "expYear" : expYear as AnyObject,
+                    "cvv" : cvv as AnyObject,
+                    "name" : name as AnyObject,
                     "address" : [
                         "street1" : street1,
                         "street2" : street2,
@@ -960,7 +980,7 @@ public class RestClient : NSObject
                         "postalCode" : postalCode,
                         "country" : country
                     ]
-                    ] as [String : AnyObject]
+                    ] as [String : Any]
                 
                 if let cardJSON = rawCard.JSONString
                 {
@@ -973,141 +993,131 @@ public class RestClient : NSObject
                     }
                 }
                 
-                let request = self._manager.request(.POST, url, parameters: parameters, encoding: .JSON, headers: headers)
+                let request = self._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                 
-                request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                     {
-                        (response:Response<CreditCard, NSError>) -> Void in
+                        (response:DataResponse<CreditCard>) -> Void in
                         
-                        dispatch_async(dispatch_get_main_queue(),
-                        {
-                            () -> Void in
-                            
+                        DispatchQueue.main.async {
                             if let resultError = response.result.error
                             {
-                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                completion(creditCard: nil, error: error)
+                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                completion(nil, error)
                             }
                             else if let resultValue = response.result.value
                             {
                                 resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
                                 resultValue.client = self
-                                completion(creditCard:resultValue, error: nil)
+                                completion(resultValue, nil)
                             }
                             else
                             {
-                                completion(creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                                completion(nil, NSError.unhandledError(RestClient.self))
                             }
-                        })
+                        }
                 })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                    {
+                DispatchQueue.main.async(execute: {
                         () -> Void in
-                        completion(creditCard:nil, error: error)
+                        completion(nil, error)
                 })
             }
         }
     }
 
-    internal func creditCards(url:String, excludeState:[String], limit:Int, offset:Int, completion:CreditCardsHandler)
+    internal func creditCards(_ url:String, excludeState:[String], limit:Int, offset:Int, completion:@escaping CreditCardsHandler)
     {
-        let parameters:[String : AnyObject] = ["excludeState" : excludeState.joinWithSeparator(","), "limit" : limit, "offest" : offset]
+        let parameters:[String : AnyObject] = ["excludeState" : excludeState.joined(separator: ",") as AnyObject, "limit" : limit as AnyObject, "offest" : offset as AnyObject]
         self.creditCards(url, parameters: parameters, completion: completion)
     }
     
-    internal func creditCards(url:String, parameters:[String:AnyObject]?, completion:CreditCardsHandler)
+    internal func creditCards(_ url:String, parameters:[String:AnyObject]?, completion:@escaping CreditCardsHandler)
     {
         self.prepareAuthAndKeyHeaders
             {
                 [unowned self](headers, error) -> Void in
                 if let headers = headers
                 {
-                    let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
+                    let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
                     
-                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                         {
-                            (response:Response<ResultCollection<CreditCard>, NSError>) -> Void in
+                            (response:DataResponse<ResultCollection<CreditCard>>) -> Void in
                             
-                            dispatch_async(dispatch_get_main_queue(),
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
                                 {
-                                    () -> Void in
-                                    if let resultError = response.result.error
-                                    {
-                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        completion(result:nil, error: error)
-                                    }
-                                    else if let resultValue = response.result.value
-                                    {
-                                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                                        
-                                        resultValue.client = self
-                                        
-                                        completion(result:resultValue, error: nil)
-                                    }
-                                    else
-                                    {
-                                        completion(result:nil, error: NSError.unhandledError(RestClient.self))
-                                    }
-                            })
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    completion(nil, error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                    
+                                    resultValue.client = self
+                                    
+                                    completion(resultValue, nil)
+                                }
+                                else
+                                {
+                                    completion(nil, NSError.unhandledError(RestClient.self))
+                                }
+                            }
                     })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                        {
+                    DispatchQueue.main.async(execute: {
                             () -> Void in
-                            completion(result:nil, error: error)
+                            completion(nil, error)
                     })
                 }
         }
     }
 
-    internal func deleteCreditCard(url:String, completion:DeleteCreditCardHandler)
+    internal func deleteCreditCard(_ url:String, completion:@escaping DeleteCreditCardHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
             [unowned self](headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .URL, headers: headers)
-                request.validate().responseData(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
+                request.validate().responseData(queue: DispatchQueue.global(), completionHandler:
                 {
-                    (response:Response<NSData, NSError>) -> Void in
+                    (response:DataResponse<Data>) -> Void in
                     
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        () -> Void in
+                    DispatchQueue.main.async {
                         if let resultError = response.result.error
                         {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                            completion(error: error)
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                            completion(error)
                         }
                         else if let _ = response.result.value
                         {
-                            completion(error: nil)
+                            completion(nil)
                         }
                         else
                         {
-                            completion(error: NSError.unhandledError(RestClient.self))
+                            completion(NSError.unhandledError(RestClient.self))
                         }
-                    })
+                    }
                 })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                {
+                DispatchQueue.main.async(execute: {
                     () -> Void in
-                    completion(error: error)
+                    completion(error)
                 })
             }
         }
     }
     
-    internal func updateCreditCard(url:String, name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:UpdateCreditCardHandler)
+    internal func updateCreditCard(_ url:String, name:String?, street1:String?, street2:String?, city:String?, state:String?, postalCode:String?, countryCode:String?, completion:@escaping UpdateCreditCardHandler)
     {
         self.prepareAuthAndKeyHeaders
             {
@@ -1116,7 +1126,7 @@ public class RestClient : NSObject
                 {
                     var operations:[[String : String]] = []
                     
-                    var parameters:[String : AnyObject] = [:]
+                    var parameters:[String : Any] = [:]
                     
                     if let name = name
                     {
@@ -1178,162 +1188,151 @@ public class RestClient : NSObject
                         }
                     }
                     
-                    let request = self._manager.request(.PATCH, url, parameters: parameters, encoding: .JSON, headers: headers)
+                    let request = self._manager.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                     
-                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                         {
-                            [unowned self](response:Response<CreditCard, NSError>) -> Void in
+                            [unowned self](response:DataResponse<CreditCard>) -> Void in
                             
-                            dispatch_async(dispatch_get_main_queue(),
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
                                 {
-                                    () -> Void in
-                                    
-                                    if let resultError = response.result.error
-                                    {
-                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        completion(creditCard:nil, error: error)
-                                    }
-                                    else if let resultValue = response.result.value
-                                    {
-                                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                                        resultValue.client = self
-                                        completion(creditCard:resultValue, error: nil)
-                                    }
-                                    else
-                                    {
-                                        completion(creditCard:nil, error: NSError.unhandledError(RestClient.self))
-                                    }
-                            })
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    completion(nil, error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                    resultValue.client = self
+                                    completion(resultValue, nil)
+                                }
+                                else
+                                {
+                                    completion(nil, NSError.unhandledError(RestClient.self))
+                                }
+                            }
                     })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                        {
+                    DispatchQueue.main.async(execute: {
                             () -> Void in
-                            completion(creditCard:nil, error: error)
+                            completion(nil, error)
                     })
                 }
         }
     }
     
-    internal func acceptTerms(url:String, completion:AcceptTermsHandler)
+    internal func acceptTerms(_ url:String, completion:@escaping AcceptTermsHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
             [unowned self](headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
-                request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                let request = self._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                     {
-                        [unowned self](response:Response<CreditCard, NSError>) -> Void in
+                        [unowned self](response:DataResponse<CreditCard>) -> Void in
                         
-                        dispatch_async(dispatch_get_main_queue(),
-                        {
-                            () -> Void in
+                        DispatchQueue.main.async {
                             if let resultError = response.result.error
                             {
-                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                completion(pending: false, card: nil, error: error)
+                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                completion(false, nil, error)
                             }
                             else if let value = response.result.value
                             {
                                 value.client = self
-                                completion(pending: false, card: value, error: nil)
+                                completion(false, value, nil)
                             }
                             else if (response.response != nil && response.response!.statusCode == 202)
                             {
-                                completion(pending: true, card: nil, error: nil)
+                                completion(true, nil, nil)
                             }
                             else
                             {
-                                completion(pending: false, card: nil, error: NSError.unhandledError(RestClient.self))
+                                completion(false, nil, NSError.unhandledError(RestClient.self))
                             }
-                        })
+                        }
                     })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                    {
+                DispatchQueue.main.async(execute: {
                         () -> Void in
-                        completion(pending: false, card: nil, error: error)
+                        completion(false, nil, error)
                 })
             }
         }
     }
     
-    internal func declineTerms(url:String, completion:DeclineTermsHandler)
+    internal func declineTerms(_ url:String, completion:@escaping DeclineTermsHandler)
     {
         self.prepareAuthAndKeyHeaders
             {
                 [unowned self](headers, error) -> Void in
                 if let headers = headers
                 {
-                    let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
-                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    let request = self._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                    request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                         {
-                            (response:Response<CreditCard, NSError>) -> Void in
+                            (response:DataResponse<CreditCard>) -> Void in
                             
-                            dispatch_async(dispatch_get_main_queue(),
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
                                 {
-                                    () -> Void in
-                                    if let resultError = response.result.error
-                                    {
-                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        completion(pending: false, card: nil, error: error)
-                                    }
-                                    else if let value = response.result.value
-                                    {
-                                        value.client = self
-                                        completion(pending: false, card: value, error: nil)
-                                    }
-                                    else if (response.response != nil && response.response!.statusCode == 202)
-                                    {
-                                        completion(pending: true, card: nil, error: nil)
-                                    }
-                                    else
-                                    {
-                                        completion(pending: false, card: nil, error: NSError.unhandledError(RestClient.self))
-                                    }
-                            })
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    completion(false, nil, error)
+                                }
+                                else if let value = response.result.value
+                                {
+                                    value.client = self
+                                    completion(false, value, nil)
+                                }
+                                else if (response.response != nil && response.response!.statusCode == 202)
+                                {
+                                    completion(true, nil, nil)
+                                }
+                                else
+                                {
+                                    completion(false, nil, NSError.unhandledError(RestClient.self))
+                                }
+                            }
                     })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                        {
+                    DispatchQueue.main.async(execute: {
                             () -> Void in
-                            completion(pending: false, card: nil, error: error)
+                            completion(false, nil, error)
                     })
                 }
         }
     }
     
-    internal func selectVerificationType(url:String, completion:SelectVerificationTypeHandler)
+    internal func selectVerificationType(_ url:String, completion:@escaping SelectVerificationTypeHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
             [unowned self](headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
-                request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                let request = self._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                     {
-                        [unowned self](response:Response<VerificationMethod, NSError>) -> Void in
+                        [unowned self](response:DataResponse<VerificationMethod>) -> Void in
                         
-                        dispatch_async(dispatch_get_main_queue(),
-                        {
+                        DispatchQueue.main.async {
                             if let resultError = response.result.error
                             {
-                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                completion(pending:false, verificationMethod:nil, error: error)
+                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                completion(false, nil, error)
                             }
                             else if let resultValue = response.result.value
                             {
                                 resultValue.client = self
-                                completion(pending:false, verificationMethod:resultValue, error: nil)
+                                completion(false, resultValue, nil)
                             }
                             else
                             {
@@ -1342,31 +1341,30 @@ public class RestClient : NSObject
                                     switch statusCode
                                     {
                                     case 202:
-                                        completion(pending:true, verificationMethod:nil, error: nil)
+                                        completion(true, nil, nil)
                                         
                                     default:
-                                        completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                        completion(false, nil, NSError.unhandledError(RestClient.self))
                                     }
                                 }
                                 else
                                 {
-                                    completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                    completion(false, nil, NSError.unhandledError(RestClient.self))
                                 }
                             }
-                        })
+                        }
                 })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                    {
-                        completion(pending:false, verificationMethod:nil, error: error)
+                DispatchQueue.main.async(execute: {
+                        completion(false, nil, error)
                 })
             }
         }
     }
     
-    internal func verify(url:String, verificationCode:String, completion:VerifyHandler)
+    internal func verify(_ url:String, verificationCode:String, completion:@escaping VerifyHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -1377,22 +1375,21 @@ public class RestClient : NSObject
                     "verificationCode" : verificationCode
                 ]
                 
-                let request = self._manager.request(.POST, url, parameters: params, encoding: .JSON, headers: headers)
-                request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                let request = self._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
+                request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                     {
-                        [](response:Response<VerificationMethod, NSError>) -> Void in
+                        [](response:DataResponse<VerificationMethod>) -> Void in
                         
-                        dispatch_async(dispatch_get_main_queue(),
-                        {
+                        DispatchQueue.main.async {
                             if let resultError = response.result.error
                             {
-                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                completion(pending:false, verificationMethod:nil, error: error)
+                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                completion(false, nil, error)
                             }
                             else if let resultValue = response.result.value
                             {
                                 resultValue.client = self
-                                completion(pending:false, verificationMethod:resultValue, error: nil)
+                                completion(false, resultValue, nil)
                             }
                             else
                             {
@@ -1401,31 +1398,30 @@ public class RestClient : NSObject
                                     switch statusCode
                                     {
                                     case 202:
-                                        completion(pending:true, verificationMethod:nil, error: nil)
+                                        completion(true, nil, nil)
                                         
                                     default:
-                                        completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                        completion(false, nil, NSError.unhandledError(RestClient.self))
                                     }
                                 }
                                 else
                                 {
-                                    completion(pending:false, verificationMethod:nil, error: NSError.unhandledError(RestClient.self))
+                                    completion(false, nil, NSError.unhandledError(RestClient.self))
                                 }
                             }
-                        })
+                        }
                     })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        completion(pending:false, verificationMethod:nil, error: error)
+                    DispatchQueue.main.async(execute: {
+                        completion(false, nil, error)
                     })
                 }
         }
     }
     
-    internal func deactivate(url:String, causedBy:CreditCardInitiator, reason:String, completion:DeactivateHandler)
+    internal func deactivate(_ url:String, causedBy:CreditCardInitiator, reason:String, completion:@escaping DeactivateHandler)
     {
         self.prepareAuthAndKeyHeaders
             {
@@ -1433,57 +1429,54 @@ public class RestClient : NSObject
                 if let headers = headers
                 {
                     let parameters = ["causedBy" : causedBy.rawValue, "reason" : reason]
-                    let request = self._manager.request(.POST, url, parameters: parameters, encoding: .JSON, headers: headers)
-                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    let request = self._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+                    request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                         {
-                            [unowned self](response:Response<CreditCard, NSError>) -> Void in
+                            [unowned self](response:DataResponse<CreditCard>) -> Void in
                             
-                            dispatch_async(dispatch_get_main_queue(),
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
                                 {
-                                    () -> Void in
-                                    if let resultError = response.result.error
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    completion(false, nil, error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.client = self
+                                    completion(false, resultValue, nil)
+                                }
+                                else
+                                {
+                                    if let statusCode = response.response?.statusCode
                                     {
-                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        completion(pending:false, creditCard:nil, error: error)
-                                    }
-                                    else if let resultValue = response.result.value
-                                    {
-                                        resultValue.client = self
-                                        completion(pending:false, creditCard:resultValue, error: nil)
+                                        switch statusCode
+                                        {
+                                        case 202:
+                                            completion(true, nil, nil)
+                                            
+                                        default:
+                                            completion(false, nil, NSError.unhandledError(RestClient.self))
+                                        }
                                     }
                                     else
                                     {
-                                        if let statusCode = response.response?.statusCode
-                                        {
-                                            switch statusCode
-                                            {
-                                            case 202:
-                                                completion(pending:true, creditCard:nil, error: nil)
-                                                
-                                            default:
-                                                completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
-                                            }
-                                        }
-                                        else
-                                        {
-                                            completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
-                                        }
+                                        completion(false, nil, NSError.unhandledError(RestClient.self))
                                     }
-                            })
+                                }
+                            }
                     })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                        {
+                    DispatchQueue.main.async(execute: {
                             () -> Void in
-                            completion(pending:false, creditCard:nil, error: error)
+                            completion(false, nil, error)
                     })
                 }
         }
     }
     
-    internal func reactivate(url:String, causedBy:CreditCardInitiator, reason:String, completion:ReactivateHandler)
+    internal func reactivate(_ url:String, causedBy:CreditCardInitiator, reason:String, completion:@escaping ReactivateHandler)
     {
         self.prepareAuthAndKeyHeaders
             {
@@ -1491,152 +1484,143 @@ public class RestClient : NSObject
                 if let headers = headers
                 {
                     let parameters = ["causedBy" : causedBy.rawValue, "reason" : reason]
-                    let request = self._manager.request(.POST, url, parameters: parameters, encoding: .JSON, headers: headers)
-                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    let request = self._manager.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+                    request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                         {
-                            [unowned self](response:Response<CreditCard, NSError>) -> Void in
+                            [unowned self](response:DataResponse<CreditCard>) -> Void in
                             
-                            dispatch_async(dispatch_get_main_queue(),
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
                                 {
-                                    () -> Void in
-                                    if let resultError = response.result.error
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    completion(false, nil, error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.client = self
+                                    completion(false, resultValue, nil)
+                                }
+                                else
+                                {
+                                    if let statusCode = response.response?.statusCode
                                     {
-                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        completion(pending:false, creditCard:nil, error: error)
-                                    }
-                                    else if let resultValue = response.result.value
-                                    {
-                                        resultValue.client = self
-                                        completion(pending:false, creditCard:resultValue, error: nil)
+                                        switch statusCode
+                                        {
+                                        case 202:
+                                            completion(true, nil, nil)
+                                            
+                                        default:
+                                            completion(false, nil, NSError.unhandledError(RestClient.self))
+                                        }
                                     }
                                     else
                                     {
-                                        if let statusCode = response.response?.statusCode
-                                        {
-                                            switch statusCode
-                                            {
-                                            case 202:
-                                                completion(pending:true, creditCard:nil, error: nil)
-                                                
-                                            default:
-                                                completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
-                                            }
-                                        }
-                                        else
-                                        {
-                                            completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
-                                        }
+                                        completion(false, nil, NSError.unhandledError(RestClient.self))
                                     }
-                            })
+                                }
+                            }
                     })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                        {
+                    DispatchQueue.main.async(execute: {
                             () -> Void in
-                            completion(pending:false, creditCard:nil, error: error)
+                            completion(false, nil, error)
                     })
                 }
         }
     }
     
-    internal func retrieveCreditCard(url:String, completion:CreditCardHandler)
+    internal func retrieveCreditCard(_ url:String, completion:@escaping CreditCardHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
             [unowned self](headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.GET, url, parameters: nil, encoding: .JSON, headers: headers)
-                request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                let request = self._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                     {
-                        [unowned self](response:Response<CreditCard, NSError>) -> Void in
+                        [unowned self](response:DataResponse<CreditCard>) -> Void in
                         
-                        dispatch_async(dispatch_get_main_queue(),
-                        {
-                            () -> Void in
+                        DispatchQueue.main.async {
                             if let resultError = response.result.error
                             {
-                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                completion(creditCard:nil, error: error)
+                                let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                completion(nil, error)
                             }
                             else if let resultValue = response.result.value
                             {
                                 resultValue.client = self
                                 resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                                completion(creditCard:resultValue, error: nil)
+                                completion(resultValue, nil)
                             }
                             else
                             {
-                                completion(creditCard:nil, error: NSError.unhandledError(RestClient.self))
+                                completion(nil, NSError.unhandledError(RestClient.self))
                             }
-                        })
+                        }
                     })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                    {
+                DispatchQueue.main.async(execute: {
                         () -> Void in
-                        completion(creditCard:nil, error: error)
+                        completion(nil, error)
                 })
             }
         }
     }
 
-    internal func makeDefault(url:String, completion:MakeDefaultHandler)
+    internal func makeDefault(_ url:String, completion:@escaping MakeDefaultHandler)
     {
         self.prepareAuthAndKeyHeaders
             {
                 [unowned self](headers, error) -> Void in
                 if let headers = headers
                 {
-                    let request = self._manager.request(.POST, url, parameters: nil, encoding: .JSON, headers: headers)
-                    request.validate().responseObject(queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    let request = self._manager.request(url, method: .post, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                    request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                         {
-                            [unowned self](response:Response<CreditCard, NSError>) -> Void in
+                            [unowned self](response:DataResponse<CreditCard>) -> Void in
                             
-                            dispatch_async(dispatch_get_main_queue(),
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
                                 {
-                                    () -> Void in
-                                    if let resultError = response.result.error
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    completion(false, nil, error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.client = self
+                                    completion(false, resultValue, nil)
+                                }
+                                else
+                                {
+                                    if let statusCode = response.response?.statusCode
                                     {
-                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        completion(pending:false, creditCard:nil, error: error)
-                                    }
-                                    else if let resultValue = response.result.value
-                                    {
-                                        resultValue.client = self
-                                        completion(pending:false, creditCard:resultValue, error: nil)
+                                        switch statusCode
+                                        {
+                                        case 202:
+                                            completion(true, nil, nil)
+                                            
+                                        default:
+                                            completion(false, nil, NSError.unhandledError(RestClient.self))
+                                        }
                                     }
                                     else
                                     {
-                                        if let statusCode = response.response?.statusCode
-                                        {
-                                            switch statusCode
-                                            {
-                                            case 202:
-                                                completion(pending:true, creditCard:nil, error: nil)
-                                                
-                                            default:
-                                                completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
-                                            }
-                                        }
-                                        else
-                                        {
-                                            completion(pending:false, creditCard:nil, error: NSError.unhandledError(RestClient.self))
-                                        }
+                                        completion(false, nil, NSError.unhandledError(RestClient.self))
                                     }
-                            })
+                                }
+                            }
                     })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                        {
+                    DispatchQueue.main.async(execute: {
                             () -> Void in
-                            completion(pending:false, creditCard:nil, error: error)
+                            completion(false, nil, error)
                     })
                 }
         }
@@ -1644,65 +1628,63 @@ public class RestClient : NSObject
     }
     
     // MARK: Devices
-    internal func devices(url:String, limit:Int, offset:Int, completion:DevicesHandler)
+    internal func devices(_ url:String, limit:Int, offset:Int, completion:@escaping DevicesHandler)
     {
         let parameters = [
             "limit" : "\(limit)",
             "offset" : "\(offset)"
         ]
 
-        self.devices(url, parameters: parameters, completion: completion)
+        self.devices(url, parameters: parameters as [String : AnyObject]?, completion: completion)
     }
     
-    internal func devices(url:String, parameters:[String : AnyObject]?, completion:DevicesHandler)
+    internal func devices(_ url:String, parameters:[String : AnyObject]?, completion:@escaping DevicesHandler)
     {
         self.prepareAuthAndKeyHeaders
             {
                 [unowned self] (headers, error) -> Void in
                 if let headers = headers {
                     
-                    let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
+                    let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
                     request.validate().responseObject(
-                        queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        queue: DispatchQueue.global(), completionHandler:
                         {
-                            [unowned self] (response: Response<ResultCollection<DeviceInfo>, NSError>) -> Void in
-                            dispatch_async(dispatch_get_main_queue(),
+                            [unowned self] (response: DataResponse<ResultCollection<DeviceInfo>>) -> Void in
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
                                 {
-                                    if let resultError = response.result.error
-                                    {
-                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        
-                                        completion(result:nil, error: error)
-                                    }
-                                    else if let resultValue = response.result.value
-                                    {
-                                        resultValue.client = self
-                                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                                        
-                                        completion(result:resultValue, error:response.result.error)
-                                    }
-                                    else
-                                    {
-                                        completion(result: nil, error: NSError.unhandledError(RestClient.self))
-                                    }
-                            })
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    
+                                    completion(nil, error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.client = self
+                                    resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                    
+                                    completion(resultValue, response.result.error as NSError?)
+                                }
+                                else
+                                {
+                                    completion(nil, NSError.unhandledError(RestClient.self))
+                                }
+                            }
                         })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        completion(result: nil, error: error)
+                    DispatchQueue.main.async(execute: {
+                        completion(nil, error)
                     })
                 }
         }
     }
 
 
-    internal func createNewDevice(url:String, deviceType:String, manufacturerName:String, deviceName:String,
+    internal func createNewDevice(_ url:String, deviceType:String, manufacturerName:String, deviceName:String,
         serialNumber:String, modelNumber:String, hardwareRevision:String, firmwareRevision:String,
         softwareRevision:String, systemId:String, osName:String, licenseKey:String, bdAddress:String,
-        secureElementId:String, pairing:String, completion:CreateNewDeviceHandler)
+        secureElementId:String, pairing:String, completion:@escaping CreateNewDeviceHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
@@ -1725,76 +1707,70 @@ public class RestClient : NSObject
                         "secureElementId" : secureElementId
                     ],
                     "pairingTs" : pairing
-                ]
-                let request = self._manager.request(.POST, url, parameters: params as? [String : AnyObject], encoding: .JSON, headers: headers)
+                ] as [String : Any]
+                let request = self._manager.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: headers)
                 request.validate().responseObject(
-                queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                queue: DispatchQueue.global(), completionHandler:
                 {
-                    [unowned self] (response: Response<DeviceInfo, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        () -> Void in
+                    [unowned self] (response: DataResponse<DeviceInfo>) -> Void in
+                    DispatchQueue.main.async {
                         if let resultError = response.result.error
                         {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                             
-                            completion(device:nil, error: error)
+                            completion(nil, error)
                         }
                         else if let resultValue = response.result.value
                         {
                             resultValue.client = self
                             
                             resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                            completion(device:resultValue, error:response.result.error)
+                            completion(resultValue, response.result.error as NSError?)
                         }
                         else
                         {
-                            completion(device: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(nil, NSError.unhandledError(RestClient.self))
                         }
-                    })
+                    }
                 })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                {
-                    completion(device: nil, error: error)
+                DispatchQueue.main.async(execute: {
+                    completion(nil, error)
                 })
             }
         }
     }
     
-    internal func deleteDevice(url:String, completion:DeleteDeviceHandler)
+    internal func deleteDevice(_ url:String, completion:@escaping DeleteDeviceHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
             [unowned self] (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .JSON, headers: headers)
+                let request = self._manager.request(url, method: .delete, parameters: nil, encoding: JSONEncoding.default, headers: headers)
                 request.validate().responseString
                 {
-                    (response:Response<String, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        () -> Void in
-                        completion(error:response.result.error)
-                    })
+                    (response:DataResponse<String>) -> Void in
+                    DispatchQueue.main.async {
+                        completion(response.result.error as NSError?)
+                    }
                 }
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                {
-                    completion(error: error)
+                DispatchQueue.main.async(execute: {
+                    completion(error)
                 })
             }
         }
     }
     
-    internal func updateDevice(url:String, firmwareRevision:String?, softwareRevision:String?,
-        completion:UpdateDeviceHandler)
+    internal func updateDevice(_ url:String, firmwareRevision:String?, softwareRevision:String?, notificationToken: String?,
+        completion:@escaping UpdateDeviceHandler)
     {
-        var paramsArray = [AnyObject]()
+        var paramsArray = [Any]()
         if let firmwareRevision = firmwareRevision {
             paramsArray.append(["op" : "replace", "path" : "/firmwareRevision", "value" : firmwareRevision])
         }
@@ -1803,60 +1779,95 @@ public class RestClient : NSObject
             paramsArray.append(["op" : "replace", "path" : "/softwareRevision", "value" : softwareRevision])
         }
         
+        if let notificationToken = notificationToken {
+            paramsArray.append(["op" : "replace", "path" : "/notificationToken", "value" : notificationToken])
+        }
+        
         self.prepareAuthAndKeyHeaders
         {
             [unowned self] (headers, error) -> Void in
             if let headers = headers {
                 let params = ["params" : paramsArray]
-                let request = self._manager.request(.PATCH, url, parameters: params, encoding: .Custom({
-                    (convertible, params) in
-                    let mutableRequest = convertible.URLRequest.copy() as! NSMutableURLRequest
-                    let jsondata = try? NSJSONSerialization.dataWithJSONObject(params!["params"]!, options: NSJSONWritingOptions(rawValue: 0))
-                    if let jsondata = jsondata {
-                        mutableRequest.HTTPBody = jsondata
-                        mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                    }
-                    return (mutableRequest, nil)
-                }), headers: headers)
+                let request = self._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
                 request.validate().responseObject(
-                    queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    queue: DispatchQueue.global(), completionHandler:
                 {
-                    [unowned self] (response: Response<DeviceInfo, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        () -> Void in
+                    [unowned self] (response: DataResponse<DeviceInfo>) -> Void in
+                    DispatchQueue.main.async {
                         if let resultError = response.result.error
                         {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                             
-                            completion(device:nil, error: error)
+                            completion(nil, error)
                         }
                         else if let resultValue = response.result.value
                         {
                             resultValue.client = self
                             resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
                             
-                            completion(device:resultValue, error:response.result.error)
+                            completion(resultValue, response.result.error as NSError?)
                         }
                         else
                         {
-                            completion(device: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(nil, NSError.unhandledError(RestClient.self))
                         }
-                    })
+                    }
                 })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                {
-                    completion(device: nil, error: error)
+                DispatchQueue.main.async(execute: {
+                    completion(nil, error)
                 })
             }
         }
     }
     
-    public func commits(url:String, commitsAfter:String?, limit:Int, offset:Int,
-        completion:CommitsHandler)
+    internal func addDeviceProperty(_ url:String, propertyPath:String, propertyValue:String, completion:@escaping UpdateDeviceHandler) {
+        var paramsArray = [Any]()
+        paramsArray.append(["op" : "add", "path" : propertyPath, "value" : propertyValue])
+        self.prepareAuthAndKeyHeaders
+            {
+                [unowned self] (headers, error) -> Void in
+                if let headers = headers {
+                    let params = ["params" : paramsArray]
+                    let request = self._manager.request(url, method: .patch, parameters: params, encoding: CustomJSONArrayEncoding.default, headers: headers)
+                    request.validate().responseObject(
+                        queue: DispatchQueue.global(), completionHandler:
+                        {
+                            [unowned self] (response: DataResponse<DeviceInfo>) -> Void in
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
+                                {
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    
+                                    completion(nil, error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.client = self
+                                    resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                    
+                                    completion(resultValue, response.result.error as NSError?)
+                                }
+                                else
+                                {
+                                    completion(nil, NSError.unhandledError(RestClient.self))
+                                }
+                            }
+                        })
+                }
+                else
+                {
+                    DispatchQueue.main.async(execute: {
+                            completion(nil, error)
+                    })
+                }
+        }
+    }
+    
+    open func commits(_ url:String, commitsAfter:String?, limit:Int, offset:Int,
+        completion:@escaping CommitsHandler)
     {
         var parameters = [
             "limit" : "\(limit)",
@@ -1872,264 +1883,245 @@ public class RestClient : NSObject
             [unowned self] (headers, error) -> Void in
             if let headers = headers {
                 
-                let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
-                request.validate().responseObject(
-                    queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
-                {
-                    [unowned self] (response: Response<ResultCollection<Commit>, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
+                let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+                request.validate().responseObject(queue: DispatchQueue.global(), completionHandler: {
+                    [unowned self] (response: DataResponse<ResultCollection<Commit>>) -> Void in
+                    DispatchQueue.main.async {
                         if let resultError = response.result.error
                         {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                             
-                            completion(result: nil, error: error)
+                            completion(nil, error)
                         }
                         else if let resultValue = response.result.value
                         {
                             resultValue.client = self
                             resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                            completion(result: resultValue, error: response.result.error)
+                            completion(resultValue, response.result.error as NSError?)
                         }
                         else
                         {
-                            completion(result: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(nil, NSError.unhandledError(RestClient.self))
                         }
-                    })
+                    }
                 })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                {
-                    completion(result: nil, error: error)
+                DispatchQueue.main.async(execute: {
+                    completion(nil, error)
                 })
             }
         }
     }
     
-    internal func commits(url:String, parameters:[String : AnyObject]?,
-        completion:CommitsHandler)
+    internal func commits(_ url:String, parameters:[String : AnyObject]?,
+        completion:@escaping CommitsHandler)
     {
         self.prepareAuthAndKeyHeaders
             {
                 [unowned self] (headers, error) -> Void in
                 if let headers = headers {
                     
-                    let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
+                    let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
                     request.validate().responseObject(
-                        queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                        queue: DispatchQueue.global(), completionHandler:
                         {
-                            [unowned self] (response: Response<ResultCollection<Commit>, NSError>) -> Void in
-                            dispatch_async(dispatch_get_main_queue(),
+                            [unowned self] (response: DataResponse<ResultCollection<Commit>>) -> Void in
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
                                 {
-                                    if let resultError = response.result.error
-                                    {
-                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        
-                                        completion(result: nil, error: error)
-                                    }
-                                    else if let resultValue = response.result.value
-                                    {
-                                        resultValue.client = self
-                                        resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                                        completion(result: resultValue, error: response.result.error)
-                                    }
-                                    else
-                                    {
-                                        completion(result: nil, error: NSError.unhandledError(RestClient.self))
-                                    }
-                            })
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    
+                                    completion(nil, error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.client = self
+                                    resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
+                                    completion(resultValue, response.result.error as NSError?)
+                                }
+                                else
+                                {
+                                    completion(nil, NSError.unhandledError(RestClient.self))
+                                }
+                            }
                         })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                        {
-                            completion(result: nil, error: error)
+                    DispatchQueue.main.async(execute: {
+                            completion(nil, error)
                     })
                 }
         }
     }
     
     // MARK: User
-    public func user(url:String, completion:UserHandler)
+    open func user(_ url:String, completion:@escaping UserHandler)
     {
         self.prepareAuthAndKeyHeaders(
         {
             [unowned self] (headers, error) -> Void in
             if let headers = headers
             {
-                let request = self._manager.request(.GET, url, parameters: nil, encoding: .JSON, headers: headers)
-                request.validate().responseObject(
-                    queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                let request = self._manager.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers)
+                request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                 {
-                    [unowned self] (response: Response<User, NSError>) -> Void in
+                    [unowned self] (response: DataResponse<User>) -> Void in
                     
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
+                    DispatchQueue.main.async {
                         if let resultError = response.result.error
                         {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                             
-                            completion(user:nil, error: error)
+                            completion(nil, error)
                         }
                         else if let resultValue = response.result.value
                         {
                             resultValue.client = self
                             resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                            completion(user:resultValue, error:response.result.error)
+                            completion(resultValue, response.result.error as NSError?)
                         }
                         else
                         {
-                            completion(user: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(nil, NSError.unhandledError(RestClient.self))
                         }
-                    })
+                    }
                 })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                {
-                    completion(user: nil, error: error)
+                DispatchQueue.main.async(execute: {
+                    completion(nil, error)
                 })
             }
         })
     }
     
     
-    internal func relationship(url:String, completion:RelationshipHandler)
+    internal func relationship(_ url:String, completion:@escaping RelationshipHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
             (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.GET, url, parameters: nil, encoding: .URLEncodedInURL, headers: headers)
-                request.validate().responseObject(
-                    queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
+                request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                 {
-                    (response: Response<Relationship, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
+                    (response: DataResponse<Relationship>) -> Void in
+                    DispatchQueue.main.async {
                         if let resultError = response.result.error
                         {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                             
-                            completion(relationship:nil, error: error)
+                            completion(nil, error)
                         }
                         else if let resultValue = response.result.value
                         {
                             resultValue.client = self
-                            completion(relationship:resultValue, error:response.result.error)
+                            completion(resultValue, response.result.error as NSError?)
                         }
                         else
                         {
-                            completion(relationship: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(nil, NSError.unhandledError(RestClient.self))
                         }
-                    })
+                    }
                 })
             }
             else
             {
-                completion(relationship: nil, error: error)
+                completion(nil, error)
             }
         }
     }
     
-    internal func deleteRelationship(url:String, completion:DeleteRelationshipHandler)
+    internal func deleteRelationship(_ url:String, completion:@escaping DeleteRelationshipHandler)
     {
         self.prepareAuthAndKeyHeaders
         {
             (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.DELETE, url, parameters: nil, encoding: .URLEncodedInURL, headers: headers)
+                let request = self._manager.request(url, method: .delete, parameters: nil, encoding: URLEncoding.default, headers: headers)
                 request.validate().responseString
                 {
-                    (response:Response<String, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        () -> Void in
-                        completion(error:response.result.error)
-                    })
+                    (response:DataResponse<String>) -> Void in
+                    DispatchQueue.main.async {
+                        completion(response.result.error as NSError?)
+                    }
                 }
             }
             else
             {
-                completion(error: error)
+                completion(error)
             }
         }
     }
 
     // MARK: Transactions
-    internal func transactions(url:String, limit:Int, offset:Int, completion:TransactionsHandler)
+    internal func transactions(_ url:String, limit:Int, offset:Int, completion:@escaping TransactionsHandler)
     {
         let parameters = [
             "limit" : "\(limit)",
             "offset" : "\(offset)",
         ]
         
-        self.transactions(url, parameters: parameters, completion: completion)
+        self.transactions(url, parameters: parameters as [String : AnyObject]?, completion: completion)
     }
     
-    internal func transactions(url:String, parameters:[String : AnyObject]?, completion:TransactionsHandler)
+    internal func transactions(_ url:String, parameters:[String : AnyObject]?, completion:@escaping TransactionsHandler)
     {
         self.prepareAuthAndKeyHeaders
             {
                 (headers, error) -> Void in
                 if let headers = headers {
-                    let request = self._manager.request(.GET, url, parameters: parameters, encoding: .URL, headers: headers)
-                    request.validate().responseObject(
-                        queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                    let request = self._manager.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+                    request.validate().responseObject(queue: DispatchQueue.global(), completionHandler:
                         {
-                            (response: Response<ResultCollection<Transaction>, NSError>) -> Void in
-                            dispatch_async(dispatch_get_main_queue(),
+                            (response: DataResponse<ResultCollection<Transaction>>) -> Void in
+                            DispatchQueue.main.async {
+                                if let resultError = response.result.error
                                 {
-                                    if let resultError = response.result.error
-                                    {
-                                        let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
-                                        
-                                        completion(result: nil, error: error)
-                                    }
-                                    else if let resultValue = response.result.value
-                                    {
-                                        resultValue.client = self
-                                        completion(result: resultValue, error: response.result.error)
-                                    }
-                                    else
-                                    {
-                                        completion(result: nil, error: NSError.unhandledError(RestClient.self))
-                                    }
-                            })
+                                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
+                                    
+                                    completion(nil, error)
+                                }
+                                else if let resultValue = response.result.value
+                                {
+                                    resultValue.client = self
+                                    completion(resultValue, response.result.error as NSError?)
+                                }
+                                else
+                                {
+                                    completion(nil, NSError.unhandledError(RestClient.self))
+                                }
+                            }
                     })
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                        {
-                            completion(result: nil, error: error)
+                    DispatchQueue.main.async(execute: {
+                            completion(nil, error)
                     })
                 }
         }
     }
 
-    internal func assets(url:String, completion:AssetsHandler)
+    internal func assets(_ url:String, completion:@escaping AssetsHandler)
     {
-        let request = self._manager.request(.GET, url, parameters: nil, encoding: .URL, headers: nil)
+        let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil)
         
-        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
-        {
-            () -> Void in
+        DispatchQueue.global().async(execute: {
             request.responseData
             {
-                (response:Response<NSData, NSError>) -> Void in
+                (response:DataResponse<Data>) -> Void in
                 if let resultError = response.result.error
                 {
-                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                    let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                     
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        completion(asset: nil, error: error)
-                    })
+                    DispatchQueue.main.async {
+                        completion(nil, error)
+                    }
                 }
                 else if let resultValue = response.result.value
                 {
@@ -2147,60 +2139,56 @@ public class RestClient : NSObject
                         asset = Asset(data: resultValue)
                     }
                     
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        completion(asset: asset, error: nil)
-                    })
+                    DispatchQueue.main.async {
+                        completion(asset, nil)
+                    }
                 }
                 else
                 {
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
-                        completion(asset: nil, error: NSError.unhandledError(RestClient.self))
-                    })
+                    DispatchQueue.main.async {
+                        completion(nil, NSError.unhandledError(RestClient.self))
+                    }
                 }
             }
         })
     }
     
     
-    internal func collectionItems<T>(url:String, completion:(resultCollection:ResultCollection<T>?, error:ErrorType?) -> Void) -> T?
+    internal func collectionItems<T>(_ url:String, completion:@escaping (_ resultCollection:ResultCollection<T>?, _ error:Error?) -> Void) -> T?
     {
         self.prepareAuthAndKeyHeaders
         {
             (headers, error) -> Void in
             if let headers = headers {
-                let request = self._manager.request(.GET, url, parameters: nil, encoding: .URL, headers: headers)
+                let request = self._manager.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: headers)
                 request.validate().responseObject(
-                queue: dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), completionHandler:
+                queue: DispatchQueue.global(), completionHandler:
                 {
-                    (response: Response<ResultCollection<T>, NSError>) -> Void in
-                    dispatch_async(dispatch_get_main_queue(),
-                    {
+                    (response: DataResponse<ResultCollection<T>>) -> Void in
+                    DispatchQueue.main.async {
                         if let resultError = response.result.error
                         {
-                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError)
+                            let error = NSError.errorWithData(code: response.response?.statusCode ?? 0, domain: RestClient.self, data: response.data, alternativeError: resultError as NSError?)
                             
-                            completion(resultCollection: nil, error: error)
+                            completion(nil, error)
                         }
                         else if let resultValue = response.result.value
                         {
                             resultValue.client = self
                             resultValue.applySecret(self.keyPair.generateSecretForPublicKey(self.key!.serverPublicKey!)!, expectedKeyId:headers[RestClient.fpKeyIdKey])
-                            completion(resultCollection: resultValue, error: response.result.error)
+                            completion(resultValue, response.result.error)
                         }
                         else
                         {
-                            completion(resultCollection: nil, error: NSError.unhandledError(RestClient.self))
+                            completion(nil, NSError.unhandledError(RestClient.self))
                         }
-                    })
+                    }
                 })
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue(),
-                {
-                    completion(resultCollection: nil, error: error)
+                DispatchQueue.main.async(execute: {
+                    completion(nil, error)
                 })
             }
         }
@@ -2216,5 +2204,5 @@ public class RestClient : NSObject
  */
 public protocol AssetRetrivable
 {
-    func retrieveAsset(completion:RestClient.AssetsHandler)
+    func retrieveAsset(_ completion:@escaping RestClient.AssetsHandler)
 }
