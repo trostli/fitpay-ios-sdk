@@ -21,7 +21,7 @@ pod install
 ```
 Open XCode, and add a project (->Open another project->/users/yourname/fipay/fitpay-ios-sdk)  
 
-Select the FitpaySDK-Universal build under Product->Scheme. Ensure that the scheme is set to build for Generic iOS Device.
+Select the **FitpaySDK-Universal** build under Product->Scheme. Ensure that the scheme is set to build for Generic iOS Device.
 ## Using a local pod
 In the project Podfile, change the following line:
 ```ruby
