@@ -222,23 +222,37 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
         }
      */
     open func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        let sentData = message.body as! NSDictionary
+        guard let sentData = message.body as? NSDictionary else {
+            print("Received message from \(message.name), but can't convert it to dictionary type.")
+            return
+        }
 
         if (sentData["data"] as? NSDictionary)?["action"] as? String == "sync" {
             print("received sync message from web-view")
-            handleSync(sentData["callBackId"] as! Int)
+            if let callbackId = sentData["callBackId"] as? Int {
+                handleSync(callbackId)
+            } else {
+                print("Can't get callbackId from rtmBridge message.")
+            }
         } else if (sentData["data"] as? NSDictionary)?["action"] as? String == "userData" {
             print("received user session data from web-view")
 
             sessionDataCallBackId = sentData["callBackId"] as? Int
 
+            guard let data = (sentData["data"] as? NSDictionary)?["data"] else {
+                print("Can't get data from rtmBridge message.")
+                return
+            }
+
             do {
-                let data = (sentData["data"] as? NSDictionary)?["data"]!
-                let jsonData = try JSONSerialization.data(withJSONObject: data!, options: JSONSerialization.WritingOptions.prettyPrinted)
+                let jsonData = try JSONSerialization.data(withJSONObject: data, options: JSONSerialization.WritingOptions.prettyPrinted)
                 let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)! as String
-                let webViewSessionData = Mapper<WebViewSessionData>().map(JSONString: jsonString)
+                guard let webViewSessionData = Mapper<WebViewSessionData>().map(JSONString: jsonString) else {
+                    print("Can't parse WebViewSessionData from rtmBridge message. Message: \(jsonString)")
+                    return
+                }
                 
-                handleSessionData(webViewSessionData!)
+                handleSessionData(webViewSessionData)
             } catch let error as NSError {
                 print(error)
             }
