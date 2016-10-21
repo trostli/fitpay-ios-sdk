@@ -7,34 +7,29 @@ target 'FitpaySDK' do
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
     pod 'KeychainAccess', '3.0.0'
-    pod 'OpenSSL-Universal', '1.0.1.19'
 end
 
 target 'FitpaySDKDemo' do
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
     pod 'KeychainAccess', '3.0.0'
-    pod 'OpenSSL-Universal', '1.0.1.19'
 end
 
 target 'FitpaySDKTests' do
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
-    pod 'OpenSSL-Universal', '1.0.1.19'
 end
 
 target 'RTMClientApp' do
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
     pod 'KeychainAccess', '3.0.0'
-    pod 'OpenSSL-Universal', '1.0.1.19'
 end
 
 target 'ObjCDemo' do
     pod 'AlamofireObjectMapper', '4.0.0'
     pod 'JWTDecode', '2.0.0'
     pod 'KeychainAccess', '3.0.0'
-    pod 'OpenSSL-Universal', '1.0.1.19'
 end
 
 post_install do |installer|
