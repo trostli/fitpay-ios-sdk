@@ -15,9 +15,10 @@ Once you have set up your project to use carthage, add the following to your Car
 github "fitpay/fitpay-ios-sdk" "develop"
 ```
 After that you should follow to default carthage workflow, which is:
+
 1. Execute next command:  ```$carthage update --platform iOS```
 1. On your application targets’ “General” settings tab, in the “Linked Frameworks and Libraries” section, drag and drop all frameworks from the Carthage/Build folder on disk.
-1.  On your application targets’ “Build Phases” settings tab, click the “+” icon and choose “New Run Script Phase”. Create a Run Script in which you specify your shell (ex: `bin/sh`), add the following contents to the script area below the shell:
+1. On your application targets’ “Build Phases” settings tab, click the “+” icon and choose “New Run Script Phase”. Create a Run Script in which you specify your shell (ex: `bin/sh`), add the following contents to the script area below the shell:
 
   ```sh
   /usr/local/bin/carthage copy-frameworks
@@ -25,12 +26,12 @@ After that you should follow to default carthage workflow, which is:
   and add the paths to the frameworks you want to use under “Input Files”, e.g.:
  
   ```
-$(SRCROOT)/Carthage/Build/iOS/Alamofire.framework
-$(SRCROOT)/Carthage/Build/iOS/AlamofireObjectMapper.framework
-$(SRCROOT)/Carthage/Build/iOS/JWTDecode.framework
-$(SRCROOT)/Carthage/Build/iOS/KeychainAccess.framework
-$(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework
-$(SRCROOT)/Carthage/Build/iOS/FitpaySDK.framework
+  $(SRCROOT)/Carthage/Build/iOS/Alamofire.framework
+  $(SRCROOT)/Carthage/Build/iOS/AlamofireObjectMapper.framework
+  $(SRCROOT)/Carthage/Build/iOS/JWTDecode.framework
+  $(SRCROOT)/Carthage/Build/iOS/KeychainAccess.framework
+  $(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework
+  $(SRCROOT)/Carthage/Build/iOS/FitpaySDK.framework
   ```
 
 
