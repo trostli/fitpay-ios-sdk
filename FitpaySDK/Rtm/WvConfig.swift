@@ -59,6 +59,7 @@ public enum WVMessageType : Int {
     }
 }
 
+@available(*, deprecated, message: "use WvRTMDelegate: instead")
 @objc public protocol WvConfigDelegate : NSObjectProtocol {
     /**
      This method will be called after successful user authorization.
@@ -80,6 +81,35 @@ public enum WVMessageType : Int {
     @objc optional func willDisplayStatusMessage(_ status:WVDeviceStatuses, defaultMessage:String, error: NSError?) -> String
 }
 
+@objc public protocol WvRTMDelegate : NSObjectProtocol {
+    /**
+     This method will be called after successful user authorization.
+     */
+    func didAuthorizeWithEmail(_ email:String?)
+    
+    /**
+     This method can be used for user messages customization.
+     
+     Will be called when status has changed and system going to show message.
+     
+     - parameter status:         New device status
+     - parameter defaultMessage: Default message for new status
+     - parameter error:          If we had an error during status change than it will be here.
+     For now error will be used with SyncError status
+     
+     - returns:                  Message string which will be shown on status board.
+     */
+    @objc optional func willDisplayStatusMessage(_ status:WVDeviceStatuses, defaultMessage:String, error: NSError?) -> String
+    
+    /**
+     Called when the message from wv was delivered to SDK.
+     
+     - parameter message: message from web view
+     */
+    @objc optional func onWvMessageReceived(message: [String:Any])
+}
+
+
 /**
  These responses must conform to what is expected by the web-view. Changing their structure also requires
  changing them in the rtmIosImpl.js
@@ -94,8 +124,11 @@ internal enum WVResponse: String {
 
 open class WvConfig : NSObject, WKScriptMessageHandler {
 
+    @available(*, unavailable, message: "use rtmDelegate: instead")
     weak open var delegate : WvConfigDelegate?
     
+    weak open var rtmDelegate : WvRTMDelegate?
+
     var url = BASE_URL
     let paymentDevice: PaymentDevice?
     open let restSession: RestSession?
@@ -226,6 +259,10 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             print("Received message from \(message.name), but can't convert it to dictionary type.")
             return
         }
+        
+        if let sentDataSwiftDictionary = sentData as? [String:Any] {
+            rtmDelegate?.onWvMessageReceived?(message: sentDataSwiftDictionary)
+        }
 
         if (sentData["data"] as? NSDictionary)?["action"] as? String == "sync" {
             print("received sync message from web-view")
@@ -261,7 +298,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     
     open func showStatusMessage(_ status: WVDeviceStatuses, message: String? = nil, error: Error? = nil) {
         var realMessage = message ?? status.defaultMessage()
-        if let newMessage = delegate?.willDisplayStatusMessage?(status, defaultMessage: realMessage, error: error as? NSError) {
+        if let newMessage = rtmDelegate?.willDisplayStatusMessage?(status, defaultMessage: realMessage, error: error as? NSError) {
             realMessage = newMessage
         }
         
@@ -331,7 +368,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
 
             self.user = user
 
-            if let delegate = self.delegate {
+            if let delegate = self.rtmDelegate {
                 delegate.didAuthorizeWithEmail(user?.email)
             }
             

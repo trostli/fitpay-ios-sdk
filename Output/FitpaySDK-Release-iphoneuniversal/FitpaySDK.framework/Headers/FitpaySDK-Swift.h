@@ -873,10 +873,12 @@ typedef SWIFT_ENUM(NSInteger, WVDeviceStatuses) {
 @class WKUserContentController;
 @class WKScriptMessage;
 @protocol WvConfigDelegate;
+@protocol WvRTMDelegate;
 
 SWIFT_CLASS("_TtC9FitpaySDK8WvConfig")
 @interface WvConfig : NSObject <WKScriptMessageHandler>
 @property (nonatomic, weak) id <WvConfigDelegate> _Nullable delegate;
+@property (nonatomic, weak) id <WvRTMDelegate> _Nullable rtmDelegate;
 @property (nonatomic, readonly, strong) RestSession * _Nullable restSession;
 @property (nonatomic, readonly, strong) RestClient * _Nullable restClient;
 @property (nonatomic, strong) User * _Nullable user;
@@ -942,6 +944,37 @@ SWIFT_PROTOCOL("_TtP9FitpaySDK16WvConfigDelegate_")
   Message string which will be shown on status board.
 */
 - (NSString * _Nonnull)willDisplayStatusMessage:(enum WVDeviceStatuses)status defaultMessage:(NSString * _Nonnull)defaultMessage error:(NSError * _Nullable)error;
+@end
+
+
+SWIFT_PROTOCOL("_TtP9FitpaySDK13WvRTMDelegate_")
+@protocol WvRTMDelegate <NSObject>
+/**
+  This method will be called after successful user authorization.
+*/
+- (void)didAuthorizeWithEmail:(NSString * _Nullable)email;
+@optional
+/**
+  This method can be used for user messages customization.
+  Will be called when status has changed and system going to show message.
+  \param status New device status
+
+  \param defaultMessage Default message for new status
+
+  \param error If we had an error during status change than it will be here.
+  For now error will be used with SyncError status
+
+
+  returns:
+  Message string which will be shown on status board.
+*/
+- (NSString * _Nonnull)willDisplayStatusMessage:(enum WVDeviceStatuses)status defaultMessage:(NSString * _Nonnull)defaultMessage error:(NSError * _Nullable)error;
+/**
+  Called when the message from wv was delivered to SDK.
+  \param message message from web view
+
+*/
+- (void)onWvMessageReceivedWithMessage:(NSDictionary<NSString *, id> * _Nonnull)message;
 @end
 
 #pragma clang diagnostic pop
