@@ -4,9 +4,9 @@ import ObjectMapper
 open class Asset : NSObject
 {
     // Only one item available for specific context
-    var text:String?
-    var image:UIImage?
-    var data:Data?
+    open var text:String?
+    open var image:UIImage?
+    open var data:Data?
     
     init(text:String)
     {

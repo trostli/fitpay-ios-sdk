@@ -106,7 +106,7 @@ public enum WVMessageType : Int {
      
      - parameter message: message from web view
      */
-    @objc optional func onWvMessageReceived(message: [String:Any])
+    @objc optional func onWvMessageReceived(message: RtmMessage)
 }
 
 
@@ -255,45 +255,58 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
         }
      */
     open func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard let sentData = message.body as? NSDictionary else {
+        guard let sentData = message.body as? [String : Any] else {
             print("Received message from \(message.name), but can't convert it to dictionary type.")
             return
         }
-        
-        if let sentDataSwiftDictionary = sentData as? [String:Any] {
-            rtmDelegate?.onWvMessageReceived?(message: sentDataSwiftDictionary)
+
+        guard let rtmMessage = RtmMessage(map: Map(mappingType: .fromJSON, JSON: sentData)) else {
+            print("Can't create RtmMessage.")
+            return
         }
-
-        if (sentData["data"] as? NSDictionary)?["action"] as? String == "sync" {
-            print("received sync message from web-view")
-            if let callbackId = sentData["callBackId"] as? Int {
-                handleSync(callbackId)
-            } else {
-                print("Can't get callbackId from rtmBridge message.")
-            }
-        } else if (sentData["data"] as? NSDictionary)?["action"] as? String == "userData" {
-            print("received user session data from web-view")
-
-            sessionDataCallBackId = sentData["callBackId"] as? Int
-
-            guard let data = (sentData["data"] as? NSDictionary)?["data"] else {
-                print("Can't get data from rtmBridge message.")
-                return
-            }
-
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: data, options: JSONSerialization.WritingOptions.prettyPrinted)
-                let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)! as String
-                guard let webViewSessionData = Mapper<WebViewSessionData>().map(JSONString: jsonString) else {
-                    print("Can't parse WebViewSessionData from rtmBridge message. Message: \(jsonString)")
+        
+        guard let messageAction = rtmMessage.action else {
+            print("RtmMessage. Action is missing")
+            return
+        }
+        
+        switch messageAction {
+            case "sync":
+                print("received sync message from web-view")
+                if let callbackIdStr = rtmMessage.callBackId, let callbackId = Int(callbackIdStr) {
+                    handleSync(callbackId)
+                } else {
+                    print("Can't get callbackId from rtmBridge message.")
+                }
+                break
+            case "userData":
+                print("received user session data from web-view")
+                
+                sessionDataCallBackId = sentData["callBackId"] as? Int
+                
+                guard let data = (sentData["data"] as? NSDictionary)?["data"] else {
+                    print("Can't get data from rtmBridge message.")
                     return
                 }
                 
-                handleSessionData(webViewSessionData)
-            } catch let error as NSError {
-                print(error)
-            }
+                do {
+                    let jsonData = try JSONSerialization.data(withJSONObject: data, options: JSONSerialization.WritingOptions.prettyPrinted)
+                    let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)! as String
+                    guard let webViewSessionData = Mapper<WebViewSessionData>().map(JSONString: jsonString) else {
+                        print("Can't parse WebViewSessionData from rtmBridge message. Message: \(jsonString)")
+                        return
+                    }
+                    
+                    handleSessionData(webViewSessionData)
+                } catch let error as NSError {
+                    print(error)
+                }
+                break
+            default:
+                break
         }
+        
+        rtmDelegate?.onWvMessageReceived?(message: rtmMessage)
     }
     
     open func showStatusMessage(_ status: WVDeviceStatuses, message: String? = nil, error: Error? = nil) {
@@ -307,6 +320,19 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     
     open func showCustomStatusMessage(_ message:String, type: WVMessageType) {
         sendStatusMessage(message, type: type)
+    }
+    
+    open func sendRtmMessage(rtmMessage: RtmMessageResponse) {
+        guard let jsonRepresentation = rtmMessage.toJSONString(prettyPrint: false) else {
+            print("Can't create json representation for rtm message.")
+            return
+        }
+        
+        webview?.evaluateJavaScript("window.RtmBridge.resolve(\(jsonRepresentation))", completionHandler: { (result, error) in
+            if let error = error {
+                print("Can't send status message, error: \(error)")
+            }
+        })
     }
     
     fileprivate func sendStatusMessage(_ message:String, type:WVMessageType) {

@@ -161,9 +161,13 @@ SWIFT_CLASS("_TtC9FitpaySDK17ApduResultMessage")
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 @end
 
+@class UIImage;
 
 SWIFT_CLASS("_TtC9FitpaySDK5Asset")
 @interface Asset : NSObject
+@property (nonatomic, copy) NSString * _Nullable text;
+@property (nonatomic, strong) UIImage * _Nullable image;
+@property (nonatomic, copy) NSData * _Nullable data;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 @end
 
