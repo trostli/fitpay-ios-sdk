@@ -652,6 +652,20 @@ SWIFT_CLASS("_TtC9FitpaySDK9RtmConfig")
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 @end
 
+
+SWIFT_CLASS("_TtC9FitpaySDK10RtmMessage")
+@interface RtmMessage : NSObject
+@property (nonatomic, copy) NSString * _Nullable callBackId;
+@property (nonatomic, copy) NSString * _Nullable data;
+@property (nonatomic, copy) NSString * _Nullable type;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
+@end
+
+
+SWIFT_CLASS("_TtC9FitpaySDK18RtmMessageResponse")
+@interface RtmMessageResponse : RtmMessage
+@end
+
 typedef SWIFT_ENUM(NSInteger, SecurityNFCState) {
   SecurityNFCStateDisabled = 0x00,
   SecurityNFCStateEnabled = 0x01,
@@ -928,6 +942,7 @@ SWIFT_CLASS("_TtC9FitpaySDK8WvConfig")
 */
 - (void)userContentController:(WKUserContentController * _Nonnull)userContentController didReceiveScriptMessage:(WKScriptMessage * _Nonnull)message;
 - (void)showStatusMessage:(enum WVDeviceStatuses)status message:(NSString * _Nullable)message error:(NSError * _Nullable)error;
+- (void)sendRtmMessageWithRtmMessage:(RtmMessageResponse * _Nonnull)rtmMessage;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 @end
 
@@ -984,7 +999,7 @@ SWIFT_PROTOCOL("_TtP9FitpaySDK13WvRTMDelegate_")
   \param message message from web view
 
 */
-- (void)onWvMessageReceivedWithMessage:(NSDictionary<NSString *, id> * _Nonnull)message;
+- (void)onWvMessageReceivedWithMessage:(RtmMessage * _Nonnull)message;
 @end
 
 #pragma clang diagnostic pop

@@ -10,9 +10,9 @@ import UIKit
 import ObjectMapper
 
 open class RtmMessage: NSObject, Mappable {
-    open var callBackId: String?
-    open var data: String?
-    open var action: String?
+    open var callBackId: Int?
+    open var data: Any?
+    open var type: String?
     
     public required init?(map: Map) {
         
@@ -25,6 +25,6 @@ open class RtmMessage: NSObject, Mappable {
     open func mapping(map: Map) {
         callBackId <- map["callBackId"]
         data <- map["data"]
-        action <- map["type"]
+        type <- map["type"]
     }
 }

@@ -140,8 +140,8 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
     var connectionBinding: FitpayEventBinding?
-    var sessionDataCallBackId: Int?
-    var syncCallBacks = [Int]()
+    var sessionDataCallBack: RtmMessage?
+    var syncCallBacks = [RtmMessage]()
     
     open var demoModeEnabled : Bool {
         get {
@@ -259,13 +259,15 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             print("Received message from \(message.name), but can't convert it to dictionary type.")
             return
         }
-
-        guard let rtmMessage = RtmMessage(map: Map(mappingType: .fromJSON, JSON: sentData)) else {
+        
+		let jsonData = try? JSONSerialization.data(withJSONObject: sentData, options: .prettyPrinted)
+        
+        guard let rtmMessage = Mapper<RtmMessage>().map(JSONString: String(data: jsonData!, encoding: .utf8)!) else {
             print("Can't create RtmMessage.")
             return
         }
         
-        guard let messageAction = rtmMessage.action else {
+        guard let messageAction = rtmMessage.type else {
             print("RtmMessage. Action is missing")
             return
         }
@@ -273,18 +275,14 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
         switch messageAction {
             case "sync":
                 print("received sync message from web-view")
-                if let callbackIdStr = rtmMessage.callBackId, let callbackId = Int(callbackIdStr) {
-                    handleSync(callbackId)
-                } else {
-                    print("Can't get callbackId from rtmBridge message.")
-                }
+                handleSync(rtmMessage)
                 break
             case "userData":
                 print("received user session data from web-view")
                 
-                sessionDataCallBackId = sentData["callBackId"] as? Int
+                sessionDataCallBack = rtmMessage
                 
-                guard let data = (sentData["data"] as? NSDictionary)?["data"] else {
+                guard let data = rtmMessage.data as? NSDictionary else {
                     print("Can't get data from rtmBridge message.")
                     return
                 }
@@ -292,6 +290,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
                 do {
                     let jsonData = try JSONSerialization.data(withJSONObject: data, options: JSONSerialization.WritingOptions.prettyPrinted)
                     let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)! as String
+
                     guard let webViewSessionData = Mapper<WebViewSessionData>().map(JSONString: jsonString) else {
                         print("Can't parse WebViewSessionData from rtmBridge message. Message: \(jsonString)")
                         return
@@ -336,25 +335,14 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
     
     fileprivate func sendStatusMessage(_ message:String, type:WVMessageType) {
-        guard let webview = self.webview else {
-            print("Can't send status message, webview is nil!")
-            return
-        }
-        
-        webview.evaluateJavaScript("window.RtmBridge.setDeviceStatus({\"message\":\"\(message)\",\"type\":\(type.rawValue)})", completionHandler: {
-            (result, error) in
-            
-            if let error = error {
-                print("Can't send status message, error: \(error)")
-            }
-        })
+        sendRtmMessage(rtmMessage: RtmMessageResponse(data:["message":message, "type":type.rawValue], type: "deviceStatus"))
     }
     
-    fileprivate func handleSync(_ callBackId:Int) -> Void {
+    fileprivate func handleSync(_ message: RtmMessage) -> Void {
         print("--- [WvConfig] handling rtm sync ---")
         if (self.webViewSessionData != nil && self.user != nil ) {
             print("--- [WvConfig] adding sync to rtm callback queue ---")
-            syncCallBacks.append(callBackId)
+            syncCallBacks.append(message)
 
             if !SyncManager.sharedInstance.isSyncing {
                 self.showStatusMessage(.syncStarted)
@@ -365,10 +353,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             }
         } else {
             print("--- [WvConfig] rtm not yet configured to hand syncs requests, failing sync ---")
-            self.callBack(
-                self.syncCallBacks.first!,
-                success: false,
-                response: self.getWVResponse(WVResponse.noSessionData, message: nil))
+            sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.syncCallBacks.first!.callBackId, data: self.getWVResponse(WVResponse.noSessionData, message: nil), type: "sync", success: false))
             self.showStatusMessage(.syncError, message: "Can't make sync. Session data or user is nil.")
         }
     }
@@ -382,10 +367,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             
             guard (error == nil || user == nil) else {
                 
-                self.callBack(
-                    self.sessionDataCallBackId!,
-                    success: false,
-                    response: self.getWVResponse(WVResponse.failed, message: error.debugDescription))
+                self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.sessionDataCallBack?.callBackId, data: self.getWVResponse(WVResponse.failed, message: error.debugDescription), type: "userData", success: false))
 
                 self.showStatusMessage(.syncError, message: "Can't get user, error: \(error.debugDescription)", error: error)
                 
@@ -398,43 +380,31 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
                 delegate.didAuthorizeWithEmail(user?.email)
             }
             
-            self.callBack(
-                self.sessionDataCallBackId!,
-                success: true,
-                response: self.getWVResponse(WVResponse.success, message: nil))
-            
+            self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.sessionDataCallBack?.callBackId, data: self.getWVResponse(WVResponse.success, message: nil), type: "userData", success: true))
+
             self.showStatusMessage(.synchronizing)
         })
     }
 
     fileprivate func rejectAndResetSyncCallbacks(_ reason:String) {
         print("--- [WvConfig] rejecting and resettting callback queue in rtm ---")
-        for cbId in self.syncCallBacks {
-            callBack(
-                cbId,
-                success: false,
-                response: getWVResponse(WVResponse.failed, message: reason))
+        for cb in self.syncCallBacks {
+            self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: cb.callBackId, data: getWVResponse(WVResponse.failed, message: reason), type: "sync", success: false))
         }
 
-        self.syncCallBacks = [Int]()
+        self.syncCallBacks = [RtmMessage]()
     }
 
     fileprivate func resolveSync() {
-        if let id = self.syncCallBacks.first {
+        if let message = self.syncCallBacks.first {
             print("--- [WvConfig] resolving rtm sync promise ---")
             if self.syncCallBacks.count > 1 {
-                self.callBack(
-                    id,
-                    success: true,
-                    response: getWVResponse(WVResponse.successStillWorking, message: "\(self.syncCallBacks.count)"))
-
+                sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: message.callBackId, data: getWVResponse(WVResponse.successStillWorking, message: "\(self.syncCallBacks.count)"), type: "sync", success: true))
                 print("--- [WvConfig] there was another rtm sync request, syncing again ---")
                 goSync()
             } else {
-                self.callBack(
-                    id,
-                    success: true,
-                    response: getWVResponse(WVResponse.success, message: nil))
+                self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: message.callBackId, data: getWVResponse(WVResponse.success, message: nil), type: "sync", success: true))
+
                 self.showStatusMessage(.synchronized)
                 print("--- [WvConfig] no more rtm sync requests in queue ---")
             }
@@ -443,17 +413,6 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
         } else {
             print("no callbacks available for sync resolution")
         }
-    }
-
-    fileprivate func callBack(_ callBackId:Int, success:Bool, response:String) {
-        print("--- [WvConfig] calling web-view callback ---")
-        self.webview!.evaluateJavaScript("window.RtmBridge.resolve(\(callBackId), \(success), \(response))", completionHandler: {
-            (result, error) in
-
-            if error != nil {
-                print("--- [WvConfig] error evaluating JS from swift rtm bridge ---")
-            }
-        })
     }
 
     fileprivate func goSync() {
@@ -501,11 +460,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
 
     @objc fileprivate func logout() {
         if let _ = user {
-            self.webview!.evaluateJavaScript("window.RtmBridge.forceLogout()") { (result, error) in
-                if error != nil {
-                    print("failed to log out user through window.RtmBridge.logout")
-                }
-            }
+            sendRtmMessage(rtmMessage: RtmMessageResponse(type: "logout"))
         }
     }
 

@@ -11,12 +11,15 @@ import ObjectMapper
 
 open class RtmMessageResponse: RtmMessage {
 
-    public required init(callbackId: String, data: String, action: String) {
+    var success: Bool?
+    
+    public required init(callbackId: Int? = nil, data: Any? = nil, type: String, success: Bool? = nil) {
         super.init()
         
         self.callBackId = callBackId
         self.data = data
-        self.action = action
+        self.type = type
+        self.success = success
     }
     
     public required init?(map: Map) {
