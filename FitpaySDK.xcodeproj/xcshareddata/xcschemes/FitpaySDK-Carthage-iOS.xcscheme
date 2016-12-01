@@ -20,6 +20,20 @@
                ReferencedContainer = "container:FitpaySDK.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3A46E1441DF023F9002D0270"
+               BuildableName = "FitpaySDKTestsCarthage.xctest"
+               BlueprintName = "FitpaySDKTestsCarthage"
+               ReferencedContainer = "container:FitpaySDK.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -32,9 +46,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0AD922A61C1F7EFC007693AB"
-               BuildableName = "FitpaySDKTests.xctest"
-               BlueprintName = "FitpaySDKTests"
+               BlueprintIdentifier = "3A46E1441DF023F9002D0270"
+               BuildableName = "FitpaySDKTestsCarthage.xctest"
+               BlueprintName = "FitpaySDKTestsCarthage"
                ReferencedContainer = "container:FitpaySDK.xcodeproj">
             </BuildableReference>
             <SkippedTests>
