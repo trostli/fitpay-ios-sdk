@@ -385,6 +385,8 @@ SWIFT_CLASS("_TtC9FitpaySDK13EncryptionKey")
 
 SWIFT_CLASS("_TtC9FitpaySDK11FitpayEvent")
 @interface FitpayEvent : NSObject
+@property (nonatomic, readonly) NSError * _Nullable reason;
+@property (nonatomic, readonly, copy) NSDate * _Nonnull date;
 @property (nonatomic, readonly) id _Nonnull eventData;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 @end
