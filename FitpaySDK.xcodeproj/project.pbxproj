@@ -55,6 +55,7 @@
 		3A640B4B1DDF1127008AD936 /* FitpaySDKLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8EF1DDB15AE0037E105 /* FitpaySDKLogger.swift */; };
 		3A640B4C1DDF1135008AD936 /* BaseOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8ED1DDB15AE0037E105 /* BaseOutput.swift */; };
 		3A640B4D1DDF1137008AD936 /* ConsoleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF3A8EE1DDB15AE0037E105 /* ConsoleOutput.swift */; };
+		3A9180BB1DE8824A00C183CE /* FitpayEventsSubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9180BA1DE8824A00C183CE /* FitpayEventsSubscriber.swift */; };
 		3A93A0321DB8C0B700A9FEB4 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A939FE41DB8C0B700A9FEB4 /* libcrypto.a */; };
 		3A93A0331DB8C0B800A9FEB4 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A939FE51DB8C0B700A9FEB4 /* libssl.a */; };
 		3A93A0341DB8C0B800A9FEB4 /* aes.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A939FE71DB8C0B700A9FEB4 /* aes.h */; };
@@ -501,6 +502,7 @@
 		3A61A47E1D66F0710033256C /* FitpayNotificationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FitpayNotificationsManager.swift; sourceTree = "<group>"; };
 		3A640B451DDF110E008AD936 /* RtmMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmMessage.swift; sourceTree = "<group>"; };
 		3A640B461DDF110E008AD936 /* RtmMessageResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtmMessageResponse.swift; sourceTree = "<group>"; };
+		3A9180BA1DE8824A00C183CE /* FitpayEventsSubscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FitpayEventsSubscriber.swift; sourceTree = "<group>"; };
 		3A939FE41DB8C0B700A9FEB4 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcrypto.a; sourceTree = "<group>"; };
 		3A939FE51DB8C0B700A9FEB4 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libssl.a; sourceTree = "<group>"; };
 		3A939FE71DB8C0B700A9FEB4 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
@@ -1121,6 +1123,7 @@
 				9A7C787C1CC77F210097BAB9 /* FitpayEventDispatcher.swift */,
 				9A7C787D1CC77F210097BAB9 /* FitpayEventListener.swift */,
 				9A7C787E1CC77F210097BAB9 /* FitpayEventTypeProtocol.swift */,
+				3A9180BA1DE8824A00C183CE /* FitpayEventsSubscriber.swift */,
 			);
 			name = EventListeners;
 			sourceTree = "<group>";
@@ -2170,6 +2173,7 @@
 				9AB68E3F1C84A1EC00A0E172 /* JWEObject.swift in Sources */,
 				9AB68E401C84A1EC00A0E172 /* Base64Utils.swift in Sources */,
 				CD038E19C412D95ED6F9F036 /* Relationship.swift in Sources */,
+				3A9180BB1DE8824A00C183CE /* FitpayEventsSubscriber.swift in Sources */,
 				CD038952A85B6214173CC785 /* Commit.swift in Sources */,
 				0AF2B4121CDA6F410090CFCF /* WvConfig.swift in Sources */,
 				CD038DC45BF133FC5A0D9A94 /* ResourceLink.swift in Sources */,
@@ -2269,6 +2273,7 @@
 				3A93A0871DB8CA2C00A9FEB4 /* Transforms.swift in Sources */,
 				3A93A0881DB8CA2C00A9FEB4 /* JWEObject.swift in Sources */,
 				3A93A0891DB8CA2C00A9FEB4 /* Base64Utils.swift in Sources */,
+				3A46E1431DEEE499002D0270 /* FitpayEventsSubscriber.swift in Sources */,
 				3A93A08A1DB8CA2C00A9FEB4 /* Relationship.swift in Sources */,
 				3A93A08B1DB8CA2C00A9FEB4 /* Commit.swift in Sources */,
 				3A93A08C1DB8CA2C00A9FEB4 /* WvConfig.swift in Sources */,

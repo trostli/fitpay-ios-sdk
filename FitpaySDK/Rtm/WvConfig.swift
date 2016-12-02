@@ -381,6 +381,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
                 self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.sessionDataCallBack?.callBackId, data: WVResponse.failed.dictionaryRepresentation(param: error.debugDescription), type: "userData", success: false))
 
                 self.showStatusMessage(.syncError, message: "Can't get user, error: \(error.debugDescription)", error: error)
+                FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .getUserAndDevice, status: .failed, reason: error)
                 
                 return
             }
@@ -390,6 +391,12 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             if let delegate = self.rtmDelegate {
                 delegate.didAuthorizeWithEmail(user?.email)
             }
+            
+            if self.rtmConfig?.hasAccount == false {
+                FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .userCreated)
+            }
+            
+            FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .getUserAndDevice)
             
             self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.sessionDataCallBack?.callBackId, data: WVResponse.success.dictionaryRepresentation(), type: "resolve", success: true))
 
