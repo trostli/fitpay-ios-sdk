@@ -74,7 +74,7 @@ open class FitpayNotificationsManager : NSObject {
     open func updateNotificationsToken(_ token: String) {
         notificationsToken = token
         
-        SyncManager.sharedInstance.currentDeviceInfo?.updateNotificationTokenIfNeeded()
+        SyncManager.sharedInstance.deviceInfo?.updateNotificationTokenIfNeeded()
     }
     
     /**

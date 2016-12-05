@@ -707,8 +707,10 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) SyncManager 
   If device disconnected, than system tries to connect.
   \param user user from API to whom device belongs to.
 
+  \param device device which we will sync with. If nil then we will use first one with secureElemendId.
+
 */
-- (NSError * _Nullable)sync:(User * _Nonnull)user;
+- (NSError * _Nullable)sync:(User * _Nonnull)user device:(DeviceInfo * _Nullable)device;
 /**
   Tries to make sync with last user.
   If device disconnected, than system tries to connect.
@@ -907,6 +909,7 @@ SWIFT_CLASS("_TtC9FitpaySDK8WvConfig")
 @property (nonatomic, readonly, strong) RestSession * _Nullable restSession;
 @property (nonatomic, readonly, strong) RestClient * _Nullable restClient;
 @property (nonatomic, strong) User * _Nullable user;
+@property (nonatomic, strong) DeviceInfo * _Nullable device;
 @property (nonatomic) BOOL demoModeEnabled;
 - (nonnull instancetype)initWithClientId:(NSString * _Nonnull)clientId redirectUri:(NSString * _Nonnull)redirectUri paymentDevice:(PaymentDevice * _Nonnull)paymentDevice userEmail:(NSString * _Nullable)userEmail isNewAccount:(BOOL)isNewAccount;
 /**
