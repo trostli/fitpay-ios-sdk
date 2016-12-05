@@ -135,6 +135,23 @@ internal enum WVResponse: Int {
 
 
 open class WvConfig : NSObject, WKScriptMessageHandler {
+    public enum ErrorCode : Int, Error, RawIntValue, CustomStringConvertible
+    {
+        case unknownError                   = 0
+        case deviceNotFound                 = 10001
+        case deviceDataNotValid				= 10002
+        
+        public var description : String {
+            switch self {
+            case .unknownError:
+                return "Unknown error"
+            case .deviceNotFound:
+                return "Can't find device provided by wv."
+            case .deviceDataNotValid:
+                return "Could not open connection. OnDeviceConnected event did not supply valid device data."
+            }
+        }
+    }
 
     @available(*, unavailable, message: "use rtmDelegate: instead")
     weak open var delegate : WvConfigDelegate?
@@ -147,7 +164,9 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     open let restClient: RestClient?
     let notificationCenter = NotificationCenter.default
 
-    open var user: User?
+    public var user: User?
+    public var device: DeviceInfo?
+    
     var rtmConfig: RtmConfig?
     var webViewSessionData: WebViewSessionData?
     var webview: WKWebView?
@@ -212,7 +231,8 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
                 return
             }
 
-            completion(NSError.error(code: 1, domain: WvConfig.self, message: "Could not open connection. OnDeviceConnected event did not supply valid device data"))
+            
+            completion(NSError.error(code:WvConfig.ErrorCode.deviceDataNotValid, domain: WvConfig.self))
         })
         
         self.paymentDevice!.connect()
@@ -373,21 +393,19 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
         self.webViewSessionData = webViewSessionData
         self.restSession!.setWebViewAuthorization(webViewSessionData)
 
-        restClient?.user(id: (self.webViewSessionData?.userId)!, completion: {
-            (user, error) in
-            
-            guard (error == nil || user == nil) else {
-                
+        let userAndDeviceReceived: (_ user: User?, _ device: DeviceInfo?, _ error: NSError?) -> Void =  {
+            (user, device, error) in
+            guard error == nil else {
                 self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.sessionDataCallBack?.callBackId, data: WVResponse.failed.dictionaryRepresentation(param: error.debugDescription), type: "userData", success: false))
-
+                
                 self.showStatusMessage(.syncError, message: "Can't get user, error: \(error.debugDescription)", error: error)
                 FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .getUserAndDevice, status: .failed, reason: error)
-                
                 return
             }
-
+            
             self.user = user
-
+            self.device = device
+            
             if let delegate = self.rtmDelegate {
                 delegate.didAuthorizeWithEmail(user?.email)
             }
@@ -399,8 +417,47 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             FitpayEventsSubscriber.sharedInstance.executeCallbacksForEvent(event: .getUserAndDevice)
             
             self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.sessionDataCallBack?.callBackId, data: WVResponse.success.dictionaryRepresentation(), type: "resolve", success: true))
-
+            
             self.showStatusMessage(.synchronizing)
+        }
+        
+        restClient?.user(id: (self.webViewSessionData?.userId)!, completion: {
+            (user, error) in
+            
+            guard (error == nil || user == nil) else {
+                userAndDeviceReceived(nil, nil, error)
+                return
+            }
+
+            user?.listDevices(limit: 20, offset: 0, completion: { (devicesColletion, error) in
+                guard (error == nil || devicesColletion == nil) else {
+                    userAndDeviceReceived(nil, nil, error)
+                    return
+                }
+                
+                for device in devicesColletion!.results! {
+                    if device.deviceIdentifier == self.webViewSessionData!.deviceId {
+                        userAndDeviceReceived(user!, device, nil)
+                        return
+                    }
+                }
+                
+                devicesColletion?.collectAllAvailable({ (devices, error) in
+                    guard (error == nil || devices == nil) else {
+                        userAndDeviceReceived(nil, nil, error as NSError?)
+                        return
+                    }
+                    
+                    for device in devices! {
+                        if device.deviceIdentifier == self.webViewSessionData!.deviceId {
+                            userAndDeviceReceived(user!, device, nil)
+                            return
+                        }
+                    }
+                    
+                    userAndDeviceReceived(nil, nil, NSError.error(code:WvConfig.ErrorCode.deviceNotFound, domain: WvConfig.self))
+                })
+            })
         })
     }
 
@@ -435,7 +492,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
 
     fileprivate func goSync() {
         log.verbose("--- [WvConfig] initiating SyncManager sync via rtm ---")
-        if SyncManager.sharedInstance.sync(self.user!) != nil {
+        if SyncManager.sharedInstance.sync(self.user!, device: self.device) != nil {
             rejectAndResetSyncCallbacks("SyncManager failed to regulate sequential syncs, all pending syncs have been rejected")
         }
     }
