@@ -63,7 +63,7 @@ public enum RtmProtocolVersion: Int {
     case ver1 = 1
     case ver2
     
-    func currentlySupportedVersion() -> RtmProtocolVersion {
+    static func currentlySupportedVersion() -> RtmProtocolVersion {
         return .ver2
     }
 }
@@ -186,6 +186,8 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     var sessionDataCallBack: RtmMessage?
     var syncCallBacks = [RtmMessage]()
     
+    fileprivate var rtmVersionSent = false
+    
     open var demoModeEnabled : Bool {
         get {
             if let isEnabled = self.rtmConfig?.demoMode {
@@ -258,7 +260,9 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
     
     open func webViewPageLoaded() {
-        
+        if !rtmVersionSent {
+            sendVersion(version: RtmProtocolVersion.currentlySupportedVersion())
+        }
     }
     
     /**
@@ -393,8 +397,11 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
                 return
             }
             
+            log.debug("WV_DATA: received \(version) rtm version.")
+            
             switch version {
             case .ver2:
+                log.debug("WV_DATA: using default message handler.")
                 self.messagesHandler = defaultMessagesHandler
                 break
             case .ver1:
@@ -411,6 +418,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     
     fileprivate func sendStatusMessage(_ message:String, type:WVMessageType) {
         sendRtmMessage(rtmMessage: RtmMessageResponse(data:["message":message, "type":type.rawValue], type: .deviceStatus))
+        rtmVersionSent = true
     }
     
     fileprivate func handleSync(_ message: RtmMessage) -> Void {
