@@ -20,7 +20,7 @@ open class ApduPackage : NSObject, Mappable
     
     open var state:APDUPackageResponseState?
     open var executedEpoch:TimeInterval?
-    open var executedDuration:Int?
+    open var executedDuration:Int64?
     
     open var validUntil:String?
     open var validUntilEpoch:TimeInterval?
@@ -68,7 +68,7 @@ open class ApduPackage : NSObject, Mappable
             }
             
             if let executed = self.executedEpoch {
-                dic["executedTsEpoch"] = Int(executed) as AnyObject?
+                dic["executedTsEpoch"] = Int64(executed * 1000) as AnyObject?
             }
             
             if state == APDUPackageResponseState.EXPIRED {
