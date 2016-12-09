@@ -919,6 +919,7 @@ SWIFT_CLASS("_TtC9FitpaySDK8WvConfig")
 */
 - (void)openDeviceConnection:(void (^ _Nonnull)(NSError * _Nullable))completion;
 - (void)setWebView:(WKWebView * _Null_unspecified)webview;
+- (void)webViewPageLoaded;
 /**
   This returns the configuration for a WKWebView that will enable the iOS rtm bridge in the web app. Note that
   the value “rtmBridge” is an agreeded upon value between this and the web-view.

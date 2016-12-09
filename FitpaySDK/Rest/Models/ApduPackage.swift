@@ -55,20 +55,20 @@ open class ApduPackage : NSObject, Mappable
         return false
     }
     
-    open var responseDictionary : [String:AnyObject] {
+    open var responseDictionary : [String:Any] {
         get {
-            var dic : [String:AnyObject] = [:]
+            var dic : [String:Any] = [:]
             
             if let packageId = self.packageId {
-                dic["packageId"] = packageId as AnyObject?
+                dic["packageId"] = packageId
             }
             
             if let state = self.state {
-                dic["state"] = state.rawValue as AnyObject?
+                dic["state"] = state.rawValue
             }
             
             if let executed = self.executedEpoch {
-                dic["executedTsEpoch"] = Int64(executed * 1000) as AnyObject?
+                dic["executedTsEpoch"] = Int64(executed * 1000)
             }
             
             if state == APDUPackageResponseState.EXPIRED {
@@ -76,19 +76,19 @@ open class ApduPackage : NSObject, Mappable
             }
             
             if let executedDuration = self.executedDuration {
-                dic["executedDuration"] = executedDuration as AnyObject?
+                dic["executedDuration"] = executedDuration
             }
             
             if let apduResponses = self.apduCommands {
                 if apduResponses.count > 0 {
-                    var responsesArray : [AnyObject] = []
+                    var responsesArray : [Any] = []
                     for resp in apduResponses {
                         if let _ = resp.responseData {
-                            responsesArray.append(resp.responseDictionary as AnyObject)
+                            responsesArray.append(resp.responseDictionary)
                         }
                     }
                     
-                    dic["apduResponses"] = responsesArray as AnyObject?
+                    dic["apduResponses"] = responsesArray
                 }
             }
             
@@ -179,20 +179,20 @@ open class APDUCommand : NSObject, Mappable {
         continueOnFailure <- map["continueOnFailure"]
     }
     
-    open var responseDictionary : [String:AnyObject] {
+    open var responseDictionary : [String:Any] {
         get {
-            var dic : [String:AnyObject] = [:]
+            var dic : [String:Any] = [:]
             
             if let commandId = self.commandId {
-                dic["commandId"] = commandId as AnyObject?
+                dic["commandId"] = commandId
             }
             
             if let responseCode = self.responseCode {
-                dic["responseCode"] = responseCode as AnyObject?
+                dic["responseCode"] = responseCode
             }
             
             if let responseData = self.responseData {
-                dic["responseData"] = responseData as AnyObject?
+                dic["responseData"] = responseData
             }
             
             return dic
