@@ -311,7 +311,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
      */
     open func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let sentData = message.body as? [String : Any] else {
-            log.error("Received message from \(message.name), but can't convert it to dictionary type.")
+            log.error("WV_DATA: Received message from \(message.name), but can't convert it to dictionary type.")
             return
         }
         
@@ -333,13 +333,15 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     
     open func sendRtmMessage(rtmMessage: RtmMessageResponse) {
         guard let jsonRepresentation = rtmMessage.toJSONString(prettyPrint: false) else {
-            log.error("Can't create json representation for rtm message.")
+            log.error("WV_DATA: Can't create json representation for rtm message.")
             return
         }
 
+        log.debug("WV_DATA: sending data to wv: \(jsonRepresentation)")
+        
         webview?.evaluateJavaScript("window.RtmBridge.resolve(\(jsonRepresentation))", completionHandler: { (result, error) in
             if let error = error {
-                log.error("Can't send status message, error: \(error)")
+                log.error("WV_DATA: Can't send status message, error: \(error)")
             }
         })
     }
@@ -348,27 +350,27 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
         let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
         
         guard let rtmMessage = Mapper<RtmMessage>().map(JSONString: String(data: jsonData!, encoding: .utf8)!) else {
-            log.error("Can't create RtmMessage.")
+            log.error("WV_DATA: Can't create RtmMessage.")
             return
         }
         
         guard let messageAction = RtmMessagesType(rawValue: rtmMessage.type ?? "") else {
-            log.error("RtmMessage. Action is missing or unknown: \(rtmMessage.type)")
+            log.error("WV_DATA: RtmMessage. Action is missing or unknown: \(rtmMessage.type)")
             return
         }
         
         switch messageAction {
         case .sync:
-            log.verbose("received sync message from web-view")
+            log.debug("WV_DATA: received SYNC message from web-view: \(message).")
             handleSync(rtmMessage)
             break
         case .userData:
-            log.verbose("received user session data from web-view")
+            log.verbose("WV_DATA: received user session data from web-view.")
             
             sessionDataCallBack = rtmMessage
             
             guard let data = rtmMessage.data as? NSDictionary else {
-                log.error("Can't get data from rtmBridge message.")
+                log.error("WV_DATA: Can't get data from rtmBridge message.")
                 return
             }
             
@@ -377,7 +379,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
                 let jsonString = NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)! as String
                 
                 guard let webViewSessionData = Mapper<WebViewSessionData>().map(JSONString: jsonString) else {
-                    log.error("Can't parse WebViewSessionData from rtmBridge message. Message: \(jsonString)")
+                    log.error("WV_DATA: Can't parse WebViewSessionData from rtmBridge message. Message: \(jsonString)")
                     return
                 }
                 
@@ -422,19 +424,20 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
     
     fileprivate func handleSync(_ message: RtmMessage) -> Void {
-        log.verbose("--- [WvConfig] handling rtm sync ---")
+        log.verbose("WV_DATA: Handling rtm sync.")
         if (self.webViewSessionData != nil && self.user != nil ) {
-            log.verbose("--- [WvConfig] adding sync to rtm callback queue ---")
+            log.verbose("WV_DATA: Adding sync to rtm callback queue.")
             syncCallBacks.append(message)
             if !SyncManager.sharedInstance.isSyncing {
                 self.showStatusMessage(.syncStarted)
-                log.verbose("--- [WvConfig] initiating sync ---")
+                log.verbose("WV_DATA: initiating sync.")
                 goSync()
             } else {
-                log.verbose("--- [WvConfig] sync manager was syncing in RTM sync request. So doing nothing ---")
+                log.debug("WV_DATA: sync manager was syncing in RTM sync request. So doing nothing.")
             }
         } else {
-            log.verbose("--- [WvConfig] rtm not yet configured to hand syncs requests, failing sync ---")
+
+            log.warning("WV_DATA: rtm not yet configured to hand syncs requests, failing sync.")
             sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.syncCallBacks.first!.callBackId, data: WVResponse.noSessionData.dictionaryRepresentation(), type: .sync, success: false))
             self.showStatusMessage(.syncError, message: "Can't make sync. Session data or user is nil.")
         }
@@ -513,7 +516,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     }
 
     fileprivate func rejectAndResetSyncCallbacks(_ reason:String) {
-        log.verbose("--- [WvConfig] rejecting and resettting callback queue in rtm ---")
+        log.verbose("WV_DATA: rejecting and resettting callback queue in rtm.")
         for cb in self.syncCallBacks {
             self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: cb.callBackId, data: WVResponse.failed.dictionaryRepresentation(param: reason), type: .sync, success: false))
         }
@@ -523,26 +526,26 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
 
     fileprivate func resolveSync() {
         if let message = self.syncCallBacks.first {
-            log.verbose("--- [WvConfig] resolving rtm sync promise ---")
+            log.verbose("WV_DATA: resolving rtm sync promise.")
             if self.syncCallBacks.count > 1 {
                 sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: message.callBackId, data: WVResponse.successStillWorking.dictionaryRepresentation(param: self.syncCallBacks.count), type: .sync, success: true))
-                log.verbose("--- [WvConfig] there was another rtm sync request, syncing again ---")
+                log.verbose("WV_DATA: there was another rtm sync request, syncing again.")
                 goSync()
             } else {
                 self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: message.callBackId, data: WVResponse.success.dictionaryRepresentation(), type: .sync, success: true))
 
                 self.showStatusMessage(.synchronized)
-                log.verbose("--- [WvConfig] no more rtm sync requests in queue ---")
+                log.verbose("WV_DATA. no more rtm sync requests in queue.")
             }
 
             self.syncCallBacks.removeFirst()
         } else {
-            log.warning("no callbacks available for sync resolution")
+            log.warning("WV_DATA: no callbacks available for sync resolution.")
         }
     }
 
     fileprivate func goSync() {
-        log.verbose("--- [WvConfig] initiating SyncManager sync via rtm ---")
+        log.verbose("WV_DATA: initiating SyncManager sync via rtm.")
         if SyncManager.sharedInstance.sync(self.user!, device: self.device) != nil {
             rejectAndResetSyncCallbacks("SyncManager failed to regulate sequential syncs, all pending syncs have been rejected")
         }
@@ -555,14 +558,14 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
     fileprivate func bindEvents() {
         let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncCompleted, completion: {
             (event) in
-            log.debug("--- [WvConfig] received sync complete from SyncManager ---")
+            log.debug("WV_DATA: received sync complete from SyncManager.")
 
             self.resolveSync()
         })
 
         let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: {
             (event) in
-            log.error("--- [WvConfig] reveiced sync FAILED from SyncManager ---")
+            log.error("WV_DATA: reveiced sync FAILED from SyncManager.")
             self.showStatusMessage(.syncError, error: (event.eventData as? [String:Any])?["error"] as? Error)
 
             self.rejectAndResetSyncCallbacks("SyncManager failed to complete the sync, all pending syncs have been rejected")
