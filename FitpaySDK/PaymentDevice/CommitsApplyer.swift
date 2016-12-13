@@ -137,9 +137,13 @@ internal class CommitsApplyer {
         
         SyncStorage.sharedInstance.lastPackageId += 1
         
+        SyncManager.sharedInstance.paymentDevice?.apduPackageProcessingStarted(apduPackage)
+        
         self.applyAPDUPackage(apduPackage, apduCommandIndex: 0, retryCount: 0)
         {
             (error) -> Void in
+            
+            SyncManager.sharedInstance.paymentDevice?.apduPackageProcessingFinished(apduPackage)
 
             let currentTimestamp = Date().timeIntervalSince1970
 
