@@ -289,6 +289,18 @@ open class PaymentDevice : NSObject
         self.deviceInterface = BluetoothPaymentDeviceConnector(paymentDevice: self)
     }
     
+    internal func apduPackageProcessingStarted(_ package: ApduPackage) {
+        if let onPreApduPackageExecute = self.deviceInterface.onPreApduPackageExecute {
+        	onPreApduPackageExecute(package)
+        }
+    }
+    
+    internal func apduPackageProcessingFinished(_ package: ApduPackage) {
+        if let onPostApduPackageExecute = self.deviceInterface.onPostApduPackageExecute {
+            onPostApduPackageExecute(package)
+        }
+    }
+    
     internal func sendAPDUCommand(_ apduCommand:APDUCommand, completion: @escaping APDUResponseHandler) {
         guard isConnected else {
             completion(nil, NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeConnected, domain: IPaymentDeviceConnector.self))
