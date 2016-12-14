@@ -95,7 +95,7 @@ internal class CommitsApplyer {
         }
         
         let commitCompletion = { (error: Error?) -> Void in
-            if error == nil {
+            if error == nil || (error as? NSError)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue {
                 SyncManager.sharedInstance.commitCompleted(commit.commit!)
             }
             

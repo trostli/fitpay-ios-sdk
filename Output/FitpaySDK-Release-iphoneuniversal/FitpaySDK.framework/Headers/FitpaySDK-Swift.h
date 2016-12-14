@@ -130,6 +130,7 @@ SWIFT_CLASS("_TtC9FitpaySDK11APDUCommand")
 @property (nonatomic) NSInteger sequence;
 @property (nonatomic, copy) NSString * _Nullable command;
 @property (nonatomic, copy) NSString * _Nullable type;
+@property (nonatomic) BOOL continueOnFailure;
 @property (nonatomic, copy) NSString * _Nullable responseCode;
 @property (nonatomic, copy) NSString * _Nullable responseData;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
