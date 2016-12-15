@@ -15,11 +15,11 @@
     
     func sendNotification(_ notificationData: Data) -> NSError?
     
-    @objc optional func onPreApduPackageExecute(_ apduPackage: ApduPackage)
+    @objc optional func onPreApduPackageExecute(_ apduPackage: ApduPackage, completion: @escaping (_ error: NSError?) -> Void)
     
     func executeAPDUCommand(_ apduCommand: APDUCommand)
     
-    @objc optional func onPostApduPackageExecute(_ apduPackage: ApduPackage)
+    @objc optional func onPostApduPackageExecute(_ apduPackage: ApduPackage, completion: @escaping (_ error: NSError?) -> Void)
 
     func deviceInfo() -> DeviceInfo?
 

@@ -289,15 +289,19 @@ open class PaymentDevice : NSObject
         self.deviceInterface = BluetoothPaymentDeviceConnector(paymentDevice: self)
     }
     
-    internal func apduPackageProcessingStarted(_ package: ApduPackage) {
+    internal func apduPackageProcessingStarted(_ package: ApduPackage, completion: @escaping (_ error: NSError?) -> Void) {
         if let onPreApduPackageExecute = self.deviceInterface.onPreApduPackageExecute {
-        	onPreApduPackageExecute(package)
+        	onPreApduPackageExecute(package, completion)
+        } else {
+            completion(nil)
         }
     }
     
-    internal func apduPackageProcessingFinished(_ package: ApduPackage) {
+    internal func apduPackageProcessingFinished(_ package: ApduPackage, completion: @escaping (_ error: NSError?) -> Void) {
         if let onPostApduPackageExecute = self.deviceInterface.onPostApduPackageExecute {
-            onPostApduPackageExecute(package)
+            onPostApduPackageExecute(package, completion)
+        } else {
+            completion(nil)
         }
     }
     
