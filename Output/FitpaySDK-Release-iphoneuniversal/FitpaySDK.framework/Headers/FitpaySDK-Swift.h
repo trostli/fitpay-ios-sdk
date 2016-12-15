@@ -447,11 +447,11 @@ SWIFT_PROTOCOL("_TtP9FitpaySDK23IPaymentDeviceConnector_")
 - (NSError * _Nullable)sendDeviceControl:(enum DeviceControlState)state;
 - (NSError * _Nullable)sendNotification:(NSData * _Nonnull)notificationData;
 @optional
-- (void)onPreApduPackageExecute:(ApduPackage * _Nonnull)apduPackage;
+- (void)onPreApduPackageExecute:(ApduPackage * _Nonnull)apduPackage completion:(void (^ _Nonnull)(NSError * _Nullable))completion;
 @required
 - (void)executeAPDUCommand:(APDUCommand * _Nonnull)apduCommand;
 @optional
-- (void)onPostApduPackageExecute:(ApduPackage * _Nonnull)apduPackage;
+- (void)onPostApduPackageExecute:(ApduPackage * _Nonnull)apduPackage completion:(void (^ _Nonnull)(NSError * _Nullable))completion;
 @required
 - (DeviceInfo * _Nullable)deviceInfo;
 - (enum SecurityNFCState)nfcState;
