@@ -163,8 +163,8 @@ internal class CommitsApplyer {
             
             var realError = error
             
-            // if we received apduSendingTimeout error than confirm it and move next, do not stop sync process
-            if (error as? NSError)?.code == PaymentDevice.ErrorCode.apduSendingTimeout.rawValue {
+            // if we received timeout or apdu with error response than confirm it and move next, do not stop sync process
+            if (error as? NSError)?.code == PaymentDevice.ErrorCode.apduErrorResponse.rawValue || (error as? NSError)?.code == PaymentDevice.ErrorCode.apduSendingTimeout.rawValue {
                 realError = nil
             }
             
