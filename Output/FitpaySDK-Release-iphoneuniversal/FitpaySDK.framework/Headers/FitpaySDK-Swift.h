@@ -690,14 +690,15 @@ typedef SWIFT_ENUM(NSInteger, SyncEventType) {
   SyncEventTypeSyncProgress = 7,
   SyncEventTypeReceivedCardsWithTowApduCommands = 8,
   SyncEventTypeApduCommandsProgress = 9,
-  SyncEventTypeCommitProcessed = 10,
-  SyncEventTypeCardAdded = 11,
-  SyncEventTypeCardDeleted = 12,
-  SyncEventTypeCardActivated = 13,
-  SyncEventTypeCardDeactivated = 14,
-  SyncEventTypeCardReactivated = 15,
-  SyncEventTypeSetDefaultCard = 16,
-  SyncEventTypeResetDefaultCard = 17,
+  SyncEventTypeCommitsReceived = 10,
+  SyncEventTypeCommitProcessed = 11,
+  SyncEventTypeCardAdded = 12,
+  SyncEventTypeCardDeleted = 13,
+  SyncEventTypeCardActivated = 14,
+  SyncEventTypeCardDeactivated = 15,
+  SyncEventTypeCardReactivated = 16,
+  SyncEventTypeSetDefaultCard = 17,
+  SyncEventTypeResetDefaultCard = 18,
 };
 
 
@@ -894,12 +895,13 @@ SWIFT_CLASS("_TtC9FitpaySDK18VerificationMethod")
 typedef SWIFT_ENUM(NSInteger, WVDeviceStatuses) {
   WVDeviceStatusesDisconnected = 0,
   WVDeviceStatusesPairing = 1,
-  WVDeviceStatusesConnected = 2,
-  WVDeviceStatusesSynchronizing = 3,
-  WVDeviceStatusesSyncStarted = 4,
-  WVDeviceStatusesSyncDataRetrieved = 5,
-  WVDeviceStatusesSynchronized = 6,
-  WVDeviceStatusesSyncError = 7,
+  WVDeviceStatusesSyncGettingUpdates = 2,
+  WVDeviceStatusesSyncNoUpdates = 3,
+  WVDeviceStatusesSyncUpdatingConnectingToDevice = 4,
+  WVDeviceStatusesSyncUpdatingConnectionFailed = 5,
+  WVDeviceStatusesSyncUpdating = 6,
+  WVDeviceStatusesSyncComplete = 7,
+  WVDeviceStatusesSyncError = 8,
 };
 
 @class WKWebView;
