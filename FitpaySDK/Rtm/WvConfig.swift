@@ -563,6 +563,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             log.debug("WV_DATA: received sync complete from SyncManager.")
 
             self.resolveSync()
+            self.showStatusMessage(.syncComplete)
         })
 
         let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: {
