@@ -280,7 +280,14 @@ open class PaymentDevice : NSObject
     internal var deviceInterface : IPaymentDeviceConnector!
     fileprivate let eventsDispatcher = FitpayEventDispatcher()
     
-    public typealias APDUResponseHandler = (_ apduResponse:ApduResultMessage?, _ error:Error?)->Void
+    /**
+     Handler for APDU execution, should be called when apdu execution completed.
+     
+     - parameter apduResponse: APDU response message
+     - parameter responseState: state which will be sent to confirm endpoint. If nil then system will choose right value automatically.
+     - parameter error: error which occurred during APDU command execution. If nil then there was no any error.
+     */
+    public typealias APDUResponseHandler = (_ apduResponse:ApduResultMessage?, _ responseState: APDUPackageResponseState?, _ error:Error?)->Void
     open var apduResponseHandler : APDUResponseHandler?
     
     override public init() {
@@ -307,7 +314,7 @@ open class PaymentDevice : NSObject
     
     internal func sendAPDUCommand(_ apduCommand:APDUCommand, completion: @escaping APDUResponseHandler) {
         guard isConnected else {
-            completion(nil, NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeConnected, domain: IPaymentDeviceConnector.self))
+            completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.deviceShouldBeConnected, domain: IPaymentDeviceConnector.self))
             return
         }
         
@@ -316,14 +323,14 @@ open class PaymentDevice : NSObject
         self.deviceInterface.executeAPDUCommand(apduCommand)
     }
     
-    internal typealias APDUExecutionHandler = (_ apduCommand:APDUCommand?, _ error:Error?)->Void
+    internal typealias APDUExecutionHandler = (_ apduCommand:APDUCommand?, _ state: APDUPackageResponseState?, _ error:Error?)->Void
     internal func executeAPDUCommand(_ apduCommand: APDUCommand, completion: @escaping APDUExecutionHandler) {
         self.sendAPDUCommand(apduCommand)
         {
-            (apduResponse, error) -> Void in
+            (apduResponse, state, error) -> Void in
             
             if let error = error {
-                completion(apduCommand, error)
+                completion(apduCommand, nil, error)
                 return
             }
 
@@ -333,11 +340,11 @@ open class PaymentDevice : NSObject
             log.debug("APDU_DATA: ExecuteAPDUCommand: response \(apduResponse?.responseData.hex ?? "nil"). Response type - \(apduCommand.responseType). Commands continueOnFailure - \(apduCommand.continueOnFailure).")
             
             if apduCommand.responseType == APDUResponseType.error && apduCommand.continueOnFailure == false {
-                completion(apduCommand, NSError.error(code: PaymentDevice.ErrorCode.apduErrorResponse, domain: IPaymentDeviceConnector.self))
+                completion(apduCommand, nil, NSError.error(code: PaymentDevice.ErrorCode.apduErrorResponse, domain: IPaymentDeviceConnector.self))
                 return
             }
             
-            completion(apduCommand, nil)
+            completion(apduCommand, nil, nil)
         }
     }
     

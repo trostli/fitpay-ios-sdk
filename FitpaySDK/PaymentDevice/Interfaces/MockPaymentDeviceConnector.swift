@@ -70,7 +70,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
     open func executeAPDUCommand(_ apduCommand: APDUCommand) {
         guard let commandData = apduCommand.command?.hexToData() else {
             if let completion = self.paymentDevice.apduResponseHandler {
-                completion(nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
+                completion(nil, nil, NSError.error(code: PaymentDevice.ErrorCode.apduDataNotFull, domain: IPaymentDeviceConnector.self))
             }
             return
         }
@@ -84,7 +84,7 @@ open class MockPaymentDeviceConnector : NSObject, IPaymentDeviceConnector {
         
         if let apduResponseHandler = self.paymentDevice.apduResponseHandler {
             self.paymentDevice.apduResponseHandler = nil
-            apduResponseHandler(packet, nil)
+            apduResponseHandler(packet, nil, nil)
         }
     }
     
