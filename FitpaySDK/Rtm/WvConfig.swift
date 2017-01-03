@@ -11,26 +11,28 @@ public enum WVMessageType : Int {
 }
 
 @objc public enum WVDeviceStatuses : Int {
-    case disconnected = 0
+    case disconnected
     case pairing
-    case connected
-    case synchronizing
-    case syncStarted
-    case syncDataRetrieved
-    case synchronized
+    case syncGettingUpdates
+    case syncNoUpdates
+    case syncUpdatingConnectingToDevice
+    case syncUpdatingConnectionFailed
+    case syncUpdating
+    case syncComplete
     case syncError
     
     func statusMessageType() -> WVMessageType {
         switch self {
         case .disconnected:
             return .pending
-        case .connected,
-             .synchronized:
+        case .syncGettingUpdates,
+             .syncNoUpdates,
+             .syncUpdatingConnectingToDevice,
+             .syncUpdating,
+             .syncComplete:
             return .success
         case .pairing,
-             .synchronizing,
-             .syncStarted,
-             .syncDataRetrieved:
+             .syncUpdatingConnectionFailed:
             return .progress
         case .syncError:
             return .error
@@ -41,18 +43,20 @@ public enum WVMessageType : Int {
         switch self {
         case .disconnected:
             return "Device is disconnected."
-        case .connected:
-            return "Ready to sync with device."
-        case .synchronized:
-            return "Device is up to date."
+        case .syncGettingUpdates:
+            return "Checking for wallet updates ..."
+        case .syncNoUpdates:
+            return "No pending updates for device"
         case .pairing:
             return "Pairing with device..."
-        case .synchronizing:
-            return "Synchronizing with device."
-        case .syncStarted:
-            return "Synchronizing with device.."
-        case .syncDataRetrieved:
-            return "Synchronizing with device..."
+        case .syncUpdatingConnectingToDevice:
+            return "Updates available for wallet - connecting to device ..."
+        case .syncUpdatingConnectionFailed:
+            return "Updates available for wallet - unable to connect to device - check connection"
+        case .syncUpdating:
+            return "Syncing updates to device ..."
+        case .syncComplete:
+            return "Sync complete - device up to date - no updates available"
         case .syncError:
             return "Sync error"
         }
@@ -429,7 +433,7 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             log.verbose("WV_DATA: Adding sync to rtm callback queue.")
             syncCallBacks.append(message)
             if !SyncManager.sharedInstance.isSyncing {
-                self.showStatusMessage(.syncStarted)
+                self.showStatusMessage(.syncGettingUpdates)
                 log.verbose("WV_DATA: initiating sync.")
                 goSync()
             } else {
@@ -472,7 +476,6 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             
             self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: self.sessionDataCallBack?.callBackId, data: WVResponse.success.dictionaryRepresentation(), type: .resolve, success: true))
             
-            self.showStatusMessage(.synchronizing)
         }
         
         restClient?.user(id: (self.webViewSessionData?.userId)!, completion: {
@@ -534,7 +537,6 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             } else {
                 self.sendRtmMessage(rtmMessage: RtmMessageResponse(callbackId: message.callBackId, data: WVResponse.success.dictionaryRepresentation(), type: .sync, success: true))
 
-                self.showStatusMessage(.synchronized)
                 log.verbose("WV_DATA. no more rtm sync requests in queue.")
             }
 
@@ -561,14 +563,34 @@ open class WvConfig : NSObject, WKScriptMessageHandler {
             log.debug("WV_DATA: received sync complete from SyncManager.")
 
             self.resolveSync()
+            self.showStatusMessage(.syncComplete)
         })
 
         let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: SyncEventType.syncFailed, completion: {
             (event) in
             log.error("WV_DATA: reveiced sync FAILED from SyncManager.")
-            self.showStatusMessage(.syncError, error: (event.eventData as? [String:Any])?["error"] as? Error)
+            let error = (event.eventData as? [String:Any])?["error"] as? NSError
+                
+            if error?.code == SyncManager.ErrorCode.cantConnectToDevice.rawValue {
+                self.showStatusMessage(.syncUpdatingConnectionFailed)
+            } else {
+            	self.showStatusMessage(.syncError, error: (event.eventData as? [String:Any])?["error"] as? Error)
+            }
 
             self.rejectAndResetSyncCallbacks("SyncManager failed to complete the sync, all pending syncs have been rejected")
+        })
+        
+        let _ = SyncManager.sharedInstance.bindToSyncEvent(eventType: .commitsReceived, completion: {
+            (event) in
+            guard let commits = (event.eventData as! [String:[Commit]])["commits"] else {
+                self.showStatusMessage(.syncNoUpdates)
+                return
+            }
+            if commits.count > 0 {
+                self.showStatusMessage(.syncUpdatingConnectingToDevice)
+            } else {
+                self.showStatusMessage(.syncNoUpdates)
+            }
         })
     }
 

@@ -33,6 +33,7 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
     case receivedCardsWithTowApduCommands
     case apduCommandsProgress
     
+    case commitsReceived
     case commitProcessed
 
     case cardAdded
@@ -67,6 +68,8 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
             return "Received cards with Top of Wallet APDU commands"
         case .apduCommandsProgress:
             return "APDU progress"
+        case .commitsReceived:
+            return "Commits received"
         case .commitProcessed:
             return "Processed commit"
         case .cardAdded:
@@ -342,6 +345,8 @@ open class SyncManager : NSObject {
                 self.syncFinished(error: NSError.error(code: SyncManager.ErrorCode.cantFetchCommits, domain: SyncManager.self))
                 return
             }
+            
+            self.callCompletionForSyncEvent(.commitsReceived, params: ["commits":commits!])
 
             log.debug("SYNC_DATA: \(commits?.count ?? 0) commits successfully retrieved.")
 
