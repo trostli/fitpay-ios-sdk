@@ -1389,11 +1389,14 @@ class RestClientTests: XCTestCase
         
         let currentTime = Date().timeIntervalSince1970
         let timeTransform = NSTimeIntervalTransform()
-        let timeAsInt = timeTransform.transformToJSON(currentTime)
+        guard let timeAsInt = timeTransform.transformToJSON(currentTime) else {
+            XCTAssert(false, "Can't get int value for time.")
+            return
+        }
         
         let intMirror = Mirror(reflecting: timeAsInt)
         debugPrint(String(describing: intMirror.subjectType))
-        XCTAssertTrue(String(describing: intMirror.subjectType) == "Optional<Int64>")
+        XCTAssertTrue(String(describing: intMirror.subjectType) == "Int64")
         
         expectation.fulfill()
         

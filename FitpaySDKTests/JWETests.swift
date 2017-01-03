@@ -9,14 +9,14 @@ class JWETests: XCTestCase
     func testJWEEncryption()
     {
         let jweObject = try? JWEObject.createNewObject(JWEAlgorithm.A256GCMKW, enc: JWEEncryption.A256GCM, payload: plainText, keyId: nil)
-        XCTAssertNotNil(jweObject)
+        XCTAssertNotNil(jweObject as Any)
         
         let encryptResult = try? jweObject!!.encrypt(sharedSecret!)
-        XCTAssertNotNil(encryptResult)
+        XCTAssertNotNil(encryptResult as Any)
         
         let jweResult = JWEObject.parse(payload: encryptResult!!)
         let decryptResult = try? jweResult?.decrypt(sharedSecret!)
-        XCTAssertNotNil(decryptResult)
+        XCTAssertNotNil(decryptResult as Any)
         
         XCTAssertTrue(plainText == decryptResult!!)
     }

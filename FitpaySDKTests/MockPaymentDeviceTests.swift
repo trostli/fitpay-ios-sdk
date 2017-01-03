@@ -18,7 +18,7 @@ class MockPaymentDeviceTests: XCTestCase
         super.setUp()
         let myPaymentDevice = PaymentDevice()
         self.paymentDevice = myPaymentDevice
-        self.paymentDevice.changeDeviceInterface(MockPaymentDeviceConnector(paymentDevice: myPaymentDevice))
+        let _ = self.paymentDevice.changeDeviceInterface(MockPaymentDeviceConnector(paymentDevice: myPaymentDevice))
     }
     
     override func tearDown()
@@ -34,7 +34,7 @@ class MockPaymentDeviceTests: XCTestCase
     {
         // Async version - use once mock device eventing is in place
         let expectation = super.expectation(description: "connection to device check")
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
             {
                 (event) in
                 debugPrint("event: \(event), eventData: \(event.eventData)")
@@ -69,7 +69,7 @@ class MockPaymentDeviceTests: XCTestCase
     func testDisconnectFromDeviceCheck()
     {
         let expectation = super.expectation(description: "disconnect from device check")
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
             {
                 (event) in
                 
@@ -80,7 +80,7 @@ class MockPaymentDeviceTests: XCTestCase
                 self.paymentDevice.disconnect()
         })
         
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceDisconnected, completion:
             {
                 _ in
                 expectation.fulfill()
@@ -96,7 +96,7 @@ class MockPaymentDeviceTests: XCTestCase
         let expectation = super.expectation(description: "disconnection from device check")
         
         var newState = SecurityNFCState.disabled
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
             {
                 (event) in
                 
@@ -108,10 +108,10 @@ class MockPaymentDeviceTests: XCTestCase
                     newState = SecurityNFCState.enabled
                 }
                 
-                self.paymentDevice.writeSecurityState(newState)
+                let _ = self.paymentDevice.writeSecurityState(newState)
         })
         
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onSecurityStateChanged, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onSecurityStateChanged, completion:
             {
                 (event) -> Void in
                 
@@ -124,7 +124,7 @@ class MockPaymentDeviceTests: XCTestCase
                 
                 if state == SecurityNFCState.disabled {
                     newState = SecurityNFCState.enabled
-                    self.paymentDevice.writeSecurityState(newState)
+                    let _ = self.paymentDevice.writeSecurityState(newState)
                 } else {
                     expectation.fulfill()
                 }
@@ -141,7 +141,7 @@ class MockPaymentDeviceTests: XCTestCase
         
         let successResponse = Data(bytes: UnsafePointer<UInt8>([0x90, 0x00] as [UInt8]), count: 2)
         
-        self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
+        let _ = self.paymentDevice.bindToEvent(eventType: PaymentDeviceEventTypes.onDeviceConnected, completion:
             {
                 (event) in
                 let error = (event.eventData as? [String:Any])?["error"]
