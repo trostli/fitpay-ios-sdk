@@ -573,7 +573,6 @@ SWIFT_CLASS("_TtC9FitpaySDK13PaymentDevice")
   Can be changed if device disconnected.
 */
 - (NSError * _Nullable)changeDeviceInterface:(id <IPaymentDeviceConnector> _Nonnull)interface;
-@property (nonatomic, copy) void (^ _Nullable apduResponseHandler)(ApduResultMessage * _Nullable, NSError * _Nullable);
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 

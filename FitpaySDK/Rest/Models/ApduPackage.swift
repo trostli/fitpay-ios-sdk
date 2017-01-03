@@ -1,10 +1,11 @@
 import ObjectMapper
 
 public enum APDUPackageResponseState : String {
-    case PROCESSED = "PROCESSED"
-    case FAILED = "FAILED"
-    case ERROR = "ERROR"
-    case EXPIRED = "EXPIRED"
+    case processed = "PROCESSED"
+    case failed = "FAILED"
+    case error = "ERROR"
+    case expired = "EXPIRED"
+    case notProcessed = "NOT_PROCESSED"
 }
 
 open class ApduPackage : NSObject, Mappable
@@ -71,7 +72,7 @@ open class ApduPackage : NSObject, Mappable
                 dic["executedTsEpoch"] = Int64(executed * 1000)
             }
             
-            if state == APDUPackageResponseState.EXPIRED {
+            if state == APDUPackageResponseState.expired {
                 return dic
             }
             
